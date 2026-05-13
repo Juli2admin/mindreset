@@ -47,13 +47,21 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       result,
       reasonSummary,
       classifierVer,
       screeningId: screening.id,
     });
+    response.cookies.set('mr_screening', screening.id, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+      sameSite: 'lax',
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+    });
+    return response;
   } catch (error) {
     console.error('[screening] DB write failed:', error);
     return NextResponse.json(
