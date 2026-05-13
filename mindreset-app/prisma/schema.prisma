@@ -52,8 +52,8 @@ model User {
 // =============================================================================
 model ScreeningResponse {
   id                 String   @id @default(cuid())
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId             String
+  user               User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String?
   createdAt          DateTime @default(now())
 
   // Raw answers (stored as JSON so we can re-classify if rules change)
