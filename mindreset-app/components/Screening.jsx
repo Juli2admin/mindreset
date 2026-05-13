@@ -151,6 +151,11 @@ const COPY = {
     back: 'Back',
     finish: 'See result',
     startOver: 'Start over',
+    submitLoadingKicker: 'One moment',
+    submitLoading: 'Saving your answers…',
+    submitErrorTitle: "Couldn't save",
+    submitErrorBody: 'Your answers came through but we had trouble saving them — please refresh and try again.',
+    retryButton: 'Try again',
     selectAll: 'Tick anything that applies to you right now.',
     rateScaleHigh: '0 = not at all, 5 = extremely',
     rateScaleLow: '0 = not present, 5 = very present',
@@ -274,6 +279,11 @@ const COPY = {
     back: 'Назад',
     finish: 'Увидеть результат',
     startOver: 'Начать заново',
+    submitLoadingKicker: 'Минуту',
+    submitLoading: 'Сохраняем ваши ответы…',
+    submitErrorTitle: 'Не удалось сохранить',
+    submitErrorBody: 'Ваши ответы получены, но нам не удалось их сохранить — пожалуйста, обновите страницу и попробуйте снова.',
+    retryButton: 'Попробовать снова',
     selectAll: 'Отметьте всё, что относится к вам сейчас.',
     rateScaleHigh: '0 — совсем нет, 5 — очень сильно',
     rateScaleLow: '0 — нет, 5 — очень присутствует',
@@ -384,22 +394,6 @@ const COPY = {
     sessionRef: 'Идентификатор',
   },
 };
-
-// ============================================================================
-// Classification — mirrors SECTION 0 decision table
-// ============================================================================
-function classify(answers) {
-  const { exclusion, functionality, emotional, trauma, cognitive, consent } = answers;
-  if (Object.values(exclusion).some(Boolean)) return 'red';
-  if (trauma === 2 || trauma === 3) return 'red';
-  if (Object.values(functionality).some((v) => v <= 1)) return 'red';
-  if (Object.values(consent).some((v) => !v)) return 'yellow';
-  if (Object.values(cognitive).some((v) => v === 'no')) return 'yellow';
-  if (Object.values(emotional).filter((v) => v >= 4).length >= 3) return 'yellow';
-  const fnVals = Object.values(functionality);
-  if (fnVals.filter((v) => v <= 3).length > fnVals.length / 2) return 'yellow';
-  return 'green';
-}
 
 // ============================================================================
 // UI atoms — theme-aware via context
@@ -1037,6 +1031,10 @@ export default function ScreeningFlow() {
   const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState(initialAnswers());
   const [sessionId] = useState(() => 'MR-' + Math.random().toString(36).slice(2, 8).toUpperCase());
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+  const [serverResult, setServerResult] = useState(null);
+  const [refireKey, setRefireKey] = useState(0);
 
   useEffect(() => {
     // Load fonts
@@ -1061,12 +1059,58 @@ export default function ScreeningFlow() {
     }
   }, []);
 
+  useEffect(() => {
+    if (step !== 6) return;
+    if (serverResult !== null) return;
+
+    let cancelled = false;
+    setSubmitting(true);
+    setSubmitError(false);
+
+    fetch('/api/screening', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exclusion: answers.exclusion,
+        functionality: answers.functionality,
+        emotional: answers.emotional,
+        trauma: answers.trauma,
+        cognitive: answers.cognitive,
+        consent: answers.consent,
+      }),
+    })
+      .then(async (res) => {
+        if (cancelled) return;
+        if (!res.ok) {
+          setSubmitError(true);
+          setSubmitting(false);
+          return;
+        }
+        const data = await res.json();
+        if (cancelled) return;
+        setServerResult(data.result);
+        setSubmitting(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setSubmitError(true);
+        setSubmitting(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [step, refireKey]);
+
   const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
   const c = COLORS[theme];
 
   const reset = () => {
     setAnswers(initialAnswers());
     setStep(-1);
+    setSubmitting(false);
+    setSubmitError(false);
+    setServerResult(null);
   };
 
   const t = COPY[lang];
@@ -1124,8 +1168,57 @@ export default function ScreeningFlow() {
       />
     );
   } else {
-    const result = classify(answers);
-    screen = <ResultScreen lang={lang} setLang={setLang} result={result} onStartOver={reset} sessionId={sessionId} />;
+    if (submitError) {
+      screen = (
+        <>
+          <Header lang={lang} setLang={setLang} brand={t.brand} showProgress={false} />
+          <div className="pl-6 mb-10" style={{ borderLeft: `2px solid ${c.danger}` }}>
+            <h2 className="text-[24px] leading-[1.25] mb-3" style={{ ...serifStyle, color: c.text, fontWeight: 400 }}>
+              {t.submitErrorTitle}
+            </h2>
+            <p className="text-[16px] leading-[1.65] mb-6" style={{ ...sansStyle, color: c.textMuted }}>
+              {t.submitErrorBody}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSubmitError(false);
+                setRefireKey((k) => k + 1);
+              }}
+              className="h-12 px-7 rounded-full text-[14px] tracking-wide transition-all"
+              style={{
+                ...sansStyle,
+                fontWeight: 500,
+                background: c.accent,
+                color: c.accentText,
+                cursor: 'pointer',
+              }}
+            >
+              {t.retryButton}
+            </button>
+          </div>
+        </>
+      );
+    } else if (submitting || serverResult === null) {
+      screen = (
+        <>
+          <Header lang={lang} setLang={setLang} brand={t.brand} showProgress={false} />
+          <div className="pl-6 mb-10" style={{ borderLeft: `2px solid ${c.accent}` }}>
+            <div
+              className="text-[11px] uppercase tracking-[0.22em] mb-3"
+              style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
+            >
+              {t.submitLoadingKicker}
+            </div>
+            <p className="text-[18px] leading-[1.5]" style={{ ...serifStyle, color: c.text, fontWeight: 400 }}>
+              {t.submitLoading}
+            </p>
+          </div>
+        </>
+      );
+    } else {
+      screen = <ResultScreen lang={lang} setLang={setLang} result={serverResult} onStartOver={reset} sessionId={sessionId} />;
+    }
   }
 
   return (
