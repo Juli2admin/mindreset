@@ -1,0 +1,286 @@
+// =============================================================================
+// MindReset.ai — Database Schema
+// Postgres via Prisma. Read architecture.md for the plain-language overview.
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// USER
+// =============================================================================
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Preferences (the lang+theme system from screening/landing)
+  locale            String    @default("en")    // en | ru | uk | pl | de | es | fr
+  themePref         String    @default("system") // day | night | system
+
+  // Consent & screening (legal gate before any product use)
+  tcAcceptedAt      DateTime?
+  privacyAcceptedAt DateTime?
+  screeningResult   String?                      // green | yellow | red | null
+  screeningResultAt DateTime?
+
+  // Tier state
+  miniMindActive    Boolean   @default(false)
+  miniMindUntil     DateTime?
+
+  // Relations
+  screeningResponses ScreeningResponse[]
+  diagnosticProfile  DiagnosticProfile?
+  conversations      Conversation[]
+  safetyEvents       SafetyEvent[]
+  purchases          Purchase[]
+  moduleProgress     ModuleProgress[]
+  recodeProgress     RecodeProgress?
+  practices          Practice[]
+}
+
+// =============================================================================
+// SCREENING — the Section 0 gate (mirrors screening.jsx)
+// =============================================================================
+model ScreeningResponse {
+  id                 String   @id @default(cuid())
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
+  createdAt          DateTime @default(now())
+
+  // Raw answers (stored as JSON so we can re-classify if rules change)
+  exclusionFlags      Json    // { "0": true, "4": true, ... }
+  functionalityScores Json    // { "0": 4, "1": 5, ... }  values 0-5
+  emotionalScores     Json    // { "0": 2, "1": 1, ... }
+  traumaLevel         Int     // 0..3 (the single-select trauma question)
+  cognitiveAnswers    Json    // { "0": "yes", "1": "no", ... }
+  consentItems        Json    // { "0": true, "1": true, ... }
+
+  // Classification
+  result        String        // green | yellow | red
+  reasonSummary String?       // audit trail — why this result
+  classifierVer String?       // version of the rules that produced it
+
+  @@index([userId])
+}
+
+// =============================================================================
+// DIAGNOSTIC PROFILE — the hidden sensor (one row per user)
+// Updated asynchronously after meaningful conversations.
+// User never sees this directly. Drives routing, recommendations, gating.
+// =============================================================================
+model DiagnosticProfile {
+  id                         String   @id @default(cuid())
+  user                       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                     String   @unique
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  // Attachment style — best guess with weights summing ~1
+  // e.g. { "anxious": 0.6, "avoidant": 0.2, "secure": 0.1, "disorganized": 0.1 }
+  attachmentStyle            Json?
+
+  // Current state (the 4 States in the methodology)
+  predominantState           String?  // anxiety | apathy | void | dissolution
+  stateIntensity             Int?     // 1..5
+  stateFirstObservedAt       DateTime?
+
+  // Active themes (the 5 Themes), weighted
+  // e.g. [{ "name": "money", "weight": 0.7 }, { "name": "shame", "weight": 0.3 }]
+  activeThemes               Json?
+
+  // Repeat-state counter — the rule: 3 occurrences in 7 days → recommend deeper module
+  recentStateOccurrences     Json?    // [{ "state": "anxiety", "at": "2025-01-12T..." }, ...]
+
+  // Channel preference — affects which practices the AI offers
+  channelPreference          String?  // visual | somatic | emotional | cognitive | mixed
+
+  // Regulation capacity (self-soothing ability) — gates depth progression
+  regulationCapacity         Int?     // 0..10
+
+  // Risk markers — aggregated patterns (distinct from acute SafetyEvent log)
+  // e.g. { "isolation": 0.4, "dysregulation": 0.6, "rumination": 0.3 }
+  riskMarkers                Json?
+
+  // Free-form notes from the assessment engine
+  engineNotes                String?  @db.Text
+
+  // Provenance
+  lastAnalyzedConversationId String?
+  modelVersion               String?  // which assessment-engine version produced this
+}
+
+// =============================================================================
+// CONVERSATIONS — every session, whatever kind
+// =============================================================================
+model Conversation {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+
+  // What kind of session
+  kind        String    // minimind | module | recode_block
+  moduleId    String?   // if kind = module (e.g. "anxiety", "money")
+  recodeBlock Int?      // 1..8 if kind = recode_block
+  depthLevel  String?   // surface | middle | deep (for modules/recode)
+
+  // Check-ins — required before deep work, optional for casual MiniMind
+  preMood     Int?      // 0..10
+  preEnergy   Int?      // 0..10
+  preSafety   Int?      // 0..10
+  postMood    Int?
+  postEnergy  Int?
+  postSafety  Int?
+
+  // Outcomes
+  redFlagged  Boolean   @default(false)  // any safety event in this session?
+  sscPassed   Boolean?                   // Stabilisation+Satisfaction Criteria met?
+
+  messages     Message[]
+  safetyEvents SafetyEvent[]
+
+  @@index([userId, startedAt])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  role      String   // user | assistant | system
+  content   String   @db.Text  // encrypt at application layer before storing
+  timestamp DateTime @default(now())
+
+  // Signals extracted by the assessment engine in real time
+  // e.g. { "emotions": ["sadness","shame"], "somatic_cues": ["tightness chest"], "red_flag_keywords": [] }
+  detectedSignals Json?
+
+  @@index([conversationId, timestamp])
+}
+
+// =============================================================================
+// SAFETY — immutable red-flag log
+// =============================================================================
+model SafetyEvent {
+  id             String        @id @default(cuid())
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?
+  messageId      String?       // the message that triggered detection
+  triggeredAt    DateTime      @default(now())
+
+  type           String        // suicidal_ideation | self_harm | abuse_disclosure | psychosis_signal | substance_crisis | other
+  severity       Int           // 1..5
+  triggerExcerpt String?       // anonymised snippet for review
+
+  aiResponse     String        @db.Text  // what the system said + which resources offered
+
+  // Human review queue
+  humanReviewed  Boolean       @default(false)
+  reviewedBy     String?
+  reviewedAt     DateTime?
+  reviewNotes    String?
+
+  // Outcome
+  userAcknowledged Boolean     @default(false)  // did user acknowledge crisis resources?
+  followedUpAt   DateTime?
+
+  @@index([userId, triggeredAt])
+  @@index([humanReviewed, triggeredAt])  // moderation queue lookup
+}
+
+// =============================================================================
+// PRODUCTS & PURCHASES
+// =============================================================================
+model Purchase {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String
+
+  productType     String    // minimind_sub | module | recode
+  productId       String?   // module id ("anxiety", "money", ...) or null for recode/sub
+  amount          Int       // pence (or cents — currency below)
+  currency        String    @default("GBP")
+
+  stripeSessionId String?   @unique
+  stripeChargeId  String?   @unique
+  status          String    // pending | completed | refunded | failed
+
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  @@index([userId])
+}
+
+// =============================================================================
+// PROGRESS TRACKING
+// =============================================================================
+model ModuleProgress {
+  id             String    @id @default(cuid())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+
+  moduleId       String    // e.g. "anxiety", "money", "shame"
+  moduleKind     String    // state | theme
+
+  startedAt      DateTime  @default(now())
+  lastActivityAt DateTime  @default(now())
+  completedAt    DateTime?
+
+  currentStep    Int       @default(0)
+  totalSteps     Int
+  depth          String    // surface | middle | deep
+
+  sscPassed      Boolean   @default(false)  // gates progression to next step
+
+  @@unique([userId, moduleId])
+  @@index([userId])
+}
+
+model RecodeProgress {
+  id             String    @id @default(cuid())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String    @unique
+
+  startedAt      DateTime  @default(now())
+  lastActivityAt DateTime  @default(now())
+
+  currentBlock   Int       @default(1)  // 1..8
+
+  // Per-block state — JSON keeps it flexible while we iterate:
+  // { "1": { "startedAt": "...", "completedAt": "...", "sscPassed": true, "depth": "deep" }, "2": {...} }
+  blockProgress  Json      @default("{}")
+
+  isPaused       Boolean   @default(false)
+  pausedAt       DateTime?
+  pauseReason    String?
+}
+
+// =============================================================================
+// PRACTICES — individual exercises completed within sessions
+// =============================================================================
+model Practice {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+
+  conversationId  String?   // which session it was part of, if any
+  practiceCode    String    // grounding_5_senses | breath_box | body_scan | parts_dialogue | ...
+
+  durationSeconds Int?
+  completedAt     DateTime  @default(now())
+  userRating      Int?      // 1..5 helpfulness
+  notes           String?
+
+  @@index([userId, completedAt])
+}
