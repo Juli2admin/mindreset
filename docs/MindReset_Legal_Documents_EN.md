@@ -2,7 +2,7 @@
 
 **Document set for /terms and /privacy pages — English version.**
 
-Version: 2.2 EN (14 May 2026)
+Version: 2.3 EN (14 May 2026)
 Status: **Pre-launch draft. Solicitor review recommended before public marketing launch.**
 
 A separate Russian-language version of these documents will be produced as a dedicated document, reviewed by a native Russian-speaker (ideally with UK legal context). Each language version is a complete, standalone legal document — not a translation appendix.
@@ -24,7 +24,7 @@ When wiring this into the site:
 
 **Checkout waiver checkboxes (required for legal enforceability of non-refundable products):**
 
-When implementing Stripe checkout for any non-refundable digital product (individual States/Themes modules, States/Themes all-access subscription, the Reset 8 Blocks Programme — both lump-sum and instalment plans), the checkout flow MUST include a clearly-presented checkbox ABOVE the payment button:
+When implementing Stripe checkout for any non-refundable digital product (individual States/Themes modules, States/Themes all-access subscription, The Journey — both lump-sum and instalment plans), the checkout flow MUST include a clearly-presented checkbox ABOVE the payment button:
 
 ```
 ☐ I understand that this content is delivered for immediate use, and I waive my 14-day right
@@ -203,9 +203,9 @@ Two purchase options:
 - **Cancellation:** as for MiniMind — no further charges, access until end of current paid month
 - You will be asked to confirm the immediate-access waiver at first subscription
 
-#### Reset 8 Blocks Programme
+#### The Journey
 
-*[NOTE: Product name finalised as "Reset 8 Blocks Programme". Branding and marketing language may evolve.]*
+*[NOTE: Product name finalised as "The Journey". Methodology described as the eight-stage Reset 8 Blocks framework — internal terminology only.]*
 
 Two purchase options:
 
@@ -492,14 +492,14 @@ This Refund Policy forms part of our Terms of Service. Current pricing for all p
 - Cancel anytime — no further payments will be taken
 - You will be asked to confirm the immediate-access waiver at first subscription
 
-### Reset 8 Blocks Programme — One-time payment
+### The Journey — One-time payment
 
 - Content is delivered for **immediate use** across all eight blocks
 - At checkout, you will be asked to confirm a waiver of the 14-day cancellation right in exchange for immediate access
 - **Non-refundable from the moment of purchase**
 - No refunds are issued under any circumstances after purchase, except as required by the Consumer Rights Act 2015 for faulty content
 
-### Reset 8 Blocks Programme — Monthly instalment plan
+### The Journey — Monthly instalment plan
 
 - **All instalments are due regardless of programme completion**
 - Each instalment is non-refundable from the date it is taken
@@ -554,10 +554,10 @@ When you take this to a UK solicitor for sign-off (recommended ~£400-800), have
 7. **EU AI Act risk classification** — confirm "limited risk" categorisation for your specific use case
 8. **ICO registration** — confirm registration is in place and notification fee paid
 9. **Payment processor T&Cs alignment** — ensure your refund policy doesn't conflict with the payment processor's chargeback rules
-10. **Consumer cancellation waiver wording** — confirm the exact wording of the at-checkout waiver checkbox is sufficient under Consumer Contracts Regulations 2013 to make individual modules and the Reset 8 Blocks Programme non-refundable from purchase. The Information Commissioner's Office and CMA have both indicated that "express consent to immediate performance" requires unambiguous, pre-purchase opt-in
+10. **Consumer cancellation waiver wording** — confirm the exact wording of the at-checkout waiver checkbox is sufficient under Consumer Contracts Regulations 2013 to make individual modules and The Journey non-refundable from purchase. The Information Commissioner's Office and CMA have both indicated that "express consent to immediate performance" requires unambiguous, pre-purchase opt-in
 11. **Pricing absent from T&Cs** — confirm that displaying current pricing only at checkout (not in T&Cs) is acceptable and that promotional pricing changes do not constitute material changes to the Terms that would require re-acceptance
 12. **Non-refundable monthly subscription wording** — the all-access States & Themes monthly subscription is non-refundable for any paid month even on mid-month cancellation. Verify this clause is enforceable given consumer law's general protection of pro-rata refund rights
-13. **Instalment plan enforceability** — confirm that "all instalments due regardless of completion" is enforceable for the Reset 8 Blocks Programme, especially in EU jurisdictions where consumer credit rules may apply
+13. **Instalment plan enforceability** — confirm that "all instalments due regardless of completion" is enforceable for The Journey, especially in EU jurisdictions where consumer credit rules may apply
 14. **Sub-processor disclosure level** — Privacy Policy §4 now lists *categories* of service providers rather than named entities. Confirm this satisfies UK GDPR transparency requirements (Art 13–14) for users to know who processes their data. A current named list is available on request via email.
 
 ---

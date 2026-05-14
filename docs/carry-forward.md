@@ -36,3 +36,42 @@ the same file.
 the `isExcludedPath` checks in `app/layout.tsx`. The middleware header can
 stay — it's harmless if unused and may serve future server-side path-aware
 features.
+
+---
+
+## Product naming
+
+The deep eight-block transformation programme has three names in active use,
+deliberately. Decision logged 14 May 2026 after considering single-name-
+everywhere vs marketing/legal split.
+
+- **User-facing name:** **"The Journey"** (Russian: **"Путь"**). Warmer,
+  matches the trauma-informed brand voice. Used on `Landing`, `/account`
+  tier card, `/terms` (Paid Products §8 + Refund Policy headings), and the
+  source markdown in `docs/MindReset_Legal_Documents_EN.md`.
+- **Internal/methodology name:** **"Reset 8 Blocks framework"** — describes
+  the eight-stage structure inside the programme. Appears once in the
+  finalised-name NOTE in Terms §8 ("Methodology described as the eight-stage
+  Reset 8 Blocks framework — internal terminology only").
+- **Internal/code identifier:** **"Recode"** — legacy. Still in use across
+  the DB schema (`RecodeProgress` Prisma model, `recode_block` Conversation
+  kind enum, `recode` Purchase productType), `architecture.md`, and
+  `README.md`. **A dedicated branding-cleanup branch should rename these
+  before MiniMind public launch** so internal identifiers stop diverging
+  from user-facing copy. Scope sketch: Prisma model rename + migration +
+  enum value renames + every consumer-code update + Supabase ALTER TABLE +
+  README/architecture editorial pass.
+
+**Where it lives in code:**
+
+| Surface | Name | File |
+|---|---|---|
+| Landing tier 3 (EN / RU) | The Journey / Путь | `components/Landing.jsx` |
+| /account tier 3 (EN / RU) | The Journey / Путь | `app/account/AccountClient.tsx` |
+| /terms §8 + Refund Policy | The Journey | `app/terms/page.tsx` |
+| Source legal markdown | The Journey | `docs/MindReset_Legal_Documents_EN.md` |
+| DB schema / models | Recode* (legacy) | `prisma/schema.prisma`, `prisma/migrations/init.sql` |
+| Internal docs | Recode (legacy) | `architecture.md`, `README.md` |
+
+**If a fourth name candidate appears:** add an entry to this section
+documenting which surface it lives on and why it's distinct.

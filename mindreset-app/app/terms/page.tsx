@@ -444,10 +444,11 @@ export default function TermsPage() {
             <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
-          <H4>Reset 8 Blocks Programme</H4>
+          <H4>The Journey</H4>
           <Note>
-            [NOTE: Product name finalised as &ldquo;Reset 8 Blocks Programme&rdquo;.
-            Branding and marketing language may evolve.]
+            [NOTE: Product name finalised as &ldquo;The Journey&rdquo;. Methodology
+            described as the eight-stage Reset 8 Blocks framework — internal
+            terminology only.]
           </Note>
           <P>Two purchase options:</P>
           <H5>Option A — Full programme, one-time payment:</H5>
@@ -678,7 +679,7 @@ export default function TermsPage() {
             <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
-          <H3 id="terms-refund-recode-onetime">Reset 8 Blocks Programme — One-time payment</H3>
+          <H3 id="terms-refund-recode-onetime">The Journey — One-time payment</H3>
           <UL>
             <li>
               Content is delivered for <Strong>immediate use</Strong> across all eight
@@ -695,7 +696,7 @@ export default function TermsPage() {
             </li>
           </UL>
 
-          <H3 id="terms-refund-recode-installment">Reset 8 Blocks Programme — Monthly instalment plan</H3>
+          <H3 id="terms-refund-recode-installment">The Journey — Monthly instalment plan</H3>
           <UL>
             <li>
               <Strong>All instalments are due regardless of programme completion</Strong>
