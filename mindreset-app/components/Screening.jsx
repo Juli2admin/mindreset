@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
@@ -213,7 +214,7 @@ const COPY = {
       'No deep modules, no parts work, no past-focused exercises until your daily functioning is steadier',
       'If you would like human support alongside, we can share a directory of trauma-informed practitioners',
     ],
-    yellowCta: 'Join the waitlist',
+    yellowCta: "When you're ready",
     greenKicker: 'Welcome',
     greenTitle: 'You are ready to begin',
     greenBody:
@@ -225,10 +226,7 @@ const COPY = {
       'Each session, the AI starts by checking in with how you are — there is never pressure to go further than feels right',
       'You can pause, slow down, or stop at any moment',
     ],
-    greenCta: 'Join the waitlist',
-    waitlistPlaceholder: 'your@email.com',
-    waitlistSubmit: 'Submit',
-    waitlistThanks: 'Thank you. We will be in touch when MindReset opens.',
+    greenCta: 'Continue → Create your account',
     sessionRef: 'Reference',
   },
   ru: {
@@ -341,7 +339,7 @@ const COPY = {
       'Никаких глубоких модулей, работы с частями или практик прошлого, пока повседневная устойчивость не вернётся',
       'Если хотите дополнительной живой поддержки, мы поделимся каталогом trauma-informed специалистов',
     ],
-    yellowCta: 'Записаться в лист ожидания',
+    yellowCta: 'Когда будешь готова',
     greenKicker: 'Добро пожаловать',
     greenTitle: 'Вы готовы начать',
     greenBody: 'Ваши ответы говорят, что MindReset вам сейчас подходит. Ниже — чего ожидать и каков следующий шаг.',
@@ -352,10 +350,7 @@ const COPY = {
       'В начале каждой сессии AI спрашивает, как вы — без давления идти дальше, чем хочется',
       'Можно остановиться, замедлиться или прекратить в любой момент',
     ],
-    greenCta: 'Записаться в лист ожидания',
-    waitlistPlaceholder: 'your@email.com',
-    waitlistSubmit: 'Отправить',
-    waitlistThanks: 'Спасибо. Мы напишем, когда MindReset откроется.',
+    greenCta: 'Продолжить — создать аккаунт',
     sessionRef: 'Идентификатор',
   },
 };
@@ -815,49 +810,6 @@ function ConsentScreen({ lang, setLang, step, total, onBack, onNext, value, setV
   );
 }
 
-function WaitlistForm({ lang, ctaLabel }) {
-  const { c } = useTheme();
-  const t = COPY[lang];
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  if (submitted) {
-    return (
-      <div className="rounded-lg p-5" style={{ background: c.bgSubtle, border: `1px solid ${c.border}` }}>
-        <p className="text-[14px]" style={{ ...sansStyle, color: c.text }}>
-          ✓ {t.waitlistThanks}
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="rounded-lg p-5 flex flex-col sm:flex-row gap-3" style={{ background: c.bgSubtle, border: `1px solid ${c.border}` }}>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder={t.waitlistPlaceholder}
-        className="flex-1 rounded-md px-4 h-11 text-[14px] focus:outline-none"
-        style={{
-          ...sansStyle,
-          background: c.bgCard,
-          color: c.text,
-          border: `1px solid ${c.border}`,
-        }}
-        onFocus={(e) => (e.target.style.borderColor = c.accent)}
-        onBlur={(e) => (e.target.style.borderColor = c.border)}
-      />
-      <button
-        onClick={() => email && email.includes('@') && setSubmitted(true)}
-        className="h-11 px-6 rounded-md text-[14px] transition-colors whitespace-nowrap"
-        style={{ ...sansStyle, fontWeight: 500, background: c.accent, color: c.accentText }}
-      >
-        {ctaLabel}
-      </button>
-    </div>
-  );
-}
-
 function ResultScreen({ lang, setLang, result, onStartOver, sessionId }) {
   const { c } = useTheme();
   const t = COPY[lang];
@@ -957,7 +909,18 @@ function ResultScreen({ lang, setLang, result, onStartOver, sessionId }) {
         ))}
       </div>
 
-      <WaitlistForm lang={lang} ctaLabel={ctaLabel} />
+      <Link
+        href="/sign-up"
+        className="inline-flex items-center justify-center w-full sm:w-auto h-14 px-10 rounded-full text-[15px] tracking-wide transition-all"
+        style={{
+          ...sansStyle,
+          fontWeight: 500,
+          background: c.accent,
+          color: c.accentText,
+        }}
+      >
+        {ctaLabel}
+      </Link>
 
       <div className="mt-12 pt-6 flex items-center justify-between" style={{ borderTop: `1px solid ${c.border}` }}>
         <span className="text-[11px] tabular-nums" style={{ ...sansStyle, color: c.textHint }}>

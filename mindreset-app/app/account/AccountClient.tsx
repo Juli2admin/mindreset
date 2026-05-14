@@ -24,10 +24,6 @@ type CopyShape = {
   welcomeTitleWithName: string;
   welcomeTitleNoName: string;
   welcomeBody: string;
-  ssBannerKicker: string;
-  ssBannerTitle: string;
-  ssBannerBody: string;
-  ssBannerCta: string;
   comingSoon: string;
   tiers: Tier[];
 };
@@ -38,11 +34,6 @@ const COPY: Record<Lang, CopyShape> = {
     welcomeTitleWithName: 'Welcome, {name}',
     welcomeTitleNoName: 'Welcome',
     welcomeBody: "A quiet place to see where you are, and to choose what's next.",
-    ssBannerKicker: 'Before you continue',
-    ssBannerTitle: 'Complete your readiness check',
-    ssBannerBody:
-      'Five short questions help us see whether MindReset is a fit for you right now.',
-    ssBannerCta: 'Begin the readiness check',
     comingSoon: 'Coming soon',
     tiers: [
       {
@@ -70,11 +61,6 @@ const COPY: Record<Lang, CopyShape> = {
     welcomeTitleWithName: 'Здравствуйте, {name}',
     welcomeTitleNoName: 'Здравствуйте',
     welcomeBody: 'Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.',
-    ssBannerKicker: 'Прежде чем продолжить',
-    ssBannerTitle: 'Короткая проверка перед началом',
-    ssBannerBody:
-      'Пять коротких вопросов — чтобы понять, подходит ли MindReset вам именно сейчас.',
-    ssBannerCta: 'Начать',
     comingSoon: 'Скоро',
     tiers: [
       {
@@ -101,11 +87,10 @@ const COPY: Record<Lang, CopyShape> = {
 
 type Props = {
   firstName: string | null;
-  hasScreening: boolean;
   cookieToClear: boolean;
 };
 
-export default function AccountClient({ firstName, hasScreening, cookieToClear }: Props) {
+export default function AccountClient({ firstName, cookieToClear }: Props) {
   const [lang, setLang] = useState<Lang>('en');
   const t = COPY[lang];
 
@@ -171,41 +156,6 @@ export default function AccountClient({ firstName, hasScreening, cookieToClear }
             {t.welcomeBody}
           </p>
         </div>
-
-        {!hasScreening && (
-          <div className="pl-6 mb-12" style={{ borderLeft: `2px solid ${PALETTE.accentSage}` }}>
-            <div
-              className="text-[11px] uppercase tracking-[0.22em] mb-3"
-              style={{ color: PALETTE.accentSage, fontWeight: 500, fontFamily: SANS }}
-            >
-              {t.ssBannerKicker}
-            </div>
-            <h3
-              className="text-[24px] mb-3"
-              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-            >
-              {t.ssBannerTitle}
-            </h3>
-            <p
-              className="text-[16px] leading-[1.65] mb-6"
-              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-            >
-              {t.ssBannerBody}
-            </p>
-            <Link
-              href="/screening"
-              className="inline-flex items-center h-12 px-7 rounded-full text-[14px] tracking-wide transition-all"
-              style={{
-                background: PALETTE.accent,
-                color: PALETTE.accentText,
-                fontWeight: 500,
-                fontFamily: SANS,
-              }}
-            >
-              {t.ssBannerCta}
-            </Link>
-          </div>
-        )}
 
         <div className="space-y-4">
           {t.tiers.map((tier, i) => (

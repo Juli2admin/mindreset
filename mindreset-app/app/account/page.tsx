@@ -28,11 +28,6 @@ export default async function AccountPage() {
     cookieToClear = true;
   }
 
-  const hasScreening = !!(await prisma.screeningResponse.findFirst({
-    where: { userId: user.id },
-    select: { id: true },
-  }));
-
   const primaryEmail =
     user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ??
     user.emailAddresses[0]?.emailAddress ??
@@ -43,7 +38,6 @@ export default async function AccountPage() {
   return (
     <AccountClient
       firstName={firstName}
-      hasScreening={hasScreening}
       cookieToClear={cookieToClear}
     />
   );
