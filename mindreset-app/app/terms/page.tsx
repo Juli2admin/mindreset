@@ -322,8 +322,8 @@ export default function TermsPage() {
 
           <H3 id="terms-section-6">6. AI and Automated Processing</H3>
           <P>
-            The Service uses artificial intelligence (specifically, large language models
-            provided by <Strong>Anthropic PBC</Strong>) to generate conversational
+            The Service uses artificial intelligence (large language models provided
+            by a third-party AI infrastructure partner) to generate conversational
             responses, suggest practices, and personalise educational content.
           </P>
           <P>You acknowledge and accept that:</P>
@@ -444,11 +444,10 @@ export default function TermsPage() {
             <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
-          <H4>The deep eight-block programme</H4>
+          <H4>Reset 8 Blocks Programme</H4>
           <Note>
-            [NOTE: Final product name to be confirmed. Currently referred to internally as
-            &ldquo;the deep eight-block programme&rdquo; or &ldquo;Recode&rdquo; pending
-            naming decision.]
+            [NOTE: Product name finalised as &ldquo;Reset 8 Blocks Programme&rdquo;.
+            Branding and marketing language may evolve.]
           </Note>
           <P>Two purchase options:</P>
           <H5>Option A — Full programme, one-time payment:</H5>
@@ -493,9 +492,9 @@ export default function TermsPage() {
 
           <H4>Payment processing</H4>
           <P>
-            All payments are processed by <Strong>Stripe</Strong>, which acts as an
-            independent data controller for payment card information under its own terms.
-            We do not store full card numbers or CVV codes.
+            All payments are processed by a regulated third-party payment processor,
+            which acts as an independent data controller for payment card information
+            under its own terms. We do not store full card numbers or CVV codes.
           </P>
           <P>
             All prices include VAT where applicable. We may add or remove sales taxes based
@@ -627,13 +626,9 @@ export default function TermsPage() {
           </P>
 
           <H3 id="terms-section-15">15. Contact</H3>
-          <P>For questions about these Terms:</P>
-          <UL>
-            <li><Strong>General:</Strong> <MailLink to="legal@mindreset.ai" /></li>
-            <li><Strong>Refunds:</Strong> <MailLink to="refund@mindreset.ai" /></li>
-            <li><Strong>Privacy:</Strong> <MailLink to="privacy@mindreset.ai" /></li>
-            <li><Strong>Support:</Strong> <MailLink to="support@mindreset.ai" /></li>
-          </UL>
+          <P>
+            For questions about these Terms: <MailLink to="support@mindreset.ai" />
+          </P>
         </article>
 
         <Divider />
@@ -683,7 +678,7 @@ export default function TermsPage() {
             <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
-          <H3 id="terms-refund-recode-onetime">The deep eight-block programme — One-time payment</H3>
+          <H3 id="terms-refund-recode-onetime">Reset 8 Blocks Programme — One-time payment</H3>
           <UL>
             <li>
               Content is delivered for <Strong>immediate use</Strong> across all eight
@@ -700,7 +695,7 @@ export default function TermsPage() {
             </li>
           </UL>
 
-          <H3 id="terms-refund-recode-installment">The deep eight-block programme — Monthly instalment plan</H3>
+          <H3 id="terms-refund-recode-installment">Reset 8 Blocks Programme — Monthly instalment plan</H3>
           <UL>
             <li>
               <Strong>All instalments are due regardless of programme completion</Strong>
@@ -715,7 +710,8 @@ export default function TermsPage() {
 
           <H3 id="terms-refund-howto">How to request a refund (where eligible)</H3>
           <P>
-            Email <MailLink to="refund@mindreset.ai" /> with:
+            Email <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in
+            the subject line so we can route it quickly. Include:
           </P>
           <UL>
             <li>Your order ID</li>

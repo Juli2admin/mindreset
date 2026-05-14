@@ -58,8 +58,8 @@ const COPY: Record<Lang, CopyShape> = {
         price: '£199 each, or £39 / month',
       },
       {
-        title: 'Recode',
-        subtitle: 'The full 8-block transformation',
+        title: 'Reset 8 Blocks',
+        subtitle: 'The full eight-block programme',
         description: 'The deep eight-block work, paced for safety and depth.',
         price: '£1,200, or 6 × £225',
       },
@@ -90,7 +90,7 @@ const COPY: Record<Lang, CopyShape> = {
         price: '£199 за каждый или £39 / месяц',
       },
       {
-        title: 'Recode',
+        title: 'Reset 8 Blocks',
         subtitle: 'Полная программа из 8 блоков',
         description: 'Глубокая работа из восьми блоков, в ритме, который бережёт вас.',
         price: '£1,200 или 6 × £225',

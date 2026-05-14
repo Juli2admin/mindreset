@@ -244,7 +244,7 @@ export default function PrivacyPage() {
               </TR>
               <TR>
                 <TD><Strong>Payment data</Strong></TD>
-                <TD>last 4 digits of card, transaction ID, billing email (full card data is held by Stripe, not us)</TD>
+                <TD>last 4 digits of card, transaction ID, billing email (full card data is held by the payment processor, not us)</TD>
                 <TD>billing, fraud prevention, financial record-keeping</TD>
                 <TD>Contract / Legal obligation (tax law)</TD>
               </TR>
@@ -264,8 +264,8 @@ export default function PrivacyPage() {
 
           <H3 id="privacy-section-3">3. How We Use AI</H3>
           <P>
-            Your conversation data is processed by our AI engine (Anthropic Claude
-            models) to generate responses and suggest practices.
+            Your conversation data is processed by our AI engine to generate responses
+            and suggest practices.
           </P>
           <UL>
             <li>
@@ -290,37 +290,37 @@ export default function PrivacyPage() {
           <H3 id="privacy-section-4">4. With Whom We Share Data</H3>
           <P>
             We <Strong>never</Strong> sell or rent your personal data. We share it
-            only with:
+            only with categories of service providers necessary to deliver the
+            Service:
           </P>
           <UL>
-            <li><Strong>Hosting provider</Strong> — Supabase (Postgres database, hosted in EU-West, Ireland)</li>
-            <li>
-              <Strong>AI infrastructure</Strong> — Anthropic PBC (USA). Text is
-              transmitted under Standard Contractual Clauses. We do not include direct
-              identifiers (email, name) in prompts sent to the AI; we use internal
-              anonymous IDs
-            </li>
-            <li><Strong>Authentication provider</Strong> — Clerk (USA). Holds email, password hash, session tokens</li>
-            <li><Strong>Payment processor</Strong> — Stripe (USA/UK). Acts as independent controller for card data</li>
-            <li>
-              <Strong>Email service</Strong> — Resend (USA) and/or other transactional
-              email providers. Only your email and message contents are shared, for the
-              purpose of sending you transactional messages
-            </li>
-            <li><Strong>Hosting platform</Strong> — Vercel (USA). Serves the website and processes incoming requests</li>
-            <li><Strong>Law enforcement</Strong> — only when legally compelled by a court order or similar legal process</li>
+            <li>Cloud hosting and database services</li>
+            <li>AI infrastructure (for the conversational and analytical features)</li>
+            <li>Authentication and account management</li>
+            <li>Payment processing</li>
+            <li>Transactional email delivery</li>
+            <li>Website hosting</li>
           </UL>
           <P>
+            Specific providers may change over time. A current list of the service
+            providers we use is available on request — email{' '}
+            <MailLink to="support@mindreset.ai" />.
+          </P>
+          <P>
+            We may also disclose your data when legally compelled by a court order or
+            similar legal process.
+          </P>
+          <P>
             We use <Strong>Standard Contractual Clauses</Strong> (or equivalent UK IDTA
-            mechanisms) for international data transfers, supplemented where necessary
-            by additional safeguards including encryption in transit and at rest.
+            mechanisms) for any international data transfers, supplemented where
+            necessary by additional safeguards including encryption in transit and at
+            rest.
           </P>
 
           <H3 id="privacy-section-5">5. International Transfers</H3>
           <P>
             Your data may be processed outside the UK and EU, primarily in the United
-            States (where Anthropic, Clerk, Stripe, Resend, and Vercel are based).
-            Where this happens we rely on either:
+            States. Where this happens we rely on either:
           </P>
           <UL>
             <li>An adequacy decision by the UK or EU (where one exists)</li>
@@ -415,7 +415,7 @@ export default function PrivacyPage() {
           <P>To exercise any of these rights:</P>
           <UL>
             <li>Use the &ldquo;Data&rdquo; section in your account settings (when available), or</li>
-            <li>Email <MailLink to="privacy@mindreset.ai" /> with your request</li>
+            <li>Email <MailLink to="support@mindreset.ai" /> with your request</li>
           </UL>
           <P>
             We will respond within one month, or notify you within one month if we
@@ -451,7 +451,7 @@ export default function PrivacyPage() {
             The Service is for adults aged 18 and over. We do not knowingly collect
             personal data from individuals under 18. If you believe a child under 18
             has provided us with personal data, please contact us at{' '}
-            <MailLink to="privacy@mindreset.ai" /> and we will delete it.
+            <MailLink to="support@mindreset.ai" /> and we will delete it.
           </P>
 
           <H3 id="privacy-section-11">11. Changes to This Policy</H3>
@@ -466,7 +466,7 @@ export default function PrivacyPage() {
           <H3 id="privacy-section-12">12. Contact</H3>
           <P>For privacy-related questions or to exercise your rights:</P>
           <UL>
-            <li><Strong>Email:</Strong> <MailLink to="privacy@mindreset.ai" /></li>
+            <li><Strong>Email:</Strong> <MailLink to="support@mindreset.ai" /></li>
             <li>
               <Strong>Postal address:</Strong>{' '}
               <Note inline>
