@@ -180,7 +180,7 @@ export default function PrivacyPage() {
           <P>
             <Strong>Data Controller:</Strong>{' '}
             <Strong>MindReset AI self-help platform</Strong>, operated by Julia Loya
-            (sole proprietor), London, United Kingdom — <MailLink to="privacy@mindreset.ai" />
+            (sole proprietor), London, United Kingdom — <MailLink to="support@mindreset.ai" />
           </P>
           <Note>
             [NOTE: ICO Registration to be obtained at ico.org.uk before public launch.
@@ -329,7 +329,7 @@ export default function PrivacyPage() {
           </UL>
           <P>
             You may request details of the specific safeguards in place for any
-            transfer by emailing <MailLink to="privacy@mindreset.ai" />.
+            transfer by emailing <MailLink to="support@mindreset.ai" />.
           </P>
 
           <H3 id="privacy-section-6">6. Security</H3>

@@ -2,7 +2,7 @@
 
 **Document set for /terms and /privacy pages — English version.**
 
-Version: 2.3 EN (14 May 2026)
+Version: 2.4 EN (14 May 2026)
 Status: **Pre-launch draft. Solicitor review recommended before public marketing launch.**
 
 A separate Russian-language version of these documents will be produced as a dedicated document, reviewed by a native Russian-speaker (ideally with UK legal context). Each language version is a complete, standalone legal document — not a translation appendix.
@@ -234,7 +234,7 @@ All prices include VAT where applicable. We may add or remove sales taxes based 
 ### 9. Cancellation
 
 - **Subscriptions:** cancel anytime in your account billing settings; no further charges will be made
-- **One-off products:** email support@mindreset.ai with your order ID, account email, and reason for refund
+- **One-off products:** email support@mindreset.ai with "REFUND" in the subject line, your order ID, account email, and reason for refund
 
 ---
 

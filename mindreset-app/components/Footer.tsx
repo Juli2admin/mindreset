@@ -14,7 +14,7 @@ export default function Footer({ omit, theme = 'day' }: Props) {
       style={{ borderTop: `1px solid ${PALETTE.border}` }}
     >
       <p
-        className="text-[12px] tracking-wide"
+        className="text-[12px] tracking-wide px-4"
         style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
       >
         {omit !== 'terms' && (
@@ -25,7 +25,7 @@ export default function Footer({ omit, theme = 'day' }: Props) {
             >
               Terms
             </Link>
-            <span className="mx-3" aria-hidden="true">·</span>
+            {' · '}
           </>
         )}
         {omit !== 'privacy' && (
@@ -36,7 +36,7 @@ export default function Footer({ omit, theme = 'day' }: Props) {
             >
               Privacy
             </Link>
-            <span className="mx-3" aria-hidden="true">·</span>
+            {' · '}
           </>
         )}
         <a

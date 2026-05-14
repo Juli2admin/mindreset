@@ -161,7 +161,7 @@ export default function TermsPage() {
             will replace this line. The methodology and product structure remain the same.]
           </Note>
           <P>
-            <Strong>Contact:</Strong> <MailLink to="legal@mindreset.ai" />
+            <Strong>Contact:</Strong> <MailLink to="support@mindreset.ai" />
           </P>
           <P>
             By using the MindReset AI self-help platform (the &ldquo;Service&rdquo;),
@@ -510,8 +510,8 @@ export default function TermsPage() {
             </li>
             <li>
               <Strong>One-off products:</Strong> email{' '}
-              <MailLink to="refund@mindreset.ai" /> with your order ID, account email, and
-              reason for refund
+              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
+              subject line, your order ID, account email, and reason for refund
             </li>
           </UL>
 
