@@ -75,3 +75,23 @@ everywhere vs marketing/legal split.
 
 **If a fourth name candidate appears:** add an entry to this section
 documenting which surface it lives on and why it's distinct.
+
+---
+
+## MiniMind chat API (`/api/minimind/chat`)
+
+Phase 3a smoke-test endpoint: authenticated POST → Anthropic Claude Sonnet
+4.6 → response. No DB writes, no streaming, no safety scanner, no memory,
+no tier check. Two items deferred:
+
+- **Rate limiting** before public launch. Apply alongside the deferred
+  `/api/screening` rate limiting (logged separately). Anthropic API costs
+  scale per call; an unauthenticated abuser can't reach this route (the
+  route returns 401), but an authenticated abuser could rack up cost
+  without a limiter.
+- **Subscription tier gating.** The route currently assumes any
+  authenticated Clerk user can call it. Once MiniMind is a paid tier (Phase
+  3b or the Stripe integration phase), the handler must check
+  `User.miniMindActive` / `miniMindUntil` and return 402 (or 403) for users
+  without an active subscription. Until then, the route is open to every
+  signed-in user.
