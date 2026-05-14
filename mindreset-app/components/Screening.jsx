@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
+import Footer from '@/components/Footer';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
@@ -1193,6 +1194,7 @@ export default function ScreeningFlow() {
       >
         <div className="max-w-2xl mx-auto px-6 py-12 sm:py-20">
           {screen}
+          <Footer theme={theme} />
         </div>
       </div>
     </ThemeContext.Provider>

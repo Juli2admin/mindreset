@@ -29,6 +29,7 @@ model User {
   // Consent & screening (legal gate before any product use)
   tcAcceptedAt      DateTime?
   privacyAcceptedAt DateTime?
+  disclaimerAcknowledgedAt DateTime?
   screeningResult   String?                      // green | yellow | red | null
   screeningResultAt DateTime?
 

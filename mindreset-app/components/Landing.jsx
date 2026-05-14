@@ -305,9 +305,9 @@ const COPY = {
     footerDisclaimer:
       'MindReset is a self-guided reflection platform, not a medical or therapeutic service. If you are in crisis, please reach out using the resources above.',
     footerLinks: [
-      { label: 'Terms', href: '#' },
-      { label: 'Privacy', href: '#' },
-      { label: 'Contact', href: '#' },
+      { label: 'Terms', href: '/terms' },
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Contact', href: 'mailto:support@mindreset.ai' },
     ],
     footerCopy: '© 2025 MindReset.ai — London, UK',
 
@@ -406,9 +406,9 @@ const COPY = {
     footerDisclaimer:
       'MindReset — платформа для рефлексии и самопомощи, не медицинская или терапевтическая услуга. Если вы в кризисе, обратитесь к ресурсам выше.',
     footerLinks: [
-      { label: 'Условия', href: '#' },
-      { label: 'Конфиденциальность', href: '#' },
-      { label: 'Контакт', href: '#' },
+      { label: 'Условия', href: '/terms' },
+      { label: 'Конфиденциальность', href: '/privacy' },
+      { label: 'Контакт', href: 'mailto:support@mindreset.ai' },
     ],
     footerCopy: '© 2025 MindReset.ai — Лондон, Великобритания',
 
