@@ -1,6 +1,7 @@
 import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import Footer from '@/components/Footer';
 
 const PALETTE = FULL_PALETTE.day;
 
@@ -41,6 +42,7 @@ export default function SignInPage() {
             },
           }}
         />
+        <Footer />
       </div>
     </main>
   );

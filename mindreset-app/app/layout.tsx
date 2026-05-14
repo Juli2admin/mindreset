@@ -1,6 +1,10 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import { ClerkProvider } from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs/server';
+import prisma from '@/lib/prisma';
+import DisclaimerGate from '@/components/DisclaimerGate';
 
 export const metadata: Metadata = {
   title: 'MindReset.ai — A way back to yourself',
@@ -8,11 +12,35 @@ export const metadata: Metadata = {
     'A trauma-informed self-help platform. Not therapy, not a crisis service — a structured digital reflection tool for emotional clarity.',
 };
 
-export default function RootLayout({
+const COOKIE_NAME = 'mr_disclaimer_acknowledged';
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const hasCookie = cookies().get(COOKIE_NAME)?.value === 'true';
+
+  let acknowledgedInDB = false;
+  if (!hasCookie) {
+    try {
+      const user = await currentUser();
+      if (user) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { disclaimerAcknowledgedAt: true },
+        });
+        acknowledgedInDB = dbUser?.disclaimerAcknowledgedAt != null;
+      }
+    } catch (err) {
+      // Fail-safe: on DB error, default to showing the modal.
+      console.error('[layout] disclaimer status check failed:', err);
+    }
+  }
+
+  const initialShow = !hasCookie && !acknowledgedInDB;
+  const needsCookieBackfill = !hasCookie && acknowledgedInDB;
+
   return (
     <ClerkProvider>
       <html lang="en">
@@ -23,7 +51,13 @@ export default function RootLayout({
             rel="stylesheet"
           />
         </head>
-        <body>{children}</body>
+        <body>
+          {children}
+          <DisclaimerGate
+            initialShow={initialShow}
+            needsCookieBackfill={needsCookieBackfill}
+          />
+        </body>
       </html>
     </ClerkProvider>
   );

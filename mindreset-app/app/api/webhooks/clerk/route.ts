@@ -74,8 +74,10 @@ export async function POST(request: NextRequest) {
             email,
             locale: 'en',
             themePref: 'system',
-            // tcAcceptedAt and privacyAcceptedAt deliberately left null —
-            // consent must be captured explicitly via a separate UI step, not implied by signup.
+            // Consent captured at sign-up via the explicit T&C + Privacy checkboxes
+            // on /sign-up; by the time this webhook fires the user has ticked both.
+            tcAcceptedAt: new Date(),
+            privacyAcceptedAt: new Date(),
           },
           update: { email },
         });

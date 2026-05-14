@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import Footer from '@/components/Footer';
 
 const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
@@ -259,6 +260,7 @@ export default function AccountClient({ firstName, hasScreening, cookieToClear }
             </div>
           ))}
         </div>
+        <Footer />
       </div>
     </main>
   );
