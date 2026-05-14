@@ -1,0 +1,47 @@
+// Single source of truth for MindReset brand palette and font stacks.
+
+export const PALETTE = {
+  day: {
+    bg: '#F4F1EA',
+    bgCard: '#FFFFFF',
+    bgSubtle: '#EAE5D8',
+    text: '#393939',
+    textMuted: '#6A6A6A',
+    textHint: '#9D9788',
+    border: '#D9D2C2',
+    borderStrong: '#B9AE99',
+    accent: '#2D7A85',
+    accentText: '#F4F1EA',
+    accentSage: '#5C8A75',
+    danger: '#8B3A3A',
+    warning: '#A07A3A',
+    success: '#4A7A5E',
+  },
+  night: {
+    bg: '#393939',
+    bgCard: '#424242',
+    bgSubtle: '#2F2F2F',
+    text: '#F4F1EA',
+    textMuted: '#C0BAA8',
+    textHint: '#8A8478',
+    border: '#4D4D4D',
+    borderStrong: '#6A6A6A',
+    accent: '#7AC5D2',
+    accentText: '#393939',
+    accentSage: '#9BC5A8',
+    danger: '#D89595',
+    warning: '#D9B383',
+    success: '#8AB89C',
+  },
+} as const;
+
+export type Theme = keyof typeof PALETTE;
+export type PaletteColors = typeof PALETTE.day;
+
+export const TOKENS = {
+  serif: 'Fraunces, Georgia, serif',
+  sans: 'Geist, -apple-system, system-ui, sans-serif',
+} as const;
+
+export const serifStyle = { fontFamily: TOKENS.serif } as const;
+export const sansStyle = { fontFamily: TOKENS.sans } as const;

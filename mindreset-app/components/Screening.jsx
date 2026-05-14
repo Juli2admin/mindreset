@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
@@ -15,42 +16,7 @@ const FONT_HREF =
 // ============================================================================
 // THEME — same family across day/night, like sunrise to sundown
 // ============================================================================
-const COLORS = {
-  day: {
-    bg: '#F4F1EA',           // warm cream (direct from logo)
-    bgCard: '#FFFFFF',
-    bgSubtle: '#EAE5D8',
-    text: '#393939',          // charcoal (direct from logo)
-    textMuted: '#6A6A6A',
-    textHint: '#9D9788',
-    border: '#D9D2C2',
-    borderStrong: '#B9AE99',
-    accent: '#2D7A85',        // deep teal for primary actions
-    accentText: '#F4F1EA',
-    accentSage: '#5C8A75',    // sage second accent
-    danger: '#8B3A3A',
-    warning: '#A07A3A',
-    success: '#4A7A5E',
-  },
-  night: {
-    bg: '#393939',           // charcoal (direct from logo)
-    bgCard: '#424242',
-    bgSubtle: '#2F2F2F',
-    text: '#F4F1EA',          // cream (direct from logo)
-    textMuted: '#C0BAA8',
-    textHint: '#8A8478',
-    border: '#4D4D4D',
-    borderStrong: '#6A6A6A',
-    accent: '#7AC5D2',        // brighter teal for dark bg
-    accentText: '#393939',
-    accentSage: '#9BC5A8',    // lighter sage for dark bg
-    danger: '#D89595',
-    warning: '#D9B383',
-    success: '#8AB89C',
-  },
-};
-
-const ThemeContext = createContext({ theme: 'day', c: COLORS.day, toggle: () => {} });
+const ThemeContext = createContext({ theme: 'day', c: PALETTE.day, toggle: () => {} });
 const useTheme = () => useContext(ThemeContext);
 
 // ============================================================================
@@ -66,8 +32,6 @@ const LANGUAGES = [
   { code: 'fr', native: 'Français', available: false },
 ];
 
-const sansStyle = { fontFamily: 'Geist, system-ui, sans-serif' };
-const serifStyle = { fontFamily: 'Fraunces, Georgia, serif' };
 
 // ============================================================================
 // BRAND MARK — tree-with-roots in mandala composition
@@ -1103,7 +1067,7 @@ export default function ScreeningFlow() {
   }, [step, refireKey]);
 
   const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
-  const c = COLORS[theme];
+  const c = PALETTE[theme];
 
   const reset = () => {
     setAnswers(initialAnswers());

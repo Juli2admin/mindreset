@@ -3,22 +3,11 @@
 import { useEffect, useState } from 'react';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
+import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 
-const PALETTE = {
-  bg: '#F4F1EA',
-  bgCard: '#FFFFFF',
-  bgSubtle: '#EAE5D8',
-  text: '#393939',
-  textMuted: '#6A6A6A',
-  textHint: '#9D9788',
-  border: '#D9D2C2',
-  accent: '#2D7A85',
-  accentText: '#F4F1EA',
-  accentSage: '#5C8A75',
-};
-
-const SANS = '"Geist", -apple-system, system-ui, sans-serif';
-const SERIF = '"Fraunces", serif';
+const PALETTE = FULL_PALETTE.day;
+const SANS = TOKENS.sans;
+const SERIF = TOKENS.serif;
 
 type Lang = 'en' | 'ru';
 
