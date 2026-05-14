@@ -1,15 +1,8 @@
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
+import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 
-const PALETTE = {
-  bg: '#F4F1EA',
-  bgCard: '#FFFFFF',
-  text: '#393939',
-  textMuted: '#6A6A6A',
-  border: '#D9D2C2',
-  accent: '#2D7A85',
-  accentSage: '#5C8A75',
-};
+const PALETTE = FULL_PALETTE.day;
 
 export default function SignUpPage() {
   return (
@@ -18,7 +11,7 @@ export default function SignUpPage() {
         <Link href="/" className="block mb-10 text-center">
           <h1
             className="text-[28px] tracking-tight"
-            style={{ fontFamily: '"Fraunces", serif', fontWeight: 400 }}
+            style={{ fontFamily: TOKENS.serif, fontWeight: 400 }}
           >
             <span style={{ color: PALETTE.accent }}>Mind</span>
             <span style={{ color: PALETTE.accentSage }}>Reset</span>
@@ -33,7 +26,7 @@ export default function SignUpPage() {
               colorTextSecondary: PALETTE.textMuted,
               colorInputBackground: '#FFFFFF',
               colorInputText: PALETTE.text,
-              fontFamily: '"Geist", -apple-system, system-ui, sans-serif',
+              fontFamily: TOKENS.sans,
               borderRadius: '10px',
             },
             elements: {
@@ -42,7 +35,7 @@ export default function SignUpPage() {
                 border: `1px solid ${PALETTE.border}`,
                 background: PALETTE.bgCard,
               },
-              headerTitle: { fontFamily: '"Fraunces", serif', fontWeight: 400 },
+              headerTitle: { fontFamily: TOKENS.serif, fontWeight: 400 },
               formButtonPrimary: { fontWeight: 500 },
               footerActionLink: { color: PALETTE.accent },
             },

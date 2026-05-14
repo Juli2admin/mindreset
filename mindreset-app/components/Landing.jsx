@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 
 // ============================================================================
 // MindReset.ai — Landing Page
@@ -12,38 +13,7 @@ const FONT_LINK_ID = 'mindreset-fonts';
 const FONT_HREF =
   'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Geist:wght@400;500&display=swap';
 
-const COLORS = {
-  day: {
-    bg: '#F4F1EA',
-    bgCard: '#FFFFFF',
-    bgSubtle: '#EAE5D8',
-    text: '#393939',
-    textMuted: '#6A6A6A',
-    textHint: '#9D9788',
-    border: '#D9D2C2',
-    borderStrong: '#B9AE99',
-    accent: '#2D7A85',
-    accentText: '#F4F1EA',
-    accentSage: '#5C8A75',
-    danger: '#8B3A3A',
-  },
-  night: {
-    bg: '#393939',
-    bgCard: '#424242',
-    bgSubtle: '#2F2F2F',
-    text: '#F4F1EA',
-    textMuted: '#C0BAA8',
-    textHint: '#8A8478',
-    border: '#4D4D4D',
-    borderStrong: '#6A6A6A',
-    accent: '#7AC5D2',
-    accentText: '#393939',
-    accentSage: '#9BC5A8',
-    danger: '#D89595',
-  },
-};
-
-const ThemeContext = createContext({ theme: 'day', c: COLORS.day, toggle: () => {} });
+const ThemeContext = createContext({ theme: 'day', c: PALETTE.day, toggle: () => {} });
 const useTheme = () => useContext(ThemeContext);
 
 const LANGUAGES = [
@@ -56,8 +26,6 @@ const LANGUAGES = [
   { code: 'fr', native: 'Français', available: false },
 ];
 
-const sansStyle = { fontFamily: 'Geist, system-ui, sans-serif' };
-const serifStyle = { fontFamily: 'Fraunces, Georgia, serif' };
 
 // ============================================================================
 // Icons
@@ -860,7 +828,7 @@ export default function LandingPage() {
   }, []);
 
   const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
-  const c = COLORS[theme];
+  const c = PALETTE[theme];
 
   const onBegin = () => { window.location.href = '/screening'; };
 
