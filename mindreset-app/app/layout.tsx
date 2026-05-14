@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { ClerkProvider } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
@@ -14,15 +14,23 @@ export const metadata: Metadata = {
 
 const COOKIE_NAME = 'mr_disclaimer_acknowledged';
 
+// Pages where the disclaimer modal must NOT block content. Legal documents
+// should be openly readable without prerequisites. Add to this list when
+// adding more legal pages (e.g. /cookies, /accessibility).
+const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy']);
+
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = headers().get('x-pathname') ?? '';
+  const isExcludedPath = DISCLAIMER_EXCLUDED_PATHS.has(pathname);
+
   const hasCookie = cookies().get(COOKIE_NAME)?.value === 'true';
 
   let acknowledgedInDB = false;
-  if (!hasCookie) {
+  if (!isExcludedPath && !hasCookie) {
     try {
       const user = await currentUser();
       if (user) {
@@ -38,8 +46,8 @@ export default async function RootLayout({
     }
   }
 
-  const initialShow = !hasCookie && !acknowledgedInDB;
-  const needsCookieBackfill = !hasCookie && acknowledgedInDB;
+  const initialShow = !isExcludedPath && !hasCookie && !acknowledgedInDB;
+  const needsCookieBackfill = !isExcludedPath && !hasCookie && acknowledgedInDB;
 
   return (
     <ClerkProvider>
@@ -53,10 +61,12 @@ export default async function RootLayout({
         </head>
         <body>
           {children}
-          <DisclaimerGate
-            initialShow={initialShow}
-            needsCookieBackfill={needsCookieBackfill}
-          />
+          {!isExcludedPath && (
+            <DisclaimerGate
+              initialShow={initialShow}
+              needsCookieBackfill={needsCookieBackfill}
+            />
+          )}
         </body>
       </html>
     </ClerkProvider>
