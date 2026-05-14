@@ -95,3 +95,25 @@ no tier check. Two items deferred:
   `User.miniMindActive` / `miniMindUntil` and return 402 (or 403) for users
   without an active subscription. Until then, the route is open to every
   signed-in user.
+- **Anthropic API credit balance:** top up or enable auto-recharge before
+  public launch. Current spec runs ~$0.015 per MiniMind turn (~4,700 in /
+  ~50 out tokens on Sonnet 4.6).
+
+---
+
+## Landing First Load JS — `useUser()` cost
+
+After flow re-order (commit `66b723c`), `/` First Load JS is **127 kB**
+(+31 kB over the prior 96.2 kB). The extra weight is Clerk's client bundle,
+pulled in because `Header` now calls `useUser()` to render the auth-aware
+"Sign in" vs "Account" label.
+
+**Acceptable for now** because the bundle is shared with `/sign-up` and
+`/account` — most visitors will get cache hits on those routes' navigation.
+
+**If we want to reduce it later:** render the link with the generic
+"Sign in" label server-side (no Clerk hook in the initial paint), then
+upgrade to "Account" client-side after Clerk's session hydrates. Net effect:
+same DOM in the steady state, smaller initial JS, at the cost of slightly
+more code. Worth doing only if Landing's TTI becomes a real metric concern
+or if we find a way to do it without the brief label-flicker.
