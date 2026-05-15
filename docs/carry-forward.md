@@ -306,3 +306,33 @@ Phase 2 already exists; this is one extra step inside it.
 **Where the gap lives:** between `app/api/screening/route.ts`
 (writes anonymous ScreeningResponse) and `app/api/webhooks/clerk/`
 (creates User on sign-up). Nothing currently bridges them.
+
+---
+
+## Phase 3d spec inconsistency on `riskMarkers`
+
+The Phase 3d Claude Code instructions described `riskMarkers` as an
+"APPEND-with-eviction array (cap at last 30)", grouping it with
+`recentStateOccurrences` and `activeThemes`. But the existing
+`DiagnosticProfile.riskMarkers` schema is a weighted Map:
+
+```
+riskMarkers Json?  // { "isolation": 0.4, "dysregulation": 0.6, "rumination": 0.3 }
+```
+
+This is a **weighted profile of risk dimensions** (does the user show
+isolation? rumination? avoidance?), not an event log. The vocabulary
+is a fixed set (isolation, dysregulation, rumination, avoidance,
+somatization, overcontrol, despair) and each key gets a 0.0-1.0
+weight reflecting how present that pattern currently is. A cap-at-30
+is semantically meaningless on a Map of seven keys.
+
+**Decision (Phase 3d Piece 4):** keep the Map shape and treat
+`riskMarkers` as REPLACE on each updater run — Haiku outputs the full
+updated map, the merge writes it whole. The implementation in
+`lib/minimind/memory/updater.ts` matches the **schema**, not the
+spec wording.
+
+Future readers: if a reviewer asks "where's the riskMarkers
+append-with-eviction logic from the Phase 3d spec?" — there isn't
+one, by design. The spec was wrong about this field's shape.
