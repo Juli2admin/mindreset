@@ -90,7 +90,7 @@ model DiagnosticProfile {
   attachmentStyle            Json?
 
   // Current state (the 4 States in the methodology)
-  predominantState           String?  // anxiety | apathy | void | dissolution
+  predominantState           String?  // see DetectedState in lib/minimind/safety/verifier.ts (9 surface states for MiniMind layer; distinct from the 4 deep States used in the Journey programme)
   stateIntensity             Int?     // 1..5
   stateFirstObservedAt       DateTime?
 
@@ -99,10 +99,10 @@ model DiagnosticProfile {
   activeThemes               Json?
 
   // Repeat-state counter — the rule: 3 occurrences in 7 days → recommend deeper module
-  recentStateOccurrences     Json?    // [{ "state": "anxiety", "at": "2025-01-12T..." }, ...]
+  recentStateOccurrences     Json?    // [{ "state": "anxiety_overwhelm", "detectedAt": "2026-05-15T..." }, ...]
 
   // Channel preference — affects which practices the AI offers
-  channelPreference          String?  // visual | somatic | emotional | cognitive | mixed
+  channelPreference          String?  // visual | somatic | emotional | cognitive
 
   // Regulation capacity (self-soothing ability) — gates depth progression
   regulationCapacity         Int?     // 0..10
@@ -116,6 +116,7 @@ model DiagnosticProfile {
 
   // Provenance
   lastAnalyzedConversationId String?
+  lastAnalyzedAt             DateTime?
   modelVersion               String?  // which assessment-engine version produced this
 }
 
