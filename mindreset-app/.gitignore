@@ -34,3 +34,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Local diagnostic scripts — not committed (DB connection probes, etc.)
+scripts/
