@@ -17,6 +17,7 @@ type Tier = {
   subtitle: string;
   description: string;
   price: string;
+  href?: string; // when set, the card is an active <Link>; otherwise inert
 };
 
 type CopyShape = {
@@ -25,6 +26,7 @@ type CopyShape = {
   welcomeTitleNoName: string;
   welcomeBody: string;
   comingSoon: string;
+  tierOpen: string;
   tiers: Tier[];
 };
 
@@ -35,12 +37,14 @@ const COPY: Record<Lang, CopyShape> = {
     welcomeTitleNoName: 'Welcome',
     welcomeBody: "A quiet place to see where you are, and to choose what's next.",
     comingSoon: 'Coming soon',
+    tierOpen: 'Open',
     tiers: [
       {
         title: 'MiniMind',
         subtitle: 'Daily companion',
         description: 'Your daily AI companion for reflection, regulation, and quiet support.',
         price: '£9.99 / month',
+        href: '/minimind',
       },
       {
         title: 'States & Themes',
@@ -62,12 +66,14 @@ const COPY: Record<Lang, CopyShape> = {
     welcomeTitleNoName: 'Здравствуйте',
     welcomeBody: 'Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.',
     comingSoon: 'Скоро',
+    tierOpen: 'Открыть',
     tiers: [
       {
         title: 'MiniMind',
         subtitle: 'Ежедневный спутник',
         description: 'Ваш ежедневный AI-спутник — для рефлексии, регуляции и тихой поддержки.',
         price: '£9.99 / месяц',
+        href: '/minimind',
       },
       {
         title: 'States & Themes',
@@ -147,57 +153,101 @@ export default function AccountClient({ firstName, cookieToClear }: Props) {
         </div>
 
         <div className="space-y-4">
-          {t.tiers.map((tier, i) => (
-            <div
-              key={i}
-              className="rounded-lg p-6 transition-all"
-              style={{
-                background: PALETTE.bgCard,
-                border: `1px solid ${PALETTE.border}`,
-              }}
-            >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div className="min-w-0">
-                  <h3
-                    className="text-[20px] mb-1"
-                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-                  >
-                    {tier.title}
-                  </h3>
-                  <p
-                    className="text-[13px]"
-                    style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-                  >
-                    {tier.subtitle}
-                  </p>
+          {t.tiers.map((tier, i) => {
+            const inner = (
+              <>
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="min-w-0">
+                    <h3
+                      className="text-[20px] mb-1"
+                      style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                    >
+                      {tier.title}
+                    </h3>
+                    <p
+                      className="text-[13px]"
+                      style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                    >
+                      {tier.subtitle}
+                    </p>
+                  </div>
+                  {tier.href ? (
+                    <span
+                      className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                      style={{
+                        background: PALETTE.accent,
+                        color: PALETTE.accentText,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {t.tierOpen}
+                    </span>
+                  ) : (
+                    <span
+                      className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                      style={{
+                        background: PALETTE.bgSubtle,
+                        color: PALETTE.textHint,
+                        border: `1px solid ${PALETTE.border}`,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {t.comingSoon}
+                    </span>
+                  )}
                 </div>
-                <span
-                  className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                  style={{
-                    background: PALETTE.bgSubtle,
-                    color: PALETTE.textHint,
-                    border: `1px solid ${PALETTE.border}`,
-                    fontFamily: SANS,
-                    fontWeight: 500,
-                  }}
+                <p
+                  className="text-[15px] mb-4"
+                  style={{ color: PALETTE.text, lineHeight: 1.6, fontFamily: SANS }}
                 >
-                  {t.comingSoon}
-                </span>
+                  {tier.description}
+                </p>
+                <p
+                  className="text-[14px]"
+                  style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
+                >
+                  {tier.price}
+                </p>
+              </>
+            );
+
+            if (tier.href) {
+              return (
+                <Link
+                  key={i}
+                  href={tier.href}
+                  className="block rounded-lg p-6 transition-all"
+                  style={{
+                    background: PALETTE.bgCard,
+                    border: `1px solid ${PALETTE.border}`,
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.borderColor = PALETTE.borderStrong)
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.borderColor = PALETTE.border)
+                  }
+                >
+                  {inner}
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={i}
+                className="rounded-lg p-6 transition-all"
+                style={{
+                  background: PALETTE.bgCard,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                {inner}
               </div>
-              <p
-                className="text-[15px] mb-4"
-                style={{ color: PALETTE.text, lineHeight: 1.6, fontFamily: SANS }}
-              >
-                {tier.description}
-              </p>
-              <p
-                className="text-[14px]"
-                style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
-              >
-                {tier.price}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <Footer />
       </div>
