@@ -214,3 +214,32 @@ response won't fire instantly on an RU crisis.
 Before public RU-audience launch, add at least Sev 4 + Sev 5 RU phrases
 with native-speaker review. Lower tiers can wait for the i18n lift
 branch.
+
+---
+
+## Phase 3c lesson — keyword lists with apostrophes
+
+The Phase 3c keyword scanner was caught missing all apostrophed phrases
+because clients (iOS keyboards, browsers with smart-quote settings,
+rich-text paste) silently convert U+0027 → U+2019. The `\b`-anchored
+regex matched literal codepoints, so curly-input never hit the
+straight-quote phrase list — a Sev 3 test typed as "what's the point
+of any of this" returned `{ matched: false }` and produced zero
+SafetyEvent rows. Fixed by normalising both single (U+2018/U+2019) and
+double (U+201C/U+201D) curly quotes to ASCII before regex matching in
+`scanForKeywords`.
+
+**Lesson for any future text-pattern matching code:** normalise
+typographic punctuation upstream of regex / exact-match. This applies
+to module content matching, future module quiz/answer validation, and
+any future safety scanner additions (RU phrases at launch, etc.). If a
+keyword list contains an apostrophe or quote character, it almost
+certainly needs `normalizeForScan` (or equivalent) wrapping the input.
+
+Same lesson, second cut: when adding new audit / logging paths, ensure
+they emit *both* an entry signal *and* a distinctive failure tag. The
+debugging round that produced this entry was lengthened by being
+unable to distinguish "logger never called" from "logger called and
+silently failed" — `[safety] event log starting` + `[SAFETY LOG
+FAILED]` now resolve that permanently, but any new audit surface
+should adopt the same pattern.
