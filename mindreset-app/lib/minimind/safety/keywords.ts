@@ -197,14 +197,27 @@ function escapeForRegex(s: string): string {
   return s.replace(REGEX_META, '\\$&');
 }
 
+// Normalize "smart" quotes so phrases authored with straight ASCII apostrophes
+// (U+0027) still match input where the client/keyboard auto-converted them to
+// curly quotes (U+2018 / U+2019). Same for double quotes (U+201C / U+201D).
+// iOS keyboards, browsers with smart-quote settings, and rich-text paste all
+// silently convert these — without this step, "what's the point" types as
+// "what’s the point" and slips past every apostrophed phrase in the list.
+function normalizeForScan(text: string): string {
+  return text
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"');
+}
+
 export function scanForKeywords(text: string): KeywordMatch {
   if (!text || typeof text !== 'string') {
     return { matched: false };
   }
+  const normalized = normalizeForScan(text);
   for (const tier of TIERS) {
     for (const entry of tier.entries) {
       const re = new RegExp(`\\b${escapeForRegex(entry.phrase)}\\b`, 'i');
-      const m = text.match(re);
+      const m = normalized.match(re);
       if (m && typeof m.index === 'number') {
         return {
           matched: true,

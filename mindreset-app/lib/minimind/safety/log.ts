@@ -25,6 +25,15 @@ export type SafetyEventLogParams = {
 };
 
 export async function logSafetyEvent(params: SafetyEventLogParams): Promise<void> {
+  // Entry signal — distinguishes "never called" from "called but failed"
+  // in Vercel logs. No PII; just routing metadata. Cheap (a handful per day
+  // at our scale) and saves real time on future investigations.
+  console.log('[safety] event log starting', {
+    conversationId: params.conversationId,
+    severity: params.severity,
+    source: params.source,
+  });
+
   try {
     const truncated = (params.triggerExcerpt ?? '').slice(
       0,
@@ -63,7 +72,23 @@ export async function logSafetyEvent(params: SafetyEventLogParams): Promise<void
       });
     }
   } catch (err) {
-    // Safety logging failure must never break user-facing chat. Log and swallow.
-    console.error('[logSafetyEvent] write failed:', err);
+    // Safety logging failure must never break user-facing chat. Loud +
+    // filterable tag so Vercel log search surfaces these immediately —
+    // silent audit-logger failure is itself a Sev-class incident. Diagnostic
+    // context is PII-free (field lengths and structural metadata, not
+    // contents) so the log surface stays safe to retain.
+    console.error('[SAFETY LOG FAILED]', {
+      error: err instanceof Error ? err.message : String(err),
+      errorName: err instanceof Error ? err.name : undefined,
+      userId: params.userId,
+      conversationId: params.conversationId,
+      hasMessageId: !!params.messageId,
+      type: params.type,
+      severity: params.severity,
+      source: params.source,
+      triggerExcerptLength: (params.triggerExcerpt ?? '').length,
+      aiResponseLength: (params.aiResponse ?? '').length,
+      hasReasoning: !!params.reasoning,
+    });
   }
 }
