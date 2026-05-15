@@ -117,3 +117,58 @@ upgrade to "Account" client-side after Clerk's session hydrates. Net effect:
 same DOM in the steady state, smaller initial JS, at the cost of slightly
 more code. Worth doing only if Landing's TTI becomes a real metric concern
 or if we find a way to do it without the brief label-flicker.
+
+---
+
+## i18n + theme global providers (deferred to post-Phase-3b)
+
+### Current state (broken)
+- Each top-level component (`Landing.jsx`, `Screening.jsx`,
+  `AccountClient.tsx`) carries its own EN/RU `COPY` block and its own toggle
+  with local `useState`.
+- Toggling on one page does not propagate to others — language state is
+  per-component.
+- `/account` RU `COPY` is partial; toggling to RU still renders English
+  content for the missing strings — visible bug. **Toggle hidden on
+  `/account` for now** (see follow-up commit) as a holding pattern until
+  the lift; reverts cleanly when global provider lands.
+- `/sign-in`, `/sign-up`, `/terms`, `/privacy` are EN-only with no toggle.
+- Day/night theme has the same per-component-local-state problem. Auth
+  pages and account are day-only.
+- `User.locale` and `User.themePref` columns exist in schema but no code
+  reads or writes them.
+
+### Target state
+- Translation files at `locales/en.json`, `locales/ru.json`.
+- Global `LanguageProvider` + `ThemeProvider` wrapping `app/layout.tsx`.
+- `useLanguage()` / `useTheme()` hooks every component uses instead of
+  local state.
+- Refactor: Landing, Screening, AccountClient, sign-in, sign-up, terms,
+  privacy, disclaimer modal — all read from JSON via the hooks.
+- Persistence: write to `User.locale` / `User.themePref` for signed-in
+  users, cookie for anonymous; read on mount so preferences follow the
+  user across devices.
+
+### Language scope
+- v1: EN + RU (Julia native-quality in both).
+- v2 (post-launch): UK (Ukrainian).
+- Future: PL, DE, ES, FR only when native-speaker trauma-informed-copy
+  review is available. Auto-translation is too risky for this product.
+
+### Sequencing
+- Branch: `claude/i18n-and-theme-lift` (pair both lifts — same files,
+  same architectural shape).
+- Slot: **after Phase 3b** (visible MiniMind chat), **before public
+  launch** (can't sell to a Russian audience with a broken toggle).
+- Scope: 1–2 focused sessions.
+
+### Where MiniMind sits
+Already handled — system prompt v2.1 instructs Claude to respond in the
+user's typed language. No change needed in `/api/minimind/chat`. The
+provider will inform the prompt's `preferred_language` runtime variable
+when we wire the context block in Phase 3b/3d.
+
+### Schema is ready
+No migration needed. `User.locale` and `User.themePref` were added in
+Phase 1 with sensible defaults (`"en"`, `"system"`). The lift is purely a
+code change.
