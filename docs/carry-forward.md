@@ -200,3 +200,17 @@ For v1 testing (Julia only), `startedAt` ordering is sufficient.
 
 **Where the marker lives in code:** `app/api/minimind/conversations/route.ts`
 has a comment above the `orderBy` referencing this note.
+
+---
+
+## Phase 3c keyword scanner is EN-only
+
+The keyword lists in `lib/minimind/safety/keywords.ts` are English-only.
+RU users typing crisis language (e.g. "хочу умереть") will not hit the
+synchronous keyword tier and will rely entirely on the async LLM verifier
+(Haiku handles RU natively). This is a real gap — the canned crisis
+response won't fire instantly on an RU crisis.
+
+Before public RU-audience launch, add at least Sev 4 + Sev 5 RU phrases
+with native-speaker review. Lower tiers can wait for the i18n lift
+branch.
