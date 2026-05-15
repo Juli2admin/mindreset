@@ -147,6 +147,12 @@ model Conversation {
   redFlagged  Boolean   @default(false)  // any safety event in this session?
   sscPassed   Boolean?                   // Stabilisation+Satisfaction Criteria met?
 
+  // Set true by Phase 3c safety scanner when a Sev 5 trigger fires. Blocks
+  // normal MiniMind flow; only the cooldown holding message is delivered
+  // until the LLM verifier detects explicit safety confirmation in a user
+  // reply, at which point the column flips back to false.
+  inCrisisCooldown Boolean @default(false)
+
   messages     Message[]
   safetyEvents SafetyEvent[]
 
