@@ -3,6 +3,9 @@ import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
 import { MINIMIND_PROMPT_V2_1 } from '@/lib/minimind/prompt';
+import { scanForKeywords } from '@/lib/minimind/safety/keywords';
+import { runVerifier } from '@/lib/minimind/safety/verifier';
+import { logSafetyEvent } from '@/lib/minimind/safety/log';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,9 +16,62 @@ const anthropic = new Anthropic({
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 800;
 const HISTORY_LIMIT = 20;
+// Hard floor: cooldown cannot lift within this window of the triggering Sev 5
+// safety event, regardless of verifier verdict on user replies during that
+// window. Rationale: a "I'm safe" arriving 30 seconds after Sev 5 is more
+// likely deflection than genuine safety; the verifier prompt's
+// bias-toward-holding is policy, this gate is enforcement.
+const COOLDOWN_MIN_WAIT_MS = 5 * 60 * 1000;
 
+// ============================================================================
+// Canned crisis copy (EN only for v1; i18n lift later moves to locales/)
+// ============================================================================
+const CRISIS_RESPONSE = `I hear how serious this is. What you're carrying right now is more than this conversation is built for, and I want you safe. Please reach out to a person who can be with you in this:
+
+Samaritans — 116 123 (free, 24/7)
+NHS 111, option 2 — for mental health crisis
+Your GP if you have one
+If you're in immediate physical danger, call 999 or go to A&E
+
+I'll be here when you're ready to come back.`;
+
+const COOLDOWN_HOLDING_MESSAGE = "I'm here. Are you somewhere safe right now?";
+
+const COOLDOWN_LIFT_MESSAGE =
+  "I'm glad you're letting me know. How are you doing right now?";
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function cannedResponseStream(text: string): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(encoder.encode(text));
+      controller.close();
+    },
+  });
+}
+
+function makeStreamResponse(
+  body: ReadableStream<Uint8Array>,
+  conversationId: string,
+): NextResponse {
+  return new NextResponse(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'X-Conversation-Id': conversationId,
+    },
+  });
+}
+
+// ============================================================================
+// POST handler
+// ============================================================================
 export async function POST(req: NextRequest) {
-  // 1. Auth (handler-level — matches Phase 3a + /api/disclaimer/acknowledge pattern)
+  // 1. Auth
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -39,7 +95,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 });
   }
 
-  // 3. Get-or-create the Conversation (owner-scoped, kind-scoped)
+  // 3. Synchronous keyword scan (< 5 ms, no IO)
+  const keywordMatch = scanForKeywords(message);
+
+  // 4. Get-or-create the Conversation (owner-scoped, kind-scoped)
   let conversation;
   let conversationCreatedThisRequest = false;
   if (conversationId) {
@@ -51,17 +110,12 @@ export async function POST(req: NextRequest) {
     }
   } else {
     conversation = await prisma.conversation.create({
-      data: {
-        userId,
-        kind: 'minimind',
-        depthLevel: 'surface',
-      },
+      data: { userId, kind: 'minimind', depthLevel: 'surface' },
     });
     conversationCreatedThisRequest = true;
   }
 
-  // 4. Load last HISTORY_LIMIT messages (chronological) as context for Claude.
-  // Prisma's `take: -N` doesn't do "last N"; the idiom is desc + take N + reverse.
+  // 5. Load last HISTORY_LIMIT messages (chronological).
   const recentReversed = await prisma.message.findMany({
     where: { conversationId: conversation.id },
     orderBy: { timestamp: 'desc' },
@@ -69,11 +123,7 @@ export async function POST(req: NextRequest) {
   });
   const history = recentReversed.reverse();
 
-  // 4b. Server-side duplicate-request guard. Primary defence is UI debounce in
-  // Piece 3; this is belt-and-braces. If the most recent message is from the
-  // user, a previous turn is either in-flight or failed before producing any
-  // assistant text. Reject rather than create consecutive user rows (which
-  // Anthropic's messages API rejects on the next turn).
+  // 6. Server-side duplicate-request guard (belt-and-braces with UI debounce).
   const lastMessage = history[history.length - 1];
   if (lastMessage && lastMessage.role === 'user') {
     return NextResponse.json(
@@ -82,8 +132,158 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 5. Save the user message to DB BEFORE calling Anthropic. Capture the row
-  // so we can clean it up cleanly on zero-token failure (Adjustment 3).
+  // ==========================================================================
+  // BRANCH: Conversation is in crisis cooldown
+  // ==========================================================================
+  if (conversation.inCrisisCooldown) {
+    // Time-floor gate. If the triggering Sev 5 was within COOLDOWN_MIN_WAIT_MS,
+    // skip the verifier and hold quietly — no SafetyEvent log (avoid log spam
+    // of rapid-retry attempts during the cooldown window).
+    const lastSev5 = await prisma.safetyEvent.findFirst({
+      where: { conversationId: conversation.id, severity: 5 },
+      orderBy: { triggeredAt: 'desc' },
+    });
+    const withinFloor =
+      lastSev5 !== null &&
+      Date.now() - lastSev5.triggeredAt.getTime() < COOLDOWN_MIN_WAIT_MS;
+
+    if (withinFloor) {
+      await prisma.message.create({
+        data: { conversationId: conversation.id, role: 'user', content: message },
+      });
+      await prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          role: 'assistant',
+          content: COOLDOWN_HOLDING_MESSAGE,
+        },
+      });
+      return makeStreamResponse(
+        cannedResponseStream(COOLDOWN_HOLDING_MESSAGE),
+        conversation.id,
+      );
+    }
+
+    // Past the floor — run the verifier to decide whether to lift.
+    const verifier = await runVerifier(
+      message,
+      history.map((m) => ({
+        role: m.role as 'user' | 'assistant',
+        content: m.content,
+      })),
+      true,
+    );
+
+    const userMessageRow = await prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        role: 'user',
+        content: message,
+      },
+    });
+
+    if (verifier.verdict === 'safety_confirmation') {
+      await prisma.conversation.update({
+        where: { id: conversation.id },
+        data: { inCrisisCooldown: false },
+      });
+      await prisma.message.create({
+        data: {
+          conversationId: conversation.id,
+          role: 'assistant',
+          content: COOLDOWN_LIFT_MESSAGE,
+        },
+      });
+      return makeStreamResponse(
+        cannedResponseStream(COOLDOWN_LIFT_MESSAGE),
+        conversation.id,
+      );
+    }
+
+    // Hold cooldown — deliver canned holding message.
+    await prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        role: 'assistant',
+        content: COOLDOWN_HOLDING_MESSAGE,
+      },
+    });
+
+    // If the verifier detected NEW crisis content in the cooldown reply, log
+    // a SafetyEvent at that severity.
+    if (verifier.verdict === 'clear_crisis' && verifier.severity != null) {
+      await logSafetyEvent({
+        userId,
+        conversationId: conversation.id,
+        messageId: userMessageRow.id,
+        type: verifier.type ?? 'other',
+        severity: verifier.severity,
+        triggerExcerpt: message,
+        aiResponse: COOLDOWN_HOLDING_MESSAGE,
+        reasoning: verifier.reasoning,
+        source: 'verifier_sync',
+      });
+    }
+
+    return makeStreamResponse(
+      cannedResponseStream(COOLDOWN_HOLDING_MESSAGE),
+      conversation.id,
+    );
+  }
+
+  // ==========================================================================
+  // BRANCH: Keyword scan fired Sev 4 or Sev 5 — SKIP MiniMind
+  // ==========================================================================
+  if (keywordMatch.matched && keywordMatch.severity >= 4) {
+    const userMessageRow = await prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        role: 'user',
+        content: message,
+      },
+    });
+
+    await prisma.message.create({
+      data: {
+        conversationId: conversation.id,
+        role: 'assistant',
+        content: CRISIS_RESPONSE,
+      },
+    });
+
+    if (keywordMatch.severity === 5) {
+      await prisma.conversation.update({
+        where: { id: conversation.id },
+        data: { inCrisisCooldown: true, redFlagged: true },
+      });
+    } else {
+      await prisma.conversation.update({
+        where: { id: conversation.id },
+        data: { redFlagged: true },
+      });
+    }
+
+    await logSafetyEvent({
+      userId,
+      conversationId: conversation.id,
+      messageId: userMessageRow.id,
+      type: keywordMatch.type,
+      severity: keywordMatch.severity,
+      triggerExcerpt: keywordMatch.triggerExcerpt,
+      aiResponse: CRISIS_RESPONSE,
+      source: 'keyword',
+    });
+
+    return makeStreamResponse(
+      cannedResponseStream(CRISIS_RESPONSE),
+      conversation.id,
+    );
+  }
+
+  // ==========================================================================
+  // BRANCH: Normal MiniMind flow (no cooldown, no Sev 4/5 keyword hit)
+  // ==========================================================================
+
   const userMessageRow = await prisma.message.create({
     data: {
       conversationId: conversation.id,
@@ -92,7 +292,21 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // 6. Build messages array for Anthropic — history + the current user message.
+  // Sev 2/3 keyword hits: silent SafetyEvent log, MiniMind responds normally.
+  if (keywordMatch.matched && keywordMatch.severity <= 3) {
+    await logSafetyEvent({
+      userId,
+      conversationId: conversation.id,
+      messageId: userMessageRow.id,
+      type: keywordMatch.type,
+      severity: keywordMatch.severity,
+      triggerExcerpt: keywordMatch.triggerExcerpt,
+      aiResponse: '(MiniMind responded normally; keyword tier was Sev 2-3)',
+      source: 'keyword',
+    });
+  }
+
+  // Build messages for Anthropic
   const claudeMessages: Anthropic.MessageParam[] = [
     ...history
       .filter((m) => m.role === 'user' || m.role === 'assistant')
@@ -103,7 +317,26 @@ export async function POST(req: NextRequest) {
     { role: 'user' as const, content: message },
   ];
 
-  // 7. Stream the Anthropic response, accumulate text, save on completion.
+  // Snapshot for the async verifier task. The closure-capture is deliberate —
+  // see the runAsyncVerifier comment.
+  const verifierInput: AsyncVerifierInput = {
+    userId,
+    conversationId: conversation.id,
+    messageId: userMessageRow.id,
+    message,
+    history: history.map((m) => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.content,
+    })),
+    keywordMatched: keywordMatch.matched,
+  };
+
+  // Fire-and-forget. Errors caught here only — never bubble to user.
+  runAsyncVerifier(verifierInput).catch((err) => {
+    console.error('[minimind/chat] async verifier task failed:', err);
+  });
+
+  // Stream the Anthropic response.
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream<Uint8Array>({
@@ -132,25 +365,14 @@ export async function POST(req: NextRequest) {
         console.error('[minimind/chat] stream error:', err);
         streamFailed = true;
       } finally {
-        // Zero-token outcomes always logged (regardless of new vs returning
-        // conversation). A returning user hitting a silent failure matters
-        // more than a first-visit failure.
         if (accumulated.length === 0) {
           console.error('[minimind/chat] stream produced zero tokens', {
             conversationId: conversation.id,
             userId,
             isNewConversation: conversationCreatedThisRequest,
           });
-
-          // Delete the orphan user message we saved in step 5. Leaving it
-          // would create two consecutive user rows on the next turn, which
-          // Anthropic's messages API rejects. The Conversation row itself
-          // persists — option (i) from the architect's decision: trauma-
-          // informed respect for the user's record of "I tried to send".
           try {
-            await prisma.message.delete({
-              where: { id: userMessageRow.id },
-            });
+            await prisma.message.delete({ where: { id: userMessageRow.id } });
           } catch (cleanupErr) {
             console.error(
               '[minimind/chat] failed to clean orphan user message:',
@@ -158,7 +380,6 @@ export async function POST(req: NextRequest) {
             );
           }
         } else {
-          // Normal or partial-success path: save whatever the assistant produced.
           try {
             await prisma.message.create({
               data: {
@@ -181,11 +402,102 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return new NextResponse(stream, {
-    status: 200,
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'X-Conversation-Id': conversation.id,
-    },
-  });
+  return makeStreamResponse(stream, conversation.id);
+}
+
+// ============================================================================
+// Async verifier task — runs after the response stream is in flight
+// ============================================================================
+
+type AsyncVerifierInput = {
+  userId: string;
+  conversationId: string;
+  messageId: string;
+  message: string;
+  history: { role: 'user' | 'assistant'; content: string }[];
+  keywordMatched: boolean;
+};
+
+async function runAsyncVerifier(input: AsyncVerifierInput): Promise<void> {
+  // Staleness note: `history` and `message` were closure-captured at the
+  // moment the POST request was handled. If subsequent messages arrived
+  // while this verifier ran, they are not visible here. This is deliberate
+  // — each verifier checks the message it was given against the context
+  // available at that time. Concurrent requests get their own verifier
+  // tasks with their own snapshots.
+
+  const result = await runVerifier(input.message, input.history, false);
+
+  // Disagreement A: keyword fired but verifier says clear_safe.
+  // Log as Sev 1 — "verifier-downgraded keyword hit" (false-positive signal).
+  if (input.keywordMatched && result.verdict === 'clear_safe') {
+    await logSafetyEvent({
+      userId: input.userId,
+      conversationId: input.conversationId,
+      messageId: input.messageId,
+      type: 'other',
+      severity: 1,
+      triggerExcerpt: input.message,
+      aiResponse: '(verifier downgraded keyword match; no user-facing change)',
+      reasoning: result.reasoning,
+      source: 'verifier_async',
+    });
+    return;
+  }
+
+  // Disagreement B: keyword missed but verifier says clear_crisis (Sev 4-5).
+  // The user already received MiniMind's normal reply (no retroactive UI
+  // change in v1). Log + console alert for review.
+  if (
+    !input.keywordMatched &&
+    result.verdict === 'clear_crisis' &&
+    result.severity != null
+  ) {
+    console.error(
+      '[ASYNC SAFETY FLAG] verifier flagged crisis where keyword missed',
+      {
+        conversationId: input.conversationId,
+        userId: input.userId,
+        severity: result.severity,
+        type: result.type,
+      },
+    );
+    await logSafetyEvent({
+      userId: input.userId,
+      conversationId: input.conversationId,
+      messageId: input.messageId,
+      type: result.type ?? 'other',
+      severity: result.severity,
+      triggerExcerpt: input.message,
+      aiResponse: '(verifier flagged after MiniMind already responded; review)',
+      reasoning: result.reasoning,
+      source: 'verifier_async',
+    });
+    return;
+  }
+
+  // Disagreement C: keyword missed, verifier says ambiguous (Sev 3).
+  // Silent log for trend tracking.
+  if (
+    !input.keywordMatched &&
+    result.verdict === 'ambiguous' &&
+    result.severity != null
+  ) {
+    await logSafetyEvent({
+      userId: input.userId,
+      conversationId: input.conversationId,
+      messageId: input.messageId,
+      type: result.type ?? 'other',
+      severity: result.severity,
+      triggerExcerpt: input.message,
+      aiResponse: '(MiniMind responded normally; verifier flagged Sev 3)',
+      reasoning: result.reasoning,
+      source: 'verifier_async',
+    });
+    return;
+  }
+
+  // All other combinations: nothing additional to log. Either the sync path
+  // already wrote a SafetyEvent (keyword Sev 2/3, normal flow), or the
+  // verifier agreed there's nothing concerning.
 }
