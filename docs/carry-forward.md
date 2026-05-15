@@ -172,3 +172,31 @@ when we wire the context block in Phase 3b/3d.
 No migration needed. `User.locale` and `User.themePref` were added in
 Phase 1 with sensible defaults (`"en"`, `"system"`). The lift is purely a
 code change.
+
+---
+
+## Conversations endpoint orders by startedAt — not last-activity
+
+`/api/minimind/conversations` returns the most recent Conversation by
+`startedAt`, not by last message timestamp. This is correct for the common
+case (user has one active conversation that grows) but produces the wrong
+answer in edge cases:
+
+- User starts conversation A Monday, uses heavily through Sunday.
+- User clicks "Start new" Friday, sends one message.
+- On return Monday, Continue offers Friday's near-empty conversation
+  instead of Monday's substantial one.
+
+**Proper fix (before public launch):** use `Conversation.endedAt` as the
+active-conversation marker. "Start new" sets `endedAt: new Date()` on the
+previous active conversation. The conversations endpoint filters
+`endedAt: null` and returns the (at most one) match.
+
+Requires Piece 3 (or a follow-up) to wire `endedAt` on "Start new" + a
+one-time data migration for any pre-existing conversations without
+`endedAt` set.
+
+For v1 testing (Julia only), `startedAt` ordering is sufficient.
+
+**Where the marker lives in code:** `app/api/minimind/conversations/route.ts`
+has a comment above the `orderBy` referencing this note.
