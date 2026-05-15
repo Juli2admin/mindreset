@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
-import { MINIMIND_PROMPT_V2_1 } from '@/lib/minimind/prompt';
+import { MINIMIND_PROMPT_V2_2 } from '@/lib/minimind/prompt';
 import { scanForKeywords } from '@/lib/minimind/safety/keywords';
 import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
@@ -347,8 +347,8 @@ export async function POST(req: NextRequest) {
   // 1, not deferred until the first profile update at message 21.
   const systemWithMemory =
     memory.formattedBlock.length > 0
-      ? `${MINIMIND_PROMPT_V2_1}\n\n${memory.formattedBlock}`
-      : MINIMIND_PROMPT_V2_1;
+      ? `${MINIMIND_PROMPT_V2_2}\n\n${memory.formattedBlock}`
+      : MINIMIND_PROMPT_V2_2;
 
   // Snapshot for the async verifier task. The closure-capture is deliberate —
   // see the runAsyncVerifier comment.
