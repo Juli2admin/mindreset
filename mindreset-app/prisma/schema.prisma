@@ -166,6 +166,10 @@ model Message {
   // e.g. { "emotions": ["sadness","shame"], "somatic_cues": ["tightness chest"], "red_flag_keywords": [] }
   detectedSignals Json?
 
+  // True when the assistant reply was saved after a streaming error — i.e. only
+  // a partial response reached the user. Set by /api/minimind/chat on stream failure.
+  partial Boolean @default(false)
+
   @@index([conversationId, timestamp])
 }
 
