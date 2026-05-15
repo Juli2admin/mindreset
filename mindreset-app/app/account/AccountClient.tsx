@@ -91,7 +91,8 @@ type Props = {
 };
 
 export default function AccountClient({ firstName, cookieToClear }: Props) {
-  const [lang, setLang] = useState<Lang>('en');
+  // Lang fixed to 'en' pending i18n-lift; see header for context.
+  const [lang] = useState<Lang>('en');
   const t = COPY[lang];
 
   useEffect(() => {
@@ -118,20 +119,8 @@ export default function AccountClient({ firstName, cookieToClear }: Props) {
             </h1>
           </Link>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setLang(lang === 'en' ? 'ru' : 'en')}
-              className="text-[11px] uppercase tracking-[0.18em] h-8 px-3 rounded-full transition-colors"
-              style={{
-                color: PALETTE.textMuted,
-                border: `1px solid ${PALETTE.border}`,
-                background: 'transparent',
-                fontFamily: SANS,
-                fontWeight: 500,
-              }}
-            >
-              {lang === 'en' ? 'RU' : 'EN'}
-            </button>
+            {/* Lang toggle hidden pending i18n-lift — RU copy is incomplete on
+                this page; re-attach when global LanguageProvider lands. */}
             <UserButton />
           </div>
         </header>
