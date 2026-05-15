@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
+import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 
 // ============================================================================
 // MindReset.ai — Landing Page
@@ -180,6 +182,9 @@ function LangSwitch({ lang, setLang }) {
 
 function Header({ lang, setLang }) {
   const { c } = useTheme();
+  const t = COPY[lang];
+  const { isLoaded, isSignedIn } = useUser();
+  const signedIn = isLoaded && isSignedIn;
   return (
     <header className="flex items-center justify-between py-6">
       <div className="flex items-center gap-3">
@@ -195,7 +200,14 @@ function Header({ lang, setLang }) {
           <span style={{ color: c.textHint }} className="ml-0.5">.ai</span>
         </span>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <Link
+          href={signedIn ? '/account' : '/sign-in'}
+          className="text-[13px] transition-colors hover:underline underline-offset-2"
+          style={{ ...sansStyle, color: c.textMuted }}
+        >
+          {signedIn ? t.account : t.signIn}
+        </Link>
         <LangSwitch lang={lang} setLang={setLang} />
         <ThemeToggle />
       </div>
@@ -208,6 +220,10 @@ function Header({ lang, setLang }) {
 // ============================================================================
 const COPY = {
   en: {
+    // HEADER NAV
+    signIn: 'Sign in',
+    account: 'Account',
+
     // HERO
     heroKicker: 'A turning point. A method.',
     heroTitle: 'A way back\nto yourself.',
@@ -316,6 +332,9 @@ const COPY = {
   },
 
   ru: {
+    signIn: 'Войти',
+    account: 'Аккаунт',
+
     heroKicker: 'Точка опоры. Метод.',
     heroTitle: 'Путь обратно\nк себе.',
     heroBody: [
