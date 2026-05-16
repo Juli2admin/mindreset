@@ -40,6 +40,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import type { DetectedState } from '@/lib/minimind/safety/verifier';
 
 const UPDATER_MODEL = 'claude-haiku-4-5-20251001';
@@ -548,15 +549,24 @@ export async function updateDiagnosticProfile(userId: string): Promise<void> {
       stateIntensity: pickReplace(payload.stateIntensity, profile?.stateIntensity ?? null),
       channelPreference: pickReplace(payload.channelPreference, profile?.channelPreference ?? null),
       regulationCapacity: pickReplace(payload.regulationCapacity, profile?.regulationCapacity ?? null),
-      attachmentStyle: pickReplace(
-        payload.attachmentStyle,
-        (profile?.attachmentStyle as AttachmentStyle | null) ?? null,
-      ),
+      // Prisma 5.x rejects raw JS `null` for Json? fields — requires
+      // Prisma.DbNull (write SQL NULL) or Prisma.JsonNull (write the JSON
+      // literal `null`). We want SQL NULL so the column reads as "no
+      // observation" rather than as a JSON null value. Same below for
+      // riskMarkers. pickReplace returns null when Haiku omitted the field
+      // and no prior value existed — exactly the new-user/sparse-evidence
+      // case where this bug fired.
+      attachmentStyle:
+        pickReplace(
+          payload.attachmentStyle,
+          (profile?.attachmentStyle as AttachmentStyle | null) ?? null,
+        ) ?? Prisma.DbNull,
       activeThemes: mergeActiveThemes(profile?.activeThemes, payload.activeThemes),
-      riskMarkers: pickReplace(
-        payload.riskMarkers,
-        (profile?.riskMarkers as Record<string, number> | null) ?? null,
-      ),
+      riskMarkers:
+        pickReplace(
+          payload.riskMarkers,
+          (profile?.riskMarkers as Record<string, number> | null) ?? null,
+        ) ?? Prisma.DbNull,
       engineNotes: appendEngineNotes(profile?.engineNotes, payload.engineNotes, now),
       lastAnalyzedAt: now,
       lastAnalyzedConversationId:
