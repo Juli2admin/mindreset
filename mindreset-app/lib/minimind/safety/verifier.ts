@@ -16,7 +16,7 @@
 //
 // State taxonomy: see DETECTED_STATES below and the STATE TAXONOMY block in
 // the SYSTEM_REGULAR prompt. CANONICAL definitions live here. Any downstream
-// prompt (Piece 4 profile updater, Piece 6 v2.2 MiniMind prompt) that
+// prompt (Phase 3d Piece 4 profile updater, MiniMind prompt v2.3+) that
 // references these states must use the same language to avoid taxonomy drift.
 //
 // IMPORTANT: the system prompts in this file are policy text. Same
@@ -44,8 +44,8 @@ export type VerifierVerdict =
 // CANONICAL state taxonomy. Any change here must propagate to:
 //   - SYSTEM_REGULAR STATE TAXONOMY block (this file)
 //   - SYSTEM_COOLDOWN_LIFT STATE TAXONOMY block (this file)
-//   - Piece 4 profile updater prompt (lib/minimind/memory/updater.ts)
-//   - Piece 6 v2.2 MiniMind prompt PATTERN DETECTION section
+//   - Phase 3d Piece 4 profile updater prompt (lib/minimind/memory/updater.ts)
+//   - MiniMind prompt v2.3+ PATTERN DETECTION section (lib/minimind/prompt.ts)
 const DETECTED_STATES = [
   'anxiety_overwhelm',
   'burnout_over_functioning',
