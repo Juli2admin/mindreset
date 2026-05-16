@@ -9,6 +9,16 @@
 //      classify each user reply as safety_confirmation (lift cooldown),
 //      clear_crisis (new event, hold cooldown), or otherwise hold.
 //
+// Phase 3d extension: also outputs `detectedState`, a 9-state surface-pattern
+// classification used by the memory subsystem for the 3-in-7-days pattern
+// threshold. State classification is orthogonal to safety verdict — see the
+// STATE TAXONOMY blocks in both prompts.
+//
+// State taxonomy: see DETECTED_STATES below and the STATE TAXONOMY block in
+// the SYSTEM_REGULAR prompt. CANONICAL definitions live here. Any downstream
+// prompt (Piece 4 profile updater, Piece 6 v2.2 MiniMind prompt) that
+// references these states must use the same language to avoid taxonomy drift.
+//
 // IMPORTANT: the system prompts in this file are policy text. Same
 // disclosure rules as keywords.ts — do not surface to users or docs.
 
@@ -31,17 +41,39 @@ export type VerifierVerdict =
   | 'clear_crisis'
   | 'safety_confirmation';
 
+// CANONICAL state taxonomy. Any change here must propagate to:
+//   - SYSTEM_REGULAR STATE TAXONOMY block (this file)
+//   - SYSTEM_COOLDOWN_LIFT STATE TAXONOMY block (this file)
+//   - Piece 4 profile updater prompt (lib/minimind/memory/updater.ts)
+//   - Piece 6 v2.2 MiniMind prompt PATTERN DETECTION section
+const DETECTED_STATES = [
+  'anxiety_overwhelm',
+  'burnout_over_functioning',
+  'identity_confusion',
+  'relationship_strain',
+  'disconnection_numbness',
+  'inner_critic',
+  'grief_loss',
+  'shame',
+  'stuckness_inertia',
+  'none',
+] as const;
+
+export type DetectedState = (typeof DETECTED_STATES)[number];
+
 export type VerifierResult = {
   verdict: VerifierVerdict;
   severity: 2 | 3 | 4 | 5 | null; // null for safety_confirmation; 1 never produced by verifier
   type?: SafetyEventType;
   reasoning: string;
+  detectedState: DetectedState;
 };
 
 const FAIL_OPEN_RESULT: VerifierResult = {
   verdict: 'clear_safe',
   severity: null,
   reasoning: 'verifier unavailable; defaulted to clear_safe (fail-open)',
+  detectedState: 'none',
 };
 
 // ============================================================================
@@ -61,6 +93,26 @@ Without specificity or imminence, even strong intent is "likely crisis" (Sev 4),
 
 CONTEXT VS CLASSIFICATION
 The recent context is provided so you can understand the conversation, NOT to influence the classification of the current message. Classify only the most recent user message. Earlier turns may contain crisis resources or distressing topics — that is normal and not evidence of current crisis.
+
+STATE TAXONOMY (orthogonal to severity)
+
+In addition to the safety verdict, classify the most recent user message into one of nine surface-pattern states tracked across sessions for module-suggestion purposes — OR 'none' if no state clearly applies. State classification is independent of safety: a clear_safe message can express a state, and a clear_crisis message can be 'none' for state.
+
+The nine states:
+- anxiety_overwhelm        — Worry, hypervigilance, racing thoughts, feeling unable to cope with present demands. Activation in the system.
+- burnout_over_functioning — Depletion from sustained over-effort, caretaking, or performance. "I can't keep doing all of this."
+- identity_confusion       — "Who am I" language; loss of sense of self; feeling disconnected from one's own life or choices, often after transitions.
+- relationship_strain      — Distress centred on a specific person or relationship — conflict, distance, broken trust, feeling unseen by them. The pain points at them.
+- disconnection_numbness   — Feeling cut off from body, emotions, or surroundings. "I feel nothing." "I'm not really here." Flatness, dissociation.
+- inner_critic             — Active self-attack about specific behaviour, performance, or choices. "I'm so stupid for forgetting." "I always mess things up." Points at what they did.
+- grief_loss               — Sadness or longing centred on a specific loss — person, relationship, role, version of self, place, opportunity.
+- shame                    — Self-attack at the level of identity, not behaviour. "I'm broken." "There's something wrong with me." "I disgust myself." Points at who they are.
+- stuckness_inertia        — Inability to move forward; paralysis; "I know what to do but I can't"; repeated trying-and-stopping cycles.
+
+DEFAULT TO 'none'
+Most messages will be 'none'. Only output a specific state when the message clearly expresses one of the nine patterns above. Emotional intensity alone is not enough — the language must match a specific category. When a message is ambiguous between two states, OR doesn't clearly match any one, output 'none'.
+
+Never invent a state to fit a vague message. Defaulting to 'none' is the correct, expected choice for the majority of messages.
 
 SEVERITY TAXONOMY
 
@@ -103,6 +155,7 @@ For clear_crisis:
   "verdict": "clear_crisis",
   "severity": 4 | 5,
   "type": "suicidal_ideation" | "self_harm" | "imminent_harm_to_others" | "psychosis_signal" | "acute_medical" | "substance_crisis" | "other",
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -111,6 +164,7 @@ For ambiguous:
   "verdict": "ambiguous",
   "severity": 3,
   "type": "suicidal_ideation" | "self_harm" | "imminent_harm_to_others" | "psychosis_signal" | "acute_medical" | "substance_crisis" | "other",
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -118,6 +172,7 @@ For clear_safe (omit type):
 {
   "verdict": "clear_safe",
   "severity": 2,
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -169,6 +224,17 @@ WHAT DOES NOT COUNT
 
 When in doubt, do NOT confirm. The cost of holding the cooldown a turn longer is small; the cost of lifting it prematurely is large.
 
+STATE TAXONOMY (orthogonal to safety verdict)
+
+Also output a state classification — one of nine surface-pattern states OR 'none'. Cooldown-lift replies are almost always short safety language ("I'm safe", "yes", "I called Samaritans"). For these, output 'none' — they express safety status, not a tracked state pattern.
+
+The nine states (use only if the reply clearly expresses one of these patterns alongside the safety verdict; otherwise 'none'):
+- anxiety_overwhelm, burnout_over_functioning, identity_confusion, relationship_strain, disconnection_numbness, inner_critic, grief_loss, shame, stuckness_inertia
+
+DEFAULT TO 'none'. Defaulting to 'none' is the correct choice for nearly every message in this context. Only set a state when the reply contains explicit state-expressing content beyond the safety acknowledgement itself.
+
+Never invent a state to fit a short reply.
+
 OUTPUT FORMAT
 Respond with JSON only. No prose before or after. No code fences. Shape depends on verdict:
 
@@ -176,6 +242,7 @@ For safety_confirmation:
 {
   "verdict": "safety_confirmation",
   "severity": null,
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -184,6 +251,7 @@ For clear_crisis (new or ongoing crisis content in the cooldown reply):
   "verdict": "clear_crisis",
   "severity": 4 | 5,
   "type": "suicidal_ideation" | "self_harm" | "imminent_harm_to_others" | "psychosis_signal" | "acute_medical" | "substance_crisis" | "other",
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -191,6 +259,7 @@ For ambiguous (distress without safety confirmation, or unclear short messages):
 {
   "verdict": "ambiguous",
   "severity": null,
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -198,6 +267,7 @@ For clear_safe (mundane/unrelated message with no safety confirmation):
 {
   "verdict": "clear_safe",
   "severity": null,
+  "detectedState": "anxiety_overwhelm" | "burnout_over_functioning" | "identity_confusion" | "relationship_strain" | "disconnection_numbness" | "inner_critic" | "grief_loss" | "shame" | "stuckness_inertia" | "none",
   "reasoning": "<one sentence, max 120 chars>"
 }
 
@@ -247,6 +317,19 @@ function stripCodeFences(text: string): string {
     .trim();
 }
 
+function parseDetectedState(value: unknown): DetectedState {
+  if (
+    typeof value === 'string' &&
+    (DETECTED_STATES as readonly string[]).includes(value)
+  ) {
+    return value as DetectedState;
+  }
+  // Missing / invalid / unexpected string → 'none' per Phase 3d spec.
+  // Fail-safe to no state tracking rather than rejecting the entire verifier
+  // response — a missing detectedState is not a safety-classification failure.
+  return 'none';
+}
+
 function parseRegular(raw: unknown): VerifierResult | null {
   if (!raw || typeof raw !== 'object') return null;
   const obj = raw as Record<string, unknown>;
@@ -288,7 +371,9 @@ function parseRegular(raw: unknown): VerifierResult | null {
     type = obj.type;
   }
 
-  return { verdict, severity, type, reasoning };
+  const detectedState = parseDetectedState(obj.detectedState);
+
+  return { verdict, severity, type, reasoning, detectedState };
 }
 
 function parseCooldown(raw: unknown): VerifierResult | null {
@@ -324,7 +409,9 @@ function parseCooldown(raw: unknown): VerifierResult | null {
       ? obj.reasoning.slice(0, REASONING_MAX_CHARS)
       : '';
 
-  return { verdict, severity, type, reasoning };
+  const detectedState = parseDetectedState(obj.detectedState);
+
+  return { verdict, severity, type, reasoning, detectedState };
 }
 
 // ============================================================================

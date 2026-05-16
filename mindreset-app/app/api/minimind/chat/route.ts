@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
-import { MINIMIND_PROMPT_V2_1 } from '@/lib/minimind/prompt';
+import { MINIMIND_PROMPT_V2_2 } from '@/lib/minimind/prompt';
 import { scanForKeywords } from '@/lib/minimind/safety/keywords';
 import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
+import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
+import { updateDiagnosticProfile } from '@/lib/minimind/memory/updater';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +24,15 @@ const HISTORY_LIMIT = 20;
 // likely deflection than genuine safety; the verifier prompt's
 // bias-toward-holding is policy, this gate is enforcement.
 const COOLDOWN_MIN_WAIT_MS = 5 * 60 * 1000;
+
+// Phase 3d: state-occurrence array cap (event-driven counter for the 7-day
+// pattern threshold). Written here in runAsyncVerifier; consumed by the
+// memory loader's countRecentStates window query.
+const RECENT_STATE_OCCURRENCES_CAP = 50;
+
+// Phase 3d: profile updater cadence. Fires when total user-message count for
+// this user (across all conversations) hits a multiple of N.
+const PROFILE_UPDATE_EVERY_N_MESSAGES = 20;
 
 // ============================================================================
 // Canned crisis copy (EN only for v1; i18n lift later moves to locales/)
@@ -98,6 +109,12 @@ export async function POST(req: NextRequest) {
   // 3. Synchronous keyword scan (< 5 ms, no IO)
   const keywordMatch = scanForKeywords(message);
 
+  // 3b. Phase 3d — fire memory loader. Independent of conversation IO; runs
+  // in parallel and is awaited after the conversation lookup completes.
+  // Loader itself swallows errors and returns { hasMemory: false,
+  // formattedBlock: '' } on any failure, so awaiting it cannot throw.
+  const memoryPromise = loadUserMemoryContext(userId);
+
   // 4. Get-or-create the Conversation (owner-scoped, kind-scoped)
   let conversation;
   let conversationCreatedThisRequest = false;
@@ -114,6 +131,9 @@ export async function POST(req: NextRequest) {
     });
     conversationCreatedThisRequest = true;
   }
+
+  // Sync point for the parallel memory load.
+  const memory = await memoryPromise;
 
   // 5. Load last HISTORY_LIMIT messages (chronological).
   const recentReversed = await prisma.message.findMany({
@@ -134,6 +154,7 @@ export async function POST(req: NextRequest) {
 
   // ==========================================================================
   // BRANCH: Conversation is in crisis cooldown
+  // Memory NOT injected — cooldown delivers canned text only.
   // ==========================================================================
   if (conversation.inCrisisCooldown) {
     // Time-floor gate. If the triggering Sev 5 was within COOLDOWN_MIN_WAIT_MS,
@@ -233,6 +254,7 @@ export async function POST(req: NextRequest) {
 
   // ==========================================================================
   // BRANCH: Keyword scan fired Sev 4 or Sev 5 — SKIP MiniMind
+  // Memory NOT injected — canned crisis response only.
   // ==========================================================================
   if (keywordMatch.matched && keywordMatch.severity >= 4) {
     const userMessageRow = await prisma.message.create({
@@ -282,6 +304,7 @@ export async function POST(req: NextRequest) {
 
   // ==========================================================================
   // BRANCH: Normal MiniMind flow (no cooldown, no Sev 4/5 keyword hit)
+  // Memory IS injected here — the only path that calls Anthropic.
   // ==========================================================================
 
   const userMessageRow = await prisma.message.create({
@@ -317,6 +340,16 @@ export async function POST(req: NextRequest) {
     { role: 'user' as const, content: message },
   ];
 
+  // Phase 3d: append the user-context block to the system prompt when present.
+  // Gate is formattedBlock.length > 0 (not memory.hasMemory) per architect
+  // decision — the minimal new-user block (language + screening + "first
+  // meeting" signal) is genuinely useful context and worth surfacing on turn
+  // 1, not deferred until the first profile update at message 21.
+  const systemWithMemory =
+    memory.formattedBlock.length > 0
+      ? `${MINIMIND_PROMPT_V2_2}\n\n${memory.formattedBlock}`
+      : MINIMIND_PROMPT_V2_2;
+
   // Snapshot for the async verifier task. The closure-capture is deliberate —
   // see the runAsyncVerifier comment.
   const verifierInput: AsyncVerifierInput = {
@@ -348,7 +381,7 @@ export async function POST(req: NextRequest) {
         const anthropicStream = anthropic.messages.stream({
           model: MODEL,
           max_tokens: MAX_TOKENS,
-          system: MINIMIND_PROMPT_V2_1,
+          system: systemWithMemory,
           messages: claudeMessages,
         });
 
@@ -389,6 +422,11 @@ export async function POST(req: NextRequest) {
                 partial: streamFailed,
               },
             });
+            // Phase 3d: fire profile-update threshold check ONLY after the
+            // assistant message has been persisted. Fire-and-forget — must
+            // not block stream close. The check runs the count query and
+            // decides whether to trigger updateDiagnosticProfile.
+            void maybeFireProfileUpdate(userId);
           } catch (saveErr) {
             console.error(
               '[minimind/chat] failed to save assistant message:',
@@ -403,6 +441,69 @@ export async function POST(req: NextRequest) {
   });
 
   return makeStreamResponse(stream, conversation.id);
+}
+
+// ============================================================================
+// Phase 3d helpers
+// ============================================================================
+
+// Threshold check + fire-and-forget profile updater. Runs in the stream's
+// finally block AFTER the assistant message is saved so the count reflects
+// the just-completed turn. Wrapped in try/catch — failure must not affect
+// chat completion.
+async function maybeFireProfileUpdate(userId: string): Promise<void> {
+  try {
+    const totalUserMessages = await prisma.message.count({
+      where: { role: 'user', conversation: { userId } },
+    });
+    if (
+      totalUserMessages > 0 &&
+      totalUserMessages % PROFILE_UPDATE_EVERY_N_MESSAGES === 0
+    ) {
+      updateDiagnosticProfile(userId).catch((err) => {
+        console.error('[memory] profile update task failed:', err);
+      });
+    }
+  } catch (err) {
+    console.error('[memory] profile update threshold check failed', {
+      userId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+// Append one { state, detectedAt } entry to the user's
+// DiagnosticProfile.recentStateOccurrences JSON array. Upsert pattern:
+// creates the row if missing.
+//
+// Read-modify-write — concurrent calls for the same user race; last
+// writer wins on the JSON array. Acceptable v1: the race window is
+// ~20ms and worst case loses one entry from an array sized for cap-50.
+// The 7-day pattern threshold (3+ in 7 days) is resilient to occasional
+// dropped entries.
+async function appendStateOccurrence(
+  userId: string,
+  state: string,
+): Promise<void> {
+  const existing = await prisma.diagnosticProfile.findUnique({
+    where: { userId },
+    select: { recentStateOccurrences: true },
+  });
+  const prior: { state: string; detectedAt: string }[] = Array.isArray(
+    existing?.recentStateOccurrences,
+  )
+    ? (existing!.recentStateOccurrences as { state: string; detectedAt: string }[])
+    : [];
+  const appended = [
+    ...prior,
+    { state, detectedAt: new Date().toISOString() },
+  ].slice(-RECENT_STATE_OCCURRENCES_CAP);
+
+  await prisma.diagnosticProfile.upsert({
+    where: { userId },
+    create: { userId, recentStateOccurrences: appended },
+    update: { recentStateOccurrences: appended },
+  });
 }
 
 // ============================================================================
@@ -427,6 +528,23 @@ async function runAsyncVerifier(input: AsyncVerifierInput): Promise<void> {
   // tasks with their own snapshots.
 
   const result = await runVerifier(input.message, input.history, false);
+
+  // Phase 3d: write state occurrence if the verifier detected a tracked
+  // state. Event-driven counter for the 7-day pattern threshold; the batch
+  // updater does NOT touch this field (see updater.ts header). Wrapped in
+  // .catch — state-writer failure must not abort the safety-disagreement
+  // logging below.
+  if (result.detectedState !== 'none') {
+    await appendStateOccurrence(input.userId, result.detectedState).catch(
+      (err) => {
+        console.error('[memory] state occurrence write failed', {
+          userId: input.userId,
+          state: result.detectedState,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      },
+    );
+  }
 
   // Disagreement A: keyword fired but verifier says clear_safe.
   // Log as Sev 1 — "verifier-downgraded keyword hit" (false-positive signal).

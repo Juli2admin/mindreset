@@ -243,3 +243,96 @@ unable to distinguish "logger never called" from "logger called and
 silently failed" — `[safety] event log starting` + `[SAFETY LOG
 FAILED]` now resolve that permanently, but any new audit surface
 should adopt the same pattern.
+
+---
+
+## `User.preferredName` field missing — MiniMind cannot address users by name
+
+The `User` schema has `email`, `locale`, `themePref`, screening +
+consent timestamps, and tier-state fields, but no `preferredName` /
+`name` column. The Phase 3d memory loader
+(`lib/minimind/memory/loader.ts`) consequently hardcodes
+`Preferred name: not given` into every injected context block —
+MiniMind has no way to address the user by name even when one would
+be natural.
+
+**Before public launch:** add `preferredName String?` to the `User`
+model (or `displayName` — naming TBD) + capture flow on sign-up or
+first chat. Then update `loader.ts` to read `user.preferredName ??
+'not given'` in the two `Preferred name:` lines.
+
+The v2.1 prompt's MEMORY ACROSS SESSIONS section already references
+"preferred name" as a memory variable — it's expecting this data even
+though the schema hasn't supplied it.
+
+**Where it lives:** `prisma/schema.prisma` `User` model + the two
+hardcoded lines in `mindreset-app/lib/minimind/memory/loader.ts`
+(inside `emptyBlock` and the populated `block` template).
+
+---
+
+## `User.screeningResult` is never populated — screening → user backfill missing
+
+`/api/screening/route.ts` writes `ScreeningResponse` rows with
+`userId: null` (screening happens before sign-up in the current flow
+re-order). After sign-up, nothing links the user to their pre-signup
+screening response, and `User.screeningResult` / `User.screeningResultAt`
+are never set.
+
+Consequence for Phase 3d: the memory loader reads
+`User.screeningResult` and consistently gets `null` for every user,
+which renders as `Section 0 screening result: none` in MiniMind's
+context block. The screening result that MiniMind's v2.1 prompt
+expects (`GREEN`/`YELLOW`/`RED`) never arrives.
+
+The `mr_screening` cookie set by `/api/screening` holds the
+`ScreeningResponse.id` for the anonymous submission. The missing
+piece is a post-sign-up handler that:
+
+1. Reads the `mr_screening` cookie on first authenticated request.
+2. Locates the matching `ScreeningResponse` row.
+3. Sets its `userId` to the new user's id.
+4. Mirrors `result` + `createdAt` into `User.screeningResult` +
+   `User.screeningResultAt` for fast loader reads.
+
+Until that wiring lands, MiniMind treats every user as
+`screeningResult: none` regardless of their actual classification.
+
+**Before public launch:** wire the backfill (probably in the Clerk
+webhook handler at `app/api/webhooks/clerk/route.ts` or on first
+authenticated /minimind hit). The Clerk-to-database wiring from
+Phase 2 already exists; this is one extra step inside it.
+
+**Where the gap lives:** between `app/api/screening/route.ts`
+(writes anonymous ScreeningResponse) and `app/api/webhooks/clerk/`
+(creates User on sign-up). Nothing currently bridges them.
+
+---
+
+## Phase 3d spec inconsistency on `riskMarkers`
+
+The Phase 3d Claude Code instructions described `riskMarkers` as an
+"APPEND-with-eviction array (cap at last 30)", grouping it with
+`recentStateOccurrences` and `activeThemes`. But the existing
+`DiagnosticProfile.riskMarkers` schema is a weighted Map:
+
+```
+riskMarkers Json?  // { "isolation": 0.4, "dysregulation": 0.6, "rumination": 0.3 }
+```
+
+This is a **weighted profile of risk dimensions** (does the user show
+isolation? rumination? avoidance?), not an event log. The vocabulary
+is a fixed set (isolation, dysregulation, rumination, avoidance,
+somatization, overcontrol, despair) and each key gets a 0.0-1.0
+weight reflecting how present that pattern currently is. A cap-at-30
+is semantically meaningless on a Map of seven keys.
+
+**Decision (Phase 3d Piece 4):** keep the Map shape and treat
+`riskMarkers` as REPLACE on each updater run — Haiku outputs the full
+updated map, the merge writes it whole. The implementation in
+`lib/minimind/memory/updater.ts` matches the **schema**, not the
+spec wording.
+
+Future readers: if a reviewer asks "where's the riskMarkers
+append-with-eviction logic from the Phase 3d spec?" — there isn't
+one, by design. The spec was wrong about this field's shape.
