@@ -8,25 +8,35 @@ export const dynamic = 'force-dynamic';
 
 const SCREENING_COOKIE = 'mr_screening';
 
-export default async function SignUpPage() {
+export default async function SignUpPage({
+  searchParams,
+}: {
+  searchParams: { screening?: string };
+}) {
   // 1. Already-signed-in users go to /account, not back through sign-up.
   const { userId } = await auth();
   if (userId) {
     redirect('/account');
   }
 
-  // 2. No screening cookie → user hasn't completed screening yet.
-  const screeningCookie = cookies().get(SCREENING_COOKIE)?.value;
-  if (!screeningCookie) {
+  // 2. Resolve screeningId — URL param wins (supports cross-device flow:
+  // user screens on phone, signs up on laptop via shareable URL with
+  // ?screening=<id>), cookie is fallback for same-device. Both paths
+  // validate against the DB below — the screening must actually exist
+  // either way, so neither path can be used to bypass the screening gate.
+  const urlScreeningId = searchParams.screening?.trim() || null;
+  const screeningCookie = cookies().get(SCREENING_COOKIE)?.value ?? null;
+  const screeningId = urlScreeningId || screeningCookie;
+  if (!screeningId) {
     redirect('/screening');
   }
 
-  // 3. Validate the cookie value against the DB. A tampered or stale cookie
-  // shouldn't be enough to reach sign-up — the screening must actually exist.
-  // This is the legal/safety gate, not just hygiene.
+  // 3. Validate against the DB. A tampered or stale value shouldn't reach
+  // sign-up — the screening must actually exist. This is the legal/safety
+  // gate, not just hygiene.
   try {
     const row = await prisma.screeningResponse.findFirst({
-      where: { id: screeningCookie },
+      where: { id: screeningId },
       select: { id: true },
     });
     if (!row) {
@@ -41,5 +51,5 @@ export default async function SignUpPage() {
     redirect('/screening');
   }
 
-  return <SignUpClient />;
+  return <SignUpClient screeningId={screeningId} />;
 }

@@ -22,6 +22,11 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  // Preferred name for MiniMind to address the user. Populated by the Clerk
+  // webhook backfill from ScreeningResponse.preferredName at user.created
+  // time. Future enhancement: account-settings page lets user edit this.
+  preferredName     String?
+
   // Preferences (the lang+theme system from screening/landing)
   locale            String    @default("en")    // en | ru | uk | pl | de | es | fr
   themePref         String    @default("system") // day | night | system
@@ -56,6 +61,11 @@ model ScreeningResponse {
   user               User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String?
   createdAt          DateTime @default(now())
+
+  // Optional preferred name captured on the result screen via PATCH after
+  // the initial anonymous POST. Webhook backfills User.preferredName from
+  // this on user.created. Empty input stored as null.
+  preferredName      String?
 
   // Raw answers (stored as JSON so we can re-classify if rules change)
   exclusionFlags      Json    // { "0": true, "4": true, ... }

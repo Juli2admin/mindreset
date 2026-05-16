@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 import Footer from '@/components/Footer';
-import Link from 'next/link';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
@@ -227,6 +226,9 @@ const COPY = {
       'You can pause, slow down, or stop at any moment',
     ],
     greenCta: 'Continue → Create your account',
+    preferredNameLabel: 'What should we call you?',
+    preferredNameHint:
+      "How you'd like MiniMind to address you. You can leave blank.",
     sessionRef: 'Reference',
   },
   ru: {
@@ -351,6 +353,9 @@ const COPY = {
       'Можно остановиться, замедлиться или прекратить в любой момент',
     ],
     greenCta: 'Продолжить — создать аккаунт',
+    preferredNameLabel: 'Как нам к вам обращаться?',
+    preferredNameHint:
+      'Как MiniMind будет к вам обращаться. Можно оставить пустым.',
     sessionRef: 'Идентификатор',
   },
 };
@@ -810,7 +815,9 @@ function ConsentScreen({ lang, setLang, step, total, onBack, onNext, value, setV
   );
 }
 
-function ResultScreen({ lang, setLang, result, onStartOver, sessionId }) {
+function ResultScreen({ lang, setLang, result, onStartOver, sessionId, serverScreeningId }) {
+  const [preferredName, setPreferredName] = useState('');
+  const [navigating, setNavigating] = useState(false);
   const { c } = useTheme();
   const t = COPY[lang];
 
@@ -909,9 +916,74 @@ function ResultScreen({ lang, setLang, result, onStartOver, sessionId }) {
         ))}
       </div>
 
-      <Link
-        href="/sign-up"
-        className="inline-flex items-center justify-center w-full sm:w-auto h-14 px-10 rounded-full text-[15px] tracking-wide transition-all"
+      {/* Preferred name — optional. Visually de-emphasized vs the CTA below.
+          Captured here, written to ScreeningResponse via PATCH on CTA click,
+          then backfilled into User.preferredName by the Clerk webhook after
+          sign-up completes. */}
+      <div className="mb-6">
+        <label
+          htmlFor="preferred-name-input"
+          className="block text-[13px] mb-2"
+          style={{ ...sansStyle, color: c.textMuted, fontWeight: 400 }}
+        >
+          {t.preferredNameLabel}
+        </label>
+        <input
+          id="preferred-name-input"
+          type="text"
+          maxLength={50}
+          autoComplete="given-name"
+          value={preferredName}
+          onChange={(e) => setPreferredName(e.target.value)}
+          disabled={navigating}
+          className="w-full h-11 px-4 rounded-lg text-[15px] outline-none transition-colors"
+          style={{
+            ...sansStyle,
+            border: `1px solid ${c.border}`,
+            background: c.bg,
+            color: c.text,
+          }}
+        />
+        <p
+          className="mt-2 text-[12px] leading-[1.5]"
+          style={{ ...sansStyle, color: c.textHint, fontStyle: 'italic' }}
+        >
+          {t.preferredNameHint}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        disabled={navigating}
+        onClick={async () => {
+          if (navigating) return;
+          setNavigating(true);
+          const trimmed = preferredName.trim();
+          // PATCH preferredName if entered AND we have a screeningId from the
+          // POST response. Best-effort: network blip / 4xx / 5xx just lets
+          // the user continue without a name (memory loader falls back to
+          // "not given"). The graceful-degradation contract: user-facing
+          // flow never blocks on this.
+          if (trimmed.length > 0 && serverScreeningId) {
+            try {
+              await fetch('/api/screening', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  screeningId: serverScreeningId,
+                  preferredName: trimmed,
+                }),
+              });
+            } catch {
+              // Non-fatal — preferredName capture is best-effort.
+            }
+          }
+          const url = serverScreeningId
+            ? `/sign-up?screening=${encodeURIComponent(serverScreeningId)}`
+            : '/sign-up';
+          window.location.href = url;
+        }}
+        className="inline-flex items-center justify-center w-full sm:w-auto h-14 px-10 rounded-full text-[15px] tracking-wide transition-all disabled:opacity-60"
         style={{
           ...sansStyle,
           fontWeight: 500,
@@ -920,7 +992,7 @@ function ResultScreen({ lang, setLang, result, onStartOver, sessionId }) {
         }}
       >
         {ctaLabel}
-      </Link>
+      </button>
 
       <div className="mt-12 pt-6 flex items-center justify-between" style={{ borderTop: `1px solid ${c.border}` }}>
         <span className="text-[11px] tabular-nums" style={{ ...sansStyle, color: c.textHint }}>
@@ -962,6 +1034,7 @@ export default function ScreeningFlow() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [serverResult, setServerResult] = useState(null);
+  const [serverScreeningId, setServerScreeningId] = useState(null);
   const [refireKey, setRefireKey] = useState(0);
 
   useEffect(() => {
@@ -1017,6 +1090,7 @@ export default function ScreeningFlow() {
         const data = await res.json();
         if (cancelled) return;
         setServerResult(data.result);
+        setServerScreeningId(data.screeningId || null);
         setSubmitting(false);
       })
       .catch(() => {
@@ -1039,6 +1113,7 @@ export default function ScreeningFlow() {
     setSubmitting(false);
     setSubmitError(false);
     setServerResult(null);
+    setServerScreeningId(null);
   };
 
   const t = COPY[lang];
@@ -1145,7 +1220,7 @@ export default function ScreeningFlow() {
         </>
       );
     } else {
-      screen = <ResultScreen lang={lang} setLang={setLang} result={serverResult} onStartOver={reset} sessionId={sessionId} />;
+      screen = <ResultScreen lang={lang} setLang={setLang} result={serverResult} onStartOver={reset} sessionId={sessionId} serverScreeningId={serverScreeningId} />;
     }
   }
 

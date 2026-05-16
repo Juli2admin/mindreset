@@ -55,7 +55,7 @@ function Checkbox({
   );
 }
 
-export default function SignUpClient() {
+export default function SignUpClient({ screeningId }: { screeningId: string }) {
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
@@ -105,6 +105,7 @@ export default function SignUpClient() {
 
         {ready ? (
           <SignUp
+            unsafeMetadata={{ screeningId }}
             appearance={{
               variables: {
                 colorPrimary: PALETTE.accent,
