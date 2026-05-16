@@ -336,3 +336,39 @@ spec wording.
 Future readers: if a reviewer asks "where's the riskMarkers
 append-with-eviction logic from the Phase 3d spec?" — there isn't
 one, by design. The spec was wrong about this field's shape.
+
+---
+
+## v2.3 Type-to-practice categories ahead of the named-practice catalog
+
+The v2.3 prompt's `Type-to-practice matching` subsection in
+`YOUR PRACTICE TOOLKIT` (introduced in Phase 3e Commit 1, file
+`mindreset-app/lib/minimind/prompt.ts` + the canonical .md doc)
+references technique **categories** rather than the named practices
+in the existing `Example practices` subsection:
+
+- `contact points` (chair, floor, hands) — for Freeze / Shutdown
+- `small movement` (toes, fingers) — for Freeze / Shutdown
+- `warm-object practice` — for Freeze / Shutdown (distinct from the
+  existing Warm Point, which is hand-on-self)
+- `gentle weight awareness` — for Freeze / Shutdown
+- `concrete body bridge questions` — for Over-analytical / Cognitive
+- `somatic containment` (hands over chest) — for Emotional Overflow
+  (overlaps Warm Point conceptually but framed differently)
+- `symbolic containment` — for Visual / Imaginative
+- `warmth as light` — for Visual / Imaginative
+- `safe-place imagery` — for Visual / Imaginative
+- `image-of-feeling` — for Visual / Imaginative
+
+The categories are descriptive and read naturally in-context, and the
+single named reference (`5-4-3-2-1`) does map cleanly to the existing
+`Grounding 5-4-3-2-1` entry. So this works for v2.3 — but when v3.0
+moves practices to a structured catalog (each practice as a row with
+type-mapping, duration, sequence steps, contraindications), these
+categories need to be populated as concrete named practices in the
+catalog and the Type-to-practice subsection rewritten to reference
+those names directly.
+
+**Where it lives:** `### Type-to-practice matching (quick reference)`
+inside `## YOUR PRACTICE TOOLKIT` in both
+`lib/minimind/prompt.ts` and the canonical doc.
