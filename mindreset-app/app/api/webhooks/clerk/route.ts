@@ -12,6 +12,7 @@ type ClerkUserData = {
   primary_email_address_id: string | null;
   first_name: string | null;
   last_name: string | null;
+  unsafe_metadata?: Record<string, unknown>;
 };
 
 type ClerkEvent =
@@ -59,14 +60,71 @@ export async function POST(request: NextRequest) {
 
   try {
     switch (event.type) {
-      case 'user.created':
-      case 'user.updated': {
+      case 'user.created': {
         const data = event.data as ClerkUserData;
         const email = primaryEmail(data);
         if (!email) {
-          console.error('[clerk-webhook] no email on user', { id: data.id, type: event.type });
+          console.error('[clerk-webhook] no email on user', { id: data.id, type: 'user.created' });
           return NextResponse.json({ ok: true, action: 'skipped:no-email' });
         }
+
+        // Carry-forward fix — look up screening backfill data BEFORE
+        // creating the User row so the upsert can include it atomically.
+        // The screeningId in unsafe_metadata is user-controllable (Clerk
+        // accepts any value the client passes), so we MUST validate it
+        // against the DB before trusting it. Invalid → fields stay null
+        // and MiniMind degrades gracefully (memory loader falls back to
+        // "not given" and screeningResult: none).
+        let backfill: {
+          preferredName: string | null;
+          screeningResult: string;
+          screeningResultAt: Date;
+        } | null = null;
+
+        const claimedScreeningId =
+          typeof data.unsafe_metadata?.screeningId === 'string'
+            ? data.unsafe_metadata.screeningId
+            : null;
+
+        if (claimedScreeningId) {
+          try {
+            const screening = await prisma.screeningResponse.findUnique({
+              where: { id: claimedScreeningId },
+              select: {
+                id: true,
+                result: true,
+                preferredName: true,
+                createdAt: true,
+              },
+            });
+            if (screening) {
+              backfill = {
+                preferredName: screening.preferredName,
+                screeningResult: screening.result,
+                screeningResultAt: screening.createdAt,
+              };
+              console.log('[clerk-webhook] backfilled from screening', {
+                userId: data.id,
+                screeningId: screening.id,
+                hadPreferredName: !!screening.preferredName,
+                screeningResult: screening.result,
+              });
+            } else {
+              console.warn('[clerk-webhook] invalid screening id in metadata', {
+                userId: data.id,
+                claimedScreeningId,
+              });
+            }
+          } catch (err) {
+            console.error('[clerk-webhook] screening lookup failed', err);
+            // Continue without backfill; graceful degradation.
+          }
+        } else {
+          console.log('[clerk-webhook] no screening id in metadata', {
+            userId: data.id,
+          });
+        }
+
         await prisma.user.upsert({
           where: { id: data.id },
           create: {
@@ -78,10 +136,40 @@ export async function POST(request: NextRequest) {
             // on /sign-up; by the time this webhook fires the user has ticked both.
             tcAcceptedAt: new Date(),
             privacyAcceptedAt: new Date(),
+            preferredName: backfill?.preferredName ?? null,
+            screeningResult: backfill?.screeningResult ?? null,
+            screeningResultAt: backfill?.screeningResultAt ?? null,
+          },
+          // Idempotency: rare Clerk retries of user.created hit the update
+          // branch. Only sync email here — preserving the first pass's
+          // backfill (which would otherwise get clobbered to null on retry).
+          update: { email },
+        });
+        return NextResponse.json({ ok: true, action: 'user.created' });
+      }
+      case 'user.updated': {
+        // Backfill does NOT run on user.updated. Future preferredName edits
+        // belong to the account-settings page, not this webhook. Only email
+        // mirrors are kept in sync here.
+        const data = event.data as ClerkUserData;
+        const email = primaryEmail(data);
+        if (!email) {
+          console.error('[clerk-webhook] no email on user', { id: data.id, type: 'user.updated' });
+          return NextResponse.json({ ok: true, action: 'skipped:no-email' });
+        }
+        await prisma.user.upsert({
+          where: { id: data.id },
+          create: {
+            id: data.id,
+            email,
+            locale: 'en',
+            themePref: 'system',
+            tcAcceptedAt: new Date(),
+            privacyAcceptedAt: new Date(),
           },
           update: { email },
         });
-        return NextResponse.json({ ok: true, action: event.type });
+        return NextResponse.json({ ok: true, action: 'user.updated' });
       }
       case 'user.deleted': {
         const data = event.data as { id: string };

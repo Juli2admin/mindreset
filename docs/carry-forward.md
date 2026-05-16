@@ -248,6 +248,17 @@ should adopt the same pattern.
 
 ## `User.preferredName` field missing — MiniMind cannot address users by name
 
+**RESOLVED** (commit `649ac02`, carry-forward fix branch).
+- `User.preferredName` column added (nullable).
+- Captured at screening result screen via `PATCH /api/screening`.
+- Backfilled into `User.preferredName` by the Clerk webhook on
+  `user.created` from `unsafe_metadata.screeningId` → `ScreeningResponse`
+  lookup.
+- Memory loader reads `user.preferredName?.trim() || 'not given'`.
+- Remaining limitation: existing users who signed up before this fix
+  do not have `preferredName` populated. See new
+  "Pre-fix users one-off backfill" entry below.
+
 The `User` schema has `email`, `locale`, `themePref`, screening +
 consent timestamps, and tier-state fields, but no `preferredName` /
 `name` column. The Phase 3d memory loader
@@ -272,6 +283,23 @@ hardcoded lines in `mindreset-app/lib/minimind/memory/loader.ts`
 ---
 
 ## `User.screeningResult` is never populated — screening → user backfill missing
+
+**RESOLVED** (commit `649ac02`, carry-forward fix branch).
+- Clerk webhook on `user.created` reads `data.unsafe_metadata.screeningId`,
+  validates against DB, backfills `User.screeningResult` (lowercase
+  `'green'|'yellow'|'red'`) + `User.screeningResultAt` (= screening
+  `createdAt`) from the matched `ScreeningResponse`.
+- Linkage mechanism: Clerk `unsafeMetadata` set by the `<SignUp>` client
+  component, fed from the screening result page (URL param wins,
+  cookie fallback for same-device). Cross-device flow handled via the
+  `?screening=<id>` URL query param on `/sign-up`.
+- Remaining limitation: existing users who signed up before this fix
+  do not have `screeningResult` populated. See new "Pre-fix users
+  one-off backfill" entry below.
+- Note: the original carry-forward entry below proposed an email-match
+  mechanism. The actual implementation uses `unsafeMetadata.screeningId`
+  instead — preserves anonymous screening (no email captured pre-signup)
+  and supports cross-device flow natively.
 
 `/api/screening/route.ts` writes `ScreeningResponse` rows with
 `userId: null` (screening happens before sign-up in the current flow
@@ -372,3 +400,41 @@ those names directly.
 **Where it lives:** `### Type-to-practice matching (quick reference)`
 inside `## YOUR PRACTICE TOOLKIT` in both
 `lib/minimind/prompt.ts` and the canonical doc.
+
+---
+
+## Pre-fix users one-off backfill (before public launch)
+
+The Clerk-webhook backfill of `User.preferredName` + `User.screeningResult`
++ `User.screeningResultAt` from `ScreeningResponse` only runs on the
+`user.created` event going forward (carry-forward fix branch, commit
+`649ac02`). Users who signed up before that wiring landed have null
+values for these three User columns.
+
+**Before public launch:** run a one-off DB script that, for each User row
+with `screeningResult IS NULL`, finds the most-temporally-proximate
+`ScreeningResponse` with `userId IS NULL` (within ~10 minutes of the
+User row's `createdAt`) and backfills the three columns. Empty
+`preferredName` is fine — that renders as "not given" in MiniMind's
+context block.
+
+**Why this is a manual one-off:** automating the match without an email
+field on `ScreeningResponse` is fragile. A human reviewer matching by
+createdAt proximity (within ~10 minutes) catches the right
+`ScreeningResponse` in nearly every case; edge cases get null fields
+and degrade gracefully.
+
+**Future enhancement** (post-launch): account-settings page lets each
+user set/edit their `preferredName`. Covers any pre-launch signed-up
+users who slipped through the one-off backfill, and lets users change
+their mind later. The Clerk webhook never overwrites `preferredName`
+on `user.updated` (only on `user.created`), so account-settings is
+the canonical source going forward.
+
+**Where the fix lives:**
+- `app/api/webhooks/clerk/route.ts` — `user.created` handler
+- `lib/minimind/memory/loader.ts` — `loadUserMemoryContext`
+- `components/Screening.jsx` — `ResultScreen` (preferredName capture)
+- `app/api/screening/route.ts` — `PATCH` handler
+- `app/sign-up/[[...sign-up]]/page.tsx` — `?screening=<id>` searchParam
+- `app/sign-up/[[...sign-up]]/SignUpClient.tsx` — `unsafeMetadata` prop

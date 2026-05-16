@@ -20,6 +20,13 @@
 // new users still get their language + screening surfaced to MiniMind on
 // turn 1 — the empty-block variant below carries genuinely useful context
 // even without a DiagnosticProfile row.
+//
+// FIELDS READ FROM USER: locale (always present), screeningResult and
+// preferredName (both populated by the Clerk webhook backfill on
+// user.created from ScreeningResponse — see
+// app/api/webhooks/clerk/route.ts and the carry-forward fix branch).
+// preferredName falls back to "not given" when null, empty, or
+// whitespace-only.
 
 import prisma from '@/lib/prisma';
 
@@ -108,11 +115,15 @@ function formatNotes(notes: string | null | undefined): string {
   );
 }
 
-function emptyBlock(locale: string, screeningResult: string | null): string {
+function emptyBlock(
+  locale: string,
+  screeningResult: string | null,
+  preferredName: string | null,
+): string {
   return `---
 USER CONTEXT FOR THIS SESSION
 
-Preferred name: not given
+Preferred name: ${preferredName?.trim() || 'not given'}
 Preferred language: ${formatLocale(locale)}
 Section 0 screening result: ${formatScreeningResult(screeningResult)}
 
@@ -126,7 +137,7 @@ export async function loadUserMemoryContext(
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { locale: true, screeningResult: true },
+      select: { locale: true, screeningResult: true, preferredName: true },
     });
     if (!user) {
       // Auth gate would normally prevent this. Fail-safe to empty.
@@ -140,7 +151,11 @@ export async function loadUserMemoryContext(
     if (!profile) {
       return {
         hasMemory: false,
-        formattedBlock: emptyBlock(user.locale, user.screeningResult),
+        formattedBlock: emptyBlock(
+          user.locale,
+          user.screeningResult,
+          user.preferredName,
+        ),
       };
     }
 
@@ -149,7 +164,7 @@ export async function loadUserMemoryContext(
     const block = `---
 USER CONTEXT FOR THIS SESSION
 
-Preferred name: not given
+Preferred name: ${user.preferredName?.trim() || 'not given'}
 Preferred language: ${formatLocale(user.locale)}
 Section 0 screening result: ${formatScreeningResult(user.screeningResult)}
 
