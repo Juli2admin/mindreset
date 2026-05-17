@@ -14,6 +14,11 @@ export const routing = defineRouting({
   // 'as-needed' means English serves at BOTH / and /en/; other locales
   // are always URL-prefixed (/ru/screening, /fr/account, etc.).
   localePrefix: 'as-needed',
+  // Use our mr_* cookie namespace so Phase 0's Footer picker (which sets
+  // mr_locale) and next-intl's middleware read/write the same cookie.
+  // Without this, next-intl defaults to NEXT_LOCALE, creating a dual-
+  // cookie regression of Phase 0's single-source-of-truth design.
+  localeCookie: { name: 'mr_locale' },
 });
 
 export type Locale = (typeof routing.locales)[number];
