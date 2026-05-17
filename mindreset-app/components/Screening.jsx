@@ -558,7 +558,10 @@ function Header({ lang, setLang, step, total, brand, showProgress }) {
         )}
       </div>
       <div className="flex items-center gap-2">
-        <LangSwitch lang={lang} setLang={setLang} />
+        {/* Legacy LangSwitch removed — the Footer language picker is the
+            sole language control. Function definition (lines 434–528) and
+            LANGUAGES const are kept as dead code; Phase i18n.2 string-
+            extraction removes them along with the lang/setLang state. */}
         <ThemeToggle />
       </div>
     </header>
