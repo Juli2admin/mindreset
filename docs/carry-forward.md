@@ -577,3 +577,44 @@ added zero new T&C surfaces). The behaviour is pre-existing on main.
 **Where to start:** `app/layout.tsx` disclaimer-gate logic + the
 existing entries above for screening consent items + `/sign-up`
 T&C+Privacy checkbox flow.
+
+---
+
+## i18n.0 — Phase 0 verification (17 May 2026)
+
+**Status: foundation verified working.**
+
+The Footer PoC (branch `claude/i18n-0-footer-poc`) wired `next-intl@4.12`
+into a single component (Footer) with EN+RU placeholder translations.
+After deploying a temporary `[DIAG-PICKER]` diagnostic to investigate
+an initial "cookie not writing" report, Julia confirmed end-to-end on
+Preview:
+
+- `mr_locale` cookie write works (value `ru` present in
+  `Application → Cookies` with `Path=/`, `Expires 2027`, `SameSite=Lax`,
+  `Secure ✓` on the Preview origin)
+- Footer renders translated strings server-side after reload
+- `useLocale()` returns the correct value
+- Early-return guard fires correctly when the picker's current locale
+  equals the click target
+
+**Root cause of the original "cookie not writing" report**: observer
+error. The first test click hit `components/Screening.jsx`'s **internal
+EN/RU toggle** (legacy COPY-block toggle in the Screening header, around
+line 280) — not the new Footer language picker. That toggle flipped
+Screening's local `lang` state to `'ru'` (its own COPY block) without
+writing any cookie or affecting the shared Footer. The diagnostic
+removed the ambiguity by displaying `currentLocale` and the cookie-write
+result inline; the next click hit the Footer picker correctly and the
+cookie wrote as designed.
+
+**Action item for Phase i18n.1 or Phase i18n.2**: remove
+`components/Screening.jsx`'s internal EN/RU toggle now that there's a
+global Footer picker. Two coexisting language toggles on the same page
+is the failure mode that produced this debugging round, and the Screening
+toggle is legacy COPY-block plumbing that Phase 2 string extraction will
+delete anyway. Removing it sooner (in Phase i18n.1) eliminates the
+ambiguity for any subsequent Phase 0/1 testing.
+
+**Phase 0 is ready to merge to main** after this carry-forward entry
++ revert of the `[DIAG-PICKER]` diagnostic land on the branch.
