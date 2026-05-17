@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
-import Footer from '@/components/Footer';
+// Footer comes in as a server-rendered slot via the `footerSlot` prop —
+// see app/screening/page.tsx. Phase i18n.0 server-component-with-client-
+// slot pattern.
 import Link from 'next/link';
 
 // ============================================================================
@@ -953,7 +955,7 @@ const initialAnswers = () => ({
   consent: {},
 });
 
-export default function ScreeningFlow() {
+export default function ScreeningFlow({ footerSlot }) {
   const [lang, setLang] = useState('en');
   const [theme, setTheme] = useState('day');
   const [step, setStep] = useState(-1);
@@ -1157,7 +1159,7 @@ export default function ScreeningFlow() {
       >
         <div className="max-w-2xl mx-auto px-6 py-12 sm:py-20">
           {screen}
-          <Footer theme={theme} />
+          {footerSlot}
         </div>
       </div>
     </ThemeContext.Provider>

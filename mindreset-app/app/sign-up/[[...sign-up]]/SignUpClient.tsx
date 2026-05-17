@@ -4,7 +4,9 @@ import { useState, type ReactNode } from 'react';
 import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
-import Footer from '@/components/Footer';
+// Footer arrives as a server-rendered slot via `footerSlot` — see
+// app/sign-up/[[...sign-up]]/page.tsx. Phase i18n.0
+// server-component-with-client-slot pattern.
 
 const PALETTE = FULL_PALETTE.day;
 
@@ -55,7 +57,11 @@ function Checkbox({
   );
 }
 
-export default function SignUpClient() {
+type SignUpClientProps = {
+  footerSlot: ReactNode;
+};
+
+export default function SignUpClient({ footerSlot }: SignUpClientProps) {
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
@@ -137,7 +143,7 @@ export default function SignUpClient() {
           </p>
         )}
 
-        <Footer />
+        {footerSlot}
       </div>
     </main>
   );

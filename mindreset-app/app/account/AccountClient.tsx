@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
-import Footer from '@/components/Footer';
+// Footer arrives as a server-rendered slot via `footerSlot` — see
+// app/account/page.tsx. Phase i18n.0 server-component-with-client-slot
+// pattern.
 
 const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
@@ -94,9 +96,10 @@ const COPY: Record<Lang, CopyShape> = {
 type Props = {
   firstName: string | null;
   cookieToClear: boolean;
+  footerSlot: ReactNode;
 };
 
-export default function AccountClient({ firstName, cookieToClear }: Props) {
+export default function AccountClient({ firstName, cookieToClear, footerSlot }: Props) {
   // Lang fixed to 'en' pending i18n-lift; see header for context.
   const [lang] = useState<Lang>('en');
   const t = COPY[lang];
@@ -249,7 +252,7 @@ export default function AccountClient({ firstName, cookieToClear }: Props) {
             );
           })}
         </div>
-        <Footer />
+        {footerSlot}
       </div>
     </main>
   );

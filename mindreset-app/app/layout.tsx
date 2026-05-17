@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { ClerkProvider } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import prisma from '@/lib/prisma';
 import DisclaimerGate from '@/components/DisclaimerGate';
 
@@ -49,9 +51,16 @@ export default async function RootLayout({
   const initialShow = !isExcludedPath && !hasCookie && !acknowledgedInDB;
   const needsCookieBackfill = !isExcludedPath && !hasCookie && acknowledgedInDB;
 
+  // i18n: resolve locale (cookie-based in Phase 0; routing arrives in Phase 1)
+  // and load the matching message bundle. Server components reach
+  // translations via `getTranslations(...)`; client components reach them
+  // via `useTranslations(...)` against the provider below.
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang={locale}>
         <head>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
@@ -60,13 +69,15 @@ export default async function RootLayout({
           />
         </head>
         <body>
-          {children}
-          {!isExcludedPath && (
-            <DisclaimerGate
-              initialShow={initialShow}
-              needsCookieBackfill={needsCookieBackfill}
-            />
-          )}
+          <NextIntlClientProvider messages={messages}>
+            {children}
+            {!isExcludedPath && (
+              <DisclaimerGate
+                initialShow={initialShow}
+                needsCookieBackfill={needsCookieBackfill}
+              />
+            )}
+          </NextIntlClientProvider>
         </body>
       </html>
     </ClerkProvider>
