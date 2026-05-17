@@ -246,66 +246,118 @@ should adopt the same pattern.
 
 ---
 
-## `User.preferredName` field missing — MiniMind cannot address users by name
+## `User.preferredName` field — feature dropped after Preview testing
 
-The `User` schema has `email`, `locale`, `themePref`, screening +
-consent timestamps, and tier-state fields, but no `preferredName` /
-`name` column. The Phase 3d memory loader
-(`lib/minimind/memory/loader.ts`) consequently hardcodes
-`Preferred name: not given` into every injected context block —
-MiniMind has no way to address the user by name even when one would
-be natural.
+**Status: dropped.** MiniMind will learn the user's name naturally in
+conversation. Preview testing showed this works better than backfilling
+from a sign-up-time captured value, which carried duplicate-collection
+UX cost and turned out to be technically fragile (see below).
 
-**Before public launch:** add `preferredName String?` to the `User`
-model (or `displayName` — naming TBD) + capture flow on sign-up or
-first chat. Then update `loader.ts` to read `user.preferredName ??
-'not given'` in the two `Preferred name:` lines.
+### What was tried
 
-The v2.1 prompt's MEMORY ACROSS SESSIONS section already references
-"preferred name" as a memory variable — it's expecting this data even
-though the schema hasn't supplied it.
+The `claude/carry-forward-user-fields` branch (May 2026, abandoned —
+preserved at tag `archive/preferred-name-backfill-2026-05-17`) attempted:
 
-**Where it lives:** `prisma/schema.prisma` `User` model + the two
-hardcoded lines in `mindreset-app/lib/minimind/memory/loader.ts`
-(inside `emptyBlock` and the populated `block` template).
+- New nullable column `User.preferredName` (TEXT) + new nullable column
+  `ScreeningResponse.preferredName` (TEXT) — migration
+  `20260516140000_user_screening_preferred_name.sql`, applied to
+  production DB.
+- Capture: optional "What should we call you?" input on the screening
+  result screen (`ResultScreen` in `components/Screening.jsx`), PATCH
+  to `/api/screening` to store on the unclaimed `ScreeningResponse`.
+- Linkage: client passes `ScreeningResponse.id` via Clerk's
+  `<SignUp unsafeMetadata={{ screeningId }} />` prop. URL-param-wins,
+  cookie-fallback. Clerk webhook reads `data.unsafe_metadata.screeningId`
+  on `user.created`, validates against DB, backfills the User row.
+- Memory loader reads `user.preferredName?.trim() || 'not given'`.
+
+End-to-end the implementation type-checked, built, and passed every
+layer of code review and most Preview tests — except the Clerk
+`unsafeMetadata` prop on the prebuilt `<SignUp>` component never landed
+on the Clerk user object for fresh sign-ups. Documented as a prop in
+`@clerk/types@4.26.0` and supported per Clerk docs; historical clerk-js
+bugs in this area exist (PR #5161 fix in 5.53.0, PR #7647 fix in
+5.121.1) but root cause for our specific case was not isolated. The
+decision to drop the feature avoided further investigation cost on a
+mechanism the product no longer wanted.
+
+### Why MiniMind learning the name in conversation is better
+
+- One less form-field at sign-up — reduces friction at conversion-
+  critical moment.
+- Honest UX: the moment the name matters is the first conversation, not
+  the form. Asking inside the conversation makes the use of it visible.
+- No reliance on Clerk SDK internal metadata propagation.
+
+### What this means for the prompt
+
+The v2.3 prompt's MEMORY ACROSS SESSIONS section already renders
+`Preferred name: not given` for users without a stored name. MiniMind
+can introduce herself, ask the user's name when it feels natural, and
+remember it through the existing `DiagnosticProfile.engineNotes`
+narrative field (or a future dedicated mechanism, post-launch).
+
+**Where the orphan DB columns live now:** see the
+"Orphan DB columns from abandoned preferredName work" entry below.
+The columns remain in production (nullable, harmless) for potential
+future use.
 
 ---
 
-## `User.screeningResult` is never populated — screening → user backfill missing
+## `User.screeningResult` is never populated — screening → user backfill missing (launch-blocker)
 
-`/api/screening/route.ts` writes `ScreeningResponse` rows with
-`userId: null` (screening happens before sign-up in the current flow
-re-order). After sign-up, nothing links the user to their pre-signup
-screening response, and `User.screeningResult` / `User.screeningResultAt`
-are never set.
+**Status: still a launch-blocker for screening-aware care.** MiniMind
+needs the user's screening result (GREEN / YELLOW / RED) to adapt
+care level — YELLOW users get slower pacing and more frequent state
+checks per the v2.3 prompt's SCREENING SIGNAL section. With this
+field null, every user is treated as `screeningResult: none`.
 
-Consequence for Phase 3d: the memory loader reads
-`User.screeningResult` and consistently gets `null` for every user,
-which renders as `Section 0 screening result: none` in MiniMind's
-context block. The screening result that MiniMind's v2.1 prompt
-expects (`GREEN`/`YELLOW`/`RED`) never arrives.
+### What was tried
 
-The `mr_screening` cookie set by `/api/screening` holds the
-`ScreeningResponse.id` for the anonymous submission. The missing
-piece is a post-sign-up handler that:
+Same abandoned branch as the preferredName work
+(`claude/carry-forward-user-fields`, preserved at tag
+`archive/preferred-name-backfill-2026-05-17`) attempted Path B1 —
+linkage via Clerk's `<SignUp unsafeMetadata={{ screeningId }} />`,
+webhook reading `data.unsafe_metadata.screeningId`, backfilling
+`User.screeningResult` + `User.screeningResultAt` from the matched
+`ScreeningResponse`.
 
-1. Reads the `mr_screening` cookie on first authenticated request.
-2. Locates the matching `ScreeningResponse` row.
-3. Sets its `userId` to the new user's id.
-4. Mirrors `result` + `createdAt` into `User.screeningResult` +
-   `User.screeningResultAt` for fast loader reads.
+Same Clerk-SDK-metadata-propagation issue blocked it: the metadata
+never landed on Clerk's user object in our test runs, so the webhook
+saw no `screeningId` to look up. The Path B1 mechanism is **no longer
+being pursued**.
 
-Until that wiring lands, MiniMind treats every user as
-`screeningResult: none` regardless of their actual classification.
+### Future approach (to evaluate in a later phase)
 
-**Before public launch:** wire the backfill (probably in the Clerk
-webhook handler at `app/api/webhooks/clerk/route.ts` or on first
-authenticated /minimind hit). The Clerk-to-database wiring from
-Phase 2 already exists; this is one extra step inside it.
+The simpler alternative is **cookie-based post-signup link**: a
+client-side `useEffect` in a post-Clerk-callback handler that:
 
-**Where the gap lives:** between `app/api/screening/route.ts`
-(writes anonymous ScreeningResponse) and `app/api/webhooks/clerk/`
-(creates User on sign-up). Nothing currently bridges them.
+1. Detects we just completed sign-up (e.g. by checking
+   `useUser().isSignedIn` transitioning to true on the landing page,
+   or by routing through a `/sign-up/complete` checkpoint).
+2. Reads the `mr_screening` cookie (still present at this point;
+   `httpOnly: false` per `/api/screening`).
+3. POSTs `{ screeningId }` to a new authenticated `/api/user/link-screening`
+   endpoint.
+4. Server route validates the user owns the request (Clerk auth) +
+   validates the screening exists + `userId IS NULL`, then atomically
+   sets `ScreeningResponse.userId = user.id` and copies
+   `result` + `createdAt` into `User.screeningResult` +
+   `User.screeningResultAt`.
+
+Properties: doesn't depend on Clerk SDK metadata propagation. Cookie
+is set on the screening submission and persists across the
+sign-up flow on same-device. Cross-device flow degrades gracefully —
+no cookie, no link, `screeningResult` stays null, MiniMind treats as
+`none`. Acceptable for v1; cross-device can be addressed post-launch
+via a "did you already screen?" account-settings flow.
+
+### Where the gap lives
+
+Between `app/api/screening/route.ts` (writes anonymous
+`ScreeningResponse` and sets the `mr_screening` cookie) and
+`app/api/webhooks/clerk/` (creates User on sign-up). Nothing currently
+bridges them.
 
 ---
 
@@ -372,3 +424,156 @@ those names directly.
 **Where it lives:** `### Type-to-practice matching (quick reference)`
 inside `## YOUR PRACTICE TOOLKIT` in both
 `lib/minimind/prompt.ts` and the canonical doc.
+
+---
+
+## Orphan DB columns from abandoned preferredName work
+
+Two nullable TEXT columns exist in the production database that no code
+on main references:
+
+- `"User"."preferredName"` TEXT NULL (no default)
+- `"ScreeningResponse"."preferredName"` TEXT NULL (no default)
+
+Added by migration
+`20260516140000_user_screening_preferred_name.sql` (no longer in
+the repo — only existed on the abandoned branch
+`claude/carry-forward-user-fields`, preserved at tag
+`archive/preferred-name-backfill-2026-05-17`). The migration was run
+manually in Supabase before the branch was abandoned, so the columns
+remain.
+
+**Decision: leave in place.** No functional impact — Prisma accepts
+extra DB columns it doesn't know about. Dropping would require an
+additional manual SQL statement against production and would lose any
+preferredName values that may have been populated during the Preview
+testing window (test data only; non-critical, but unnecessary loss).
+
+**Future use:** if a later phase reintroduces preferredName capture
+(any mechanism — account-settings page edit, cookie-based post-signup
+link, etc.) the columns are already there. No migration needed to
+revive. The `prisma/schema.prisma` on main would need a single-line
+addition per column at that point so Prisma generates client types for
+them; the DB itself is ready.
+
+**Test data note:** the Preview branch ran the Clerk-webhook backfill
+code briefly. A small number of test users (Julia, Maria, internal
+test accounts) may have `preferredName` populated. Treat this as
+not-canonical and safe to ignore until a future phase decides
+explicitly what to do with it.
+
+---
+
+## Clerk production instance setup (pre-launch)
+
+Clerk is currently running in **development mode** on production —
+the dev-mode banner is visible at the top of every page on
+`mindreset.vercel.app`. This is acceptable for closed Preview testing
+but **must be switched to a production Clerk instance before public
+launch**.
+
+**Requirements before launch:**
+
+1. Create a production Clerk application in the Clerk dashboard.
+2. Configure production keys in Vercel env vars:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` → production publishable key
+     (begins `pk_live_`)
+   - `CLERK_SECRET_KEY` → production secret key (begins `sk_live_`)
+   - `CLERK_WEBHOOK_SECRET` → production webhook signing secret
+     (matches the production webhook endpoint configured in dashboard)
+3. Configure the production webhook endpoint in Clerk dashboard
+   pointing to the production `/api/webhooks/clerk` URL.
+4. Configure sign-in/sign-up URL settings, redirect URLs, and any
+   appearance / localization overrides.
+5. Verify the dev-mode banner is gone on next deploy.
+
+**Where the env vars live:** Vercel project settings → Environment
+Variables → Production scope. The dev-mode keys can stay in Preview
+scope for ongoing test deployments.
+
+**Cost note:** Clerk's production tier has its own pricing
+(free up to a monthly active-user threshold). Worth checking the
+plan before the public launch hits.
+
+---
+
+## Language toggle missing on `/account`
+
+The language toggle (EN / RU) was hidden on `/account` during Phase 2
+as a holding pattern — see the
+"i18n + theme global providers (deferred to post-Phase-3b)" entry
+above for full context. The intent at that time was the i18n lift
+branch would restore the toggle globally before launch.
+
+**Status now: still missing on `/account`.** Other pages (`/`,
+`/screening`) have local toggles. Signed-in users have no way to
+change their language preference, and `User.locale` is never written
+even though the column exists.
+
+**Pre-launch decision needed:** either
+
+- **Land the deferred i18n lift first** (global LanguageProvider +
+  `useLanguage()` hook + persistence to `User.locale`) — restores the
+  toggle on `/account` cleanly and addresses the broader per-page
+  toggle inconsistency in one pass. Larger scope.
+- **Or restore the toggle on `/account` as a holding patch** with the
+  local-state pattern used elsewhere, mirroring the partial RU copy
+  problem the original hide was working around. Smaller scope but
+  inherits the bug.
+
+The i18n lift is the documented preferred path. Holding patch is
+acceptable only if the launch timeline doesn't fit the lift.
+
+**Where it lives:** `app/account/AccountClient.tsx` — the toggle was
+removed during Phase 2 (see git log for the specific commit). The
+"i18n + theme global providers" carry-forward entry above is the
+canonical reference for the broader plan.
+
+---
+
+## T&C duplication in signup flow (pre-existing on main, needs pre-launch investigation)
+
+Users testing the sign-up flow report seeing T&C-style content twice —
+once between pre-screening and Clerk sign-up, then again after
+Clerk sign-in. The duplication is **not caused by the abandoned
+`claude/carry-forward-user-fields` branch** (verified: that branch
+added zero new T&C surfaces). The behaviour is pre-existing on main.
+
+### What's been ruled out
+
+- **Clerk Legal Acceptance dashboard toggle**: verified OFF in the
+  Clerk dashboard, so Clerk's prebuilt sign-up form is NOT rendering
+  its own T&C checkbox in addition to ours.
+
+### Likely candidates (uninvestigated)
+
+1. **Disclaimer modal firing twice across the screening → signup →
+   landing chain.** The modal uses both a cookie (`mr_disclaimer_acknowledged`,
+   1-year, path=/, sameSite=lax) and a DB-column gate
+   (`User.disclaimerAcknowledgedAt`) per `app/layout.tsx`. If the
+   cookie is missing post-Clerk-flow (e.g. cleared during sign-up,
+   or testing in incognito between sessions), the modal could fire
+   again post-signup-landing because `disclaimerAcknowledgedAt` is
+   never backfilled at sign-up time.
+2. **Overlap between the screening's step-5 ConsentScreen and the
+   `/sign-up` T&C+Privacy checkboxes.** Both ask for consent-style
+   acknowledgement. Topically overlapping content. Two visually
+   different surfaces that may register as "T&C twice" to a user.
+
+### Investigation plan (when picked up)
+
+- Reproduce with fresh browser session (clean cookies).
+- Walk the chain: `/` (disclaimer modal) → `/screening` (step 5
+  consent) → `/sign-up` (T&C checkboxes) → Clerk signup form → first
+  landing post-signup.
+- Note which surfaces show consent-style content and whether the user
+  is asked to re-acknowledge after sign-in.
+- If the disclaimer modal IS firing again post-sign-in, add a small
+  backfill in the Clerk webhook on `user.created` that sets
+  `User.disclaimerAcknowledgedAt` from the cookie value's timestamp (or
+  `new Date()` as approximation) so signed-in users don't get
+  re-prompted.
+
+**Where to start:** `app/layout.tsx` disclaimer-gate logic + the
+existing entries above for screening consent items + `/sign-up`
+T&C+Privacy checkbox flow.
