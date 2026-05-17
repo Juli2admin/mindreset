@@ -1,31 +1,46 @@
 import { cookies } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
+import { routing } from './routing';
 
-// Phase i18n.0 supported locales. Phase i18n.1 expands this to the full
-// 8-language set (EN, RU, FR, DE, ES, IT, PL, PT) once routing is in place.
-const SUPPORTED_LOCALES = ['en', 'ru'] as const;
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-const DEFAULT_LOCALE: SupportedLocale = 'en';
-
-// Cookie name follows our existing mr_* namespace (mr_screening,
-// mr_disclaimer_acknowledged). next-intl's default is NEXT_LOCALE; we
-// override that here so all locale persistence is grep-able under mr_*.
+// Phase i18n.1a — locale resolution order:
+//   1. URL segment ([locale] in the path), passed in via requestLocale
+//      from next-intl's middleware
+//   2. mr_locale cookie (set by the Footer picker — see
+//      components/FooterLanguagePicker.tsx)
+//   3. defaultLocale ('en') as final fallback
+//
+// Accept-Language header detection lands in Phase i18n.1b (middleware-
+// side, applies only to first-visit users who lack both URL segment and
+// cookie).
+//
+// Cookie name follows our mr_* namespace (mr_screening,
+// mr_disclaimer_acknowledged). next-intl's default cookie is
+// NEXT_LOCALE; we override here for grep-ability and ownership clarity.
 const LOCALE_COOKIE = 'mr_locale';
 
-function isSupported(value: string | undefined): value is SupportedLocale {
+function isSupported(value: string | undefined): value is (typeof routing.locales)[number] {
   return (
     typeof value === 'string' &&
-    (SUPPORTED_LOCALES as readonly string[]).includes(value)
+    (routing.locales as readonly string[]).includes(value)
   );
 }
 
-export default getRequestConfig(async () => {
-  // No [locale] routing in Phase 0 — locale resolution is cookie-only.
-  // Phase i18n.1 adds Accept-Language fallback + URL-prefixed routing.
-  const cookieValue = cookies().get(LOCALE_COOKIE)?.value;
-  const locale: SupportedLocale = isSupported(cookieValue)
-    ? cookieValue
-    : DEFAULT_LOCALE;
+export default getRequestConfig(async ({ requestLocale }) => {
+  // 1. URL segment (set by next-intl middleware when route is under [locale])
+  let locale = await requestLocale;
+
+  // 2. Cookie fallback (when URL has no [locale] prefix, e.g. root /)
+  if (!isSupported(locale)) {
+    const cookieValue = cookies().get(LOCALE_COOKIE)?.value;
+    if (isSupported(cookieValue)) {
+      locale = cookieValue;
+    }
+  }
+
+  // 3. Default fallback
+  if (!isSupported(locale)) {
+    locale = routing.defaultLocale;
+  }
 
   return {
     locale,

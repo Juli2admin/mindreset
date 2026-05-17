@@ -5,7 +5,9 @@ import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 // Footer comes in as a server-rendered slot via the `footerSlot` prop —
 // see app/screening/page.tsx. Phase i18n.0 server-component-with-client-
 // slot pattern.
-import Link from 'next/link';
+// Phase i18n.1a — locale-aware Link auto-prefixes the active locale
+// (e.g. href="/sign-up" from /ru/screening becomes /ru/sign-up).
+import { Link } from '@/i18n/navigation';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
