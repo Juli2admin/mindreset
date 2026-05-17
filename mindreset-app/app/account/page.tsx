@@ -3,6 +3,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import AccountClient from './AccountClient';
+import Footer from '@/components/Footer';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +40,7 @@ export default async function AccountPage() {
     <AccountClient
       firstName={firstName}
       cookieToClear={cookieToClear}
+      footerSlot={<Footer />}
     />
   );
 }

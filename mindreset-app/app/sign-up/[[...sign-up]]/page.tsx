@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import SignUpClient from './SignUpClient';
+import Footer from '@/components/Footer';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,5 +42,5 @@ export default async function SignUpPage() {
     redirect('/screening');
   }
 
-  return <SignUpClient />;
+  return <SignUpClient footerSlot={<Footer />} />;
 }

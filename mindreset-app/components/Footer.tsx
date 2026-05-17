@@ -1,12 +1,18 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import FooterLanguagePicker from './FooterLanguagePicker';
 
 type Props = {
   omit?: 'terms' | 'privacy';
   theme?: 'day' | 'night';
 };
 
-export default function Footer({ omit, theme = 'day' }: Props) {
+// Server component. Translations resolve at request time via the locale
+// returned by i18n/request.ts (cookie-driven in Phase 0). The language
+// picker beneath is a client island and handles cookie writes itself.
+export default async function Footer({ omit, theme = 'day' }: Props) {
+  const t = await getTranslations('Footer');
   const PALETTE = FULL_PALETTE[theme];
   return (
     <footer
@@ -23,7 +29,7 @@ export default function Footer({ omit, theme = 'day' }: Props) {
               href="/terms"
               className="hover:underline underline-offset-2 transition-colors"
             >
-              Terms
+              {t('terms')}
             </Link>
             {' · '}
           </>
@@ -34,7 +40,7 @@ export default function Footer({ omit, theme = 'day' }: Props) {
               href="/privacy"
               className="hover:underline underline-offset-2 transition-colors"
             >
-              Privacy
+              {t('privacy')}
             </Link>
             {' · '}
           </>
@@ -43,9 +49,10 @@ export default function Footer({ omit, theme = 'day' }: Props) {
           href="mailto:support@mindreset.ai"
           className="hover:underline underline-offset-2 transition-colors"
         >
-          Contact
+          {t('contact')}
         </a>
       </p>
+      <FooterLanguagePicker label={t('languagePickerLabel')} theme={theme} />
     </footer>
   );
 }
