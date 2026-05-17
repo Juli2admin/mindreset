@@ -9,6 +9,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import prisma from '@/lib/prisma';
 import DisclaimerGate from '@/components/DisclaimerGate';
 import { routing } from '@/i18n/routing';
+import { getPathname } from '@/i18n/navigation';
 
 // Phase i18n.1a — locale-scoped layout. Owns <html>/<body>/<head> so that
 // `lang={locale}` can be set per request, plus the providers that used to
@@ -86,8 +87,25 @@ export default async function LocaleLayout({
 
   const messages = await getMessages();
 
+  // Phase i18n.1a — locale-preserved Clerk redirects. Without these,
+  // auth().protect() on /ru/account would redirect a signed-out user to
+  // /sign-in (English) because Clerk's defaults come from
+  // NEXT_PUBLIC_CLERK_SIGN_IN_URL env (an unprefixed path). next-intl
+  // can only recover the locale on the follow-up request via the
+  // mr_locale cookie, which a first-time direct-link visitor won't have.
+  // getPathname respects localePrefix='as-needed': returns /sign-in for
+  // 'en' and /ru/sign-in for 'ru'.
+  const signInUrl = getPathname({ href: '/sign-in', locale });
+  const signUpUrl = getPathname({ href: '/sign-up', locale });
+  const afterAuthUrl = getPathname({ href: '/account', locale });
+
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl={signInUrl}
+      signUpUrl={signUpUrl}
+      signInFallbackRedirectUrl={afterAuthUrl}
+      signUpFallbackRedirectUrl={afterAuthUrl}
+    >
       <html lang={locale}>
         <head>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

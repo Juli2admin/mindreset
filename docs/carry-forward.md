@@ -633,3 +633,30 @@ failure mode within minutes of going live.
 fix it BEFORE shipping the affecting phase, not after. The cost of
 bringing forward a one-line fix is always lower than the cost of
 post-production debugging plus reviewer confidence loss.
+
+## Process — stop-hook commits during propose-and-pause (17 May 2026)
+
+The `~/.claude/stop-hook-git-check.sh` Stop hook fires after every turn
+that ends with uncommitted changes in the tree and forces a commit before
+the agent can pause. This conflicts with the "apply changes → tsc + cold
+build → show grouped diff → pause for reviewer approval BEFORE commit"
+pattern that i18n.0's diagnostic branch and i18n.1a both followed: in
+each case, a commit landed on the feature branch before the reviewer had
+signed off on the diff.
+
+**Mitigation already in place**: commits land on the feature branch, no
+PR is opened automatically, and the agent's protocol still pauses at the
+PR/merge gate (PR is opened only after reviewer approval, merge only
+after smoke test). The reviewer retains full control at the PR boundary
+even though they lose it at the commit boundary.
+
+**Why this is acceptable**: feature-branch commits are cheap and
+reversible (`git reset`, force-push, or just landing additional fixup
+commits before PR). The propose-and-pause invariant that matters — "no
+unreviewed code reaches main" — is preserved by the PR gate.
+
+**Awareness for future phases**: don't be surprised when commits appear
+in the feature branch mid-conversation before approval. If a change
+needs to be backed out before PR, do it via a follow-up commit on the
+same branch, not by trying to suppress the stop hook. No settings change
+proposed; flagging for protocol clarity only.
