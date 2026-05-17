@@ -26,6 +26,20 @@ const isProtectedRoute = createRouteMatcher([
   '/(.*)?/journey(.*)',
 ]);
 
+// Extract the locale segment from a pathname (e.g. /ru/account → 'ru').
+// Used to make Clerk's auth().protect() redirect locale-aware: without
+// this, a signed-out direct-link visitor to /ru/account would be
+// redirected to /sign-in (English), losing the locale. The ClerkProvider
+// signInUrl prop in the layout only affects client-side Clerk redirects;
+// middleware-time protect() needs its target passed explicitly.
+function localeFromPath(pathname: string): string {
+  const match = pathname.match(/^\/([a-z]{2})(?:\/|$)/);
+  if (match && (routing.locales as readonly string[]).includes(match[1])) {
+    return match[1];
+  }
+  return routing.defaultLocale;
+}
+
 export default clerkMiddleware((auth, req) => {
   // API routes: no locale segment, no next-intl involvement.
   if (req.nextUrl.pathname.startsWith('/api/')) {
@@ -34,7 +48,12 @@ export default clerkMiddleware((auth, req) => {
 
   // Clerk auth gate first.
   if (isProtectedRoute(req)) {
-    auth().protect();
+    const locale = localeFromPath(req.nextUrl.pathname);
+    const signInPath =
+      locale === routing.defaultLocale ? '/sign-in' : `/${locale}/sign-in`;
+    auth().protect({
+      unauthenticatedUrl: new URL(signInPath, req.url).toString(),
+    });
   }
 
   // next-intl handles the rest (locale detection, URL rewriting).

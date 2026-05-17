@@ -660,3 +660,12 @@ in the feature branch mid-conversation before approval. If a change
 needs to be backed out before PR, do it via a follow-up commit on the
 same branch, not by trying to suppress the stop hook. No settings change
 proposed; flagging for protocol clarity only.
+
+## Process — sandbox-to-Vercel firewall limits Preview verification (17 May 2026)
+
+Sandbox cannot reach Vercel hosts (`host_not_allowed`). Local-with-stub-Clerk
+substitutes for ~21/25 of a typical 25-point Preview checklist. Clerk-
+completion paths (`auth().protect()` rewrites, sign-in flows, signed-in
+routes) require Julia's manual walkthrough on the real Preview URL. Factor
+this into all future verification protocols — don't promise full local
+coverage.
