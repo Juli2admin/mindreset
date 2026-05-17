@@ -618,3 +618,18 @@ ambiguity for any subsequent Phase 0/1 testing.
 
 **Phase 0 is ready to merge to main** after this carry-forward entry
 + revert of the `[DIAG-PICKER]` diagnostic land on the branch.
+
+---
+
+## Process — dual-toggle lesson (17 May 2026)
+
+Phase 0 was shipped with the legacy Screening/Landing LangSwitch toggles
+still in place, despite the May 17 carry-forward entry explicitly naming
+"two coexisting language toggles on the same page" as the failure mode.
+Production smoke test surfaced UX confusion consistent with that
+failure mode within minutes of going live.
+
+**New rule for future phases**: if carry-forward names a known UX trap,
+fix it BEFORE shipping the affecting phase, not after. The cost of
+bringing forward a one-line fix is always lower than the cost of
+post-production debugging plus reviewer confidence loss.
