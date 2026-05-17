@@ -4,6 +4,11 @@ import React, { useState, useEffect, useRef, createContext, useContext } from 'r
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
+// Phase i18n.1a — locale-aware router so the "Begin" CTA preserves the
+// active locale (from /ru/ → /ru/screening, not /screening). The rest of
+// Landing.jsx still uses its internal `lang` prop pattern; full
+// unification with the locale segment lands in Phase i18n.1d.
+import { useRouter } from '@/i18n/navigation';
 
 // ============================================================================
 // MindReset.ai — Landing Page
@@ -826,6 +831,7 @@ export default function LandingPage() {
   const [lang, setLang] = useState('en');
   const [theme, setTheme] = useState('day');
   const [toast, setToast] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!document.getElementById(FONT_LINK_ID)) {
@@ -849,7 +855,8 @@ export default function LandingPage() {
   const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
   const c = PALETTE[theme];
 
-  const onBegin = () => { window.location.href = '/screening'; };
+  // Locale-aware navigation: from /ru/ this pushes to /ru/screening.
+  const onBegin = () => { router.push('/screening'); };
 
   return (
     <ThemeContext.Provider value={{ theme, c, toggle }}>

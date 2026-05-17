@@ -1,25 +1,33 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import SignUpClient from './SignUpClient';
 import Footer from '@/components/Footer';
+// Phase i18n.1a — locale-aware redirect: redirect('/account') from a /ru/
+// page produces /ru/account, not /account.
+import { redirect } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
 
 const SCREENING_COOKIE = 'mr_screening';
 
-export default async function SignUpPage() {
+export default async function SignUpPage({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const { locale } = params;
+
   // 1. Already-signed-in users go to /account, not back through sign-up.
   const { userId } = await auth();
   if (userId) {
-    redirect('/account');
+    redirect({ href: '/account', locale });
   }
 
   // 2. No screening cookie → user hasn't completed screening yet.
   const screeningCookie = cookies().get(SCREENING_COOKIE)?.value;
   if (!screeningCookie) {
-    redirect('/screening');
+    redirect({ href: '/screening', locale });
   }
 
   // 3. Validate the cookie value against the DB. A tampered or stale cookie
@@ -31,7 +39,7 @@ export default async function SignUpPage() {
       select: { id: true },
     });
     if (!row) {
-      redirect('/screening');
+      redirect({ href: '/screening', locale });
     }
   } catch (err) {
     // Note: redirect() throws a special Next.js error that does NOT match this
@@ -39,7 +47,7 @@ export default async function SignUpPage() {
     // fires on actual Prisma/DB errors — fail-safe to /screening rather than
     // letting the user past the gate.
     console.error('[sign-up] screening cookie validation failed:', err);
-    redirect('/screening');
+    redirect({ href: '/screening', locale });
   }
 
   return <SignUpClient footerSlot={<Footer />} />;

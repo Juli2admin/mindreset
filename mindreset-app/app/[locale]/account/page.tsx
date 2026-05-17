@@ -1,16 +1,24 @@
 import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import AccountClient from './AccountClient';
 import Footer from '@/components/Footer';
+// Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
+// page produces /ru/sign-in, not /sign-in.
+import { redirect } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const { locale } = params;
+
   const user = await currentUser();
   if (!user) {
-    redirect('/sign-in');
+    redirect({ href: '/sign-in', locale });
   }
 
   const cookieStore = cookies();

@@ -1,22 +1,67 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import createNextIntlMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
+import { routing } from './i18n/routing';
+
+// Phase i18n.1a — composition pattern (Clerk first, then next-intl):
+//   1. API routes bypass next-intl entirely (no [locale] segment for APIs).
+//   2. Clerk auth gate runs first so auth().protect() can redirect cleanly
+//      before next-intl rewrites/redirects on locale.
+//   3. next-intl middleware handles locale detection (URL > cookie >
+//      defaultLocale), URL rewriting, prefix logic for /ru/, /fr/, etc.
+//   4. x-pathname header passthrough preserved for the disclaimer-modal
+//      gate (it reads the header to decide whether to show on /terms or
+//      /privacy).
+//
+// Protected-route matcher patterns include an optional leading locale
+// segment: /(.*)?/account(.*) matches both /account (default English)
+// and /ru/account (locale-prefixed).
+
+const intlMiddleware = createNextIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  '/account(.*)',
-  '/minimind(.*)',
-  '/modules(.*)',
-  '/journey(.*)',
+  '/(.*)?/account(.*)',
+  '/(.*)?/minimind(.*)',
+  '/(.*)?/modules(.*)',
+  '/(.*)?/journey(.*)',
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  if (isProtectedRoute(req)) {
-    auth().protect();
+// Extract the locale segment from a pathname (e.g. /ru/account → 'ru').
+// Used to make Clerk's auth().protect() redirect locale-aware: without
+// this, a signed-out direct-link visitor to /ru/account would be
+// redirected to /sign-in (English), losing the locale. The ClerkProvider
+// signInUrl prop in the layout only affects client-side Clerk redirects;
+// middleware-time protect() needs its target passed explicitly.
+function localeFromPath(pathname: string): string {
+  const match = pathname.match(/^\/([a-z]{2})(?:\/|$)/);
+  if (match && (routing.locales as readonly string[]).includes(match[1])) {
+    return match[1];
   }
-  // Expose the current pathname to server components via a request header.
-  // Used by app/layout.tsx to skip the disclaimer modal on legal pages.
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set('x-pathname', req.nextUrl.pathname);
-  return NextResponse.next({ request: { headers: requestHeaders } });
+  return routing.defaultLocale;
+}
+
+export default clerkMiddleware((auth, req) => {
+  // API routes: no locale segment, no next-intl involvement.
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
+  // Clerk auth gate first.
+  if (isProtectedRoute(req)) {
+    const locale = localeFromPath(req.nextUrl.pathname);
+    const signInPath =
+      locale === routing.defaultLocale ? '/sign-in' : `/${locale}/sign-in`;
+    auth().protect({
+      unauthenticatedUrl: new URL(signInPath, req.url).toString(),
+    });
+  }
+
+  // next-intl handles the rest (locale detection, URL rewriting).
+  const response = intlMiddleware(req);
+
+  // Preserve x-pathname for the disclaimer-modal gate in the layout.
+  response.headers.set('x-pathname', req.nextUrl.pathname);
+  return response;
 });
 
 export const config = {
