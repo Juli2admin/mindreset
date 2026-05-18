@@ -1,3 +1,5 @@
+'use client';
+
 // Phase i18n.1d.2 — shared top-bar component used by every page.
 // Slot-prop shell pattern (same as Footer's footerSlot):
 //   - Wordmark Link to / (locale-aware via @/i18n/navigation)
@@ -13,11 +15,17 @@
 // optional UI controls. User reaches the picker via Footer or by
 // navigating back to a regular page.
 //
-// Server component. Translations resolve via getTranslations against
-// the active locale; the LanguagePicker leaf is a client island.
+// Client component. The earlier draft was server-async, but three
+// pages (Landing, Screening, MiniMind) need client-state-derived
+// content in the right slot (ThemeToggle reads from a ThemeContext
+// provided by the client parent; Sign-in Link depends on Clerk's
+// useUser hook; MiniMind's Start-new is bound to a client callback).
+// Converting to client lets all 8 pages use TopBar uniformly — paying
+// ~2 KB to the shared client bundle for a single source of truth
+// rather than maintaining 3 local duplicate headers.
 
 import { Link } from '@/i18n/navigation';
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import LanguagePicker from './LanguagePicker';
 
@@ -63,14 +71,14 @@ function TreeMark({ size = 26, color }: { size?: number; color: string }) {
   );
 }
 
-export default async function TopBar({
+export default function TopBar({
   right,
   align = 'default',
   showTreeMark = false,
   theme = 'day',
 }: Props) {
-  const t = await getTranslations('TopBar');
-  const tFooter = await getTranslations('Footer');
+  const t = useTranslations('TopBar');
+  const tFooter = useTranslations('Footer');
   const PALETTE = FULL_PALETTE[theme];
 
   const wordmark = (

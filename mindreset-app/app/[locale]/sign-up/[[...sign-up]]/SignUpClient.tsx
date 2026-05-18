@@ -5,6 +5,8 @@ import { SignUp } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+import TopBar from '@/components/TopBar';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/sign-up/[[...sign-up]]/page.tsx. Phase i18n.0
 // server-component-with-client-slot pattern.
@@ -59,11 +61,10 @@ function Checkbox({
 }
 
 type SignUpClientProps = {
-  topBarSlot: ReactNode;
   footerSlot: ReactNode;
 };
 
-export default function SignUpClient({ topBarSlot, footerSlot }: SignUpClientProps) {
+export default function SignUpClient({ footerSlot }: SignUpClientProps) {
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
@@ -74,8 +75,9 @@ export default function SignUpClient({ topBarSlot, footerSlot }: SignUpClientPro
       style={{ background: PALETTE.bg }}
     >
       <div className="w-full max-w-md px-6 py-12 sm:py-20">
-        {/* Phase 1d.2 — server-rendered TopBar in centered mode. */}
-        {topBarSlot}
+        {/* Phase 1d.2 — shared TopBar in centered mode (no picker visible).
+            Trauma-informed friction-point clean-up. */}
+        <TopBar align="centered" />
 
         <div className="mt-10 mb-8">
           <Checkbox checked={tcAccepted} onChange={setTcAccepted}>

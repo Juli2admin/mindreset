@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-// Phase i18n.1b — locale-aware Link.
-import { Link } from '@/i18n/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+// Chat-side code (TypingIndicator, MessageRow, ChoosingView, ChattingView,
+// streaming, conversation memory loading) is untouched by 1d.2 — only
+// the visual header swap.
+import TopBar from '@/components/TopBar';
 
 const PALETTE = FULL_PALETTE.day;
 
@@ -62,31 +65,29 @@ function MiniMindHeader({
   showStartNew: boolean;
   onStartNew?: () => void;
 }) {
+  // Phase 1d.2 — thin wrapper around shared TopBar with optional "Start
+  // new" button in the right slot. Wordmark behavior changes from /account
+  // to / (universal home convention per TopBar design).
   return (
-    <header
-      className="flex items-center justify-between px-6 py-4"
+    <div
+      className="px-6"
       style={{ borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <Link href="/account" className="block">
-        <h1
-          className="text-[22px] tracking-tight"
-          style={{ fontFamily: TOKENS.serif, fontWeight: 400 }}
-        >
-          <span style={{ color: PALETTE.accent }}>Mind</span>
-          <span style={{ color: PALETTE.accentSage }}>Reset</span>
-        </h1>
-      </Link>
-      {showStartNew && onStartNew && (
-        <button
-          type="button"
-          onClick={onStartNew}
-          className="text-[13px] hover:underline underline-offset-2 transition-colors"
-          style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
-        >
-          Start new
-        </button>
-      )}
-    </header>
+      <TopBar
+        right={
+          showStartNew && onStartNew ? (
+            <button
+              type="button"
+              onClick={onStartNew}
+              className="text-[13px] hover:underline underline-offset-2 transition-colors"
+              style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+            >
+              Start new
+            </button>
+          ) : undefined
+        }
+      />
+    </div>
   );
 }
 

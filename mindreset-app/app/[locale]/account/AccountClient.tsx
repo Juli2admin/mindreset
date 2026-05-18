@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
+import { UserButton } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+import TopBar from '@/components/TopBar';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/account/page.tsx. Phase i18n.0 server-component-with-client-slot
 // pattern.
@@ -96,14 +99,12 @@ const COPY: Record<Lang, CopyShape> = {
 type Props = {
   firstName: string | null;
   cookieToClear: boolean;
-  topBarSlot: ReactNode;
   footerSlot: ReactNode;
 };
 
 export default function AccountClient({
   firstName,
   cookieToClear,
-  topBarSlot,
   footerSlot,
 }: Props) {
   // Lang fixed to 'en' pending i18n-lift; see header for context.
@@ -123,7 +124,7 @@ export default function AccountClient({
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        {topBarSlot}
+        <TopBar right={<UserButton />} />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         <div className="mb-12">
