@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
-import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
-// Phase i18n.1a — locale-aware router so the "Begin" CTA preserves the
-// active locale (from /ru/ → /ru/screening, not /screening). The rest of
-// Landing.jsx still uses its internal `lang` prop pattern; full
-// unification with the locale segment lands in Phase i18n.1d.
-import { useRouter } from '@/i18n/navigation';
+// Phase i18n.1a/1b — locale-aware router for the "Begin" CTA and
+// locale-aware Link for the Account/Sign-in header (l.209). The footer
+// <a> tags at l.791 stay as plain anchors for now and rely on
+// middleware redirect — full Landing.jsx unification (LangSwitch
+// component + internal `lang` state machine) lands in Phase i18n.1d.
+import { Link, useRouter } from '@/i18n/navigation';
 
 // ============================================================================
 // MindReset.ai — Landing Page
