@@ -4,5 +4,8 @@
     "privacy": "Privacy",
     "contact": "Contact",
     "languagePickerLabel": "Language"
+  },
+  "TopBar": {
+    "wordmarkAria": "MindReset home"
   }
 }

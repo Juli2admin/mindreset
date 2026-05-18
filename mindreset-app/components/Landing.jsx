@@ -1,14 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import { useLocale } from 'next-intl';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 import { useUser } from '@clerk/nextjs';
-// Phase i18n.1a/1b — locale-aware router for the "Begin" CTA and
-// locale-aware Link for the Account/Sign-in header (l.209). The footer
-// <a> tags at l.791 stay as plain anchors for now and rely on
-// middleware redirect — full Landing.jsx unification (LangSwitch
-// component + internal `lang` state machine) lands in Phase i18n.1d.
+// Phase i18n.1a/1b — locale-aware router for the "Begin" CTA.
 import { Link, useRouter } from '@/i18n/navigation';
+// Phase i18n.1d.2 — shared TopBar (client) + CrisisResources (client).
+// The shared Footer is a server-async component and can't render
+// inline inside this client component (Footer uses getTranslations).
+// LandingPage receives Footer as a slot prop from [locale]/page.tsx
+// — same pattern Account and Sign-up use for their server-rendered
+// Footer.
+import TopBar from '@/components/TopBar';
+import CrisisResources from '@/components/CrisisResources';
 
 // ============================================================================
 // MindReset.ai — Landing Page
@@ -22,17 +27,6 @@ const FONT_HREF =
 
 const ThemeContext = createContext({ theme: 'day', c: PALETTE.day, toggle: () => {} });
 const useTheme = () => useContext(ThemeContext);
-
-const LANGUAGES = [
-  { code: 'en', native: 'English', available: true },
-  { code: 'ru', native: 'Русский', available: true },
-  { code: 'uk', native: 'Українська', available: false },
-  { code: 'pl', native: 'Polski', available: false },
-  { code: 'de', native: 'Deutsch', available: false },
-  { code: 'es', native: 'Español', available: false },
-  { code: 'fr', native: 'Français', available: false },
-];
-
 
 // ============================================================================
 // Icons
@@ -74,14 +68,6 @@ function MoonIcon({ size = 14 }) {
   );
 }
 
-function ChevronDown({ size = 10 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 6L8 10L12 6" />
-    </svg>
-  );
-}
-
 function ArrowRight({ size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -108,115 +94,33 @@ function ThemeToggle() {
   );
 }
 
-function LangSwitch({ lang, setLang }) {
-  const { c } = useTheme();
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const click = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
-    document.addEventListener('mousedown', click);
-    document.addEventListener('keydown', key);
-    return () => {
-      document.removeEventListener('mousedown', click);
-      document.removeEventListener('keydown', key);
-    };
-  }, [open]);
-
-  const current = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-3 h-8 rounded-full text-[11px] uppercase tracking-wider transition-colors"
-        style={{
-          ...sansStyle,
-          fontWeight: 500,
-          color: c.textMuted,
-          border: `1px solid ${c.border}`,
-          background: open ? c.bgSubtle : 'transparent',
-        }}
-      >
-        {current.code}
-        <ChevronDown size={10} />
-      </button>
-      {open && (
-        <div
-          className="absolute right-0 top-10 rounded-lg overflow-hidden min-w-[180px] z-20"
-          style={{ background: c.bgCard, border: `1px solid ${c.border}`, boxShadow: '0 8px 24px -8px rgba(0, 0, 0, 0.18)' }}
-        >
-          {LANGUAGES.map((l) => {
-            const isActive = lang === l.code;
-            return (
-              <button
-                key={l.code}
-                type="button"
-                disabled={!l.available}
-                onClick={() => { if (l.available) { setLang(l.code); setOpen(false); } }}
-                className="w-full text-left px-4 py-2.5 text-[13px] flex items-center justify-between transition-colors"
-                style={{
-                  ...sansStyle,
-                  color: isActive ? c.text : l.available ? c.textMuted : c.textHint,
-                  background: isActive ? c.bgSubtle : 'transparent',
-                  cursor: l.available ? 'pointer' : 'not-allowed',
-                  opacity: l.available ? 1 : 0.55,
-                  fontWeight: isActive ? 500 : 400,
-                }}
-              >
-                <span className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-wider tabular-nums" style={{ color: c.textHint, minWidth: '1.4rem' }}>
-                    {l.code}
-                  </span>
-                  <span>{l.native}</span>
-                </span>
-                {!l.available && (
-                  <span className="text-[9px] uppercase tracking-wider" style={{ color: c.textHint }}>soon</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Header({ lang, setLang }) {
-  const { c } = useTheme();
+// Phase 1d.2 — replaced inline Header (with legacy LangSwitch + inline
+// wordmark) with shared TopBar. The right slot composes the Account/
+// Sign-in Link (depends on Clerk's useUser hook — client-state-derived)
+// plus the ThemeToggle (depends on Landing's ThemeContext). TopBar is
+// a client component so this composition works inline.
+function Header({ lang }) {
+  const { c, theme } = useTheme();
   const t = COPY[lang];
   const { isLoaded, isSignedIn } = useUser();
   const signedIn = isLoaded && isSignedIn;
   return (
-    <header className="flex items-center justify-between py-6">
-      <div className="flex items-center gap-3">
-        <span style={{ color: c.text }}>
-          <TreeMark size={26} />
-        </span>
-        <span
-          className="text-[20px] tracking-tight"
-          style={{ ...serifStyle, fontWeight: 500, fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
-        >
-          <span style={{ color: c.accent }}>Mind</span>
-          <span style={{ color: c.accentSage }}>Reset</span>
-          <span style={{ color: c.textHint }} className="ml-0.5">.ai</span>
-        </span>
-      </div>
-      <div className="flex items-center gap-3">
-        <Link
-          href={signedIn ? '/account' : '/sign-in'}
-          className="text-[13px] transition-colors hover:underline underline-offset-2"
-          style={{ ...sansStyle, color: c.textMuted }}
-        >
-          {signedIn ? t.account : t.signIn}
-        </Link>
-        <LangSwitch lang={lang} setLang={setLang} />
-        <ThemeToggle />
-      </div>
-    </header>
+    <TopBar
+      showTreeMark
+      theme={theme}
+      right={
+        <>
+          <Link
+            href={signedIn ? '/account' : '/sign-in'}
+            className="text-[13px] transition-colors hover:underline underline-offset-2"
+            style={{ ...sansStyle, color: c.textMuted }}
+          >
+            {signedIn ? t.account : t.signIn}
+          </Link>
+          <ThemeToggle />
+        </>
+      }
+    />
   );
 }
 
@@ -744,64 +648,10 @@ function ClosingCTA({ lang, onBegin }) {
   );
 }
 
-function Footer({ lang }) {
-  const { c } = useTheme();
-  const t = COPY[lang];
-  return (
-    <footer className="pt-16 pb-12" style={{ borderTop: `1px solid ${c.border}` }}>
-      <div
-        className="mb-12 rounded-xl p-6"
-        style={{ background: c.bgSubtle, border: `1px solid ${c.border}` }}
-      >
-        <div
-          className="text-[11px] uppercase tracking-[0.18em] mb-4"
-          style={{ ...sansStyle, color: c.danger, fontWeight: 500 }}
-        >
-          {t.crisisLabel}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {t.crisisItems.map((item) => (
-            <div key={item.name}>
-              <div className="text-[15px] mb-0.5" style={{ ...serifStyle, color: c.text, fontWeight: 500 }}>
-                {item.name}
-              </div>
-              <div className="text-[13px]" style={{ ...sansStyle, color: c.textMuted }}>
-                {item.detail}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <p className="text-[13px] leading-[1.7] mb-10 max-w-[42rem]" style={{ ...sansStyle, color: c.textHint }}>
-        {t.footerDisclaimer}
-      </p>
-
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span style={{ color: c.text }}>
-            <TreeMark size={22} />
-          </span>
-          <span className="text-[14px]" style={{ ...sansStyle, color: c.textHint }}>
-            {t.footerCopy}
-          </span>
-        </div>
-        <div className="flex items-center gap-5">
-          {t.footerLinks.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="text-[13px] transition-colors hover:underline"
-              style={{ ...sansStyle, color: c.textMuted }}
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  );
-}
+// Phase 1d.2 — inline Footer removed. Crisis-resource block + safety
+// disclaimer extracted into <CrisisResources />; T&C/Privacy/Contact
+// links + language picker move to the shared <Footer /> (rendered
+// below CrisisResources by LandingPage).
 
 function Toast({ message, onClose }) {
   const { c } = useTheme();
@@ -827,8 +677,14 @@ function Toast({ message, onClose }) {
 // ============================================================================
 // Main
 // ============================================================================
-export default function LandingPage() {
-  const [lang, setLang] = useState('en');
+export default function LandingPage({ footerSlot }) {
+  // Phase 1d.2 — `lang` now derives from useLocale() (next-intl) rather
+  // than a setState pair driven by the (removed) inline LangSwitch.
+  // COPY only has 'en' and 'ru' keys today; placeholder locales fall
+  // back to 'en' content. Phase 2 migrates COPY to message bundles
+  // and removes the lang/COPY duplication across Landing's children.
+  const locale = useLocale();
+  const lang = locale === 'ru' ? 'ru' : 'en';
   const [theme, setTheme] = useState('day');
   const [toast, setToast] = useState(null);
   const router = useRouter();
@@ -862,7 +718,7 @@ export default function LandingPage() {
     <ThemeContext.Provider value={{ theme, c, toggle }}>
       <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
         <div className="max-w-2xl mx-auto px-6">
-          <Header lang={lang} setLang={setLang} />
+          <Header lang={lang} />
           <Hero lang={lang} onBegin={onBegin} />
           <WhatIs lang={lang} />
           <WhoFor lang={lang} />
@@ -870,7 +726,11 @@ export default function LandingPage() {
           <PathsSection lang={lang} />
           <Different lang={lang} />
           <ClosingCTA lang={lang} onBegin={onBegin} />
-          <Footer lang={lang} />
+          {/* Phase 1d.2 — Landing-only crisis-resource block + safety
+              disclaimer, rendered above the shared Footer. Footer arrives
+              as a server-rendered slot from [locale]/page.tsx. */}
+          <CrisisResources lang={lang} theme={theme} />
+          {footerSlot}
         </div>
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
       </div>

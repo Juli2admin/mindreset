@@ -4,5 +4,8 @@
     "privacy": "Конфиденциальность",
     "contact": "Контакты",
     "languagePickerLabel": "Язык"
+  },
+  "TopBar": {
+    "wordmarkAria": "MindReset главная"
   }
 }

@@ -710,5 +710,79 @@ This is the honest middle ground between:
 
 Phase 2 will remove the suffix marker on each locale as its DeepL pass
 + native-speaker review lands. The `NATIVE_CONTENT_LOCALES` set in
-`components/FooterLanguagePicker.tsx` is the source of truth — add a
-locale code to it when its content lands and the suffix disappears.
+`components/LanguagePicker.tsx` (renamed from `FooterLanguagePicker.tsx`
+in Phase 1d.2) is the source of truth — add a locale code to it when
+its content lands and the suffix disappears.
+
+## Phase 1d.1 — skipped: Clerk packaging conflict (18 May 2026)
+
+The `@clerk/localizations` package (which would translate Clerk's
+`<SignIn>` / `<SignUp>` / `<UserButton>` form labels into our 8
+locales) cannot be installed cleanly against `@clerk/nextjs@5.7.6`.
+Clerk's own dep tree pins exact versions that conflict between the two
+packages — installing localizations forces duplicate `@clerk/shared`
+(2.x + 3.x) and duplicate `@clerk/types` (4.26 + 4.101) into
+`node_modules`. This is structural to Clerk's packaging, not something
+we caused.
+
+Today's behaviour: every locale shows English Clerk form labels
+regardless of UI locale. On RU pages this stands out (Russian page
+wrapper + English form); on the 6 placeholder locales it doesn't stand
+out yet (whole page is English).
+
+When the natural `@clerk/nextjs` SDK upgrade happens (estimated
+9-12 months, sooner if CVE-driven), Clerk's packaging will likely have
+resolved. The localizations install becomes free at that point — we
+translate all 8 locales in one go.
+
+Trap to remember: `npm install @clerk/localizations` (no version)
+resolves to `@latest` which currently points at `4.6.4` — the version
+paired with the NEXT Clerk SDK major (v6), not our current v5. The
+correct install for v5 is the `@latest-v5` dist-tag (currently
+`3.37.5`). But even with the right tag, the exact-pin conflict above
+bites. So the dep-tree conflict, not the version-tag confusion, is the
+actual blocker — version-tag awareness only matters once Clerk fixes
+the upstream packaging.
+
+Not a launch blocker. Not a polish item we'll prioritise against
+Stripe / Resend / domain / MiniMind prompt work in the meantime.
+
+## Phase 1d.2 — TopBar is a client component by design (18 May 2026)
+
+The initial 1d.2 draft made `TopBar` a server-async component (mirror
+of `Footer.tsx`). During application three pages (Landing, Screening,
+MiniMind) revealed a constraint that forced a re-design: each needs
+client-state-derived content in its TopBar right slot —
+
+- **Landing**: Sign-in/Account `<Link>` whose `href` and label depend
+  on Clerk's `useUser()` hook; `<ThemeToggle />` reads from Landing's
+  local `ThemeContext`
+- **Screening**: progress indicator driven by internal step state;
+  `<ThemeToggle />` reads from Screening's `ThemeContext`
+- **MiniMind**: conditional "Start new" button bound to `onStartNew`
+  client callback
+
+A server-async TopBar can't accept client-context-dependent or
+callback-bound JSX as a prop value rendered inline from a `'use client'`
+parent. Options considered:
+- Local TopBar-shaped headers on the 3 affected pages — ~90 LOC of
+  duplication across 3 files
+- Two-row sibling layout — awkward UX
+- **Convert TopBar to client component** — ~2 KB on the shared client
+  bundle, single source of truth, drops the `topBarSlot` slot-prop
+  plumbing on Sign-up and Account (cleanup gain)
+
+Chose the conversion. `TopBar` now has `'use client'`, uses
+`useTranslations` instead of `getTranslations`, and is imported
+directly by every page (server pages — Terms, Privacy, Sign-in —
+render the client component inline; this is fine, server components
+can render client components).
+
+`Footer.tsx` stays a server component because its right-side content
+is fixed (T&C / Privacy / Contact / picker) — no client-state
+dependency. Asymmetry between TopBar and Footer is acceptable and
+documented.
+
+Future TopBar surgery (adding new shared elements, restructuring) is
+now a single-file change — no risk of 3 local copies drifting.
+

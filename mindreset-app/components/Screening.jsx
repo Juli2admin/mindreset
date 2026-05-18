@@ -8,6 +8,8 @@ import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 // Phase i18n.1a — locale-aware Link auto-prefixes the active locale
 // (e.g. href="/sign-up" from /ru/screening becomes /ru/sign-up).
 import { Link } from '@/i18n/navigation';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+import TopBar from '@/components/TopBar';
 
 // ============================================================================
 // MindReset — Pre-Screening Flow (Section 0)
@@ -530,43 +532,32 @@ function LangSwitch({ lang, setLang }) {
   );
 }
 
-function Header({ lang, setLang, step, total, brand, showProgress }) {
-  const { c } = useTheme();
+function Header({ lang, step, total, showProgress }) {
+  // Phase 1d.2 — replaced inline header with shared TopBar (client
+  // component). Progress indicator + ThemeToggle compose into the
+  // right slot. The wordmark Link inside TopBar goes to / (universal
+  // home convention). Theme is read from ThemeContext via useTheme().
+  const { theme } = useTheme();
   return (
-    <header className="mb-10 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <span style={{ color: c.text }}>
-          <TreeMark size={26} />
-        </span>
-        <span
-          className="text-[20px] tracking-tight"
-          style={{
-            ...serifStyle,
-            fontWeight: 500,
-            fontVariationSettings: '"opsz" 144, "SOFT" 50',
-          }}
-        >
-          <span style={{ color: c.accent }}>Mind</span>
-          <span style={{ color: c.accentSage }}>Reset</span>
-          <span style={{ color: c.textHint }} className="ml-0.5">.ai</span>
-        </span>
-        {showProgress && (
-          <span
-            className="ml-4 text-[11px] uppercase tracking-[0.16em]"
-            style={{ ...sansStyle, color: c.textHint }}
-          >
-            {COPY[lang].progress} {step + 1} {COPY[lang].of} {total}
-          </span>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        {/* Legacy LangSwitch removed — the Footer language picker is the
-            sole language control. Function definition (lines 434–528) and
-            LANGUAGES const are kept as dead code; Phase i18n.2 string-
-            extraction removes them along with the lang/setLang state. */}
-        <ThemeToggle />
-      </div>
-    </header>
+    <div className="mb-10">
+      <TopBar
+        showTreeMark
+        theme={theme}
+        right={
+          <>
+            {showProgress && (
+              <span
+                className="text-[11px] uppercase tracking-[0.16em]"
+                style={{ ...sansStyle, color: PALETTE[theme].textHint }}
+              >
+                {COPY[lang].progress} {step + 1} {COPY[lang].of} {total}
+              </span>
+            )}
+            <ThemeToggle />
+          </>
+        }
+      />
+    </div>
   );
 }
 

@@ -5,6 +5,8 @@ import { UserButton } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+import TopBar from '@/components/TopBar';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/account/page.tsx. Phase i18n.0 server-component-with-client-slot
 // pattern.
@@ -100,7 +102,11 @@ type Props = {
   footerSlot: ReactNode;
 };
 
-export default function AccountClient({ firstName, cookieToClear, footerSlot }: Props) {
+export default function AccountClient({
+  firstName,
+  cookieToClear,
+  footerSlot,
+}: Props) {
   // Lang fixed to 'en' pending i18n-lift; see header for context.
   const [lang] = useState<Lang>('en');
   const t = COPY[lang];
@@ -117,24 +123,10 @@ export default function AccountClient({ firstName, cookieToClear, footerSlot }: 
 
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
-      <div className="max-w-2xl mx-auto px-6 py-12 sm:py-16">
-        <header className="flex items-center justify-between mb-12">
-          <Link href="/" className="block">
-            <h1
-              className="text-[22px] tracking-tight"
-              style={{ fontFamily: SERIF, fontWeight: 400 }}
-            >
-              <span style={{ color: PALETTE.accent }}>Mind</span>
-              <span style={{ color: PALETTE.accentSage }}>Reset</span>
-            </h1>
-          </Link>
-          <div className="flex items-center gap-3">
-            {/* Lang toggle hidden pending i18n-lift — RU copy is incomplete on
-                this page; re-attach when global LanguageProvider lands. */}
-            <UserButton />
-          </div>
-        </header>
-
+      <div className="max-w-2xl mx-auto px-6 py-4">
+        <TopBar right={<UserButton />} />
+      </div>
+      <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         <div className="mb-12">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"

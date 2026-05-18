@@ -5,6 +5,8 @@ import { SignUp } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
+import TopBar from '@/components/TopBar';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/sign-up/[[...sign-up]]/page.tsx. Phase i18n.0
 // server-component-with-client-slot pattern.
@@ -73,17 +75,11 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
       style={{ background: PALETTE.bg }}
     >
       <div className="w-full max-w-md px-6 py-12 sm:py-20">
-        <Link href="/" className="block mb-10 text-center">
-          <h1
-            className="text-[28px] tracking-tight"
-            style={{ fontFamily: TOKENS.serif, fontWeight: 400 }}
-          >
-            <span style={{ color: PALETTE.accent }}>Mind</span>
-            <span style={{ color: PALETTE.accentSage }}>Reset</span>
-          </h1>
-        </Link>
+        {/* Phase 1d.2 — shared TopBar in centered mode (no picker visible).
+            Trauma-informed friction-point clean-up. */}
+        <TopBar align="centered" />
 
-        <div className="mb-8">
+        <div className="mt-10 mb-8">
           <Checkbox checked={tcAccepted} onChange={setTcAccepted}>
             I agree to the{' '}
             <Link
