@@ -2,7 +2,8 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import Link from 'next/link';
+// Phase i18n.1b — locale-aware Link.
+import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/account/page.tsx. Phase i18n.0 server-component-with-client-slot

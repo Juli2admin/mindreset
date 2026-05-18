@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+// Phase i18n.1b — locale-aware Link.
+import { Link } from '@/i18n/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';

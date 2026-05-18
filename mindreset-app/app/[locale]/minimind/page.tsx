@@ -1,5 +1,4 @@
 import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import MiniMindClient from './MiniMindClient';
 
@@ -12,7 +11,15 @@ const MESSAGE_HISTORY_LIMIT = 50;
 export default async function MiniMindPage() {
   const { userId } = await auth();
   if (!userId) {
-    redirect('/sign-in');
+    // Middleware's auth().protect() catches signed-out requests to
+    // /(.*)?/minimind(.*) and emits a locale-aware redirect to
+    // /<locale>/sign-in before this page renders. Reaching this branch
+    // means the matcher in middleware.ts has regressed — fail loud so
+    // it surfaces in dev/logs immediately, rather than passing null
+    // userId to Prisma and silently rendering an unauthenticated session.
+    throw new Error(
+      'Unauthenticated request reached /minimind page — middleware matcher likely misconfigured',
+    );
   }
 
   // Same query as /api/minimind/conversations, plus the last N messages so

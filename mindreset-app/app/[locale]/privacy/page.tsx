@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+// Phase i18n.1b — locale-aware Link.
+import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import Footer from '@/components/Footer';
 

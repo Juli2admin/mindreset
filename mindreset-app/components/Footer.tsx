@@ -1,4 +1,7 @@
-import Link from 'next/link';
+// Phase i18n.1b — locale-aware Link from @/i18n/navigation auto-prefixes
+// the active locale to internal hrefs (href="/terms" from a /ru/ page
+// renders as /ru/terms). External URLs (mailto:, https://) pass through.
+import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import FooterLanguagePicker from './FooterLanguagePicker';

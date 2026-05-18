@@ -2,20 +2,20 @@ import { cookies } from 'next/headers';
 import { getRequestConfig } from 'next-intl/server';
 import { routing } from './routing';
 
-// Phase i18n.1a — locale resolution order:
+// Locale resolution order (next-intl middleware + request handler):
 //   1. URL segment ([locale] in the path), passed in via requestLocale
 //      from next-intl's middleware
 //   2. mr_locale cookie (set by the Footer picker — see
 //      components/FooterLanguagePicker.tsx)
-//   3. defaultLocale ('en') as final fallback
-//
-// Accept-Language header detection lands in Phase i18n.1b (middleware-
-// side, applies only to first-visit users who lack both URL segment and
-// cookie).
+//   3. Accept-Language header (next-intl default — localeDetection:true
+//      is the implicit setting in i18n/routing.ts; the middleware
+//      redirects /(no-prefix) → /<locale>/ for non-default matches)
+//   4. defaultLocale ('en') as final fallback
 //
 // Cookie name follows our mr_* namespace (mr_screening,
 // mr_disclaimer_acknowledged). next-intl's default cookie is
-// NEXT_LOCALE; we override here for grep-ability and ownership clarity.
+// NEXT_LOCALE; we override via localeCookie.name in i18n/routing.ts
+// (Phase i18n.1a Finding 1 unified the two systems on mr_locale).
 const LOCALE_COOKIE = 'mr_locale';
 
 function isSupported(value: string | undefined): value is (typeof routing.locales)[number] {
