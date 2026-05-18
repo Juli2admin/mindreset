@@ -1,8 +1,10 @@
 import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { UserButton } from '@clerk/nextjs';
 import AccountClient from './AccountClient';
 import Footer from '@/components/Footer';
+import TopBar from '@/components/TopBar';
 // Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
 // page produces /ru/sign-in, not /sign-in.
 import { redirect } from '@/i18n/navigation';
@@ -48,6 +50,7 @@ export default async function AccountPage({
     <AccountClient
       firstName={firstName}
       cookieToClear={cookieToClear}
+      topBarSlot={<TopBar right={<UserButton />} />}
       footerSlot={<Footer />}
     />
   );

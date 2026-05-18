@@ -59,10 +59,11 @@ function Checkbox({
 }
 
 type SignUpClientProps = {
+  topBarSlot: ReactNode;
   footerSlot: ReactNode;
 };
 
-export default function SignUpClient({ footerSlot }: SignUpClientProps) {
+export default function SignUpClient({ topBarSlot, footerSlot }: SignUpClientProps) {
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
@@ -73,17 +74,10 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
       style={{ background: PALETTE.bg }}
     >
       <div className="w-full max-w-md px-6 py-12 sm:py-20">
-        <Link href="/" className="block mb-10 text-center">
-          <h1
-            className="text-[28px] tracking-tight"
-            style={{ fontFamily: TOKENS.serif, fontWeight: 400 }}
-          >
-            <span style={{ color: PALETTE.accent }}>Mind</span>
-            <span style={{ color: PALETTE.accentSage }}>Reset</span>
-          </h1>
-        </Link>
+        {/* Phase 1d.2 — server-rendered TopBar in centered mode. */}
+        {topBarSlot}
 
-        <div className="mb-8">
+        <div className="mt-10 mb-8">
           <Checkbox checked={tcAccepted} onChange={setTcAccepted}>
             I agree to the{' '}
             <Link

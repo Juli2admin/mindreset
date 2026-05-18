@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import Footer from '@/components/Footer';
+import TopBar from '@/components/TopBar';
 
 const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
@@ -127,25 +128,17 @@ function ExtLink({ href, children }: { href: string; children: ReactNode }) {
 export default function TermsPage() {
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
-      <div className="max-w-3xl mx-auto px-6 py-12 sm:py-16">
-        {/* ─── Page header ────────────────────────────────────── */}
-        <header className="mb-16">
-          <Link href="/" className="inline-block">
-            <h1
-              className="text-[22px] tracking-tight"
-              style={{ fontFamily: SERIF, fontWeight: 400 }}
-            >
-              <span style={{ color: PALETTE.accent }}>Mind</span>
-              <span style={{ color: PALETTE.accentSage }}>Reset</span>
-            </h1>
-          </Link>
-          <p
-            className="text-[11px] uppercase tracking-[0.22em] mt-8"
-            style={{ color: PALETTE.textHint, fontFamily: SANS, fontWeight: 500 }}
-          >
-            Last updated · {LAST_UPDATED}
-          </p>
-        </header>
+      <div className="max-w-3xl mx-auto px-6 py-4">
+        <TopBar />
+      </div>
+      <div className="max-w-3xl mx-auto px-6 pb-12 sm:pb-16">
+        {/* ─── Document metadata ───────────────────────────────── */}
+        <p
+          className="text-[11px] uppercase tracking-[0.22em] mb-16"
+          style={{ color: PALETTE.textHint, fontFamily: SANS, fontWeight: 500 }}
+        >
+          Last updated · {LAST_UPDATED}
+        </p>
 
         {/* ─── 1. Terms of Service ────────────────────────────── */}
         <article className="mb-12">

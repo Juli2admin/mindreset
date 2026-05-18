@@ -6,7 +6,7 @@ import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 
-// Phase i18n.1c — URL-aware picker. Two render branches:
+// Phase i18n.1c/1d.2 — URL-aware picker. Two render branches:
 //   1. EN active (default locale): silent globe icon only, low-contrast.
 //      Russian/French/etc.-speaking UK users landing on / via
 //      Accept-Language=en or direct link still need a discoverable way to
@@ -18,10 +18,14 @@ import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 // suffix in the dropdown — honest signal that the routing works but
 // content is English until Phase 2's DeepL pass. Removed in Phase 2.
 //
-// Globe moves to top-right header in Phase 1d alongside Landing.jsx
-// unification (top-right is the universal convention — Airbnb, Booking,
-// Google). Footer is the right placement only while the top-header is
-// not yet a shared component.
+// Phase 1d.2 — same component is now mounted in BOTH the new TopBar
+// (top-right, universal web convention — Airbnb, Booking, Google) AND
+// the Footer (industry-standard dual placement). Both write the same
+// mr_locale cookie + URL navigation; clicking either has identical
+// effect. Auth pages (/sign-in, /sign-up) render the TopBar in
+// 'centered' mode which omits the picker — trauma-informed friction-
+// point clean-up. User reaches the picker via Footer or by navigating
+// back to a regular page.
 
 const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
@@ -143,7 +147,11 @@ export default function FooterLanguagePicker({ label, theme = 'day' }: Props) {
     : `${label}. ${currentNative}`;
 
   return (
-    <div className="mt-4 flex items-center justify-center relative">
+    // Layout-neutral outer: only `relative` (needed to anchor the
+    // absolute-positioned dropdown panel below). Parent component
+    // controls placement — Footer wraps in `mt-4 flex justify-center`,
+    // TopBar drops it into the right-side flex row directly.
+    <div className="relative inline-block">
       <button
         ref={triggerRef}
         type="button"

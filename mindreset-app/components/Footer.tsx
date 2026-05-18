@@ -4,7 +4,7 @@
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
-import FooterLanguagePicker from './FooterLanguagePicker';
+import LanguagePicker from './LanguagePicker';
 
 type Props = {
   omit?: 'terms' | 'privacy';
@@ -55,7 +55,9 @@ export default async function Footer({ omit, theme = 'day' }: Props) {
           {t('contact')}
         </a>
       </p>
-      <FooterLanguagePicker label={t('languagePickerLabel')} theme={theme} />
+      <div className="mt-4 flex items-center justify-center">
+        <LanguagePicker label={t('languagePickerLabel')} theme={theme} />
+      </div>
     </footer>
   );
 }

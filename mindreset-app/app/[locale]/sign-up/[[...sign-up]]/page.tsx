@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import SignUpClient from './SignUpClient';
 import Footer from '@/components/Footer';
+import TopBar from '@/components/TopBar';
 // Phase i18n.1a — locale-aware redirect: redirect('/account') from a /ru/
 // page produces /ru/account, not /account.
 import { redirect } from '@/i18n/navigation';
@@ -50,5 +51,14 @@ export default async function SignUpPage({
     redirect({ href: '/screening', locale });
   }
 
-  return <SignUpClient footerSlot={<Footer />} />;
+  // Phase i18n.1d.2 — TopBar in 'centered' align mode (no picker visible)
+  // is passed as a server-rendered slot. Same slot-prop pattern as Footer
+  // since SignUpClient is a client component and can't render an async
+  // server component directly.
+  return (
+    <SignUpClient
+      topBarSlot={<TopBar align="centered" />}
+      footerSlot={<Footer />}
+    />
+  );
 }
