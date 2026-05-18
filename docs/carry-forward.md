@@ -669,3 +669,46 @@ completion paths (`auth().protect()` rewrites, sign-in flows, signed-in
 routes) require Julia's manual walkthrough on the real Preview URL. Factor
 this into all future verification protocols — don't promise full local
 coverage.
+
+## Phase 1c — design decisions locked (18 May 2026)
+
+### Globe icon placement: Footer in 1c, top-right header in 1d
+
+The universal web convention for language pickers is the top-right
+header (Airbnb, Booking, Google all do this). In Phase 1c we placed the
+discreet globe icon in the Footer because the top-right header is not
+yet a shared component — every page renders its own header layout, and
+adding the picker to all of them is a separate piece of work that
+overlaps with Landing.jsx unification.
+
+Phase 1d will:
+- Unify the top header into a shared component (currently each page
+  renders inline header markup)
+- Move the locale-picker globe affordance from Footer to top-right
+- Remove the now-redundant Footer placement
+
+The Footer picker in 1c is functionally complete and discoverable; it
+just isn't where users will look first by convention. Acceptable
+trade-off for shipping 1c independently.
+
+### Placeholder-content marker: "· en" suffix in dropdown
+
+Six of the eight locales (FR, DE, ES, IT, PL, PT) ship in Phase 1 with
+English placeholder bundles — the URL routing works (`/fr/screening`
+returns a page), but the strings are still English until Phase 2's
+DeepL pass + native-speaker review.
+
+The picker dropdown marks these locales with a low-contrast "· en"
+suffix after the native name:
+- "Français · en"
+- "Polski · en"
+- (EN and RU show no suffix — native-quality content)
+
+This is the honest middle ground between:
+- Unmarked: clean but user picks Polski expecting Polish, bounces
+- Disabled/greyed-out: user can't explore the locale framework at all
+
+Phase 2 will remove the suffix marker on each locale as its DeepL pass
++ native-speaker review lands. The `NATIVE_CONTENT_LOCALES` set in
+`components/FooterLanguagePicker.tsx` is the source of truth — add a
+locale code to it when its content lands and the suffix disappears.
