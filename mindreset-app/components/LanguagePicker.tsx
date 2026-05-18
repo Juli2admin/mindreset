@@ -52,6 +52,11 @@ type Props = {
   // the trigger itself is icon-only or icon + native name.
   label: string;
   theme?: 'day' | 'night';
+  // Which way the dropdown panel opens from the trigger.
+  //   'up'   = panel above the trigger — correct for Footer (page-bottom mount).
+  //   'down' = panel below the trigger — correct for TopBar (page-top mount).
+  // Defaults to 'up' so Footer (existing caller) needs no update.
+  direction?: 'up' | 'down';
 };
 
 function GlobeIcon({ size = 14, color }: { size?: number; color: string }) {
@@ -76,7 +81,11 @@ function GlobeIcon({ size = 14, color }: { size?: number; color: string }) {
   );
 }
 
-export default function FooterLanguagePicker({ label, theme = 'day' }: Props) {
+export default function FooterLanguagePicker({
+  label,
+  theme = 'day',
+  direction = 'up',
+}: Props) {
   const currentLocale = useLocale();
   const router = useRouter();
   const currentPath = usePathname();
@@ -190,10 +199,16 @@ export default function FooterLanguagePicker({ label, theme = 'day' }: Props) {
           aria-label={label}
           className="absolute z-50 overflow-y-auto rounded-md shadow-lg"
           style={{
-            // Above the trigger; footer is page-bottom so opening upward
-            // is the natural direction. max-height + scroll handles
-            // short-viewport mobile.
-            bottom: 'calc(100% + 6px)',
+            // Direction = where the panel opens FROM the trigger.
+            //   'up'   (Footer mount, page bottom): panel above, anchored
+            //          via `bottom: calc(100% + 6px)`.
+            //   'down' (TopBar mount, page top): panel below, anchored
+            //          via `top: calc(100% + 6px)`.
+            // max-height + scroll handles short-viewport mobile in either
+            // direction.
+            ...(direction === 'down'
+              ? { top: 'calc(100% + 6px)' }
+              : { bottom: 'calc(100% + 6px)' }),
             left: '50%',
             transform: 'translateX(-50%)',
             minWidth: '180px',

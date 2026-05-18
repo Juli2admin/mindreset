@@ -119,7 +119,11 @@ export default function TopBar({
       <div className="flex items-center">{wordmark}</div>
       <div className="flex items-center gap-3">
         {right}
-        <LanguagePicker label={tFooter('languagePickerLabel')} theme={theme} />
+        <LanguagePicker
+          label={tFooter('languagePickerLabel')}
+          theme={theme}
+          direction="down"
+        />
       </div>
     </header>
   );
