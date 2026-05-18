@@ -55,18 +55,23 @@ export function formatNumber(
 }
 
 /**
- * Format a currency value. Defaults to GBP (UK launch).
+ * Format a currency value. Always rendered in en-GB regardless of UI
+ * locale — this is a UK-only product and prices stay in British format
+ * everywhere ("£9.99", never "9,99 £" or "9,99 £GB"). Reasoning:
+ *   - Stripe checkout shows English-format GBP regardless of UI language,
+ *     so picker switches in our UI shouldn't desync from checkout
+ *   - Trauma-informed simplicity: avoids "is that 9.99 or 999" format
+ *     ambiguity for users unfamiliar with comma-as-decimal conventions
+ *   - Localisation work applies to labels AROUND the price
+ *     ("/month" → "/месяц") not the price itself
  *
- * Example: formatCurrency(9.99, 'en') → "£9.99",
- *          formatCurrency(9.99, 'fr') → "9,99 £",
- *          formatCurrency(9.99, 'ru') → "9,99 £" (Russian convention with £).
+ * Defaults to GBP. Other ISO 4217 codes accepted in case we ever surface
+ * a USD/EUR figure (e.g. a reference price), still in British format.
+ *
+ * Example: formatCurrency(9.99) → "£9.99" for every UI locale.
  */
-export function formatCurrency(
-  value: number,
-  locale: Locale,
-  currency: string = 'GBP',
-): string {
-  return new Intl.NumberFormat(INTL_TAGS[locale], {
+export function formatCurrency(value: number, currency: string = 'GBP'): string {
+  return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency,
   }).format(value);
