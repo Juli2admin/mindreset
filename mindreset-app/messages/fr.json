@@ -7,5 +7,258 @@
   },
   "TopBar": {
     "wordmarkAria": "MindReset home"
+  },
+  "CrisisResources": {
+    "crisisLabel": "Need help right now?",
+    "crisisItems": [
+      { "name": "Samaritans", "detail": "Call 116 123 — 24/7, free" },
+      { "name": "Shout", "detail": "Text SHOUT to 85258 — 24/7" },
+      { "name": "NHS 111", "detail": "Mental health crisis line — option 2" }
+    ],
+    "disclaimer": "MindReset is a wellbeing tool — not therapy, not a medical device, and not a substitute for professional care. If you are in immediate danger, please use one of the lines above or call 999."
+  },
+  "DisclaimerModal": {
+    "title": "Important — before you continue",
+    "primary": "MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.",
+    "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
+    "crisisLine": "<b>UK:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> option 2. Your GP. In an emergency: <b>999</b> or A&E.",
+    "acknowledge": "I understand — continue"
+  },
+  "MiniMind": {
+    "opener": "Hello. Good to have you here. How are you doing today?",
+    "placeholder": "Say what's on your mind.",
+    "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
+    "preparingResponse": "MiniMind is preparing a response",
+    "startNew": "Start new",
+    "welcomeBack": "Welcome back.",
+    "conversationInProgress": "You have a conversation in progress.",
+    "lastConversation": "Last conversation · {when}"
+  },
+  "Landing": {
+    "signIn": "Sign in",
+    "account": "Account",
+    "heroKicker": "A turning point. A method.",
+    "heroTitle": "A way back\nto yourself.",
+    "heroBody": [
+      "You feel it, don't you? That quiet sense that something inside is misaligned.",
+      "You are functioning. You are capable. But underneath — there is confusion, exhaustion, or emptiness you cannot quite explain.",
+      "This is where you stop. And begin again."
+    ],
+    "heroCta": "Begin",
+    "heroNote": "Begins with a five-minute check-in.",
+    "whatKicker": "What this is",
+    "whatTitle": "Structure, not advice.",
+    "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
+    "whatNot": ["therapy", "coaching", "a crisis service"],
+    "notWord": "Not",
+    "whatHelpsLead": "It helps you:",
+    "whatHelpsItems": [
+      "Slow down internal noise",
+      "Recognise emotional patterns",
+      "Rebuild inner coherence",
+      "Reconnect with who you are beneath roles and expectations"
+    ],
+    "whoKicker": "Who it is for",
+    "whoTitle": "Internally disoriented,\nexternally functioning.",
+    "whoLead": "MindReset is designed for adults navigating internal transitions:",
+    "whoScenarios": [
+      "Feeling lost or disconnected despite doing everything right",
+      "Emotional burnout after years of responsibility or caregiving",
+      "Identity confusion after divorce, relocation, ageing, or major life shifts",
+      "Chronic self-neglect, people-pleasing, putting others first",
+      "Saying: I have tried therapy, books, and self-work — but something still feels missing"
+    ],
+    "whoClose": "It is for those who are emotionally stable, but internally disoriented.",
+    "safetyKicker": "Safety",
+    "safetyTitle": "You stay in control.",
+    "safetyLead": "MindReset is built with emotional safety at its core.",
+    "safetyItems": [
+      "No diagnoses. No labels. No pressure.",
+      "No deep trauma work unless you choose it.",
+      "You can pause, slow down, or stop at any moment.",
+      "If your responses suggest distress or instability, the system pauses gently and points you to professional support."
+    ],
+    "pathsKicker": "What is inside",
+    "pathsTitle": "Three paths,\nthree depths.",
+    "paths": [
+      {
+        "name": "MiniMind",
+        "kind": "Daily companion",
+        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help."
+      },
+      {
+        "name": "States & Themes",
+        "kind": "Focused modules",
+        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation."
+      },
+      {
+        "name": "The Journey",
+        "kind": "Eight-stage reset",
+        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself."
+      }
+    ],
+    "differentKicker": "What sets it apart",
+    "differentTitle": "Most platforms give advice.\nMindReset gives structure.",
+    "differentItems": [
+      "No diagnoses",
+      "No digging unless you choose",
+      "No dependency on the system",
+      "No pressure to change",
+      "Just a clear, contained path — at your pace"
+    ],
+    "closingKicker": "Whenever you are ready",
+    "closingTitle": "Begin.",
+    "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
+    "closingCta": "Start the check-in"
+  },
+  "Screening": {
+    "brand": "MindReset",
+    "tagline": "A trauma-informed self-help companion — not therapy, not a crisis service.",
+    "introTitle": "Before we begin",
+    "introBody": "This short questionnaire helps us understand whether MindReset is the right fit for you right now. It takes about five minutes. Some questions are direct — answer honestly. If anything feels too much, you can close this tab at any moment.",
+    "ageGate": "I confirm I am 18 or older.",
+    "notMedical": "I understand this is not medical or psychiatric treatment.",
+    "begin": "Begin",
+    "next": "Continue",
+    "back": "Back",
+    "finish": "See result",
+    "startOver": "Start over",
+    "submitLoadingKicker": "One moment",
+    "submitLoading": "Saving your answers…",
+    "submitErrorTitle": "Couldn't save",
+    "submitErrorBody": "Your answers came through but we had trouble saving them — please refresh and try again.",
+    "retryButton": "Try again",
+    "selectAll": "Tick anything that applies to you right now.",
+    "rateScaleHigh": "0 = not at all, 5 = extremely",
+    "rateScaleLow": "0 = not present, 5 = very present",
+    "pickOne": "Choose the one that best describes you.",
+    "yes": "Yes",
+    "no": "No",
+    "progress": "Step",
+    "of": "of",
+    "secExclusion": "Important first",
+    "secFunctionality": "How you function day to day",
+    "secEmotional": "Emotional state right now",
+    "secTrauma": "Past wounds",
+    "secCognitive": "Practicalities",
+    "secConsent": "Agreement",
+    "exclusionTitle": "Is any of this true for you in this period of your life?",
+    "functionalityTitle": "How much does each of these match your current life?",
+    "emotionalTitle": "How present is each of these for you right now?",
+    "traumaTitle": "Which of these is closest to how things feel about your past?",
+    "cognitiveTitle": "A few quick checks.",
+    "consentTitle": "Before you proceed, please confirm you understand:",
+    "exclusion": [
+      "Current thoughts of suicide, with intent or a plan",
+      "A suicide attempt in the past 12 months",
+      "Self-harm in the past 3 months",
+      "A diagnosis of schizophrenia, schizoaffective disorder, or psychosis",
+      "A diagnosis of bipolar disorder with manic episodes",
+      "Severe depression that stops you doing daily tasks",
+      "Untreated severe PTSD or complex PTSD",
+      "Active drug or alcohol dependence",
+      "Current hallucinations or delusions",
+      "Living in a home that is currently unsafe (domestic violence)",
+      "A current eating disorder with medical instability"
+    ],
+    "functionality": [
+      "I can do daily things — wash, eat, work, basic tasks",
+      "I can focus on a conversation for at least 10 minutes",
+      "I feel safe in my home environment",
+      "I can regulate myself, at least partially, when upset",
+      "I can feel basic emotions, rather than complete numbness",
+      "I can describe my feelings in simple words"
+    ],
+    "emotional": [
+      "I feel overwhelmed constantly",
+      "I have frequent panic attacks",
+      "I shut down emotionally (freeze) often",
+      "I dissociate — feel unreal, disconnected",
+      "I get triggered suddenly and lose control"
+    ],
+    "trauma": [
+      "I have mild emotional wounds but function normally",
+      "I have unresolved past issues but can stay stable",
+      "My past trauma overwhelms me regularly",
+      "I cannot stay emotionally safe when remembering the past"
+    ],
+    "cognitive": [
+      "I can follow instructions step by step",
+      "I can imagine simple things, or sense them through the body",
+      "I understand that MindReset requires active participation from me"
+    ],
+    "consent": [
+      "MindReset is not medical or psychiatric treatment",
+      "MindReset cannot support a crisis, suicidal state, or psychosis",
+      "I will be honest about my symptoms in each session",
+      "I will stop the process if I feel unsafe",
+      "The AI may stop the process for safety reasons, and I accept that",
+      "I take responsibility for my decisions and life changes",
+      "I understand MindReset only works if I actively participate",
+      "I consent to proceed voluntarily"
+    ],
+    "redKicker": "Please pause here",
+    "redTitle": "MindReset is not the right fit for you right now",
+    "redBody": "What you described needs more than an AI companion can safely offer. That is not a failure on your part — it just means a real human, with proper training, is the right next step. Please reach out today, not tomorrow.",
+    "redResourcesTitle": "Where to turn now",
+    "redResources": [
+      { "name": "Samaritans", "detail": "Call 116 123 — free, 24/7, any reason" },
+      { "name": "NHS 111", "detail": "Press option 2 for the mental health line" },
+      { "name": "Your GP", "detail": "Ask for an urgent same-day appointment" },
+      { "name": "A&E or 999", "detail": "If you feel unsafe right now" }
+    ],
+    "redFooter": "We are not the right service for this moment, but the people above are. You deserve to be heard by someone who can really help.",
+    "yellowKicker": "Caution path",
+    "yellowTitle": "MindReset can help, but gently",
+    "yellowBody": "Your answers tell us your nervous system is carrying a lot right now. The deeper modules of MindReset will not serve you well yet — they could make things harder, not easier. The right starting point is stabilisation work, focused only on bringing your system back into balance before going further.",
+    "yellowNextTitle": "What we suggest",
+    "yellowNext": [
+      "Begin with MiniMind — the AI companion with daily check-ins and short grounding practices",
+      "No deep modules, no parts work, no past-focused exercises until your daily functioning is steadier",
+      "If you would like human support alongside, we can share a directory of trauma-informed practitioners"
+    ],
+    "yellowCta": "When you're ready",
+    "greenKicker": "Welcome",
+    "greenTitle": "You are ready to begin",
+    "greenBody": "Your answers suggest MindReset is a good fit for you right now. Below is what to expect, and the next step.",
+    "greenNextTitle": "What happens next",
+    "greenNext": [
+      "You will create an account with your email",
+      "Before any module, you will see a short introduction explaining what to expect",
+      "Each session, the AI starts by checking in with how you are — there is never pressure to go further than feels right",
+      "You can pause, slow down, or stop at any moment"
+    ],
+    "greenCta": "Continue → Create your account",
+    "sessionRef": "Reference"
+  },
+  "Account": {
+    "welcomeKicker": "Your account",
+    "welcomeTitleWithName": "Welcome, {name}",
+    "welcomeTitleNoName": "Welcome",
+    "welcomeBody": "A quiet place to see where you are, and to choose what's next.",
+    "comingSoon": "Coming soon",
+    "tierOpen": "Open",
+    "tiers": {
+      "miniMind": {
+        "title": "MiniMind",
+        "subtitle": "Daily companion",
+        "description": "Your daily AI companion for reflection, regulation, and quiet support."
+      },
+      "statesThemes": {
+        "title": "States & Themes",
+        "subtitle": "Focused modules",
+        "description": "Targeted work on four states and five themes."
+      },
+      "journey": {
+        "title": "The Journey",
+        "subtitle": "Eight-stage reset",
+        "description": "The deep eight-block work, paced for safety and depth."
+      }
+    },
+    "price": {
+      "perMonth": "{price} / month",
+      "eachOrPerMonth": "{single} each, or {monthly} / month",
+      "oneOffOrInstalments": "{single}, or {count} × {instalment}"
+    }
   }
 }

@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+
+// Phase i18n.2a — Phase 0 oversight (modal was hardcoded EN only)
+// resolved. Content moved into DisclaimerModal namespace in message
+// bundles. The crisis-line paragraph uses t.rich() to handle inline
+// <b> markup around hotline numbers without splitting the prose into
+// many small translatable strings.
 
 const PALETTE = FULL_PALETTE.day;
 const OVERLAY = 'rgba(57, 57, 57, 0.55)';
@@ -9,6 +16,7 @@ const OVERLAY = 'rgba(57, 57, 57, 0.55)';
 type Props = { onAcknowledge: () => void };
 
 export default function DisclaimerModal({ onAcknowledge }: Props) {
+  const t = useTranslations('DisclaimerModal');
   const buttonRef = useRef<HTMLButtonElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +57,7 @@ export default function DisclaimerModal({ onAcknowledge }: Props) {
         style={{ background: PALETTE.bg, color: PALETTE.text }}
       >
         <h2 id="disclaimer-modal-title" className="sr-only">
-          Important — before you continue
+          {t('title')}
         </h2>
 
         <div
@@ -65,23 +73,17 @@ export default function DisclaimerModal({ onAcknowledge }: Props) {
           className="text-[18px] leading-[1.5] mb-5"
           style={{ fontFamily: TOKENS.serif, fontWeight: 400, color: PALETTE.text }}
         >
-          MindReset is a wellbeing tool — not therapy, not a medical device, not a
-          crisis service.
+          {t('primary')}
         </p>
         <p className="text-[15px] leading-[1.7] mb-5" style={{ color: PALETTE.textMuted }}>
-          The AI here cannot diagnose, treat, or replace a clinician. If you are in
-          crisis, in danger, or experiencing severe psychological symptoms — please
-          reach out to professional support.
+          {t('secondary')}
         </p>
         <p className="text-[15px] leading-[1.7] mb-8" style={{ color: PALETTE.textMuted }}>
-          <strong style={{ color: PALETTE.text, fontWeight: 500 }}>UK:</strong>{' '}
-          Samaritans{' '}
-          <strong style={{ color: PALETTE.text, fontWeight: 500 }}>116 123</strong>{' '}
-          (24/7). NHS{' '}
-          <strong style={{ color: PALETTE.text, fontWeight: 500 }}>111</strong> option
-          2. Your GP. In an emergency:{' '}
-          <strong style={{ color: PALETTE.text, fontWeight: 500 }}>999</strong> or
-          A&amp;E.
+          {t.rich('crisisLine', {
+            b: (chunks) => (
+              <strong style={{ color: PALETTE.text, fontWeight: 500 }}>{chunks}</strong>
+            ),
+          })}
         </p>
 
         <button
@@ -95,7 +97,7 @@ export default function DisclaimerModal({ onAcknowledge }: Props) {
             fontWeight: 500,
           }}
         >
-          I understand — continue
+          {t('acknowledge')}
         </button>
       </div>
     </div>

@@ -71,9 +71,16 @@ export function formatNumber(
  * Example: formatCurrency(9.99) → "£9.99" for every UI locale.
  */
 export function formatCurrency(value: number, currency: string = 'GBP'): string {
+  // minimumFractionDigits: 0 + maximumFractionDigits: 2 — display human-
+  // friendly prices: "£199" instead of "£199.00" for whole numbers,
+  // "£9.99" for non-whole. Stripe-consistency note: Stripe enforces
+  // currency-locale (en-GB), but trailing-zero padding is a UX choice
+  // independent of locale. en-GB format preserved either way.
   return new Intl.NumberFormat('en-GB', {
     style: 'currency',
     currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
