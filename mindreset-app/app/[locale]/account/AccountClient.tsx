@@ -1,100 +1,48 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { UserButton } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 // Phase i18n.1d.2 — shared TopBar (client component) imported directly.
 import TopBar from '@/components/TopBar';
+// Phase i18n.2a — formatCurrency for price values; period words come
+// from message bundles via ICU template strings.
+import { formatCurrency } from '@/lib/format';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
-// app/account/page.tsx. Phase i18n.0 server-component-with-client-slot
-// pattern.
+// app/account/page.tsx.
 
 const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-type Lang = 'en' | 'ru';
+// Phase i18n.2a — Product tier data. Code, not content. Numeric values
+// feed formatCurrency() (en-GB locked per Phase 1c); period words are
+// composed at render via ICU templates in the Account.price.* namespace.
+type TierData =
+  | { id: 'miniMind'; price: number; priceKey: 'perMonth'; href: '/minimind' }
+  | { id: 'statesThemes'; single: number; monthly: number; priceKey: 'eachOrPerMonth' }
+  | {
+      id: 'journey';
+      single: number;
+      instalment: number;
+      count: number;
+      priceKey: 'oneOffOrInstalments';
+    };
 
-type Tier = {
-  title: string;
-  subtitle: string;
-  description: string;
-  price: string;
-  href?: string; // when set, the card is an active <Link>; otherwise inert
-};
-
-type CopyShape = {
-  welcomeKicker: string;
-  welcomeTitleWithName: string;
-  welcomeTitleNoName: string;
-  welcomeBody: string;
-  comingSoon: string;
-  tierOpen: string;
-  tiers: Tier[];
-};
-
-const COPY: Record<Lang, CopyShape> = {
-  en: {
-    welcomeKicker: 'Your account',
-    welcomeTitleWithName: 'Welcome, {name}',
-    welcomeTitleNoName: 'Welcome',
-    welcomeBody: "A quiet place to see where you are, and to choose what's next.",
-    comingSoon: 'Coming soon',
-    tierOpen: 'Open',
-    tiers: [
-      {
-        title: 'MiniMind',
-        subtitle: 'Daily companion',
-        description: 'Your daily AI companion for reflection, regulation, and quiet support.',
-        price: '£9.99 / month',
-        href: '/minimind',
-      },
-      {
-        title: 'States & Themes',
-        subtitle: 'Focused modules',
-        description: 'Targeted work on four states and five themes.',
-        price: '£199 each, or £39 / month',
-      },
-      {
-        title: 'The Journey',
-        subtitle: 'Eight-stage reset',
-        description: 'The deep eight-block work, paced for safety and depth.',
-        price: '£1,200, or 6 × £225',
-      },
-    ],
+const TIERS: TierData[] = [
+  { id: 'miniMind', price: 9.99, priceKey: 'perMonth', href: '/minimind' },
+  { id: 'statesThemes', single: 199, monthly: 39, priceKey: 'eachOrPerMonth' },
+  {
+    id: 'journey',
+    single: 1200,
+    instalment: 225,
+    count: 6,
+    priceKey: 'oneOffOrInstalments',
   },
-  ru: {
-    welcomeKicker: 'Ваш аккаунт',
-    welcomeTitleWithName: 'Здравствуйте, {name}',
-    welcomeTitleNoName: 'Здравствуйте',
-    welcomeBody: 'Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.',
-    comingSoon: 'Скоро',
-    tierOpen: 'Открыть',
-    tiers: [
-      {
-        title: 'MiniMind',
-        subtitle: 'Ежедневный спутник',
-        description: 'Ваш ежедневный AI-спутник — для рефлексии, регуляции и тихой поддержки.',
-        price: '£9.99 / месяц',
-        href: '/minimind',
-      },
-      {
-        title: 'States & Themes',
-        subtitle: 'Фокусированные модули',
-        description: 'Целевая работа над четырьмя состояниями и пятью темами.',
-        price: '£199 за каждый или £39 / месяц',
-      },
-      {
-        title: 'Путь',
-        subtitle: 'Восьмиступенчатый перезапуск',
-        description: 'Глубокая работа из восьми блоков, в ритме, который бережёт вас.',
-        price: '£1,200 или 6 × £225',
-      },
-    ],
-  },
-};
+];
 
 type Props = {
   firstName: string | null;
@@ -107,9 +55,7 @@ export default function AccountClient({
   cookieToClear,
   footerSlot,
 }: Props) {
-  // Lang fixed to 'en' pending i18n-lift; see header for context.
-  const [lang] = useState<Lang>('en');
-  const t = COPY[lang];
+  const t = useTranslations('Account');
 
   useEffect(() => {
     if (cookieToClear) {
@@ -118,8 +64,25 @@ export default function AccountClient({
   }, [cookieToClear]);
 
   const welcomeTitle = firstName
-    ? t.welcomeTitleWithName.replace('{name}', firstName)
-    : t.welcomeTitleNoName;
+    ? t('welcomeTitleWithName', { name: firstName })
+    : t('welcomeTitleNoName');
+
+  function renderTierPrice(tier: TierData): string {
+    if (tier.priceKey === 'perMonth') {
+      return t('price.perMonth', { price: formatCurrency(tier.price) });
+    }
+    if (tier.priceKey === 'eachOrPerMonth') {
+      return t('price.eachOrPerMonth', {
+        single: formatCurrency(tier.single),
+        monthly: formatCurrency(tier.monthly),
+      });
+    }
+    return t('price.oneOffOrInstalments', {
+      single: formatCurrency(tier.single),
+      count: tier.count,
+      instalment: formatCurrency(tier.instalment),
+    });
+  }
 
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
@@ -132,7 +95,7 @@ export default function AccountClient({
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
             style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
           >
-            {t.welcomeKicker}
+            {t('welcomeKicker')}
           </div>
           <h2
             className="text-[32px] leading-[1.15] mb-4"
@@ -144,12 +107,18 @@ export default function AccountClient({
             className="text-[16px] leading-[1.65]"
             style={{ color: PALETTE.textMuted, fontFamily: SANS }}
           >
-            {t.welcomeBody}
+            {t('welcomeBody')}
           </p>
         </div>
 
         <div className="space-y-4">
-          {t.tiers.map((tier, i) => {
+          {TIERS.map((tier) => {
+            const title = t(`tiers.${tier.id}.title`);
+            const subtitle = t(`tiers.${tier.id}.subtitle`);
+            const description = t(`tiers.${tier.id}.description`);
+            const priceText = renderTierPrice(tier);
+            const hasHref = 'href' in tier && tier.href;
+
             const inner = (
               <>
                 <div className="flex items-start justify-between gap-4 mb-3">
@@ -158,16 +127,16 @@ export default function AccountClient({
                       className="text-[20px] mb-1"
                       style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
                     >
-                      {tier.title}
+                      {title}
                     </h3>
                     <p
                       className="text-[13px]"
                       style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                     >
-                      {tier.subtitle}
+                      {subtitle}
                     </p>
                   </div>
-                  {tier.href ? (
+                  {hasHref ? (
                     <span
                       className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
                       style={{
@@ -177,7 +146,7 @@ export default function AccountClient({
                         fontWeight: 500,
                       }}
                     >
-                      {t.tierOpen}
+                      {t('tierOpen')}
                     </span>
                   ) : (
                     <span
@@ -190,7 +159,7 @@ export default function AccountClient({
                         fontWeight: 500,
                       }}
                     >
-                      {t.comingSoon}
+                      {t('comingSoon')}
                     </span>
                   )}
                 </div>
@@ -198,21 +167,21 @@ export default function AccountClient({
                   className="text-[15px] mb-4"
                   style={{ color: PALETTE.text, lineHeight: 1.6, fontFamily: SANS }}
                 >
-                  {tier.description}
+                  {description}
                 </p>
                 <p
                   className="text-[14px]"
                   style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
                 >
-                  {tier.price}
+                  {priceText}
                 </p>
               </>
             );
 
-            if (tier.href) {
+            if (hasHref && 'href' in tier) {
               return (
                 <Link
-                  key={i}
+                  key={tier.id}
                   href={tier.href}
                   className="block rounded-lg p-6 transition-all"
                   style={{
@@ -233,7 +202,7 @@ export default function AccountClient({
 
             return (
               <div
-                key={i}
+                key={tier.id}
                 className="rounded-lg p-6 transition-all"
                 style={{
                   background: PALETTE.bgCard,

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
-import { useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
 import { useUser } from '@clerk/nextjs';
 // Phase i18n.1a/1b — locale-aware router for the "Begin" CTA.
@@ -99,9 +99,9 @@ function ThemeToggle() {
 // Sign-in Link (depends on Clerk's useUser hook — client-state-derived)
 // plus the ThemeToggle (depends on Landing's ThemeContext). TopBar is
 // a client component so this composition works inline.
-function Header({ lang }) {
+function Header() {
   const { c, theme } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
   const { isLoaded, isSignedIn } = useUser();
   const signedIn = isLoaded && isSignedIn;
   return (
@@ -115,7 +115,7 @@ function Header({ lang }) {
             className="text-[13px] transition-colors hover:underline underline-offset-2"
             style={{ ...sansStyle, color: c.textMuted }}
           >
-            {signedIn ? t.account : t.signIn}
+            {signedIn ? t('account') : t('signIn')}
           </Link>
           <ThemeToggle />
         </>
@@ -124,226 +124,6 @@ function Header({ lang }) {
   );
 }
 
-// ============================================================================
-// COPY
-// ============================================================================
-const COPY = {
-  en: {
-    // HEADER NAV
-    signIn: 'Sign in',
-    account: 'Account',
-
-    // HERO
-    heroKicker: 'A turning point. A method.',
-    heroTitle: 'A way back\nto yourself.',
-    heroBody: [
-      "You feel it, don't you? That quiet sense that something inside is misaligned.",
-      'You are functioning. You are capable. But underneath — there is confusion, exhaustion, or emptiness you cannot quite explain.',
-      'This is where you stop. And begin again.',
-    ],
-    heroCta: 'Begin',
-    heroNote: 'Begins with a five-minute check-in.',
-
-    // WHAT IS
-    whatKicker: 'What this is',
-    whatTitle: 'Structure, not advice.',
-    whatLead: 'MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.',
-    whatNot: ['therapy', 'coaching', 'a crisis service'],
-    whatHelpsLead: 'It helps you:',
-    whatHelpsItems: [
-      'Slow down internal noise',
-      'Recognise emotional patterns',
-      'Rebuild inner coherence',
-      'Reconnect with who you are beneath roles and expectations',
-    ],
-
-    // WHO IT IS FOR
-    whoKicker: 'Who it is for',
-    whoTitle: 'Internally disoriented,\nexternally functioning.',
-    whoLead: 'MindReset is designed for adults navigating internal transitions:',
-    whoScenarios: [
-      'Feeling lost or disconnected despite doing everything right',
-      'Emotional burnout after years of responsibility or caregiving',
-      'Identity confusion after divorce, relocation, ageing, or major life shifts',
-      'Chronic self-neglect, people-pleasing, putting others first',
-      'Saying: I have tried therapy, books, and self-work — but something still feels missing',
-    ],
-    whoClose: 'It is for those who are emotionally stable, but internally disoriented.',
-
-    // SAFETY
-    safetyKicker: 'Safety',
-    safetyTitle: 'You stay in control.',
-    safetyLead: 'MindReset is built with emotional safety at its core.',
-    safetyItems: [
-      'No diagnoses. No labels. No pressure.',
-      'No deep trauma work unless you choose it.',
-      'You can pause, slow down, or stop at any moment.',
-      'If your responses suggest distress or instability, the system pauses gently and points you to professional support.',
-    ],
-
-    // PATHS
-    pathsKicker: 'What is inside',
-    pathsTitle: 'Three paths,\nthree depths.',
-    paths: [
-      {
-        name: 'MiniMind',
-        kind: 'Daily companion',
-        body: 'A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help.',
-      },
-      {
-        name: 'States & Themes',
-        kind: 'Focused modules',
-        body: 'Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation.',
-      },
-      {
-        name: 'The Journey',
-        kind: 'Eight-stage reset',
-        body: 'A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself.',
-      },
-    ],
-
-    // DIFFERENT
-    differentKicker: 'What sets it apart',
-    differentTitle: 'Most platforms give advice.\nMindReset gives structure.',
-    differentItems: [
-      'No diagnoses',
-      'No digging unless you choose',
-      'No dependency on the system',
-      'No pressure to change',
-      'Just a clear, contained path — at your pace',
-    ],
-
-    // CLOSING
-    closingKicker: 'Whenever you are ready',
-    closingTitle: 'Begin.',
-    closingBody:
-      'You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.',
-    closingCta: 'Start the check-in',
-
-    // FOOTER
-    crisisLabel: 'Need help right now?',
-    crisisItems: [
-      { name: 'Samaritans', detail: 'Call 116 123 — free, 24/7' },
-      { name: 'NHS 111', detail: 'option 2 for the mental health line' },
-      { name: 'Emergency', detail: '999 or A&E if you feel unsafe' },
-    ],
-    footerDisclaimer:
-      'MindReset is a self-guided reflection platform, not a medical or therapeutic service. If you are in crisis, please reach out using the resources above.',
-    footerLinks: [
-      { label: 'Terms', href: '/terms' },
-      { label: 'Privacy', href: '/privacy' },
-      { label: 'Contact', href: 'mailto:support@mindreset.ai' },
-    ],
-    footerCopy: '© 2025 MindReset.ai — London, UK',
-
-    toastText: '→ In the live app, this routes to /screening — the five-minute check-in.',
-    notWord: 'Not',
-  },
-
-  ru: {
-    signIn: 'Войти',
-    account: 'Аккаунт',
-
-    heroKicker: 'Точка опоры. Метод.',
-    heroTitle: 'Путь обратно\nк себе.',
-    heroBody: [
-      'Вы это чувствуете, правда? Тихое ощущение, что что-то внутри сместилось.',
-      'Вы функционируете. Вы способны. Но под этим — растерянность, истощение или пустота, которую трудно объяснить.',
-      'Здесь вы останавливаетесь. И начинаете заново.',
-    ],
-    heroCta: 'Начать',
-    heroNote: 'Начинается с пятиминутной анкеты.',
-
-    whatKicker: 'Что это',
-    whatTitle: 'Структура, а не советы.',
-    whatLead:
-      'MindReset — структурированная платформа для рефлексии, помогающая вернуть эмоциональную ясность, внутреннюю устойчивость и ощущение собственного направления.',
-    whatNot: ['терапия', 'коучинг', 'служба экстренной помощи'],
-    whatHelpsLead: 'Она помогает:',
-    whatHelpsItems: [
-      'Замедлить внутренний шум',
-      'Распознать эмоциональные паттерны',
-      'Восстановить внутреннюю целостность',
-      'Вернуться к тому, кем вы являетесь под ролями и ожиданиями',
-    ],
-
-    whoKicker: 'Для кого',
-    whoTitle: 'Внутри потеряны,\nснаружи функционируете.',
-    whoLead: 'MindReset создан для взрослых, проходящих внутренние переходы:',
-    whoScenarios: [
-      'Чувство потерянности, хотя внешне «всё правильно»',
-      'Эмоциональное выгорание после лет ответственности и заботы о других',
-      'Потеря идентичности после развода, переезда, взросления или жизненного перелома',
-      'Хроническое самопренебрежение, угодничество, постоянное «другие важнее»',
-      'Слова: «Я пробовала терапию, книги, работу над собой — но чего-то всё ещё не хватает»',
-    ],
-    whoClose: 'Это для тех, кто эмоционально устойчив, но внутренне дезориентирован.',
-
-    safetyKicker: 'Безопасность',
-    safetyTitle: 'Вы остаётесь в контроле.',
-    safetyLead: 'MindReset построен с эмоциональной безопасностью в основе.',
-    safetyItems: [
-      'Никаких диагнозов. Никаких ярлыков. Никакого давления.',
-      'Никакой глубокой работы с травмой без вашего выбора.',
-      'Можно остановиться, замедлиться или прекратить в любой момент.',
-      'Если ответы указывают на дистресс, система мягко делает паузу и направляет к живой профессиональной поддержке.',
-    ],
-
-    pathsKicker: 'Что внутри',
-    pathsTitle: 'Три пути,\nтри глубины.',
-    paths: [
-      {
-        name: 'MiniMind',
-        kind: 'Ежедневный спутник',
-        body: 'Тёплый чат-спутник, к которому можно вернуться в любой момент. Ежедневная проверка состояния, короткие практики заземления, место, где можно опереться. Мягко учится вашим паттернам и предлагает более глубокую работу, когда это уместно.',
-      },
-      {
-        name: 'Состояния и Темы',
-        kind: 'Фокусные модули',
-        body: 'Короткие структурированные путешествия для конкретных моментов. Состояния для настоящего: тревога, отключённость, внутренняя пустота, онемение. Темы для паттернов под этим: деньги и самоценность, семья, тело, стыд, самореализация.',
-      },
-      {
-        name: 'Путь',
-        kind: 'Восьмиступенчатый перезапуск',
-        body: 'Медленный, последовательный путь от стабилизации к новому ощущению себя. Месяцы работы в темпе, который выдерживает ваша система. Создан, чтобы помочь отпустить убеждения, которые никогда не были вашими, восстановить границы и вспомнить себя.',
-      },
-    ],
-
-    differentKicker: 'Чем отличается',
-    differentTitle: 'Большинство платформ дают советы.\nMindReset даёт структуру.',
-    differentItems: [
-      'Никаких диагнозов',
-      'Никаких раскопок, кроме тех, что вы выбираете',
-      'Никакой зависимости от системы',
-      'Никакого давления изменяться',
-      'Только ясный, ограниченный путь — в вашем темпе',
-    ],
-
-    closingKicker: 'Когда будете готовы',
-    closingTitle: 'Начните.',
-    closingBody:
-      'Не нужно быть в полном порядке, чтобы начать. Не нужно знать, чего вы хотите. Анкета мягко скажет, подходит ли это вам в данный момент.',
-    closingCta: 'Пройти анкету',
-
-    crisisLabel: 'Сейчас нужна помощь?',
-    crisisItems: [
-      { name: 'Samaritans (UK)', detail: '116 123 — бесплатно, круглосуточно' },
-      { name: 'NHS 111', detail: 'вариант 2 — линия психического здоровья' },
-      { name: 'Экстренно', detail: '999 или A&E, если небезопасно' },
-    ],
-    footerDisclaimer:
-      'MindReset — платформа для рефлексии и самопомощи, не медицинская или терапевтическая услуга. Если вы в кризисе, обратитесь к ресурсам выше.',
-    footerLinks: [
-      { label: 'Условия', href: '/terms' },
-      { label: 'Конфиденциальность', href: '/privacy' },
-      { label: 'Контакт', href: 'mailto:support@mindreset.ai' },
-    ],
-    footerCopy: '© 2025 MindReset.ai — Лондон, Великобритания',
-
-    toastText: '→ В реальном приложении это перейдёт на /screening — пятиминутную анкету.',
-    notWord: 'Не',
-  },
-};
 
 // ============================================================================
 // Shared section helpers
@@ -374,27 +154,28 @@ function SectionTitle({ text, large = false }) {
 // ============================================================================
 // Sections
 // ============================================================================
-function Hero({ lang, onBegin }) {
+function Hero({ onBegin }) {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const heroBody = t.raw('heroBody');
   return (
     <section className="pt-12 pb-24 text-center">
       <div
         className="text-[11px] uppercase tracking-[0.22em] mb-8"
         style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
       >
-        {t.heroKicker}
+        {t('heroKicker')}
       </div>
 
       <h1
         className="text-[60px] sm:text-[76px] leading-[0.98] mb-12 -tracking-[0.025em] whitespace-pre-line"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
-        {t.heroTitle}
+        {t('heroTitle')}
       </h1>
 
       <div className="max-w-[36rem] mx-auto space-y-5 mb-12">
-        {t.heroBody.map((para, i) => (
+        {heroBody.map((para, i) => (
           <p key={i} className="text-[17px] leading-[1.65]" style={{ ...sansStyle, color: c.textMuted }}>
             {para}
           </p>
@@ -411,38 +192,40 @@ function Hero({ lang, onBegin }) {
           color: c.accentText,
         }}
       >
-        {t.heroCta}
+        {t('heroCta')}
         <ArrowRight size={14} />
       </button>
 
       <div className="text-[12px] mt-5" style={{ ...sansStyle, color: c.textHint }}>
-        {t.heroNote}
+        {t('heroNote')}
       </div>
     </section>
   );
 }
 
-function WhatIs({ lang }) {
+function WhatIs() {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const whatNot = t.raw('whatNot');
+  const whatHelpsItems = t.raw('whatHelpsItems');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
-      <SectionKicker text={t.whatKicker} color={c.accent} />
-      <SectionTitle text={t.whatTitle} />
+      <SectionKicker text={t('whatKicker')} color={c.accent} />
+      <SectionTitle text={t('whatTitle')} />
 
       <p className="text-[17px] leading-[1.65] mt-8 mb-12 max-w-[36rem]" style={{ ...sansStyle, color: c.textMuted }}>
-        {t.whatLead}
+        {t('whatLead')}
       </p>
 
       {/* "Not therapy. Not coaching. Not a crisis service." */}
       <div className="space-y-3 mb-14">
-        {t.whatNot.map((word, i) => (
+        {whatNot.map((word, i) => (
           <div
             key={i}
             className="text-[32px] sm:text-[40px] leading-[1.1] -tracking-[0.01em]"
             style={serifStyle}
           >
-            <span style={{ color: c.textHint, fontWeight: 300 }}>{t.notWord} </span>
+            <span style={{ color: c.textHint, fontWeight: 300 }}>{t('notWord')} </span>
             <span style={{ color: c.text, fontWeight: 400 }}>{word}.</span>
           </div>
         ))}
@@ -452,10 +235,10 @@ function WhatIs({ lang }) {
         className="text-[11px] uppercase tracking-[0.18em] mb-5"
         style={{ ...sansStyle, color: c.textHint, fontWeight: 500 }}
       >
-        {t.whatHelpsLead}
+        {t('whatHelpsLead')}
       </div>
       <ul className="space-y-3">
-        {t.whatHelpsItems.map((item, i) => (
+        {whatHelpsItems.map((item, i) => (
           <li key={i} className="flex gap-4">
             <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
               0{i + 1}
@@ -470,27 +253,28 @@ function WhatIs({ lang }) {
   );
 }
 
-function WhoFor({ lang }) {
+function WhoFor() {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const whoScenarios = t.raw('whoScenarios');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
-      <SectionKicker text={t.whoKicker} color={c.accentSage} />
-      <SectionTitle text={t.whoTitle} />
+      <SectionKicker text={t('whoKicker')} color={c.accentSage} />
+      <SectionTitle text={t('whoTitle')} />
 
       <p
         className="text-[15px] uppercase tracking-[0.04em] mt-10 mb-6"
         style={{ ...sansStyle, color: c.textMuted }}
       >
-        {t.whoLead}
+        {t('whoLead')}
       </p>
 
       <ul className="space-y-5 mb-12">
-        {t.whoScenarios.map((item, i) => (
+        {whoScenarios.map((item, i) => (
           <li
             key={i}
             className="flex gap-4 pb-5"
-            style={{ borderBottom: i === t.whoScenarios.length - 1 ? 'none' : `1px solid ${c.border}` }}
+            style={{ borderBottom: i === whoScenarios.length - 1 ? 'none' : `1px solid ${c.border}` }}
           >
             <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
               0{i + 1}
@@ -506,33 +290,34 @@ function WhoFor({ lang }) {
         className="text-[22px] leading-[1.4] italic max-w-[34rem]"
         style={{ ...serifStyle, color: c.accent, fontWeight: 400 }}
       >
-        {t.whoClose}
+        {t('whoClose')}
       </p>
     </section>
   );
 }
 
-function Safety({ lang }) {
+function Safety() {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const safetyItems = t.raw('safetyItems');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
-      <SectionKicker text={t.safetyKicker} color={c.accent} />
-      <SectionTitle text={t.safetyTitle} />
+      <SectionKicker text={t('safetyKicker')} color={c.accent} />
+      <SectionTitle text={t('safetyTitle')} />
 
       <p className="text-[17px] leading-[1.65] mt-8 mb-10 max-w-[36rem]" style={{ ...sansStyle, color: c.textMuted }}>
-        {t.safetyLead}
+        {t('safetyLead')}
       </p>
 
       <div className="space-y-5">
-        {t.safetyItems.map((item, i) => (
+        {safetyItems.map((item, i) => (
           <p
             key={i}
             className="text-[16px] leading-[1.6] pb-5"
             style={{
               ...sansStyle,
               color: c.text,
-              borderBottom: i === t.safetyItems.length - 1 ? 'none' : `1px solid ${c.border}`,
+              borderBottom: i === safetyItems.length - 1 ? 'none' : `1px solid ${c.border}`,
             }}
           >
             {item}
@@ -543,22 +328,23 @@ function Safety({ lang }) {
   );
 }
 
-function PathsSection({ lang }) {
+function PathsSection() {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const paths = t.raw('paths');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
       <div className="mb-16">
-        <SectionKicker text={t.pathsKicker} color={c.accentSage} />
-        <SectionTitle text={t.pathsTitle} />
+        <SectionKicker text={t('pathsKicker')} color={c.accentSage} />
+        <SectionTitle text={t('pathsTitle')} />
       </div>
 
       <div className="space-y-12">
-        {t.paths.map((p, i) => (
+        {paths.map((p, i) => (
           <div
             key={p.name}
             className="grid grid-cols-1 sm:grid-cols-12 gap-6 pb-12 last:pb-0"
-            style={{ borderBottom: i === t.paths.length - 1 ? 'none' : `1px solid ${c.border}` }}
+            style={{ borderBottom: i === paths.length - 1 ? 'none' : `1px solid ${c.border}` }}
           >
             <div className="sm:col-span-4">
               <div
@@ -586,21 +372,22 @@ function PathsSection({ lang }) {
   );
 }
 
-function Different({ lang }) {
+function Different() {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
+  const differentItems = t.raw('differentItems');
   return (
     <section className="py-20 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
-      <SectionKicker text={t.differentKicker} color={c.accent} />
+      <SectionKicker text={t('differentKicker')} color={c.accent} />
       <h2
         className="text-[36px] sm:text-[44px] leading-[1.1] -tracking-[0.015em] whitespace-pre-line max-w-[36rem] mx-auto mb-12"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
-        {t.differentTitle}
+        {t('differentTitle')}
       </h2>
 
       <ul className="space-y-3 max-w-[26rem] mx-auto text-left">
-        {t.differentItems.map((item, i) => (
+        {differentItems.map((item, i) => (
           <li
             key={i}
             className="flex items-baseline gap-4 py-2"
@@ -616,20 +403,20 @@ function Different({ lang }) {
   );
 }
 
-function ClosingCTA({ lang, onBegin }) {
+function ClosingCTA({ onBegin }) {
   const { c } = useTheme();
-  const t = COPY[lang];
+  const t = useTranslations('Landing');
   return (
     <section className="py-24 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
-      <SectionKicker text={t.closingKicker} color={c.accent} />
+      <SectionKicker text={t('closingKicker')} color={c.accent} />
       <h2
         className="text-[56px] sm:text-[72px] leading-[1] mb-8 -tracking-[0.02em]"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
-        {t.closingTitle}
+        {t('closingTitle')}
       </h2>
       <p className="text-[17px] leading-[1.65] mb-10 max-w-[34rem] mx-auto" style={{ ...sansStyle, color: c.textMuted }}>
-        {t.closingBody}
+        {t('closingBody')}
       </p>
       <button
         onClick={onBegin}
@@ -641,7 +428,7 @@ function ClosingCTA({ lang, onBegin }) {
           color: c.accentText,
         }}
       >
-        {t.closingCta}
+        {t('closingCta')}
         <ArrowRight size={14} />
       </button>
     </section>
@@ -678,13 +465,12 @@ function Toast({ message, onClose }) {
 // Main
 // ============================================================================
 export default function LandingPage({ footerSlot }) {
-  // Phase 1d.2 — `lang` now derives from useLocale() (next-intl) rather
-  // than a setState pair driven by the (removed) inline LangSwitch.
-  // COPY only has 'en' and 'ru' keys today; placeholder locales fall
-  // back to 'en' content. Phase 2 migrates COPY to message bundles
-  // and removes the lang/COPY duplication across Landing's children.
-  const locale = useLocale();
-  const lang = locale === 'ru' ? 'ru' : 'en';
+  // Phase 2a — `lang` state + prop drilling removed. Every subcomponent
+  // calls useTranslations('Landing') directly from NextIntlClientProvider
+  // context. The Phase 1d.2 'en'|'ru' narrowing is no longer needed
+  // because every locale has a complete message bundle (placeholder
+  // locales ship EN content as fallback; Phase 2b fills with real
+  // translations).
   const [theme, setTheme] = useState('day');
   const [toast, setToast] = useState(null);
   const router = useRouter();
@@ -718,18 +504,18 @@ export default function LandingPage({ footerSlot }) {
     <ThemeContext.Provider value={{ theme, c, toggle }}>
       <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
         <div className="max-w-2xl mx-auto px-6">
-          <Header lang={lang} />
-          <Hero lang={lang} onBegin={onBegin} />
-          <WhatIs lang={lang} />
-          <WhoFor lang={lang} />
-          <Safety lang={lang} />
-          <PathsSection lang={lang} />
-          <Different lang={lang} />
-          <ClosingCTA lang={lang} onBegin={onBegin} />
+          <Header />
+          <Hero onBegin={onBegin} />
+          <WhatIs />
+          <WhoFor />
+          <Safety />
+          <PathsSection />
+          <Different />
+          <ClosingCTA onBegin={onBegin} />
           {/* Phase 1d.2 — Landing-only crisis-resource block + safety
               disclaimer, rendered above the shared Footer. Footer arrives
               as a server-rendered slot from [locale]/page.tsx. */}
-          <CrisisResources lang={lang} theme={theme} />
+          <CrisisResources theme={theme} />
           {footerSlot}
         </div>
         {toast && <Toast message={toast} onClose={() => setToast(null)} />}
