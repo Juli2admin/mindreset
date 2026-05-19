@@ -1,12 +1,33 @@
 {
-  "Footer": {
-    "terms": "Terms",
-    "privacy": "Privacy",
-    "contact": "Contact",
-    "languagePickerLabel": "Language"
-  },
-  "TopBar": {
-    "wordmarkAria": "MindReset home"
+  "Account": {
+    "welcomeKicker": "Your account",
+    "welcomeTitleWithName": "Welcome, {name}",
+    "welcomeTitleNoName": "Welcome",
+    "welcomeBody": "A quiet place to see where you are, and to choose what's next.",
+    "comingSoon": "Coming soon",
+    "tierOpen": "Open",
+    "tiers": {
+      "miniMind": {
+        "title": "MiniMind",
+        "subtitle": "Daily companion",
+        "description": "Your daily AI companion for reflection, regulation, and quiet support."
+      },
+      "statesThemes": {
+        "title": "States & Themes",
+        "subtitle": "Focused modules",
+        "description": "Targeted work on four states and five themes."
+      },
+      "journey": {
+        "title": "The Journey",
+        "subtitle": "Eight-stage reset",
+        "description": "The deep eight-block work, paced for safety and depth."
+      }
+    },
+    "price": {
+      "perMonth": "{price} / month",
+      "eachOrPerMonth": "{single} each, or {monthly} / month",
+      "oneOffOrInstalments": "{single}, or {count} × {instalment}"
+    }
   },
   "CrisisResources": {
     "crisisLabel": "Need help right now?",
@@ -24,15 +45,11 @@
     "crisisLine": "<b>UK:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> option 2. Your GP. In an emergency: <b>999</b> or A&E.",
     "acknowledge": "I understand — continue"
   },
-  "MiniMind": {
-    "opener": "Hello. Good to have you here. How are you doing today?",
-    "placeholder": "Say what's on your mind.",
-    "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
-    "preparingResponse": "MiniMind is preparing a response",
-    "startNew": "Start new",
-    "welcomeBack": "Welcome back.",
-    "conversationInProgress": "You have a conversation in progress.",
-    "lastConversation": "Last conversation · {when}"
+  "Footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "languagePickerLabel": "Language"
   },
   "Landing": {
     "signIn": "Sign in",
@@ -110,6 +127,16 @@
     "closingTitle": "Begin.",
     "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
     "closingCta": "Start the check-in"
+  },
+  "MiniMind": {
+    "opener": "Hello. Good to have you here. How are you doing today?",
+    "placeholder": "Say what's on your mind.",
+    "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
+    "preparingResponse": "MiniMind is preparing a response",
+    "startNew": "Start new",
+    "welcomeBack": "Welcome back.",
+    "conversationInProgress": "You have a conversation in progress.",
+    "lastConversation": "Last conversation · {when}"
   },
   "Screening": {
     "brand": "MindReset",
@@ -231,34 +258,7 @@
     "greenCta": "Continue → Create your account",
     "sessionRef": "Reference"
   },
-  "Account": {
-    "welcomeKicker": "Your account",
-    "welcomeTitleWithName": "Welcome, {name}",
-    "welcomeTitleNoName": "Welcome",
-    "welcomeBody": "A quiet place to see where you are, and to choose what's next.",
-    "comingSoon": "Coming soon",
-    "tierOpen": "Open",
-    "tiers": {
-      "miniMind": {
-        "title": "MiniMind",
-        "subtitle": "Daily companion",
-        "description": "Your daily AI companion for reflection, regulation, and quiet support."
-      },
-      "statesThemes": {
-        "title": "States & Themes",
-        "subtitle": "Focused modules",
-        "description": "Targeted work on four states and five themes."
-      },
-      "journey": {
-        "title": "The Journey",
-        "subtitle": "Eight-stage reset",
-        "description": "The deep eight-block work, paced for safety and depth."
-      }
-    },
-    "price": {
-      "perMonth": "{price} / month",
-      "eachOrPerMonth": "{single} each, or {monthly} / month",
-      "oneOffOrInstalments": "{single}, or {count} × {instalment}"
-    }
+  "TopBar": {
+    "wordmarkAria": "MindReset home"
   }
 }
