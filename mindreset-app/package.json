@@ -4,13 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run i18n:check",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "i18n:sync": "node i18n-tools/sync-placeholders.mjs",
+    "i18n:check": "node i18n-tools/check-bundle-parity.mjs",
+    "i18n": "npm run i18n:sync && npm run i18n:check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.1",
