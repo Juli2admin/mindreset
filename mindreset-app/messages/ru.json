@@ -7,10 +7,27 @@
     "comingSoon": "Скоро",
     "tierOpen": "Открыть",
     "tiers": {
-      "miniMind": {
-        "title": "MiniMind",
+      "freeTaster": {
+        "title": "Бесплатная проба",
+        "subtitle": "20 сообщений, чтобы попробовать",
+        "description": "Отправьте до 20 сообщений в MiniMind. Без карты, без срока. В вашем темпе."
+      },
+      "miniMindEssential": {
+        "title": "MiniMind Essential",
         "subtitle": "Ежедневный спутник",
-        "description": "Ваш ежедневный AI-спутник — для рефлексии, регуляции и тихой поддержки."
+        "description": "Ежедневный спутник для самостоятельной рефлексии. 200 сообщений в каждый расчётный период.",
+        "annualNote": "Годовая оплата — экономия около 28%."
+      },
+      "miniMindExtended": {
+        "title": "MiniMind Extended",
+        "subtitle": "Больше пространства для глубины",
+        "description": "Расширенный доступ для дней, когда нужно опереться глубже. От 800 до 1 200 сообщений в каждый расчётный период.",
+        "annualNote": "Годовая оплата — экономия около 30%."
+      },
+      "topUp": {
+        "title": "Дополнительные сообщения",
+        "subtitle": "Когда нужно ещё немного",
+        "description": "Добавьте 200 сообщений к текущему периоду. Разовая покупка, сгорает при обновлении периода."
       },
       "statesThemes": {
         "title": "Состояния и Темы",
@@ -25,8 +42,8 @@
     },
     "price": {
       "perMonth": "{price} / месяц",
-      "eachOrPerMonth": "{single} за каждый или {monthly} / месяц",
-      "oneOffOrInstalments": "{single} или {count} × {instalment}"
+      "perYearOrMonth": "{annual} / год — или {monthly} / месяц",
+      "oneOff": "{price}"
     }
   },
   "CrisisResources": {

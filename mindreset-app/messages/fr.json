@@ -7,10 +7,27 @@
     "comingSoon": "Coming soon",
     "tierOpen": "Open",
     "tiers": {
-      "miniMind": {
-        "title": "MiniMind",
+      "freeTaster": {
+        "title": "Free taster",
+        "subtitle": "20 messages to try",
+        "description": "Send up to 20 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
+      },
+      "miniMindEssential": {
+        "title": "MiniMind Essential",
         "subtitle": "Daily companion",
-        "description": "Your daily AI companion for reflection, regulation, and quiet support."
+        "description": "A daily companion for self-guided reflection. 200 messages each billing cycle.",
+        "annualNote": "Annual billing saves around 28%."
+      },
+      "miniMindExtended": {
+        "title": "MiniMind Extended",
+        "subtitle": "More room to lean in",
+        "description": "Higher monthly access for the times you need to lean in deeper. 800 to 1,200 messages each billing cycle.",
+        "annualNote": "Annual billing saves around 30%."
+      },
+      "topUp": {
+        "title": "Message top-up",
+        "subtitle": "When you need a few more",
+        "description": "Add 200 messages to your current billing cycle. One-off — expires at cycle reset."
       },
       "statesThemes": {
         "title": "States & Themes",
@@ -25,8 +42,8 @@
     },
     "price": {
       "perMonth": "{price} / month",
-      "eachOrPerMonth": "{single} each, or {monthly} / month",
-      "oneOffOrInstalments": "{single}, or {count} × {instalment}"
+      "perYearOrMonth": "{annual} / year — or {monthly} / month",
+      "oneOff": "{price}"
     }
   },
   "CrisisResources": {

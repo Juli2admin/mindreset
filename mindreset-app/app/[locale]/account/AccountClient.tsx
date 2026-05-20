@@ -18,30 +18,25 @@ const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-// Phase i18n.2a — Product tier data. Code, not content. Numeric values
-// feed formatCurrency() (en-GB locked per Phase 1c); period words are
-// composed at render via ICU templates in the Account.price.* namespace.
+// Block B PR 0 — Product tier data. Code, not content. Numeric values feed
+// formatCurrency() (en-GB locked per Phase 1c); period words are composed at
+// render via ICU templates in the Account.price.* namespace. The 'kind'
+// discriminator drives render: 'open' = Open badge + link, 'sub' = annual/
+// monthly price line, 'oneOff' = single price line, 'comingSoon' = badge
+// only, no price. S&T and Journey carry no prices until Block C ships them.
 type TierData =
-  | { id: 'miniMind'; price: number; priceKey: 'perMonth'; href: '/minimind' }
-  | { id: 'statesThemes'; single: number; monthly: number; priceKey: 'eachOrPerMonth' }
-  | {
-      id: 'journey';
-      single: number;
-      instalment: number;
-      count: number;
-      priceKey: 'oneOffOrInstalments';
-    };
+  | { id: 'freeTaster'; kind: 'open'; href: '/minimind' }
+  | { id: 'miniMindEssential' | 'miniMindExtended'; kind: 'sub'; monthly: number; annual: number }
+  | { id: 'topUp'; kind: 'oneOff'; price: number }
+  | { id: 'statesThemes' | 'journey'; kind: 'comingSoon' };
 
 const TIERS: TierData[] = [
-  { id: 'miniMind', price: 9.99, priceKey: 'perMonth', href: '/minimind' },
-  { id: 'statesThemes', single: 199, monthly: 39, priceKey: 'eachOrPerMonth' },
-  {
-    id: 'journey',
-    single: 1200,
-    instalment: 225,
-    count: 6,
-    priceKey: 'oneOffOrInstalments',
-  },
+  { id: 'freeTaster', kind: 'open', href: '/minimind' },
+  { id: 'miniMindEssential', kind: 'sub', monthly: 14.99, annual: 129 },
+  { id: 'miniMindExtended', kind: 'sub', monthly: 24.99, annual: 209 },
+  { id: 'topUp', kind: 'oneOff', price: 4.99 },
+  { id: 'statesThemes', kind: 'comingSoon' },
+  { id: 'journey', kind: 'comingSoon' },
 ];
 
 type Props = {
@@ -67,21 +62,17 @@ export default function AccountClient({
     ? t('welcomeTitleWithName', { name: firstName })
     : t('welcomeTitleNoName');
 
-  function renderTierPrice(tier: TierData): string {
-    if (tier.priceKey === 'perMonth') {
-      return t('price.perMonth', { price: formatCurrency(tier.price) });
-    }
-    if (tier.priceKey === 'eachOrPerMonth') {
-      return t('price.eachOrPerMonth', {
-        single: formatCurrency(tier.single),
+  function renderTierPrice(tier: TierData): string | null {
+    if (tier.kind === 'sub') {
+      return t('price.perYearOrMonth', {
+        annual: formatCurrency(tier.annual),
         monthly: formatCurrency(tier.monthly),
       });
     }
-    return t('price.oneOffOrInstalments', {
-      single: formatCurrency(tier.single),
-      count: tier.count,
-      instalment: formatCurrency(tier.instalment),
-    });
+    if (tier.kind === 'oneOff') {
+      return t('price.oneOff', { price: formatCurrency(tier.price) });
+    }
+    return null;
   }
 
   return (
@@ -117,7 +108,6 @@ export default function AccountClient({
             const subtitle = t(`tiers.${tier.id}.subtitle`);
             const description = t(`tiers.${tier.id}.description`);
             const priceText = renderTierPrice(tier);
-            const hasHref = 'href' in tier && tier.href;
 
             const inner = (
               <>
@@ -136,7 +126,7 @@ export default function AccountClient({
                       {subtitle}
                     </p>
                   </div>
-                  {hasHref ? (
+                  {tier.kind === 'open' ? (
                     <span
                       className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
                       style={{
@@ -148,7 +138,7 @@ export default function AccountClient({
                     >
                       {t('tierOpen')}
                     </span>
-                  ) : (
+                  ) : tier.kind === 'comingSoon' ? (
                     <span
                       className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
                       style={{
@@ -161,7 +151,7 @@ export default function AccountClient({
                     >
                       {t('comingSoon')}
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 <p
                   className="text-[15px] mb-4"
@@ -169,16 +159,18 @@ export default function AccountClient({
                 >
                   {description}
                 </p>
-                <p
-                  className="text-[14px]"
-                  style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
-                >
-                  {priceText}
-                </p>
+                {priceText && (
+                  <p
+                    className="text-[14px]"
+                    style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
+                  >
+                    {priceText}
+                  </p>
+                )}
               </>
             );
 
-            if (hasHref && 'href' in tier) {
+            if (tier.kind === 'open') {
               return (
                 <Link
                   key={tier.id}

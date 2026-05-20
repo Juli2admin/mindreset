@@ -9,7 +9,7 @@ const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-const LAST_UPDATED = '14 May 2026';
+const LAST_UPDATED = '20 May 2026';
 
 export const metadata = {
   title: 'Terms of Service — MindReset',
@@ -383,23 +383,64 @@ export default function TermsPage() {
             affect any product you have already purchased.
           </P>
 
-          <H4>MiniMind subscription (monthly)</H4>
+          <H4>MiniMind</H4>
+          <P>
+            <Strong>Free taster.</Strong> Every new account receives 20 messages with
+            MiniMind at no cost. The taster does not require a card, has no time limit,
+            and is limited to one per email address.
+          </P>
+
+          <H5>MiniMind subscriptions</H5>
+          <P>Two tiers, each billed monthly or annually:</P>
           <UL>
-            <li>Charged monthly to your chosen payment method until you cancel</li>
+            <li>
+              <Strong>MiniMind Essential</Strong> — £14.99/month or £129/year. 200
+              messages per billing cycle.
+            </li>
+            <li>
+              <Strong>MiniMind Extended</Strong> — £24.99/month or £209/year. 800 to
+              1,200 messages per billing cycle.
+            </li>
+          </UL>
+          <UL>
+            <li>Charged to your chosen payment method until you cancel</li>
+            <li>
+              Message allowance resets at the start of each billing cycle and does not
+              roll over
+            </li>
+            <li>
+              <Strong>7-day refund window:</Strong> you may request a full refund within
+              7 days of your initial subscription purchase, by emailing{' '}
+              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
+              subject. After 7 days, the standard cancellation policy applies.
+            </li>
             <li>
               <Strong>Cancellation:</Strong> you may cancel at any time via your account
               billing settings. When you cancel:
               <UL>
                 <li>No further payments will be taken</li>
-                <li>
-                  You retain access to MiniMind until the end of your current paid month
-                </li>
-                <li>Access ends automatically at the end of the current paid month</li>
+                <li>You retain access until the end of your current billing cycle</li>
+                <li>Access ends automatically at the end of the current cycle</li>
               </UL>
             </li>
-            <li>No partial-month refunds are issued for cancellations</li>
+            <li>
+              No partial-cycle refunds are issued for cancellations after the 7-day
+              window
+            </li>
           </UL>
-          <Note>[NOTE: Free trial period to be determined. Currently no trial offered.]</Note>
+
+          <H5>Message top-up</H5>
+          <UL>
+            <li>
+              £4.99 one-off charge — adds 200 messages to your current billing cycle
+            </li>
+            <li>Top-up messages expire when your billing cycle resets</li>
+            <li>Available to both Essential and Extended subscribers; stackable</li>
+            <li>
+              <Strong>Non-refundable</Strong> — top-ups are delivered for immediate use
+              as digital content
+            </li>
+          </UL>
 
           <H4>States &amp; Themes — modules and all-access subscription</H4>
           <P>Two purchase options:</P>
@@ -636,15 +677,38 @@ export default function TermsPage() {
             products is shown at checkout.
           </P>
 
-          <H3 id="terms-refund-minimind">MiniMind Subscription (monthly)</H3>
+          <H3 id="terms-refund-minimind">MiniMind Subscriptions (Essential and Extended)</H3>
           <UL>
+            <li>
+              <Strong>7-day refund window from initial purchase</Strong> — for both
+              monthly and annual plans. Request via{' '}
+              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
+              subject. After 7 days the standard cancellation policy applies.
+            </li>
             <li>Cancel anytime in your account billing settings</li>
             <li>
               When you cancel: <Strong>no further payments are taken</Strong>, and your
-              access continues until the end of the current paid month
+              access continues until the end of the current billing cycle
             </li>
-            <li>Access ends automatically at the end of the current paid month</li>
-            <li><Strong>No partial-month or pro-rata refunds</Strong> are issued</li>
+            <li>Access ends automatically at the end of the current cycle</li>
+            <li>
+              <Strong>No partial-cycle or pro-rata refunds</Strong> are issued for
+              cancellations after the 7-day window
+            </li>
+          </UL>
+
+          <H3 id="terms-refund-minimind-topup">MiniMind Message Top-up</H3>
+          <UL>
+            <li>
+              £4.99 one-off purchase — adds 200 messages to your current billing cycle
+            </li>
+            <li>Delivered for immediate use as digital content</li>
+            <li>
+              At checkout, you confirm a waiver of the 14-day cancellation right under
+              the Consumer Contracts Regulations 2013, in exchange for immediate access
+            </li>
+            <li><Strong>Non-refundable once purchased</Strong></li>
+            <li>Top-up messages expire at the end of the current billing cycle</li>
           </UL>
 
           <H3 id="terms-refund-modules-individual">States &amp; Themes — Individual modules (one-off purchase)</H3>
