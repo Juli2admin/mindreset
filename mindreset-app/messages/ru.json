@@ -1,12 +1,33 @@
 {
-  "Footer": {
-    "terms": "Условия",
-    "privacy": "Конфиденциальность",
-    "contact": "Контакты",
-    "languagePickerLabel": "Язык"
-  },
-  "TopBar": {
-    "wordmarkAria": "MindReset главная"
+  "Account": {
+    "welcomeKicker": "Ваш аккаунт",
+    "welcomeTitleWithName": "Здравствуйте, {name}",
+    "welcomeTitleNoName": "Здравствуйте",
+    "welcomeBody": "Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.",
+    "comingSoon": "Скоро",
+    "tierOpen": "Открыть",
+    "tiers": {
+      "miniMind": {
+        "title": "MiniMind",
+        "subtitle": "Ежедневный спутник",
+        "description": "Ваш ежедневный AI-спутник — для рефлексии, регуляции и тихой поддержки."
+      },
+      "statesThemes": {
+        "title": "Состояния и Темы",
+        "subtitle": "Фокусированные модули",
+        "description": "Целевая работа над четырьмя состояниями и пятью темами."
+      },
+      "journey": {
+        "title": "Путь",
+        "subtitle": "Восьмиступенчатый перезапуск",
+        "description": "Глубокая работа из восьми блоков, в ритме, который бережёт вас."
+      }
+    },
+    "price": {
+      "perMonth": "{price} / месяц",
+      "eachOrPerMonth": "{single} за каждый или {monthly} / месяц",
+      "oneOffOrInstalments": "{single} или {count} × {instalment}"
+    }
   },
   "CrisisResources": {
     "crisisLabel": "Сейчас нужна помощь?",
@@ -24,15 +45,11 @@
     "crisisLine": "Великобритания: <b>Samaritans</b> — 116 123 (круглосуточно). <b>NHS 111</b>, вариант 2. Ваш GP. В экстренной ситуации: <b>999</b> или <b>A&E</b>.",
     "acknowledge": "Понятно — продолжить"
   },
-  "MiniMind": {
-    "opener": "Здравствуйте. Хорошо, что вы здесь. Как вы себя чувствуете сегодня?",
-    "placeholder": "Скажите, что у вас на уме.",
-    "streamErrorSuffix": "— *(я потеряла мысль на мгновение. Пожалуйста, отправьте ещё раз, когда будете готовы.)*",
-    "preparingResponse": "MiniMind готовит ответ",
-    "startNew": "Начать заново",
-    "welcomeBack": "С возвращением.",
-    "conversationInProgress": "У вас есть начатый разговор.",
-    "lastConversation": "Последний разговор · {when}"
+  "Footer": {
+    "terms": "Условия",
+    "privacy": "Конфиденциальность",
+    "contact": "Контакты",
+    "languagePickerLabel": "Язык"
   },
   "Landing": {
     "signIn": "Войти",
@@ -110,6 +127,16 @@
     "closingTitle": "Начните.",
     "closingBody": "Не нужно быть в полном порядке, чтобы начать. Не нужно знать, чего вы хотите. Анкета мягко скажет, подходит ли это вам в данный момент.",
     "closingCta": "Пройти анкету"
+  },
+  "MiniMind": {
+    "opener": "Здравствуйте. Хорошо, что вы здесь. Как вы себя чувствуете сегодня?",
+    "placeholder": "Скажите, что у вас на уме.",
+    "streamErrorSuffix": "— *(я потеряла мысль на мгновение. Пожалуйста, отправьте ещё раз, когда будете готовы.)*",
+    "preparingResponse": "MiniMind готовит ответ",
+    "startNew": "Начать заново",
+    "welcomeBack": "С возвращением.",
+    "conversationInProgress": "У вас есть начатый разговор.",
+    "lastConversation": "Последний разговор · {when}"
   },
   "Screening": {
     "brand": "MindReset",
@@ -215,7 +242,7 @@
     "yellowNext": [
       "Начать с MiniMind — AI-спутник с ежедневной проверкой состояния и короткими заземляющими практиками",
       "Никаких глубоких модулей, работы с частями или практик прошлого, пока повседневная устойчивость не вернётся",
-      "Если хотите дополнительной живой поддержки, мы поделимся каталогом trauma-informed специалистов"
+      "Если вы чувствуете, что вам нужна дополнительная поддержка, мы рекомендуем обратиться к специалисту, работающему в травма-информированном подходе."
     ],
     "yellowCta": "Когда будешь готова",
     "greenKicker": "Добро пожаловать",
@@ -231,34 +258,7 @@
     "greenCta": "Продолжить — создать аккаунт",
     "sessionRef": "Идентификатор"
   },
-  "Account": {
-    "welcomeKicker": "Ваш аккаунт",
-    "welcomeTitleWithName": "Здравствуйте, {name}",
-    "welcomeTitleNoName": "Здравствуйте",
-    "welcomeBody": "Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.",
-    "comingSoon": "Скоро",
-    "tierOpen": "Открыть",
-    "tiers": {
-      "miniMind": {
-        "title": "MiniMind",
-        "subtitle": "Ежедневный спутник",
-        "description": "Ваш ежедневный AI-спутник — для рефлексии, регуляции и тихой поддержки."
-      },
-      "statesThemes": {
-        "title": "States & Themes",
-        "subtitle": "Фокусированные модули",
-        "description": "Целевая работа над четырьмя состояниями и пятью темами."
-      },
-      "journey": {
-        "title": "Путь",
-        "subtitle": "Восьмиступенчатый перезапуск",
-        "description": "Глубокая работа из восьми блоков, в ритме, который бережёт вас."
-      }
-    },
-    "price": {
-      "perMonth": "{price} / месяц",
-      "eachOrPerMonth": "{single} за каждый или {monthly} / месяц",
-      "oneOffOrInstalments": "{single} или {count} × {instalment}"
-    }
+  "TopBar": {
+    "wordmarkAria": "MindReset главная"
   }
 }
