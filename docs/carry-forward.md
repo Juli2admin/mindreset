@@ -786,3 +786,83 @@ documented.
 Future TopBar surgery (adding new shared elements, restructuring) is
 now a single-file change — no risk of 3 local copies drifting.
 
+---
+
+## Security — RLS enabled on all tables (20 May 2026)
+
+**Status: applied to production Supabase project, smoke verified.**
+
+All 10 user-data tables in the `public` schema had Row Level Security
+disabled, with the default Supabase grants leaving `anon` and
+`authenticated` roles with full SELECT/INSERT/UPDATE/DELETE access via
+PostgREST (`/rest/v1/*`). Caught by Supabase Security Advisor; fixed
+the same day with manual SQL in the Supabase dashboard.
+
+### Root cause
+
+Prisma migrations do not manage Postgres RLS — `ENABLE ROW LEVEL
+SECURITY` is not in Prisma's vocabulary and is never emitted by
+`prisma migrate`. Supabase, on the other hand, ships every new
+project with PostgREST enabled and grants `anon` + `authenticated`
+roles full CRUD on every table in `public` by default. The two
+defaults compose into a wide-open state for any Prisma-managed table
+until an out-of-band SQL step enables RLS.
+
+### What was fixed
+
+Two SQL blocks ran in a single `BEGIN`/`COMMIT` transaction against
+the production project (`mfcdfgratnsjjvprmucc`) via Supabase SQL
+editor:
+
+1. `ENABLE ROW LEVEL SECURITY` on all 10 tables — `User`,
+   `ScreeningResponse`, `DiagnosticProfile`, `Conversation`, `Message`,
+   `SafetyEvent`, `Purchase`, `ModuleProgress`, `RecodeProgress`,
+   `Practice`.
+2. `REVOKE ALL ... FROM anon, authenticated` on the same 10 tables as
+   defence-in-depth — even if Supabase ever changes its RLS default
+   semantics, the underlying grants themselves are gone.
+
+The exact SQL is codified at `mindreset-app/db/rls.sql` so a future
+disaster-recovery restore from a Prisma migration set can re-apply
+it in one step.
+
+### Why the app is unaffected
+
+Prisma connects to Postgres as the `postgres.<project-ref>` role
+(visible in the `DATABASE_URL` pooler connection string). That role
+carries the `BYPASSRLS` attribute by Supabase default, so RLS
+policies and the lack-of-policies-as-deny do not apply to Prisma
+traffic. Production smoke after applying the SQL confirmed
+sign-in, screening submission, and MiniMind chat all continue to work
+unchanged.
+
+### Future note — new tables need this step
+
+Any new table added via `prisma migrate` (or any other Prisma schema
+change that creates a new table in the `public` schema) needs a
+manual `ALTER TABLE public."<Name>" ENABLE ROW LEVEL SECURITY;`
+plus `REVOKE ALL ON public."<Name>" FROM anon, authenticated;`
+in the Supabase SQL editor before deploying to production. Append the
+new statements to `mindreset-app/db/rls.sql` in the same PR that adds
+the Prisma model, so the file stays the canonical reproduction step.
+
+### Exposure assessment
+
+The app never used the Supabase anon key — no `@supabase/supabase-js`
+import anywhere in the codebase, no `NEXT_PUBLIC_SUPABASE_*` env vars
+ever defined, and all data access is via Prisma's direct Postgres
+connection. The project's anon key was never shared outside the
+Supabase dashboard owner. Practical exposure window was zero
+attackers in possession of the anon key, so no breach occurred and no
+UK-GDPR Article 33 notification is required. The Security Advisor
+lint was a real defect (the wide-open state was real); the data was
+not actually accessed by anyone outside Prisma's authorised
+connection.
+
+### Where it lives
+
+- Codified SQL: `mindreset-app/db/rls.sql`
+- Audit transcript: this entry
+- Production state: applied to project `mfcdfgratnsjjvprmucc` on
+  20 May 2026
+
