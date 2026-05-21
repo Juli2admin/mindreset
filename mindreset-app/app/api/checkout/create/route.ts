@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid price key' }, { status: 400 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+  const origin = request.headers.get('origin') ?? process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
 
   try {
     const user = await prisma.user.findUnique({
@@ -73,8 +73,8 @@ export async function POST(request: NextRequest) {
       customer: customerId,
       mode: isSubscription ? 'subscription' : 'payment',
       line_items: [{ price: getPriceId(typedKey), quantity: 1 }],
-      success_url: `${appUrl}/${locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/${locale}/account`,
+      success_url: `${origin}/${locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/${locale}/account`,
       billing_address_collection: 'required',
       automatic_tax: { enabled: false },
       allow_promotion_codes: true,
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error('[checkout/create]', err);
-    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
+    const detail = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: 'Failed to create checkout session', detail }, { status: 500 });
   }
 }

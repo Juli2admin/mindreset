@@ -53,22 +53,26 @@ export default function AccountClient({
   const t = useTranslations('Account');
   const locale = useLocale();
   const [loading, setLoading] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   async function handleCheckout(priceKey: string) {
     setLoading(priceKey);
+    setCheckoutError(null);
     try {
       const res = await fetch('/api/checkout/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceKey, locale }),
       });
-      const data: { url?: string } = await res.json();
+      const data: { url?: string; error?: string; detail?: string } = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
+        setCheckoutError(data.detail ?? data.error ?? 'Checkout failed');
         setLoading(null);
       }
     } catch {
+      setCheckoutError('Network error — please try again');
       setLoading(null);
     }
   }
@@ -287,6 +291,14 @@ export default function AccountClient({
             );
           })}
         </div>
+        {checkoutError && (
+          <p
+            className="mt-4 text-[13px]"
+            style={{ color: '#b91c1c', fontFamily: SANS }}
+          >
+            {checkoutError}
+          </p>
+        )}
         {footerSlot}
       </div>
     </main>
