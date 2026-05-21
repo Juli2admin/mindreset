@@ -50,6 +50,7 @@
       "subscribeMonthly": "Subscribe monthly",
       "subscribeAnnual": "Subscribe annually",
       "buyTopUp": "Buy top-up",
+      "managePlan": "Manage subscription",
       "processing": "Processing…"
     }
   },
@@ -160,7 +161,16 @@
     "startNew": "Start new",
     "welcomeBack": "Welcome back.",
     "conversationInProgress": "You have a conversation in progress.",
-    "lastConversation": "Last conversation · {when}"
+    "lastConversation": "Last conversation · {when}",
+    "atCap": {
+      "subscriberTitle": "You've used all your messages for this billing period.",
+      "subscriberBody": "Your allowance resets on {date}. You can add 200 more messages now.",
+      "freeTitle": "You've used your 50 free messages.",
+      "freeBody": "Choose a plan to keep going.",
+      "buyTopUp": "Buy a message top-up →",
+      "managePlan": "Manage subscription →",
+      "seePlans": "See plans →"
+    }
   },
   "Screening": {
     "brand": "MindReset",

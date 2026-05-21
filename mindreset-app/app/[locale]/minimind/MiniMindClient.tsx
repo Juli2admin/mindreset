@@ -62,6 +62,9 @@ type LastConvo = LastConvoNone | LastConvoWithData;
 
 type Props = {
   lastConvo: LastConvo;
+  atCap: boolean;
+  currentTier: string | null;
+  cycleResetAt: string | null;
 };
 
 function MiniMindHeader({
@@ -262,6 +265,9 @@ function ChattingView({
   awaitingFirstToken,
   onSend,
   onStartNew,
+  atCap,
+  currentTier,
+  cycleResetAt,
 }: {
   messages: Message[];
   input: string;
@@ -270,8 +276,12 @@ function ChattingView({
   awaitingFirstToken: boolean;
   onSend: () => void;
   onStartNew: () => void;
+  atCap: boolean;
+  currentTier: string | null;
+  cycleResetAt: string | null;
 }) {
   const t = useTranslations('MiniMind');
+  const locale = useLocale() as Locale;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -316,63 +326,136 @@ function ChattingView({
         </div>
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSend();
-        }}
-        className="sticky bottom-0 px-6 py-4"
-        style={{
-          background: PALETTE.bg,
-          borderTop: `1px solid ${PALETTE.border}`,
-        }}
-      >
-        <div className="max-w-[700px] mx-auto flex gap-3 items-end">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                onSend();
-              }
-            }}
-            placeholder={t('placeholder')}
-            rows={1}
-            disabled={sending}
-            className="flex-1 resize-none rounded-lg px-4 py-3 text-[15px] leading-[1.5] transition-colors focus:outline-none"
-            style={{
-              background: sending ? PALETTE.bgSubtle : PALETTE.bgCard,
-              color: PALETTE.text,
-              border: `1px solid ${PALETTE.border}`,
-              fontFamily: TOKENS.sans,
-              opacity: sending ? 0.6 : 1,
-              minHeight: TEXTAREA_MIN_HEIGHT,
-              maxHeight: TEXTAREA_MAX_HEIGHT,
-            }}
-          />
-          <button
-            type="submit"
-            disabled={sending || input.trim().length === 0}
-            className="h-12 px-6 rounded-full text-[14px] tracking-wide transition-all disabled:cursor-not-allowed"
-            style={{
-              background: PALETTE.accent,
-              color: PALETTE.accentText,
-              fontWeight: 500,
-              fontFamily: TOKENS.sans,
-              opacity: sending || input.trim().length === 0 ? 0.5 : 1,
-            }}
-          >
-            Send
-          </button>
-        </div>
-      </form>
+      {atCap ? (
+        <AtCapBanner
+          currentTier={currentTier}
+          cycleResetAt={cycleResetAt}
+          locale={locale}
+        />
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSend();
+          }}
+          className="sticky bottom-0 px-6 py-4"
+          style={{
+            background: PALETTE.bg,
+            borderTop: `1px solid ${PALETTE.border}`,
+          }}
+        >
+          <div className="max-w-[700px] mx-auto flex gap-3 items-end">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  onSend();
+                }
+              }}
+              placeholder={t('placeholder')}
+              rows={1}
+              disabled={sending}
+              className="flex-1 resize-none rounded-lg px-4 py-3 text-[15px] leading-[1.5] transition-colors focus:outline-none"
+              style={{
+                background: sending ? PALETTE.bgSubtle : PALETTE.bgCard,
+                color: PALETTE.text,
+                border: `1px solid ${PALETTE.border}`,
+                fontFamily: TOKENS.sans,
+                opacity: sending ? 0.6 : 1,
+                minHeight: TEXTAREA_MIN_HEIGHT,
+                maxHeight: TEXTAREA_MAX_HEIGHT,
+              }}
+            />
+            <button
+              type="submit"
+              disabled={sending || input.trim().length === 0}
+              className="h-12 px-6 rounded-full text-[14px] tracking-wide transition-all disabled:cursor-not-allowed"
+              style={{
+                background: PALETTE.accent,
+                color: PALETTE.accentText,
+                fontWeight: 500,
+                fontFamily: TOKENS.sans,
+                opacity: sending || input.trim().length === 0 ? 0.5 : 1,
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      )}
     </main>
   );
 }
 
-export default function MiniMindClient({ lastConvo }: Props) {
+function AtCapBanner({
+  currentTier,
+  cycleResetAt,
+  locale,
+}: {
+  currentTier: string | null;
+  cycleResetAt: string | null;
+  locale: Locale;
+}) {
+  const t = useTranslations('MiniMind.atCap');
+  const isFree = currentTier !== 'essential' && currentTier !== 'extended';
+  const resetDate = cycleResetAt
+    ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(cycleResetAt))
+    : '';
+
+  return (
+    <div
+      className="sticky bottom-0 px-6 py-6"
+      style={{
+        background: PALETTE.bg,
+        borderTop: `1px solid ${PALETTE.border}`,
+      }}
+    >
+      <div
+        className="max-w-[700px] mx-auto rounded-lg p-5"
+        style={{
+          background: PALETTE.bgCard,
+          border: `1px solid ${PALETTE.border}`,
+        }}
+      >
+        <p
+          className="text-[15px] leading-[1.5] mb-2"
+          style={{ color: PALETTE.text, fontFamily: TOKENS.sans, fontWeight: 500 }}
+        >
+          {isFree ? t('freeTitle') : t('subscriberTitle')}
+        </p>
+        <p
+          className="text-[14px] leading-[1.5] mb-4"
+          style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+        >
+          {isFree ? t('freeBody') : t('subscriberBody', { date: resetDate })}
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href={`/${locale}/account`}
+            className="text-[14px] transition-opacity hover:opacity-70"
+            style={{ color: PALETTE.accent, fontFamily: TOKENS.sans, fontWeight: 500 }}
+          >
+            {isFree ? t('seePlans') : t('buyTopUp')}
+          </a>
+          {!isFree && (
+            <a
+              href={`/${locale}/account`}
+              className="text-[14px] transition-opacity hover:opacity-70"
+              style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+            >
+              {t('managePlan')}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function MiniMindClient({ lastConvo, atCap, currentTier, cycleResetAt }: Props) {
   const t = useTranslations('MiniMind');
   // Resolved up-front so they're stable across event-handler closures.
   // These were const-at-module-scope strings pre-2a; now bundle-driven.
@@ -551,6 +634,9 @@ export default function MiniMindClient({ lastConvo }: Props) {
       awaitingFirstToken={awaitingFirstToken}
       onSend={onSend}
       onStartNew={onStartNew}
+      atCap={atCap}
+      currentTier={currentTier}
+      cycleResetAt={cycleResetAt}
     />
   );
 }

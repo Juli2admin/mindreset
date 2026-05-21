@@ -57,6 +57,8 @@ export default function AccountClient({
   const [loading, setLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
+  const userIsSubscribed = currentTier === 'essential' || currentTier === 'extended';
+
   async function handleCheckout(priceKey: string) {
     setLoading(priceKey);
     setCheckoutError(null);
@@ -71,6 +73,28 @@ export default function AccountClient({
         window.location.href = data.url;
       } else {
         setCheckoutError(data.detail ?? data.error ?? 'Checkout failed');
+        setLoading(null);
+      }
+    } catch {
+      setCheckoutError('Network error — please try again');
+      setLoading(null);
+    }
+  }
+
+  async function handlePortal() {
+    setLoading('portal');
+    setCheckoutError(null);
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locale }),
+      });
+      const data: { url?: string; error?: string; detail?: string } = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setCheckoutError(data.detail ?? data.error ?? 'Could not open portal');
         setLoading(null);
       }
     } catch {
@@ -247,39 +271,63 @@ export default function AccountClient({
                 {inner}
                 {tier.kind === 'sub' && (
                   <div className="flex flex-wrap gap-3 mt-5">
-                    <button
-                      onClick={() => handleCheckout(monthlyKey)}
-                      disabled={loading !== null}
-                      className="px-5 py-2 rounded-full text-[13px] transition-opacity"
-                      style={{
-                        background: PALETTE.accent,
-                        color: PALETTE.accentText,
-                        fontFamily: SANS,
-                        fontWeight: 500,
-                        opacity: loading !== null ? 0.5 : 1,
-                      }}
-                    >
-                      {loading === monthlyKey
-                        ? t('cta.processing')
-                        : t('cta.subscribeMonthly')}
-                    </button>
-                    <button
-                      onClick={() => handleCheckout(annualKey)}
-                      disabled={loading !== null}
-                      className="px-5 py-2 rounded-full text-[13px] transition-opacity"
-                      style={{
-                        background: 'transparent',
-                        color: PALETTE.text,
-                        fontFamily: SANS,
-                        fontWeight: 500,
-                        border: `1px solid ${PALETTE.border}`,
-                        opacity: loading !== null ? 0.5 : 1,
-                      }}
-                    >
-                      {loading === annualKey
-                        ? t('cta.processing')
-                        : t('cta.subscribeAnnual')}
-                    </button>
+                    {userIsSubscribed ? (
+                      ((currentTier === 'essential' && tier.id === 'miniMindEssential') ||
+                        (currentTier === 'extended' && tier.id === 'miniMindExtended')) && (
+                        <button
+                          onClick={handlePortal}
+                          disabled={loading !== null}
+                          className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                          style={{
+                            background: PALETTE.accent,
+                            color: PALETTE.accentText,
+                            fontFamily: SANS,
+                            fontWeight: 500,
+                            opacity: loading !== null ? 0.5 : 1,
+                          }}
+                        >
+                          {loading === 'portal'
+                            ? t('cta.processing')
+                            : t('cta.managePlan')}
+                        </button>
+                      )
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleCheckout(monthlyKey)}
+                          disabled={loading !== null}
+                          className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                          style={{
+                            background: PALETTE.accent,
+                            color: PALETTE.accentText,
+                            fontFamily: SANS,
+                            fontWeight: 500,
+                            opacity: loading !== null ? 0.5 : 1,
+                          }}
+                        >
+                          {loading === monthlyKey
+                            ? t('cta.processing')
+                            : t('cta.subscribeMonthly')}
+                        </button>
+                        <button
+                          onClick={() => handleCheckout(annualKey)}
+                          disabled={loading !== null}
+                          className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                          style={{
+                            background: 'transparent',
+                            color: PALETTE.text,
+                            fontFamily: SANS,
+                            fontWeight: 500,
+                            border: `1px solid ${PALETTE.border}`,
+                            opacity: loading !== null ? 0.5 : 1,
+                          }}
+                        >
+                          {loading === annualKey
+                            ? t('cta.processing')
+                            : t('cta.subscribeAnnual')}
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
                 {tier.kind === 'oneOff' && tier.id === 'topUp' && (

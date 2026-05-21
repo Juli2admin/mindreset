@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { hasCapacity } from '@/lib/billing/limits';
 import MiniMindClient from './MiniMindClient';
 
 export const dynamic = 'force-dynamic';
@@ -96,5 +97,25 @@ export default async function MiniMindPage() {
     }
   }
 
-  return <MiniMindClient lastConvo={lastConvo} />;
+  const billingUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      currentTier: true,
+      messagesUsedThisCycle: true,
+      topUpMessagesRemaining: true,
+      lifetimeMessagesUsed: true,
+      cycleResetAt: true,
+    },
+  });
+
+  const atCap = billingUser ? !hasCapacity(billingUser) : false;
+
+  return (
+    <MiniMindClient
+      lastConvo={lastConvo}
+      atCap={atCap}
+      currentTier={billingUser?.currentTier ?? null}
+      cycleResetAt={billingUser?.cycleResetAt?.toISOString() ?? null}
+    />
+  );
 }
