@@ -385,7 +385,7 @@ export default function TermsPage() {
 
           <H4>MiniMind</H4>
           <P>
-            <Strong>Free taster.</Strong> Every new account receives 20 messages with
+            <Strong>Free taster.</Strong> Every new account receives 50 messages with
             MiniMind at no cost. The taster does not require a card, has no time limit,
             and is limited to one per email address.
           </P>
@@ -410,9 +410,11 @@ export default function TermsPage() {
             </li>
             <li>
               <Strong>7-day refund window:</Strong> you may request a full refund within
-              7 days of your initial subscription purchase, by emailing{' '}
+              7 days of your initial subscription purchase, having used fewer than 30
+              messages, by emailing{' '}
               <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
-              subject. After 7 days, the standard cancellation policy applies.
+              subject. After 7 days or 30 messages used, the standard cancellation policy
+              applies.
             </li>
             <li>
               <Strong>Cancellation:</Strong> you may cancel at any time via your account
@@ -442,41 +444,26 @@ export default function TermsPage() {
             </li>
           </UL>
 
-          <H4>States &amp; Themes — modules and all-access subscription</H4>
-          <P>Two purchase options:</P>
-          <H5>Option A — Individual modules (one-off digital purchase):</H5>
+          <H4>States &amp; Themes — individual module purchases</H4>
           <UL>
+            <li>£59 per module (one-off, permanent access)</li>
+            <li>
+              Active MiniMind subscribers (Essential or Extended) pay £29 per module —
+              discount applied automatically at checkout when logged in with an active
+              subscription
+            </li>
             <li>Access begins immediately upon successful payment</li>
             <li>
-              Due to the nature of digital content delivered immediately, these modules are{' '}
-              <Strong>non-refundable once accessed</Strong>
+              At checkout, you confirm a waiver of the 14-day cancellation right under the
+              Consumer Contracts Regulations 2013, in exchange for immediate access. If you
+              do not open the module within 14 days of purchase, you may request a full
+              refund by emailing{' '}
+              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
+              subject
             </li>
             <li>
-              Under the Consumer Contracts Regulations 2013, you have a 14-day right to
-              cancel digital purchases UNLESS you have explicitly waived this right by
-              accessing the content immediately
+              <Strong>Once a module has been opened, the purchase is non-refundable</Strong>
             </li>
-            <li>
-              <Strong>You will be asked to confirm this waiver at checkout</Strong> before
-              payment is taken. By ticking the waiver checkbox, you accept that you lose
-              the 14-day cancellation right in exchange for immediate access
-            </li>
-            <li>Refunds are not provided after access is granted</li>
-          </UL>
-          <H5>Option B — All-access monthly subscription:</H5>
-          <UL>
-            <li>Charged monthly to your chosen payment method until you cancel</li>
-            <li>
-              <Strong>Non-refundable for the current paid month</Strong> — even if you
-              cancel mid-month, access continues to the end of that month but no refund is
-              issued. This is because the content is delivered for immediate use throughout
-              the month
-            </li>
-            <li>
-              <Strong>Cancellation:</Strong> as for MiniMind — no further charges, access
-              until end of current paid month
-            </li>
-            <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
           <H4>The Journey</H4>
@@ -508,20 +495,17 @@ export default function TermsPage() {
               Policy below)
             </li>
           </UL>
-          <H5>Option B — Monthly instalment plan:</H5>
+          <H5>Option B — Weekly instalment plan:</H5>
           <UL>
-            <li>Total programme fee divided into a fixed number of monthly instalments</li>
+            <li>12 weekly payments of £55 — each payment unlocks the next block of content</li>
+            <li>You may stop future payments at any time</li>
             <li>
-              All instalments are due regardless of whether you complete the programme
+              Any weekly payments already made are non-refundable; previously unlocked
+              content remains accessible after stopping payments
             </li>
             <li>
-              <Strong>Non-refundable from the first instalment.</Strong> Access to
-              programme blocks begins immediately
-            </li>
-            <li>
-              You may cancel the instalment plan at any time, but any instalments already
-              paid are non-refundable, and you forfeit access to any blocks not yet
-              unlocked
+              Once the first block has been accessed, the right to a cooling-off period no
+              longer applies
             </li>
             <li>You will be asked to confirm the immediate-access waiver at checkout</li>
           </UL>
@@ -711,30 +695,25 @@ export default function TermsPage() {
             <li>Top-up messages expire at the end of the current billing cycle</li>
           </UL>
 
-          <H3 id="terms-refund-modules-individual">States &amp; Themes — Individual modules (one-off purchase)</H3>
+          <H3 id="terms-refund-modules-individual">States &amp; Themes — individual module purchases</H3>
           <UL>
-            <li>Content is delivered for <Strong>immediate use</Strong></li>
+            <li>£59 per module (non-subscribers) — one-off, permanent access</li>
             <li>
-              At checkout, you will be asked to confirm a waiver of the 14-day cancellation
-              right under the Consumer Contracts Regulations 2013, in exchange for
-              immediate access to the content
+              Active MiniMind subscribers (Essential or Extended) pay £29 per module —
+              discount applied automatically at checkout
             </li>
-            <li><Strong>Non-refundable once accessed</Strong></li>
+            <li>Access begins immediately upon successful payment</li>
             <li>
-              If you did not tick the waiver checkbox and have not yet accessed the
-              content, you may request a refund within 14 days
+              At checkout, you confirm a waiver of the 14-day cancellation right under the
+              Consumer Contracts Regulations 2013, in exchange for immediate access. If you
+              do not open the module within 14 days of purchase, you may request a full
+              refund by emailing{' '}
+              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
+              subject
             </li>
-          </UL>
-
-          <H3 id="terms-refund-modules-subscription">States &amp; Themes — All-access monthly subscription</H3>
-          <UL>
             <li>
-              <Strong>Non-refundable for any month already paid</Strong>, even if you
-              cancel mid-month
+              <Strong>Once a module has been opened, the purchase is non-refundable</Strong>
             </li>
-            <li>Access continues to the end of the current paid month</li>
-            <li>Cancel anytime — no further payments will be taken</li>
-            <li>You will be asked to confirm the immediate-access waiver at first subscription</li>
           </UL>
 
           <H3 id="terms-refund-recode-onetime">The Journey — One-time payment</H3>
@@ -754,16 +733,17 @@ export default function TermsPage() {
             </li>
           </UL>
 
-          <H3 id="terms-refund-recode-installment">The Journey — Monthly instalment plan</H3>
+          <H3 id="terms-refund-recode-installment">The Journey — Weekly instalment plan</H3>
           <UL>
+            <li>12 weekly payments of £55 — each payment unlocks the next block of content</li>
+            <li>You may stop future payments at any time</li>
             <li>
-              <Strong>All instalments are due regardless of programme completion</Strong>
+              Any weekly payments already made are non-refundable; previously unlocked
+              content remains accessible after stopping payments
             </li>
-            <li>Each instalment is non-refundable from the date it is taken</li>
-            <li>You may cancel the instalment plan at any time to stop further charges</li>
             <li>
-              Any instalments already paid are non-refundable; you forfeit access to blocks
-              not yet unlocked
+              Once the first block has been accessed, the right to a cooling-off period no
+              longer applies
             </li>
           </UL>
 
