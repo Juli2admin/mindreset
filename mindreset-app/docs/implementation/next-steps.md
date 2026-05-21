@@ -1,71 +1,119 @@
 # Next steps
 
-A tactical sequence — what to do, in what order, and the gates between
-each step. Last updated 21 May 2026.
+Tactical sequence for Block B. Last updated 21 May 2026 (v2 spec).
 
-## Immediate (this branch)
+## Immediate — both PRs on hold
 
-`claude/review-project-structure-3uVtO` — Block B PR 0 (pricing copy)
-is committed at `fd17934b`, not yet opened as a PR.
+Both open PRs are on hold pending spec v2 updates:
 
-**Owner action**: tell the agent to open PR for PR 0, or merge directly
-from the current branch.
+**PR #22** (`claude/review-project-structure-3uVtO`) — on hold.
+Blockers:
+- Julia to provide RU translation of ~28 new EN strings
+- S&T subscriber discount copy (£29 vs £59) not yet in messages/en.json
+- Architect review of final RU strings before merge
 
-## Block B sequence — Stripe billing
+**PR #23** (`claude/block-b-pr1-schema-stripe`) — on hold.
+Blockers:
+- `lib/billing/limits.ts`: change `TIER_CAPS.free.lifetime` **20 → 50**
+- `.env.example`: add 4 new price ID env vars
+- Align env var: `STRIPE_PRICE_TOPUP` (canonical) vs `STRIPE_PRICE_TOP_UP`
+  (current code)
+- Julia runs SQL migration in Supabase after merge
 
-| Step | What | Blockers |
-|---|---|---|
-| **PR 0** | Pricing copy revision | DONE — awaiting PR open |
-| **PR 1** | Schema + Stripe lib + billing limits | Owner runs SQL + creates Stripe Price IDs |
-| **PR 2** | Checkout flow | Stripe Price IDs in env vars |
-| **PR 3** | Webhook + state sync + chat gating | Webhook URL configured in Stripe dashboard |
-| **PR 4** | Customer Portal + at-cap UI | Customer Portal enabled in Stripe dashboard |
-| **PR 5** | Message counter integration polish | PR 3 must be live |
-| **PR 6** | Top-up purchase flow (if not folded into PR 2) | PR 3 webhook handles top-up event |
+---
 
-Each PR is independently shippable. Between PRs, the app stays in a
-working state — e.g. after PR 1 the schema has new columns but no
-checkout UI exists yet, after PR 2 checkout works but doesn't gate
-chat, etc.
+## Block B sequence
 
-## Pre-launch (parallel work — not Block B)
+| Step | What | Status | Blockers |
+|---|---|---|---|
+| **PR #22** | Pricing copy + T&C | On hold | RU translation + S&T copy |
+| **PR #23** | Schema + Stripe client + billing limits | On hold | 20→50 fix + env vars + SQL |
+| **PR 2** | Checkout flow (all product types) | Not started | 9 Stripe Price IDs in env |
+| **PR 3** | Webhook + state sync | Not started | Webhook URL in Stripe dashboard |
+| **PR 4** | Customer Portal + at-cap UI | Not started | Portal enabled in Stripe |
+| **PR 5** | Message counter integration | Not started | PR 3 must be live |
+| **PR 6** | Top-up purchase flow | Not started | PR 3 webhook handles it |
 
-These items are independent of Block B and can be worked in parallel
-or after Block B ships:
+Each PR is independently shippable — app stays in a working state between
+steps.
+
+---
+
+## PR #22 outstanding copy work
+
+These strings need adding to `messages/en.json` (and RU mirror) before
+PR #22 can merge. They are NOT currently in the branch:
+
+1. **S&T subscriber discount UI copy** — e.g. "£29 for subscribers /
+   £59 standard" on the `/account` tier card and checkout page
+2. Any new top-up strings (if the existing `topUp.description` covers it,
+   just confirm)
+
+T&C text in `terms/page.tsx` also needs a review for the S&T subscriber
+discount refund policy (14-day window if module never opened). The
+current Section 8 S&T text uses the old single-price model.
+
+---
+
+## PR #23 outstanding code fixes
+
+Three concrete changes needed on `claude/block-b-pr1-schema-stripe`:
+
+1. `lib/billing/limits.ts` — `TIER_CAPS.free.lifetime: 20` → `50`
+2. `.env.example` — add these four env vars:
+   ```
+   STRIPE_PRICE_ST_MODULE_FULL=price_...
+   STRIPE_PRICE_ST_MODULE_SUBSCRIBER=price_...
+   STRIPE_PRICE_JOURNEY_ONETIME=price_...
+   STRIPE_PRICE_JOURNEY_INSTALLMENT=price_...
+   ```
+3. `lib/stripe/products.ts` — add entries for the 4 new price IDs above;
+   rename `topUp` key to match canonical `STRIPE_PRICE_TOPUP`
+
+---
+
+## Julia's manual steps (before PR 2 can be tested)
+
+1. Run ALTER TABLE SQL in Supabase (from PR #23 body — use the
+   `IF NOT EXISTS` version)
+2. Run existing-user reset UPDATE
+3. Create 9 Stripe products/prices in TEST MODE (see
+   `docs/implementation/block-b-stripe-plan.md`)
+4. Paste 9 `price_xxx` IDs into `.env.local` + Vercel env vars
+5. Confirm Stripe Tax is OFF
+6. Confirm billing restricted to GB
+
+---
+
+## Pre-launch (parallel work — independent of Block B)
 
 1. **Welcome email sequence** (Resend) — launch-critical
-2. **AI support email Pattern A** (Resend) — launch-critical
-3. **`User.screeningResult` populate** — fix the cookie linkage to
-   write the result into the User row
-4. **Clerk production instance setup** — currently using dev keys
-5. **Auth-page i18n** — sign-in / sign-up / terms / privacy still EN-only
-6. **`/account` language toggle** — restore from Footer-only access
-7. **RU phrases in safety scanner** — Phase 3c keyword scanner is
-   EN-only
+2. **AI support email Pattern A** — launch-critical; spec not yet defined
+3. **`User.screeningResult` populate** — cookie linkage doesn't write
+   the field; see `docs/carry-forward.md`
+4. **Clerk production instance setup** — currently dev keys
+5. **Auth-page i18n** — sign-in / sign-up / terms / privacy EN-only
+6. **`/account` language toggle** — currently Footer-only
+7. **RU phrases in safety scanner** — Phase 3c keyword scanner is EN-only
 8. **Pre-launch native translation pass** — `translate-missing.mjs`
-   per-locale, owner reviews
-9. **T&C duplication investigation** — pre-existing bug to understand
-   before launch
+9. **T&C duplication** — pre-existing bug; investigate before launch
+
+---
 
 ## Block C — post-launch
 
-States & Themes and The Journey. Schema is partially ready
-(`Purchase` table, `ModuleProgress`, `RecodeProgress`) but:
+States & Themes and The Journey content delivery:
+- S&T block-by-block delivery + AI gating
+- Journey 8-block progression + time gates per block
+- No prompts yet — 9 module prompts + 8 Journey prompts to design
+- No UI — module-player and Journey-player not built
 
-- **No prompts yet** — 9 module prompts + 8 Journey block prompts need
-  designing (with Julia's clinical-voice review)
-- **No UI** — module-player and Journey-player not built
-- **Pricing in schema** but not in Stripe — would be added as Price
-  IDs when Block C ships
+Block B billing infrastructure (checkout, webhook, Purchase rows) is
+reused in Block C with new product types.
 
-Reusing Block B's infrastructure for Block C is mostly mechanical:
-new Price IDs, new product types in the existing checkout endpoint,
-new webhook handlers for module purchases. The hard part is the
-prompts and the player UI.
+---
 
 ## Block F — Julia's external steps
-
-Out of agent scope but needed before launch:
 
 - UK Limited company registration
 - ICO data-controller registration
@@ -74,34 +122,17 @@ Out of agent scope but needed before launch:
 - Designer pass on Landing / Account
 - Stripe Tax UK confirm OFF status
 
-## Decision points the owner needs to make
+---
 
-Before PR 1 starts, the owner needs to lock:
+## Suggested fast-ship order (once PRs unblocked)
 
-- ❓ **Counter reset timing** — midnight UTC vs Stripe anniversary
-- ❓ **Mid-cycle upgrade behaviour** — counter persists vs resets
-- ❓ **Webhook endpoint scope** — production only vs preview/staging
-  too
-- ❓ **Receipt VAT line wording** — "VAT not applicable" line vs no
-  tax line at all
-- ❓ **Promo code rollout** — when does the first 50%-off-first-month
-  code go live
-
-Logged in `../decisions/open-questions.md` with recommendations.
-
-## Suggested order if shipping fast
-
-1. Open + merge PR 0 (today)
-2. Lock the 5 open questions above (15 minutes)
-3. PR 1 (1 session) — owner runs SQL + creates 5 Stripe Prices
-4. PR 2 (1 session) — owner pastes Price IDs into Vercel env
-5. PR 3 (1 session — the hardest) — careful review
-6. PR 4 + PR 5 (1 session combined)
-7. Welcome email + AI support email (1–2 sessions)
-8. `User.screeningResult` fix (small)
-9. RU pre-launch translation pass (manual review-heavy)
-10. Soft launch
-11. Auth-page i18n + remaining polish
-
-Total estimate: 5–7 working sessions for Block B + critical email +
-screening fix. Then launch-readiness check.
+1. RU translation (Julia) + S&T copy → unblock PR #22
+2. Limit fix + env vars → PR #23 → Julia runs SQL → merge both
+3. Julia creates 9 Stripe Prices → PR 2
+4. PR 3 (hardest — careful review)
+5. PR 4 + PR 5 combined
+6. Welcome email + AI support email (1–2 sessions)
+7. `User.screeningResult` fix
+8. RU pre-launch translation pass
+9. Soft launch
+10. Auth-page i18n + remaining polish

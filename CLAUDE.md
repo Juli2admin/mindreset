@@ -100,14 +100,22 @@ companion for daily reflection.
 See `mindreset-app/docs/product/philosophy.md` for the full list and
 rationale.
 
-## Pricing — locked (Block B)
+## Pricing — locked (Block B, spec v2 — 2026-05-21)
 
-- **Free taster** — 20 messages lifetime (per email, one shot), no card
+### MiniMind
+- **Free taster** — **50 messages lifetime** (per email, one shot), no card
 - **MiniMind Essential** — £14.99/month or £129/year — 200 msgs/cycle
 - **MiniMind Extended** — £24.99/month or £209/year — 800–1,200 msgs/cycle
-- **Message top-up** — £4.99 one-off — adds 200 msgs to the current cycle
-- States & Themes + The Journey are **Block C** (post-launch) — they
-  remain "Coming soon" on `/account` with no price displayed
+- **Message top-up** — £4.99 one-off — +200 msgs to current cycle, expires at reset
+
+### States & Themes (Block B — billing wired, content delivery Block C)
+- **S&T module (non-subscriber)** — £59 per module, one-off, permanent access
+- **S&T module (subscriber)** — £29 per module (discount auto-applied at checkout)
+- **S&T All Access subscription — DROPPED.** Does not exist. Do not create in Stripe.
+
+### The Journey (Block B — billing wired, content delivery Block C)
+- **One-off** — £599, non-refundable once first block accessed
+- **Installment** — 12 × £55/week, NOT a subscription; can stop, no refund on paid weeks
 
 Full spec: `mindreset-app/docs/implementation/block-b-stripe-plan.md`
 

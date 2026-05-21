@@ -101,29 +101,71 @@ Locked 2026-05-21 in a single planning session.
     after 7-day window.
 17. **Refund flow**: Manual via `support@mindreset.ai`. No self-serve
     refund UI at launch.
+18. **Counter reset timing**: Driven by `invoice.payment_succeeded` webhook
+    (Stripe anniversary). No separate cron. Auto-blocks user if renewal fails.
+    **Confirmed by Julia 2026-05-21.**
+19. **Mid-cycle upgrade (Essential → Extended)**: Counter persists; cap raises
+    from 200 to 1,200. User is buying headroom, not a fresh allowance.
+    **Confirmed by Julia 2026-05-21.**
+20. **Mid-cycle downgrade (Extended → Essential)**: Effective at next cycle
+    boundary via Stripe Customer Portal scheduled-change. No negative-cap edge
+    case; user retains Extended access until period end.
+    **Confirmed by Julia 2026-05-21.**
+21. **Webhook endpoint scope**: Production only —
+    `https://mindreset.ai/api/webhooks/stripe`. Local dev via
+    `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+    **Confirmed by Julia 2026-05-21.**
+22. **Receipt VAT line**: Hidden entirely. Stripe Tax OFF, no tax_id
+    collection. Julia is not VAT-registered; subtotal = total.
+    **Confirmed by Julia 2026-05-21.**
+23. **S&T All Access subscription**: DROPPED ENTIRELY. The £29/month all-access
+    S&T subscription no longer exists. Do not create it in Stripe.
+    **Locked in spec v2, 2026-05-21.**
+24. **S&T subscriber discount**: Non-subscribers pay £59/module; active
+    MiniMind subscribers (Essential or Extended) pay £29/module. Discount
+    applied automatically at Stripe checkout.
+    **Locked in spec v2, 2026-05-21.**
+25. **Free taster limit**: **50 messages lifetime** (changed from 20 in v1).
+    **Locked in spec v2, 2026-05-21.**
 
-## Pricing structure (locked together with Block B)
+## Pricing structure (locked — v2, 2026-05-21)
+
+### MiniMind
 
 | Product | Price | Limit |
 |---|---|---|
-| Free taster | £0 (no card) | 20 messages lifetime |
+| Free taster | £0 (no card) | **50** messages lifetime |
 | MiniMind Essential | £14.99/month or £129/year | 200 msgs/cycle |
 | MiniMind Extended | £24.99/month or £209/year | 800–1,200 msgs/cycle |
 | Message top-up | £4.99 | +200 msgs/cycle, expires at reset |
 
-Annual savings copy: "Annual billing saves around 28%" (Essential)
-and "around 30%" (Extended).
+Annual savings copy: "Annual billing saves around 28%" (Essential) and
+"around 30%" (Extended).
+
+### States & Themes
+
+| Product | Price | Notes |
+|---|---|---|
+| S&T module (non-subscriber) | £59 per module | One-off, permanent access |
+| S&T module (subscriber) | £29 per module | Auto-applied at checkout |
+| S&T All Access subscription | DROPPED | Does not exist |
+
+### The Journey
+
+| Product | Price | Notes |
+|---|---|---|
+| The Journey (one-off) | £599 | Non-refundable once first block accessed |
+| The Journey (installment) | 12 × £55/week | Not a subscription; can stop, no refund on paid weeks |
 
 ## Out-of-scope / explicit non-goals (locked)
 
-- "Unlimited" tier — never. Use "Extended" / "Expanded" / "High
-  Access".
+- "Unlimited" tier — never. Use "Extended" / "Expanded" / "High Access".
 - Multi-currency at launch — GBP only.
 - Russian-market pricing — deferred to month 6.
 - Annual → monthly downgrade flow — use Customer Portal cancel +
   re-subscribe.
 - Pause subscription feature.
-- Referral programme with per-user codes — deferred (when implemented,
-  reward will be account credit, not cash, to avoid HMRC/ASA
-  complexity).
+- Referral programme with per-user codes — deferred (reward = account
+  credit, not cash).
 - Self-serve refund UI — manual via email.
+- S&T All Access subscription — removed from product structure entirely.

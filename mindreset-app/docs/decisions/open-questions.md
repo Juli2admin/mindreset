@@ -14,91 +14,30 @@ Tags:
 
 ## Block B — open questions
 
-### 1. Counter reset timing — `[blocker:PR-3]`
+### 1. Counter reset timing — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-When does `messagesUsedThisCycle` reset?
+**Decision**: Stripe anniversary. Reset driven by `invoice.payment_succeeded`
+webhook — no cron needed; auto-blocks on renewal failure.
 
-- **Option A**: Midnight UTC on cycle anniversary. Predictable for
-  users; cron-friendly.
-- **Option B**: Exact Stripe subscription anniversary timestamp.
-  Aligns with Stripe invoice timing exactly.
+### 2. Mid-cycle upgrade behaviour — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-**Recommendation**: Option B — reset is driven by the
-`invoice.payment_succeeded` webhook, so timing is automatically
-aligned to Stripe. No separate cron needed. If a renewal fails, the
-user is auto-blocked at the cycle boundary.
+**Decision**: Counter persists; cap raises from 200 to 1,200. User is buying
+headroom, not a fresh allowance.
 
-**Logged**: 2026-05-21.
+### 3. Mid-cycle downgrade behaviour — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-### 2. Mid-cycle upgrade behaviour — `[blocker:PR-3]`
+**Decision**: Next cycle boundary. Stripe Customer Portal scheduled-change —
+user keeps Extended access until period end. No negative-cap edge case.
 
-User upgrades Essential → Extended in the middle of their cycle.
-Stripe prorates the bill automatically. What happens to the counter?
+### 4. Webhook endpoint scope — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-- **Option A**: Counter persists. They keep the count of messages
-  used and just get the higher cap (1,200 instead of 200).
-- **Option B**: Counter resets. They effectively get a fresh 1,200
-  for the rest of the cycle.
+**Decision**: Production only — `https://mindreset.ai/api/webhooks/stripe`.
+Local dev via `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
 
-**Recommendation**: Option A. Cleaner UX, matches user expectation
-("I'm not buying a fresh allowance, I'm buying more headroom"), and
-the proration math on Stripe's side already accounts for partial
-cycle.
+### 5. Receipt VAT line wording — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-**Logged**: 2026-05-21.
-
-### 3. Mid-cycle downgrade behaviour — `[blocker:PR-4]`
-
-User downgrades Extended → Essential. Cap drops from 1,200 to 200.
-If they've already used 250, do they go over-cap immediately?
-
-- **Option A**: Downgrade takes effect at next cycle boundary
-  (Stripe Customer Portal native behaviour). Until then they keep the
-  Extended cap.
-- **Option B**: Downgrade is immediate. They're over-cap and chat is
-  blocked until top-up or next cycle.
-
-**Recommendation**: Option A. Use Stripe's native scheduled-change
-behaviour. Less complexity in our webhook handler; no negative-cap
-edge case to handle.
-
-**Logged**: 2026-05-21.
-
-### 4. Webhook endpoint scope — `[blocker:PR-3]`
-
-Stripe webhook URL — production-only, or also a Vercel preview /
-staging endpoint?
-
-- **Option A**: Production only. `https://mindreset.ai/api/webhooks/stripe`
-  configured in Stripe live dashboard. Test mode webhook fires to a
-  test-mode endpoint (could be the same URL, since the env var
-  determines which Stripe secret is used).
-- **Option B**: Production + preview. Each Vercel preview deploy gets
-  a unique URL — would require a wildcard webhook subscription, which
-  Stripe doesn't natively support. Would need a relay.
-
-**Recommendation**: Option A — production only. For testing during
-PR development, use Stripe CLI's `stripe listen --forward-to
-localhost:3000/api/webhooks/stripe` which proxies test-mode events to
-the local dev server.
-
-**Logged**: 2026-05-21.
-
-### 5. Receipt VAT line wording — `[blocker:PR-2]`
-
-Stripe receipts show a tax line. Since Julia is not VAT-registered,
-what does this line say?
-
-- **Option A**: Hide the tax line entirely. Stripe Checkout config:
-  `automatic_tax: { enabled: false }` and no tax_id collection.
-  Receipts show subtotal = total, no tax row.
-- **Option B**: Show a line "VAT not applicable" or similar. Requires
-  a custom Stripe Tax setup. Probably overkill.
-
-**Recommendation**: Option A. Default Stripe behaviour with tax
-disabled hides the tax line. Cleanest, no risk of misleading users.
-
-**Logged**: 2026-05-21.
+**Decision**: Hide tax line entirely. `automatic_tax: { enabled: false }`,
+no tax_id collection. Subtotal = total, no tax row.
 
 ### 6. Promo code rollout — `[non-blocking]`
 
