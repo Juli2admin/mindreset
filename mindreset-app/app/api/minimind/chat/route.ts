@@ -8,6 +8,7 @@ import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
 import { updateDiagnosticProfile } from '@/lib/minimind/memory/updater';
+import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,6 +87,28 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // 1b. Billing cap gate. Defence-in-depth: the MiniMind page SSRs an
+  // at-cap banner that hides the textarea, so the client should not be
+  // calling this endpoint when at-cap. This catch handles stale UI,
+  // direct API hits, and the race where the last available message was
+  // consumed by a parallel request. Crisis/cooldown branches further
+  // down do NOT consume from the pool (safety surfaces are free), but
+  // the gate sits above them so an at-cap user still can't dump messages
+  // into a Sev 5 cooldown to bypass the meter — consistent with the
+  // page-level UI that hides the form regardless of branch.
+  const billingUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      currentTier:            true,
+      messagesUsedThisCycle:  true,
+      topUpMessagesRemaining: true,
+      lifetimeMessagesUsed:   true,
+    },
+  });
+  if (billingUser && !hasCapacity(billingUser)) {
+    return NextResponse.json({ error: 'at-cap' }, { status: 402 });
   }
 
   // 2. Body parse + validate
@@ -421,6 +444,16 @@ export async function POST(req: NextRequest) {
                 content: accumulated,
                 partial: streamFailed,
               },
+            });
+            // Billing meter. Increment AFTER the assistant message is
+            // saved so a DB failure on the message write doesn't charge
+            // for a turn the user can't see. consumeMessage() prefers
+            // the top-up pool over the cycle allowance — see
+            // lib/billing/limits.ts. Fire-and-forget swallow: if the
+            // increment fails, the user gets a free message rather
+            // than a delivered-but-uncharged-then-500 surprise.
+            consumeMessage(userId).catch((err) => {
+              console.error('[minimind/chat] consumeMessage failed:', err);
             });
             // Phase 3d: fire profile-update threshold check ONLY after the
             // assistant message has been persisted. Fire-and-forget — must
