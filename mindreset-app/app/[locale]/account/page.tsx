@@ -44,10 +44,16 @@ export default async function AccountPage({
 
   const firstName = user.firstName ?? (primaryEmail ? primaryEmail.split('@')[0] : null);
 
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { currentTier: true },
+  });
+
   return (
     <AccountClient
       firstName={firstName}
       cookieToClear={cookieToClear}
+      currentTier={dbUser?.currentTier ?? null}
       footerSlot={<Footer />}
     />
   );
