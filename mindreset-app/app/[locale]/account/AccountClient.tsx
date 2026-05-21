@@ -42,12 +42,14 @@ const TIERS: TierData[] = [
 type Props = {
   firstName: string | null;
   cookieToClear: boolean;
+  currentTier: string | null;
   footerSlot: ReactNode;
 };
 
 export default function AccountClient({
   firstName,
   cookieToClear,
+  currentTier,
   footerSlot,
 }: Props) {
   const t = useTranslations('Account');
@@ -175,6 +177,19 @@ export default function AccountClient({
                       }}
                     >
                       {t('comingSoon')}
+                    </span>
+                  ) : (currentTier === 'essential' && tier.id === 'miniMindEssential') ||
+                      (currentTier === 'extended'  && tier.id === 'miniMindExtended') ? (
+                    <span
+                      className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                      style={{
+                        background: PALETTE.accent,
+                        color: PALETTE.accentText,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {t('tierActive')}
                     </span>
                   ) : null}
                 </div>
