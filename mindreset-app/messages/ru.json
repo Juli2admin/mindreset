@@ -9,8 +9,8 @@
     "tiers": {
       "freeTaster": {
         "title": "Бесплатная проба",
-        "subtitle": "20 сообщений, чтобы попробовать",
-        "description": "Отправьте до 20 сообщений в MiniMind. Без карты, без срока. В вашем темпе."
+        "subtitle": "50 сообщений, чтобы попробовать",
+        "description": "Отправьте до 50 сообщений с MiniMind. Без карты, без срока. В вашем темпе."
       },
       "miniMindEssential": {
         "title": "MiniMind Essential",
@@ -44,6 +44,12 @@
       "perMonth": "{price} / месяц",
       "perYearOrMonth": "{annual} / год — или {monthly} / месяц",
       "oneOff": "{price}"
+    },
+    "cta": {
+      "subscribeMonthly": "Подписаться ежемесячно",
+      "subscribeAnnual": "Подписаться ежегодно",
+      "buyTopUp": "Купить дополнительный пакет",
+      "processing": "Обработка…"
     }
   },
   "CrisisResources": {
