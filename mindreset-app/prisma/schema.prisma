@@ -33,7 +33,18 @@ model User {
   screeningResult   String?                      // green | yellow | red | null
   screeningResultAt DateTime?
 
-  // Tier state
+  // Stripe billing identifiers
+  stripeCustomerId        String?   @unique
+  stripeSubscriptionId    String?   @unique
+
+  // Tier + message allowance (Block B)
+  currentTier             String?             // 'free' | 'essential' | 'extended' | null
+  messagesUsedThisCycle   Int       @default(0)
+  cycleResetAt            DateTime?
+  topUpMessagesRemaining  Int       @default(0)
+  lifetimeMessagesUsed    Int       @default(0)
+
+  // Legacy access gate (populated by webhook — kept for backwards compat)
   miniMindActive    Boolean   @default(false)
   miniMindUntil     DateTime?
 

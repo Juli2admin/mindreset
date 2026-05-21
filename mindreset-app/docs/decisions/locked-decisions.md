@@ -101,6 +101,18 @@ Locked 2026-05-21 in a single planning session.
     after 7-day window.
 17. **Refund flow**: Manual via `support@mindreset.ai`. No self-serve
     refund UI at launch.
+18. **Counter reset timing**: Driven by `invoice.payment_succeeded` webhook
+    (Stripe anniversary). No separate cron. Auto-blocks user if renewal fails.
+19. **Mid-cycle upgrade (Essential → Extended)**: Counter persists; cap raises
+    from 200 to 1,200. User is buying headroom, not a fresh allowance.
+20. **Mid-cycle downgrade (Extended → Essential)**: Effective at next cycle
+    boundary via Stripe Customer Portal scheduled-change. No negative-cap edge
+    case; user retains Extended access until period end.
+21. **Webhook endpoint scope**: Production only —
+    `https://mindreset.ai/api/webhooks/stripe`. Local dev via
+    `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+22. **Receipt VAT line**: Hidden entirely. `automatic_tax: { enabled: false }`,
+    no tax_id collection. Julia is not VAT-registered; subtotal = total.
 
 ## Pricing structure (locked together with Block B)
 
