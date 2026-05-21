@@ -1,12 +1,12 @@
 // Message allowance caps for each tier (Block B, locked 2026-05-21).
-// Free taster: 20 lifetime messages, one shot per email, no card.
+// Free taster: 50 lifetime messages, one shot per email, no card.
 // Essential:   200 per billing cycle.
 // Extended:    soft cap at 800 (gentle notice), hard cap at 1,200.
 // Top-up:      +200 per purchase, consumed before the cycle pool.
 // Counter reset is driven by invoice.payment_succeeded webhook (Stripe anniversary).
 
 export const TIER_CAPS = {
-  free:     { lifetime: 20 },
+  free:     { lifetime: 50 },
   essential: { perCycle: 200 },
   extended: { softCap: 800, hardCap: 1_200 },
   topUp:    { messages: 200 },
