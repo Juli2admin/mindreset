@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { UserButton } from '@clerk/nextjs';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
@@ -51,6 +51,27 @@ export default function AccountClient({
   footerSlot,
 }: Props) {
   const t = useTranslations('Account');
+  const locale = useLocale();
+  const [loading, setLoading] = useState<string | null>(null);
+
+  async function handleCheckout(priceKey: string) {
+    setLoading(priceKey);
+    try {
+      const res = await fetch('/api/checkout/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceKey, locale }),
+      });
+      const data: { url?: string } = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setLoading(null);
+      }
+    } catch {
+      setLoading(null);
+    }
+  }
 
   useEffect(() => {
     if (cookieToClear) {
@@ -192,6 +213,9 @@ export default function AccountClient({
               );
             }
 
+            const monthlyKey = tier.id === 'miniMindEssential' ? 'essentialMonthly' : 'extendedMonthly';
+            const annualKey  = tier.id === 'miniMindEssential' ? 'essentialAnnual'  : 'extendedAnnual';
+
             return (
               <div
                 key={tier.id}
@@ -202,6 +226,63 @@ export default function AccountClient({
                 }}
               >
                 {inner}
+                {tier.kind === 'sub' && (
+                  <div className="flex flex-wrap gap-3 mt-5">
+                    <button
+                      onClick={() => handleCheckout(monthlyKey)}
+                      disabled={loading !== null}
+                      className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                      style={{
+                        background: PALETTE.accent,
+                        color: PALETTE.accentText,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                        opacity: loading !== null ? 0.5 : 1,
+                      }}
+                    >
+                      {loading === monthlyKey
+                        ? t('cta.processing')
+                        : t('cta.subscribeMonthly')}
+                    </button>
+                    <button
+                      onClick={() => handleCheckout(annualKey)}
+                      disabled={loading !== null}
+                      className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                      style={{
+                        background: 'transparent',
+                        color: PALETTE.text,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                        border: `1px solid ${PALETTE.border}`,
+                        opacity: loading !== null ? 0.5 : 1,
+                      }}
+                    >
+                      {loading === annualKey
+                        ? t('cta.processing')
+                        : t('cta.subscribeAnnual')}
+                    </button>
+                  </div>
+                )}
+                {tier.kind === 'oneOff' && tier.id === 'topUp' && (
+                  <div className="mt-5">
+                    <button
+                      onClick={() => handleCheckout('topUp')}
+                      disabled={loading !== null}
+                      className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                      style={{
+                        background: PALETTE.accent,
+                        color: PALETTE.accentText,
+                        fontFamily: SANS,
+                        fontWeight: 500,
+                        opacity: loading !== null ? 0.5 : 1,
+                      }}
+                    >
+                      {loading === 'topUp'
+                        ? t('cta.processing')
+                        : t('cta.buyTopUp')}
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}

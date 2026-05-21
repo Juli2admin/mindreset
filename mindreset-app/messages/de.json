@@ -9,8 +9,8 @@
     "tiers": {
       "freeTaster": {
         "title": "Free taster",
-        "subtitle": "20 messages to try",
-        "description": "Send up to 20 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
+        "subtitle": "50 messages to try",
+        "description": "Send up to 50 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
       },
       "miniMindEssential": {
         "title": "MiniMind Essential",
@@ -44,6 +44,12 @@
       "perMonth": "{price} / month",
       "perYearOrMonth": "{annual} / year — or {monthly} / month",
       "oneOff": "{price}"
+    },
+    "cta": {
+      "subscribeMonthly": "Subscribe monthly",
+      "subscribeAnnual": "Subscribe annually",
+      "buyTopUp": "Buy top-up",
+      "processing": "Processing…"
     }
   },
   "CrisisResources": {
