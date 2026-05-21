@@ -14,42 +14,30 @@ Tags:
 
 ## Block B — open questions
 
-### 1. Counter reset timing — ✅ LOCKED
+### 1. Counter reset timing — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
 **Decision**: Stripe anniversary. Reset driven by `invoice.payment_succeeded`
 webhook — no cron needed; auto-blocks on renewal failure.
 
-**Locked**: 2026-05-21.
+### 2. Mid-cycle upgrade behaviour — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-### 2. Mid-cycle upgrade behaviour — ✅ LOCKED
+**Decision**: Counter persists; cap raises from 200 to 1,200. User is buying
+headroom, not a fresh allowance.
 
-**Decision**: Counter persists; cap raises from 200 to 1,200.
-User is buying headroom, not a fresh allowance.
+### 3. Mid-cycle downgrade behaviour — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-**Locked**: 2026-05-21.
+**Decision**: Next cycle boundary. Stripe Customer Portal scheduled-change —
+user keeps Extended access until period end. No negative-cap edge case.
 
-### 3. Mid-cycle downgrade behaviour — ✅ LOCKED
+### 4. Webhook endpoint scope — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
-**Decision**: Next cycle boundary. Stripe Customer Portal
-scheduled-change — user keeps Extended access until the period end.
-No negative-cap edge case.
+**Decision**: Production only — `https://mindreset.ai/api/webhooks/stripe`.
+Local dev via `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
 
-**Locked**: 2026-05-21.
-
-### 4. Webhook endpoint scope — ✅ LOCKED
-
-**Decision**: Production only. One URL:
-`https://mindreset.ai/api/webhooks/stripe`. Local dev uses
-`stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
-
-**Locked**: 2026-05-21.
-
-### 5. Receipt VAT line wording — ✅ LOCKED
+### 5. Receipt VAT line wording — ✅ LOCKED (confirmed by Julia 2026-05-21)
 
 **Decision**: Hide tax line entirely. `automatic_tax: { enabled: false }`,
-no tax_id collection. Subtotal = total, no tax row. Default Stripe behaviour.
-
-**Locked**: 2026-05-21.
+no tax_id collection. Subtotal = total, no tax row.
 
 ### 6. Promo code rollout — `[non-blocking]`
 

@@ -1,285 +1,362 @@
 # Block B — Stripe billing for MiniMind
 
-The full active plan. Supersedes any prior "Plus/Premium" pricing
-discussion. Decisions locked as of 21 May 2026.
+**Specification version:** v2  
+**Date locked:** 2026-05-21  
+**Supersedes:** v1 and all prior pricing assumptions  
+**Architect signoff:** Julia Loya  
+
+Key changes from v1: free taster 20 → 50 messages; S&T All Access
+subscription dropped entirely; S&T subscriber discount model added (£29
+vs £59); Journey installment no-cancellation clarified; 5 product
+questions confirmed by Julia.
+
+---
+
+## Sequencing context
+
+Stripe billing proceeds in English first. Locale-aware Stripe checkout
+is added later when i18n.1 routing lands.
+
+**Block B** = MiniMind subscriptions + top-up + S&T modules + Journey
+purchase flows.  
+**Block C** (future) = S&T module content delivery + Journey block-gating
+logic.
+
+---
 
 ## Product structure
 
-### Subscription products
+### User journey
 
-| Product | Price | Billing | Message allowance |
+1. User signs up → 50 free MiniMind messages (free taster). No S&T or
+   Journey access without purchasing.
+2. After taster, user chooses one or more of three independent purchase
+   paths. No path requires another — a user can buy The Journey directly
+   from the free taster without ever subscribing to MiniMind.
+3. S&T and Journey are gated by AI assistant — content delivered block
+   by block. This is Block C content-delivery logic, not Block B billing.
+
+### Products table (locked)
+
+| Product | Price | Who can buy | Billing type |
 |---|---|---|---|
-| Free taster | £0 (no card) | One-time signup | 20 messages lifetime |
-| MiniMind Essential | £14.99/month | Recurring monthly | 200 / cycle |
-| MiniMind Essential Annual | £129/year | Recurring annual | 200 / cycle (2,400/yr functionally) |
-| MiniMind Extended | £24.99/month | Recurring monthly | 800–1,200 / cycle (soft cap at 1,200) |
-| MiniMind Extended Annual | £209/year | Recurring annual | 800–1,200 / cycle |
+| Free taster | £0 | Everyone (new accounts) | None |
+| MiniMind Essential | £14.99/month or £129/year | Everyone | Recurring subscription |
+| MiniMind Extended | £24.99/month or £209/year | Everyone | Recurring subscription |
+| Message top-up | £4.99 / 200 messages | Active subscribers only | One-off charge |
+| States & Themes module | £59 per module | Non-subscribers | One-off charge |
+| States & Themes module | £29 per module | Active MiniMind subscribers | One-off charge (subscriber discount) |
+| The Journey | £599 | Everyone | One-off charge |
+| The Journey | 12 × £55/week | Everyone | Installment plan |
 
-### One-off products
+### DROPPED from v1
 
-| Product | Price | What it does |
-|---|---|---|
-| Message top-up | £4.99 | +200 messages to current cycle, expires at cycle reset |
+**States & Themes All Access £29/month standalone subscription — REMOVED
+ENTIRELY.** This product no longer exists. Do not create it in Stripe.
 
-### NOT in Block B (deferred to Block C, post-launch)
+---
 
-- States & Themes module purchases (£59 one-off, per module)
-- States & Themes All Access (£29/month)
-- The Journey (£599 one-off OR 12 × £55/week instalment)
+## Tier definitions
 
-## All locked decisions
+### Free taster
+- **50 messages lifetime** (changed from 20 in v1)
+- No card required
+- No time limit
+- One per email address (Clerk primary-email match, case-insensitive)
+- At message 50: "You have reached the free taster limit. Subscribe to
+  continue your work with MiniMind."
 
-Captured in chronological order at
-`../decisions/locked-decisions.md`. Highlights:
+### MiniMind Essential — £14.99/month or £129/year
+- 200 messages per billing cycle
+- At 200: show top-up CTA or wait message with next reset date
+- Annual = same monthly allowance (200/month), billed £129 upfront
 
-1. **UK-only at launch** — Stripe Checkout restricts billing to GB.
-   Stripe Tax stays OFF (Julia is not VAT-registered).
-2. **No grandfathering** — existing users reset to Free taster.
-3. **PR 0 is copy-only** — restructure Account UI + T&Cs, no Stripe
-   API. (Shipped — commit `fd17934b`.)
-4. **Brand language audit scope** — Stripe surfaces only. In-app keeps
-   "trauma-informed".
-5. **Free taster start** — counter ticks from first MiniMind message
-   sent.
-6. **Single-use enforcement** — Clerk primary email match,
-   case-insensitive.
-7. **At-cap UX** — disabled input + inline banner with reset date +
-   top-up button. No modal. History visible.
-8. **Stripe account ready** — test + live keys obtainable.
-9. **Free tier label** — "Free taster" on UI.
-10. **Tier differentiator** — only message allowance differs (no
-    feature flags between Essential and Extended for v1).
-11. **T&Cs refund clause** — included in PR 0 (shipped). 7-day window.
-12. **PR 0 file scope** — messages bundles + Landing + T&Cs +
-    AccountClient.tsx restructure.
-13. **Stripe naming** — plain functional names matching the app
-    (`MiniMind Essential`, `MiniMind Extended`, `MiniMind Message
-    Top-up`, plus Annual variants).
-14. **EN tier copy** — Essential description drops the explicit
-    "trauma-informed companion" framing; uses "A daily companion for
-    self-guided reflection." RU mirrors EN.
+### MiniMind Extended — £24.99/month or £209/year
+- 800–1,200 messages per billing cycle, soft-capped at 1,200
+- At 800: gentle notice "You are approaching your monthly limit"
+- At 1,200: show top-up CTA or wait message
+- NEVER use the word "Unlimited"
 
-## Schema changes (PR 1)
+### Message top-up — £4.99
+- One-off charge, not subscription
+- Adds 200 messages to current billing cycle
+- Expires at cycle reset — does not carry over
+- Stackable (can buy multiple per cycle)
+- Available to Essential and Extended subscribers only
+- Non-refundable (digital content waiver at checkout)
 
-Manual SQL Julia runs in Supabase SQL editor:
+### States & Themes module — £59 (non-subscriber) / £29 (subscriber)
+- One-off purchase per module
+- Permanent access to that module once purchased
+- Subscriber discount (£29) applies automatically at checkout when user
+  has active Essential or Extended subscription
+- If user cancels MiniMind subscription, they keep permanently purchased
+  modules
+- Non-refundable once module opened
+- If not opened within 14 days of purchase, full refund available on
+  request
+
+### The Journey — £599 one-off or 12 × £55/week
+- Available to everyone regardless of MiniMind subscription status
+- Price identical whether or not user has active MiniMind subscription
+- Content gated block by block — user cannot see all 8 blocks at once
+  (Block C logic)
+- **One-off £599:** non-refundable once first block accessed. 14-day
+  refund window if never accessed.
+- **Installment 12 × £55/week:** each weekly payment unlocks next block.
+  User can stop future payments at any time. No refund on payments
+  already made. No cooling-off right once first block accessed.
+- Installment plan is NOT a subscription — it is a payment plan.
+  Stopping future payments ends further content unlocking but does not
+  trigger refunds.
+
+---
+
+## Promo codes
+
+Handled natively by Stripe built-in Coupons + Promotion Codes. No
+separate database table needed.
+
+- Discount shape: 50% off first month only (`duration: 'once'`)
+- UI: quiet "Have a code?" link below CTA at checkout. No banners or
+  popups.
+- Referral programme (credit-based, not cash) deferred to post-100-users
+  phase.
+
+---
+
+## Refund policy matrix (locked)
+
+| Product | Refund window | Condition | After window |
+|---|---|---|---|
+| Free taster | N/A | N/A | N/A |
+| Essential / Extended (monthly or annual) | 7 days from initial purchase | Fewer than 30 messages used | No refund. Cancel anytime, access until cycle end |
+| Message top-up | None | Digital content waiver at checkout | Non-refundable |
+| S&T module (any price) | 14 days from purchase | Module never opened | Non-refundable once opened |
+| The Journey one-off | 14 days from purchase | First block never accessed | Non-refundable once first block accessed |
+| The Journey installment | Per-payment | No refund on paid weeks | Can stop future payments, no recovery of past payments |
+
+Refund request process: email `support@mindreset.ai` with "REFUND" in
+subject line.
+
+---
+
+## Brand language (CRITICAL — Stripe compliance)
+
+All Stripe product names, descriptions, metadata, checkout copy, and
+email receipts must use approved language only.
+
+**Approved:** self-help, self-guided reflection, emotional wellbeing,
+personal growth, trauma-informed self-development, daily companion,
+companion for reflection.
+
+**Forbidden (Stripe deplatforms for these):** therapy / therapeutic,
+treatment, medical, mental illness, diagnosis, counseling / counselling,
+clinical intervention.
+
+---
+
+## Schema changes (PR #23 — on hold pending limit fix)
+
+### 7 new User columns
+
+| Column | Type | Default | Purpose |
+|---|---|---|---|
+| `stripeCustomerId` | `String? @unique` | null | Stripe Customer ID |
+| `stripeSubscriptionId` | `String? @unique` | null | Active subscription ID |
+| `currentTier` | `String?` | null | `'free' \| 'essential' \| 'extended' \| null` |
+| `messagesUsedThisCycle` | `Int` | `0` | Cycle message counter |
+| `cycleResetAt` | `DateTime?` | null | Next counter reset timestamp |
+| `topUpMessagesRemaining` | `Int` | `0` | Top-up balance (consumed before cycle counter) |
+| `lifetimeMessagesUsed` | `Int` | `0` | Gates free taster (cap = **50**) |
+
+### SQL to run in Supabase (updated — use IF NOT EXISTS)
 
 ```sql
-ALTER TABLE "User"
-  ADD COLUMN "stripeCustomerId"     TEXT UNIQUE,
-  ADD COLUMN "stripeSubscriptionId" TEXT UNIQUE,
-  ADD COLUMN "currentTier"          TEXT,
-  ADD COLUMN "messagesUsedThisCycle" INTEGER NOT NULL DEFAULT 0,
-  ADD COLUMN "cycleResetAt"         TIMESTAMP(3),
-  ADD COLUMN "topUpMessagesRemaining" INTEGER NOT NULL DEFAULT 0,
-  ADD COLUMN "lifetimeMessagesUsed" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "stripeCustomerId" TEXT UNIQUE;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "stripeSubscriptionId" TEXT UNIQUE;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "currentTier" TEXT;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "messagesUsedThisCycle" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "cycleResetAt" TIMESTAMP WITH TIME ZONE;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "topUpMessagesRemaining" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "lifetimeMessagesUsed" INTEGER NOT NULL DEFAULT 0;
 ```
 
-`currentTier` is one of `'free' | 'essential' | 'extended' | null`. The
-old `miniMindActive` and `miniMindUntil` columns stay — they're
-populated by the webhook in PR 3.
+Run in Supabase SQL editor before merging PR #23.
 
-After the SQL runs, `schema.prisma` is updated to mirror these columns,
-and `prisma generate` runs to refresh the client.
-
-Existing-user reset (also in PR 1 migration):
+### Existing-user reset (also needed)
 
 ```sql
 UPDATE "User" SET
-  "currentTier" = 'free',
-  "messagesUsedThisCycle" = 0,
+  "currentTier"            = 'free',
+  "messagesUsedThisCycle"  = 0,
   "topUpMessagesRemaining" = 0,
-  "lifetimeMessagesUsed" = 0;
+  "lifetimeMessagesUsed"   = 0;
 ```
 
-(This is safe because all currently-registered users are test users.)
+### Code fix outstanding before PR #23 merges
 
-## PR sequence
+In `lib/billing/limits.ts`:
+- `TIER_CAPS.free.lifetime`: **change 20 → 50**
 
-### PR 0 — Pricing copy (SHIPPED)
+---
 
-Commit `fd17934b` on branch `claude/review-project-structure-3uVtO`.
-Awaiting open-PR command from owner. See `./progress.md` for contents.
+## Stripe environment variables
 
-### PR 1 — Schema + Stripe client + billing limits
+```
+STRIPE_SECRET_KEY=sk_test_...           # or sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...   # or pk_live_...
 
-**Files added:**
+# Price IDs — create in Stripe dashboard, paste here
+STRIPE_PRICE_ESSENTIAL_MONTHLY=price_...
+STRIPE_PRICE_ESSENTIAL_ANNUAL=price_...
+STRIPE_PRICE_EXTENDED_MONTHLY=price_...
+STRIPE_PRICE_EXTENDED_ANNUAL=price_...
+STRIPE_PRICE_TOPUP=price_...
+STRIPE_PRICE_ST_MODULE_FULL=price_...        # £59 non-subscriber
+STRIPE_PRICE_ST_MODULE_SUBSCRIBER=price_...  # £29 subscriber discount
+STRIPE_PRICE_JOURNEY_ONETIME=price_...       # £599
+STRIPE_PRICE_JOURNEY_INSTALLMENT=price_...   # £55/week × 12
+```
 
-- `lib/stripe/client.ts` — server-side Stripe SDK singleton
-- `lib/stripe/products.ts` — Price ID map, env-gated test vs production
-- `lib/billing/limits.ts` — tier caps (50 / 200 / 1,200 / +200 top-up),
-  helpers: `hasCapacity(user)`, `availableMessages(user)`,
-  `cycleHasReset(user, now)`
-- `lib/billing/messageCounter.ts` — increment + decrement helpers used
-  by PR 5 chat gating
+Note: PR #23 used `STRIPE_PRICE_TOP_UP` (underscore before UP). The
+canonical name per this spec is `STRIPE_PRICE_TOPUP`. Align before PR 2
+wires the checkout endpoint.
 
-**Files changed:**
+---
 
-- `prisma/schema.prisma` — User gains the 7 new columns above
-- `.env.example` — documented Price ID env vars for all 5 Stripe
-  products
+## PR sequence (v2)
 
-**Manual steps Julia takes outside the codebase:**
+### PR #22 — Pricing copy and T&C updates
 
-1. Run the ALTER TABLE SQL above in Supabase SQL editor
-2. Run the existing-user reset UPDATE
-3. In Stripe dashboard (test mode first):
-   - Create Product "MiniMind Essential", Price £14.99/month → copy
-     `price_xxx`
-   - Create Product "MiniMind Essential Annual", Price £129/year →
-     copy `price_xxx`
-   - Create Product "MiniMind Extended", Price £24.99/month → copy
-     `price_xxx`
-   - Create Product "MiniMind Extended Annual", Price £209/year →
-     copy `price_xxx`
-   - Create Product "MiniMind Message Top-up", Price £4.99 one-off →
-     copy `price_xxx`
-4. Paste all 5 IDs into `.env.local` + Vercel env vars (test + live
-   separately)
-5. Confirm Stripe Tax is OFF
-6. Confirm Stripe Checkout is set to restrict billing-address country
-   to GB only
+**Status: on hold.**
 
-**Verification:** Stripe API callable from the app's server runtime;
-`hasCapacity()` returns expected values for the seeded users.
+Blockers before merge:
+- Julia to provide RU translation of new EN strings (~28 sentences)
+- S&T subscriber discount copy (£29 vs £59) not yet in messages/en.json
+- Architect review of final RU strings
+
+### PR #23 — Schema + Stripe client + billing limits
+
+**Status: on hold.**
+
+Blockers before merge:
+- `lib/billing/limits.ts`: change `TIER_CAPS.free.lifetime` **20 → 50**
+- `.env.example`: add 4 new price ID env vars (ST_MODULE_FULL,
+  ST_MODULE_SUBSCRIBER, JOURNEY_ONETIME, JOURNEY_INSTALLMENT)
+- Align env var name: `STRIPE_PRICE_TOPUP` (canonical) vs
+  `STRIPE_PRICE_TOP_UP` (current code)
+- Julia runs SQL migration in Supabase after merge
 
 ### PR 2 — Checkout flow
 
-**Files added:**
+POST `/api/stripe/checkout` handles all purchase types via body
+discriminator:
+- Essential/Extended subscription (monthly or annual)
+- S&T module (detects subscriber status → £29 or £59 price ID)
+- Journey one-off £599
+- Journey installment (Stripe payment plan / subscription schedule)
+- Top-up one-off
 
-- `app/api/stripe/checkout/route.ts` — POST handler
-  - Body: `{ tier: "essential" | "extended"; interval: "month" | "year" }`
-    OR `{ topup: true }`
-  - Creates Customer if `user.stripeCustomerId` is null, saves the ID
-  - Creates Checkout Session with right Price ID + customer + success/
-    cancel URLs + GB billing-address restriction
-  - Exposes promo-code field (Stripe native)
-  - Returns Checkout URL for client redirect
-- `app/[locale]/account/checkout/success/page.tsx` — landing after
-  Stripe redirect
-- `app/[locale]/account/checkout/cancel/page.tsx` — landing on user
-  back-out
+Features:
+- Creates Stripe Customer if `user.stripeCustomerId` is null
+- GB billing address restriction
+- Stripe-native promo code field at checkout
+- Digital content waiver checkbox for: top-up, S&T modules, Journey
 
-**Files changed:**
+Pages: `/account/checkout/success`, `/account/checkout/cancel`.
 
-- `app/[locale]/account/AccountClient.tsx` — wire Subscribe / Top-up
-  CTAs to the new endpoint (was placeholders post-PR-0)
-- `messages/en.json` + `ru.json` — checkout-flow strings
+**Blocker:** Julia creates 9 Stripe price objects in test mode, pastes
+IDs into Vercel env vars.
 
-**Verification:** A test purchase end-to-end in Stripe test mode lands
-on success page. No DB writes yet — PR 3 owns that.
+### PR 3 — Webhook + state sync
 
-### PR 3 — Webhook + state sync + chat gating
-
-**Files added:**
-
-- `app/api/webhooks/stripe/route.ts` — mirror the
-  `app/api/webhooks/clerk/route.ts` pattern (svix-style verification,
-  but using `stripe.webhooks.constructEvent` instead of `svix.Webhook`)
-- Idempotency: dedupe via `stripeEventId` (will need a column on
-  `Purchase` to track this — add in this PR's migration)
-
-**Events handled:**
+Events handled:
 
 | Event | Action |
 |---|---|
-| `checkout.session.completed` | Insert Purchase row; set `stripeSubscriptionId`, `currentTier`, `miniMindActive`, `cycleResetAt`, `miniMindUntil` |
-| `customer.subscription.updated` | Update `currentTier`, `cycleResetAt`, `miniMindUntil` |
-| `customer.subscription.deleted` | Flip `miniMindActive = false` at period end (not immediately — user keeps access until paid period ends) |
+| `checkout.session.completed` | Insert Purchase row; set `stripeCustomerId`, `stripeSubscriptionId`, `currentTier`, `miniMindActive`, `cycleResetAt`, `miniMindUntil` |
+| `customer.subscription.updated` | Update `currentTier`, `miniMindUntil`, `cycleResetAt` |
+| `customer.subscription.deleted` | `miniMindActive = false` at period end |
 | `invoice.payment_succeeded` | Reset `messagesUsedThisCycle` to 0; update `cycleResetAt` |
-| `invoice.payment_failed` | Flag user as `paymentFailed` (need new bool column on User?) — TBD |
-| `charge.refunded` | If subscription refund: cancel sub + `miniMindActive` false |
-| `payment_intent.succeeded` (top-up product) | `topUpMessagesRemaining += 200`, write Purchase row |
+| `invoice.payment_failed` | Flag payment failure — downgrade path TBD |
+| `charge.refunded` | Cancel sub; flip `miniMindActive` |
+| `payment_intent.succeeded` (Journey installment) | Unlock next block flag (Block C reads this) |
 
-**Files changed:**
+Idempotency via `stripeEventId` column on `Purchase` — dedupes on
+webhook retry.
 
-- `app/api/minimind/chat/route.ts` — gating: before LLM call, check
-  `hasCapacity(user)`; if false return 402 with structured error +
-  next reset date. On success, decrement `topUpMessagesRemaining`
-  first, then `messagesUsedThisCycle`.
+**Blocker:** webhook URL configured in Stripe dashboard (production
+only). Local dev uses `stripe listen --forward-to
+localhost:3000/api/webhooks/stripe`.
 
-**Verification:** Stripe CLI fires test events end-to-end.
+### PR 4 — Customer Portal
 
-### PR 4 — Customer Portal + at-cap UI
+- `POST /api/stripe/portal` → returns portal URL
+- "Manage subscription" button in AccountClient
+- Portal handles: cancel, update card, invoices, upgrade/downgrade,
+  switch interval
 
-**Files added:**
+### PR 5 — Message counter integration
 
-- `app/api/stripe/portal/route.ts` — POST returns Stripe Customer
-  Portal session URL
-- `components/CapReachedBanner.tsx` — inline banner shown when
-  `hasCapacity()` is false (NOT a modal, per locked decision)
-
-**Files changed:**
-
-- `app/[locale]/account/AccountClient.tsx` — "Manage subscription"
-  button for active subscribers
-- MiniMind chat client component — when chat returns 402, render
-  `CapReachedBanner` and disable input
-- `messages/en.json` + `ru.json` — banner copy
-
-**Verification:** Cancel via portal → webhook fires → subscription
-flagged for end-of-period cancellation. Cap reached → banner appears
-with date + top-up button.
-
-### PR 5 — Message counter integration (already partially in PR 3)
-
-If PR 3 doesn't fully cover chat gating, PR 5 fills the gaps:
-
-- Soft-cap warning at 800 messages on Extended (gentle approach
-  notice — not a hard cap, the hard cap is at 1,200)
-- Lifetime cap at 20 for Free taster
-- Frontend handling of 402 with structured error payload
-- Idempotency of decrement (in case of partial streams)
-
-**Verification:** Test cap behaviour with mocked counter values via
-diagnostic script.
+Updates `/api/minimind/chat/route.ts`:
+- Check `lifetimeMessagesUsed` (free taster, cap = **50**)
+- Check `topUpMessagesRemaining` (consumed first)
+- Check `messagesUsedThisCycle` (paid tier cap)
+- Soft-cap warnings at correct thresholds (800 for Extended)
+- Return 402 with next reset date when caps hit
+- Frontend handles 402 with top-up CTA or wait message
 
 ### PR 6 — Top-up purchase flow
 
-If not already shipped in PR 2 + PR 3, PR 6 adds:
+Separate endpoint or body discriminator in PR 2 checkout.
+- Digital content waiver at checkout
+- Webhook increments `topUpMessagesRemaining` by 200
 
-- `app/api/stripe/checkout/topup/route.ts` (or unify with checkout
-  endpoint via body discriminator)
-- UI surface: top-up CTA in `CapReachedBanner`
-- Stackability: webhook adds 200 to whatever's already in
-  `topUpMessagesRemaining`
+---
 
-**Verification:** End-to-end test of top-up purchase + counter
-increment.
+## Julia's Stripe dashboard setup (before PR 2 testing)
 
-## Verification before PR 1 starts
+In TEST MODE, create 9 products and prices:
 
-- ✅ Stripe account exists, test + live keys ready (confirmed by
-  owner)
-- ⏳ Stripe Tax: OFF (to be confirmed when Julia logs in)
-- ✅ Product structure approved (this document)
-- ✅ PR sequence approved
+1. MiniMind Essential — recurring £14.99/month
+2. MiniMind Essential Annual — recurring £129/year
+3. MiniMind Extended — recurring £24.99/month
+4. MiniMind Extended Annual — recurring £209/year
+5. Message Top-up — one-off £4.99
+6. States & Themes Module — Full Price — one-off £59
+7. States & Themes Module — Subscriber Price — one-off £29
+8. The Journey — One-off — £599
+9. The Journey — Installment — recurring £55/week (12 weeks)
 
-## Open questions parked for in-flight resolution
+Copy each `price_xxx` ID into Vercel env vars. Then confirm Stripe Tax
+is OFF and billing restricted to GB.
 
-Logged in `../decisions/open-questions.md`. Highlights:
+---
 
-- **Counter reset timing** — midnight UTC vs Stripe anniversary
-  (blocks PR 5 gating logic)
-- **Mid-cycle Essential → Extended upgrade** — does the counter reset
-  or just raise the cap? (blocks PR 3 webhook logic; recommended
-  answer: keep counter, raise cap)
-- **Mid-cycle downgrade** — Stripe Customer Portal handles via
-  scheduled change at next cycle boundary; confirm we use that
-- **Webhook endpoint** — production only, or also a Vercel preview
-  /staging endpoint? (affects PR 3 setup)
-- **Receipt VAT line** — show "VAT not applicable" line, or no tax
-  line at all? (affects PR 2 Checkout config)
-- **Annual savings copy** — "Annual billing saves around 28%" — is
-  this final, or do you want different framing?
-- **Promo code rollout** — when does the first 50%-off-first-month
-  code go live? Pre-launch / launch day?
+## Out of scope for Block B
 
-## Non-goals (explicit, recorded)
+- S&T content delivery and block gating (Block C)
+- Journey 8-block progression logic and time gates (Block C)
+- Locale-aware Stripe checkout (waits for i18n.1 routing)
+- Multi-currency (GBP only at v1)
+- Russian-market pricing (deferred to month 6)
+- Referral programme with user-specific codes (post-100-users)
+- Annual → monthly mid-cycle downgrade (Customer Portal)
+- Pause subscription feature
+- VAT registration and Stripe Tax automation
+- UK cookie consent banner
 
-- Multi-currency (GBP only)
-- Russian pricing variant
-- Annual → monthly downgrade UI (use Customer Portal cancel + re-sub)
-- Pause subscription
-- Referral programme with per-user codes
-- Self-serve refund flow
-- "Unlimited" tier
+---
+
+## Five product decisions — confirmed by Julia (2026-05-21)
+
+1. **Counter reset timing:** Stripe anniversary via
+   `invoice.payment_succeeded` webhook. Not midnight UTC.
+2. **Mid-cycle upgrade (Essential → Extended):** Counter persists. 150
+   used → stays at 150, cap raises from 200 to 1,200.
+3. **Mid-cycle downgrade (Extended → Essential):** Takes effect at next
+   cycle boundary via Stripe Customer Portal scheduled change.
+4. **Webhook environment:** Production only. Stripe CLI for local dev.
+5. **VAT handling:** Stripe Tax OFF. Tax line hidden entirely.
