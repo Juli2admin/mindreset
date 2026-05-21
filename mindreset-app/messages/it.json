@@ -7,10 +7,27 @@
     "comingSoon": "Coming soon",
     "tierOpen": "Open",
     "tiers": {
-      "miniMind": {
-        "title": "MiniMind",
+      "freeTaster": {
+        "title": "Free taster",
+        "subtitle": "20 messages to try",
+        "description": "Send up to 20 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
+      },
+      "miniMindEssential": {
+        "title": "MiniMind Essential",
         "subtitle": "Daily companion",
-        "description": "Your daily AI companion for reflection, regulation, and quiet support."
+        "description": "A daily companion for self-guided reflection. 200 messages each billing cycle.",
+        "annualNote": "Annual billing saves around 28%."
+      },
+      "miniMindExtended": {
+        "title": "MiniMind Extended",
+        "subtitle": "More room to lean in",
+        "description": "Higher monthly access for the times you need to lean in deeper. 800 to 1,200 messages each billing cycle.",
+        "annualNote": "Annual billing saves around 30%."
+      },
+      "topUp": {
+        "title": "Message top-up",
+        "subtitle": "When you need a few more",
+        "description": "Add 200 messages to your current billing cycle. One-off — expires at cycle reset."
       },
       "statesThemes": {
         "title": "States & Themes",
@@ -25,8 +42,8 @@
     },
     "price": {
       "perMonth": "{price} / month",
-      "eachOrPerMonth": "{single} each, or {monthly} / month",
-      "oneOffOrInstalments": "{single}, or {count} × {instalment}"
+      "perYearOrMonth": "{annual} / year — or {monthly} / month",
+      "oneOff": "{price}"
     }
   },
   "CrisisResources": {
@@ -257,6 +274,36 @@
     ],
     "greenCta": "Continue → Create your account",
     "sessionRef": "Reference"
+  },
+  "Terms": {
+    "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
+    "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
+    "subsIntro": "Two tiers, each billed monthly or annually:",
+    "subsEssential": "MiniMind Essential — £14.99/month or £129/year. 200 messages per billing cycle.",
+    "subsExtended": "MiniMind Extended — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
+    "subsBilling": "Charged to your chosen payment method until you cancel.",
+    "subsAllowanceReset": "Message allowance resets at the start of each billing cycle and does not roll over.",
+    "subsRefundWindow": "7-day refund window: you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing support@mindreset.ai with REFUND in the subject.",
+    "subsAfterWindow": "After 7 days or 30 messages used, the standard cancellation policy applies.",
+    "subsCancelRight": "You may cancel at any time via your account billing settings.",
+    "subsNoFurtherCharges": "No further payments will be taken.",
+    "subsAccessToEnd": "Access continues until the end of your current billing cycle.",
+    "subsAccessEndsAuto": "Access ends automatically at the end of the current cycle.",
+    "subsNoPartialRefund": "No partial-cycle refunds are issued for cancellations after the 7-day window.",
+    "topupDescription": "£4.99 one-off charge — adds 200 messages to your current billing cycle.",
+    "topupExpiry": "Top-up messages expire when your billing cycle resets and do not roll over.",
+    "topupAvailability": "Available to both Essential and Extended subscribers; stackable.",
+    "topupWaiver": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access.",
+    "topupNonRefundable": "Non-refundable once purchased.",
+    "refundBothIntervals": "7-day refund window applies to both monthly and annual plans.",
+    "refundRequestInstructions": "To request a refund, email support@mindreset.ai with REFUND in the subject within 7 days of purchase and before using 30 messages.",
+    "refundAccessAfterCancel": "If you cancel after the 7-day period, access continues until the end of your current billing cycle.",
+    "refundNoPartial": "No partial or pro-rata refunds are issued after the 7-day window.",
+    "stModuleFull": "States & Themes modules are available as individual one-off purchases at £59 per module.",
+    "stModuleSubscriber": "For active MiniMind subscribers (Essential or Extended), the price is £29 per module. The discount is applied automatically at checkout when logged in with an active subscription.",
+    "stModuleRefund": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing support@mindreset.ai with REFUND in the subject. Once the module has been opened, the purchase is non-refundable.",
+    "journeyOnetime": "The Journey is available as a one-off purchase at £599. At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. Once the first block has been started, no refund is available.",
+    "journeyInstalment": "The Journey is also available as a 12-week instalment plan at £55 per week. Each weekly payment unlocks the next block of content. You may stop future payments at any time; however, payments already made are non-refundable, and previously unlocked content remains accessible. Once the first block has been accessed, the right to a cooling-off period no longer applies."
   },
   "TopBar": {
     "wordmarkAria": "MindReset home"
