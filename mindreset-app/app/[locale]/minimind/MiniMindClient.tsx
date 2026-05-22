@@ -461,6 +461,10 @@ export default function MiniMindClient({ lastConvo, atCap, currentTier, cycleRes
   // These were const-at-module-scope strings pre-2a; now bundle-driven.
   const opener = t('opener');
   const streamErrorSuffix = t('streamErrorSuffix');
+  // Local mirror of the server-computed atCap so we can flip into the
+  // AtCapBanner mid-session when the chat route returns 402 (counter
+  // catches up between page load and send).
+  const [atCapLocal, setAtCapLocal] = useState(atCap);
   const [phase, setPhase] = useState<'choosing' | 'chatting'>(
     lastConvo.hasLast ? 'choosing' : 'chatting',
   );
@@ -529,6 +533,14 @@ export default function MiniMindClient({ lastConvo, atCap, currentTier, cycleRes
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, conversationId }),
       });
+
+      if (res.status === 402) {
+        // At-cap: server rejected because the message would exceed the
+        // tier allowance. Flip the UI to AtCapBanner instead of showing
+        // the generic stream-error message.
+        setAtCapLocal(true);
+        return;
+      }
 
       if (!res.ok) {
         const errText = await res.text();
@@ -634,7 +646,7 @@ export default function MiniMindClient({ lastConvo, atCap, currentTier, cycleRes
       awaitingFirstToken={awaitingFirstToken}
       onSend={onSend}
       onStartNew={onStartNew}
-      atCap={atCap}
+      atCap={atCapLocal}
       currentTier={currentTier}
       cycleResetAt={cycleResetAt}
     />
