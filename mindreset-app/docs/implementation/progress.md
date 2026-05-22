@@ -1,7 +1,10 @@
 # Implementation progress
 
 Snapshot of what's shipped, what's in flight, and what's next. Last
-updated 21 May 2026.
+updated 22 May 2026 (after Block B PRs 0–4 merge).
+
+> **For the next session**: read `docs/SESSION_HANDOFF.md` FIRST. It
+> covers the current production-deploy issue that gates further work.
 
 ## Shipped (on `main`)
 
@@ -43,43 +46,42 @@ updated 21 May 2026.
 |---|---|---|
 | — | Codify production RLS fix in `db/rls.sql` + carry-forward entry | #20 |
 
+### Block B — Stripe billing (PRs 0–4 merged)
+
+| PR | Scope | Merged |
+|---|---|---|
+| **Block B PR 0** | Pricing copy — Free taster / Essential / Extended / Top-up; S&T/Journey "Coming soon" | `f2a0ef9` |
+| **Block B PR 1** | Schema columns + Stripe client lib + billing limits (`hasCapacity`, `TIER_CAPS`) | `b0ba00d` |
+| **Block B PR 2** | Stripe Checkout flow (subscribe + top-up) | `ff075e0` |
+| **Block B PR 3** | Stripe webhook + active-plan badge + `getPeriodEnd()` defensive read + top-up idempotency | `29cbc4e` |
+| **Block B PR 4** | Customer Portal + at-cap UI (`AtCapBanner`) + Active tier badge | `35d8338` |
+
 ## In flight
 
-### Block B PR 0 — Pricing copy revision (current branch)
+### Block B PR 5 — Message counter integration
 
-Branch: `claude/review-project-structure-3uVtO`
-SHA: `fd17934b` (commit pushed, PR not yet opened)
+- **Branch**: `claude/block-b-pr5-message-counter`
+- **PR**: [#27](https://github.com/Juli2admin/mindreset/pull/27)
+- **Status**: Open, owner-approved, **NOT merged**.
+  Blocked on Vercel production deploys (see SESSION_HANDOFF.md).
 
-Changes:
+Adds `consumeMessage(userId)` to `lib/billing/limits.ts` and wires
+billing gate + post-stream increment into `app/api/minimind/chat/route.ts`.
 
-- `messages/en.json` + `ru.json` — Account.tiers restructured (Free
-  taster, Essential, Extended, Top-up + S&T/Journey "Coming soon")
-- 6 placeholder bundles auto-synced
-- `AccountClient.tsx` — replaced TIERS array with kind-discriminated
-  structure (`open` | `sub` | `oneOff` | `comingSoon`); S&T/Journey
-  no longer display stale prices
-- `terms/page.tsx` — Section 8 split into Essential/Extended; added
-  7-day refund window; added Top-up subsection. Refund Policy article
-  mirrors. LAST_UPDATED → 20 May 2026.
+### Block B PR 6 — Top-up purchase flow
 
-## Next (Block B remaining)
-
-Six PRs in sequence — see `./block-b-stripe-plan.md` for the full spec
-and `./next-steps.md` for the immediate priorities.
-
-| PR | Scope | Schema migration |
-|---|---|---|
-| PR 1 | Schema + Stripe client lib + billing limits | YES (manual SQL) |
-| PR 2 | Checkout flow (Essential/Extended/Top-up) + success/cancel pages | No |
-| PR 3 | Webhook + state sync + chat gating | No |
-| PR 4 | Customer Portal + at-cap UI | No |
-| PR 5 | Message counter integration | No |
-| PR 6 | Top-up purchase flow (one-off Stripe charge) | No |
+Likely already covered by PR 3's webhook handler
+(`checkout.session.completed` → `topUpMessagesRemaining += 200` via
+idempotent `Purchase` row). **Re-scope before starting** — may be a
+no-op PR.
 
 ## Known launch blockers (not in Block B)
 
 These need attention before public launch but are out of Block B scope:
 
+- **Vercel production deploys** — currently broken; auto-deploy on
+  `main` not firing. See `SESSION_HANDOFF.md`.
+- **`mindreset.ai` DNS** — domain not yet connected to Vercel.
 - **`User.screeningResult` is never populated** — screening row
   linkage works, but the denormalised result field on User is left
   null. Tracked in `docs/carry-forward.md`.
@@ -103,9 +105,9 @@ These need attention before public launch but are out of Block B scope:
 - UK Limited company registration
 - ICO data-controller registration
 - Solicitor review of T&Cs and Privacy
-- Domain DNS final setup
+- Domain DNS final setup (mindreset.ai → Vercel)
 - Designer pass on Landing / Account
-- Stripe Tax UK registration (or confirm OFF since not VAT-registered)
+- Stripe Tax UK confirm OFF (done — Julia confirmed not VAT-registered)
 
 ## Carry-forward themes
 
@@ -118,6 +120,9 @@ mind. Full notes in `docs/carry-forward.md`:
 - Orphan DB columns from abandoned preferredName work — to be cleaned
 - DiagnosticProfile updates are async — race between update and read
   not addressed
+- Tier downgrade edge case: subscriber cancels → inherits high
+  `lifetimeMessagesUsed` → instantly at-cap on free fallback. Flagged
+  in PR #27 audit, deferred.
 
 ## Roadmap v1 status
 
@@ -125,4 +130,4 @@ mind. Full notes in `docs/carry-forward.md`:
 strategic document. It is significantly out of date in places
 (pricing, especially) and should be refreshed once Block B ships. The
 v1 numbers in the roadmap supersede nothing — `tiers-and-pricing.md`
-is the current source of truth.
+and `decisions/locked-decisions.md` are the current sources of truth.

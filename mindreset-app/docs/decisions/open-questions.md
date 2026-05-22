@@ -97,21 +97,18 @@ an active subscription. Avoids the awkward edge case of "what does
 
 **Logged**: 2026-05-21.
 
-### 9. Stripe Customer Portal feature toggles — `[blocker:PR-4]`
+### 9. Stripe Customer Portal feature toggles — ✅ RESOLVED (2026-05-22)
 
-Stripe Customer Portal can be configured to allow:
+Configured in Stripe Dashboard with:
+- View invoices ✅
+- Update payment method ✅
+- Update billing info ✅
+- Cancel subscription ✅ (mode: "At end of billing period")
+- Pause OFF
 
-- View invoices ✅ (default)
-- Update payment method ✅ (default)
-- Cancel subscription ✅ (default)
-- Switch tier (Essential ↔ Extended) — toggle TBD
-- Switch interval (monthly ↔ annual) — toggle TBD
-- Pause subscription — already locked OFF
-
-**Recommendation**: All defaults ON. Tier-switch and interval-switch
-both enabled. Pause stays OFF.
-
-**Logged**: 2026-05-21.
+Tier-switch / interval-switch left at Stripe defaults. Owner can
+revisit if needed but not blocking launch. **See locked decisions
+#35, #36.**
 
 ## Pre-launch — open questions (non-Block-B)
 
@@ -192,3 +189,89 @@ A pre-existing bug on `main` where T&C capture happens twice in the
 signup flow. See `docs/carry-forward.md`.
 
 **Logged**: pre-existing.
+
+### 17. Vercel production deploys broken — `[blocker:launch]` `[blocker:PR-5]`
+
+**Reported by owner 2026-05-22.** After merging PR #26 (commit
+`35d8338`) to `main` via GitHub MCP, no new Vercel deployment fired.
+Owner sees no Vercel activity in 20+ hours despite the merge.
+
+Suspected causes (ranked):
+1. Vercel-GitHub integration paused/disconnected (possibly a
+   side-effect of disabling Deployment Protection earlier)
+2. Production Branch misconfigured (should be `main`)
+3. "Ignored Build Step" returning skip
+4. Build silently failing (less likely — Vercel surfaces these)
+
+Blocks: PR #27 cannot be tested live; any further deployment of
+production code. **Resolve before merging PR #27.**
+
+**Logged**: 2026-05-22.
+
+### 18. `mindreset.ai` DNS connection — `[blocker:launch]`
+
+Owner clarified 2026-05-22 that `mindreset.ai` is NOT yet connected
+to Vercel. All testing has happened on Vercel-provided URLs.
+
+Implications:
+- Stripe webhook URL is configured with `mindreset.ai` host plus a
+  `?x-vercel-protection-bypass=TOKEN` query string. The fact that
+  webhooks were succeeding in tests suggests the URL is resolving
+  somewhere — investigate.
+- Production tier copy / Stripe receipts referencing `mindreset.ai`
+  domain need to remain consistent.
+- Welcome emails (when wired) will need a working domain.
+
+**Resolution path**: Block F item (Julia's external work). Connect
+DNS at registrar → Vercel auto-provisions SSL → update Stripe webhook
+to clean URL → update Clerk allowed origins.
+
+**Logged**: 2026-05-22.
+
+### 19. Tier-downgrade edge case — `[non-blocking]`
+
+Surfaced in PR #27 audit. When a subscriber cancels and
+`currentTier` is set to `'free'`, the user inherits their cumulative
+`lifetimeMessagesUsed`. If they have 50+ (likely, since they paid
+for a tier), they land at-cap immediately on the free fallback.
+
+Options:
+- **A**: Leave on free with cumulative count — "you used your free
+  trial during your paid period, no second taster". Clean, defensible,
+  may feel punitive.
+- **B**: Grant fresh 50 lifetime messages on downgrade — kinder, but
+  abusable (subscribe-and-cancel loops for unlimited tasters).
+- **C**: Set `lifetimeMessagesUsed = 0` ONLY if `subscriptionStartedAt`
+  exists (proves they were a paying customer). Hybrid.
+
+**Recommendation**: Option A — simplest, defensible, no abuse path.
+Owner copy at cancel surface should hint at it.
+
+**Logged**: 2026-05-22 (PR #27 audit).
+
+### 20. Extended soft-cap notice — `[non-blocking]`
+
+`isAtSoftCap()` helper exists in `lib/billing/limits.ts` but isn't
+surfaced in UI. Should show a gentle "approaching limit" notice for
+Extended users between 800 and 1,200 messages used.
+
+**Recommendation**: small banner above chat input. Non-intrusive.
+Schedule after Block B closes.
+
+**Logged**: 2026-05-22 (PR #27 audit, out of scope).
+
+### 21. PR 6 scope — top-up purchase flow — `[non-blocking]`
+
+PR 3's webhook already handles `checkout.session.completed` for
+top-up, including idempotency via `Purchase.stripeSessionId` and the
+`topUpMessagesRemaining += 200` credit. PR 2's checkout flow includes
+the top-up case.
+
+What's actually left for PR 6? Possibly nothing.
+
+**Recommendation**: when production deploys are working again, the
+next session should test the end-to-end top-up flow (buy → webhook
+credits → meter consumes top-up first → expires at cycle reset). If
+all four steps work, declare PR 6 complete and close Block B.
+
+**Logged**: 2026-05-22.

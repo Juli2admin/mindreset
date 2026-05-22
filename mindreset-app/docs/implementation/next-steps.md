@@ -1,115 +1,142 @@
 # Next steps
 
-Tactical sequence for Block B. Last updated 21 May 2026 (v2 spec).
+Tactical sequence as of **22 May 2026**. Last updated after Block B
+PRs 0–4 merged and PR 5 opened.
 
-## Immediate — both PRs on hold
-
-Both open PRs are on hold pending spec v2 updates:
-
-**PR #22** (`claude/review-project-structure-3uVtO`) — on hold.
-Blockers:
-- Julia to provide RU translation of ~28 new EN strings
-- S&T subscriber discount copy (£29 vs £59) not yet in messages/en.json
-- Architect review of final RU strings before merge
-
-**PR #23** (`claude/block-b-pr1-schema-stripe`) — on hold.
-Blockers:
-- `lib/billing/limits.ts`: change `TIER_CAPS.free.lifetime` **20 → 50**
-- `.env.example`: add 4 new price ID env vars
-- Align env var: `STRIPE_PRICE_TOPUP` (canonical) vs `STRIPE_PRICE_TOP_UP`
-  (current code)
-- Julia runs SQL migration in Supabase after merge
+> **Read `docs/SESSION_HANDOFF.md` FIRST** if you are starting a fresh
+> session. The handoff doc supersedes anything else here for the next
+> session.
 
 ---
 
-## Block B sequence
+## Immediate priority — fix Vercel production deploys
 
-| Step | What | Status | Blockers |
-|---|---|---|---|
-| **PR #22** | Pricing copy + T&C | On hold | RU translation + S&T copy |
-| **PR #23** | Schema + Stripe client + billing limits | On hold | 20→50 fix + env vars + SQL |
-| **PR 2** | Checkout flow (all product types) | Not started | 9 Stripe Price IDs in env |
-| **PR 3** | Webhook + state sync | Not started | Webhook URL in Stripe dashboard |
-| **PR 4** | Customer Portal + at-cap UI | Not started | Portal enabled in Stripe |
-| **PR 5** | Message counter integration | Not started | PR 3 must be live |
-| **PR 6** | Top-up purchase flow | Not started | PR 3 webhook handles it |
+PR #26 was merged to `main` (commit `35d8338`) but Vercel did NOT
+fire a production deployment. Owner sees no Vercel activity in 20+
+hours. Until this is resolved we cannot:
 
-Each PR is independently shippable — app stays in a working state between
-steps.
+- Verify PR #26's at-cap banner / Customer Portal button live
+- Merge PR #27 (message counter) — no way to test it
+- Continue Block B in any form
 
----
+### Debug sequence (with the owner — do not write code)
 
-## PR #22 outstanding copy work
+1. Owner opens Vercel → mindreset project → **Deployments** tab.
+   Clear all filters. Paste top 3 rows.
+2. Vercel → Settings → **Git**: confirm GitHub repo connected
+   (green checkmark) and "Production Branch" = `main`.
+3. Check "Ignored Build Step" — is it returning shell-exit 0?
+4. Investigate side-effects of the recent Deployment Protection
+   disable (could have disconnected something).
+5. If GitHub integration is broken: re-link via Vercel dashboard.
+   If Production Branch is wrong: fix it. If build is failing:
+   read the error and fix.
 
-These strings need adding to `messages/en.json` (and RU mirror) before
-PR #22 can merge. They are NOT currently in the branch:
-
-1. **S&T subscriber discount UI copy** — e.g. "£29 for subscribers /
-   £59 standard" on the `/account` tier card and checkout page
-2. Any new top-up strings (if the existing `topUp.description` covers it,
-   just confirm)
-
-T&C text in `terms/page.tsx` also needs a review for the S&T subscriber
-discount refund policy (14-day window if module never opened). The
-current Section 8 S&T text uses the old single-price model.
+**Do NOT merge PR #27 until Vercel deploys are green again.**
 
 ---
 
-## PR #23 outstanding code fixes
+## Block B — open work
 
-Three concrete changes needed on `claude/block-b-pr1-schema-stripe`:
+### PR #27 — Message counter integration
 
-1. `lib/billing/limits.ts` — `TIER_CAPS.free.lifetime: 20` → `50`
-2. `.env.example` — add these four env vars:
-   ```
-   STRIPE_PRICE_ST_MODULE_FULL=price_...
-   STRIPE_PRICE_ST_MODULE_SUBSCRIBER=price_...
-   STRIPE_PRICE_JOURNEY_ONETIME=price_...
-   STRIPE_PRICE_JOURNEY_INSTALLMENT=price_...
-   ```
-3. `lib/stripe/products.ts` — add entries for the 4 new price IDs above;
-   rename `topUp` key to match canonical `STRIPE_PRICE_TOPUP`
+- **Branch**: `claude/block-b-pr5-message-counter`
+- **URL**: https://github.com/Juli2admin/mindreset/pull/27
+- **Status**: Open, owner-approved, awaiting merge
+- **Blocker**: Vercel deploys broken (see above)
 
----
+### PR 6 — Top-up purchase flow
 
-## Julia's manual steps (before PR 2 can be tested)
+Likely a no-op — PR 3's webhook already credits
+`topUpMessagesRemaining += 200` on `checkout.session.completed` with
+`Purchase` idempotency. **Re-scope before starting**:
 
-1. Run ALTER TABLE SQL in Supabase (from PR #23 body — use the
-   `IF NOT EXISTS` version)
-2. Run existing-user reset UPDATE
-3. Create 9 Stripe products/prices in TEST MODE (see
-   `docs/implementation/block-b-stripe-plan.md`)
-4. Paste 9 `price_xxx` IDs into `.env.local` + Vercel env vars
-5. Confirm Stripe Tax is OFF
-6. Confirm billing restricted to GB
+- Read `app/api/stripe/webhook/route.ts` and `app/api/stripe/checkout/create/route.ts`
+- Confirm top-up flow is end-to-end working: owner can buy top-up,
+  webhook credits it, the credit is consumed before cycle pool, and
+  it expires at billing-period reset
+- If anything is missing, scope PR 6 against the gap. If nothing
+  is missing, close out Block B as fully shipped.
 
 ---
 
-## Pre-launch (parallel work — independent of Block B)
+## After Block B closes
 
-1. **Welcome email sequence** (Resend) — launch-critical
-2. **AI support email Pattern A** — launch-critical; spec not yet defined
-3. **`User.screeningResult` populate** — cookie linkage doesn't write
-   the field; see `docs/carry-forward.md`
-4. **Clerk production instance setup** — currently dev keys
-5. **Auth-page i18n** — sign-in / sign-up / terms / privacy EN-only
-6. **`/account` language toggle** — currently Footer-only
-7. **RU phrases in safety scanner** — Phase 3c keyword scanner is EN-only
-8. **Pre-launch native translation pass** — `translate-missing.mjs`
-9. **T&C duplication** — pre-existing bug; investigate before launch
+In priority order:
+
+### 1. Vercel + DNS productionisation
+
+- Connect `mindreset.ai` to Vercel (Julia + Vercel docs)
+- Verify SSL cert auto-provisioned
+- Update Stripe webhook URL from current bypass-token form to clean
+  `https://mindreset.ai/api/stripe/webhook`
+- Update Clerk allowed origins to include `mindreset.ai`
+
+### 2. Clerk production keys
+
+Currently using dev keys. Production instance needs setup. Tracked
+in `docs/carry-forward.md`.
+
+### 3. Welcome email (Resend, launch-critical)
+
+Email 1 only at launch. Add Email 2/3 later if retention data
+suggests. See open question #11.
+
+### 4. AI support email Pattern A (launch-critical)
+
+Spec not yet defined. Owner to provide. See open question #12.
+
+### 5. `User.screeningResult` populate fix
+
+Cookie linkage doesn't write the field. Implementation sketch in
+`docs/carry-forward.md`. Open question #10.
+
+### 6. RU safety-scanner phrases
+
+Phase 3c keyword scanner is EN-only. Add RU crisis phrases before
+public launch. Owner-authored as a sensitive list. Open question #13.
+
+### 7. Auth-page i18n
+
+sign-in / sign-up / terms / privacy currently EN-only.
+
+### 8. `/account` LanguagePicker
+
+Currently Footer-only. Add to /account top bar.
+
+### 9. Pre-launch native translation pass
+
+Run `translate-missing.mjs` for fr/de/es/it/pl/pt. Confirm with
+native speakers if budget allows.
+
+### 10. T&C duplication investigation
+
+Pre-existing bug. T&C capture happens twice in signup flow.
+
+### 11. Tier-downgrade edge case (flagged in PR #27 audit)
+
+When a subscriber cancels and `currentTier` becomes 'free', the user
+inherits their cumulative `lifetimeMessagesUsed`. If they have 50+,
+they land at-cap immediately on free fallback. Product call needed:
+leave them on free with cumulative count, or grant fresh 50?
+
+### 12. Extended soft-cap notice
+
+`isAtSoftCap()` helper exists but isn't surfaced in UI. Add a gentle
+"approaching limit" notice for Extended users between 800–1,200 msgs.
 
 ---
 
-## Block C — post-launch
+## Block C (post-launch)
 
-States & Themes and The Journey content delivery:
+States & Themes and The Journey content delivery — see Block B PR 0
+pricing for cost structure; reuses Block B billing infrastructure:
+
 - S&T block-by-block delivery + AI gating
 - Journey 8-block progression + time gates per block
-- No prompts yet — 9 module prompts + 8 Journey prompts to design
-- No UI — module-player and Journey-player not built
-
-Block B billing infrastructure (checkout, webhook, Purchase rows) is
-reused in Block C with new product types.
+- 9 module prompts + 8 Journey prompts to design (significant
+  clinical-voice work)
+- module-player and Journey-player UI not built
 
 ---
 
@@ -118,21 +145,23 @@ reused in Block C with new product types.
 - UK Limited company registration
 - ICO data-controller registration
 - Solicitor review of T&Cs and Privacy
-- Domain DNS final setup
+- Domain DNS final setup (in progress — see priority 1 above)
 - Designer pass on Landing / Account
-- Stripe Tax UK confirm OFF status
+- Stripe Tax UK confirm OFF status — done
 
 ---
 
-## Suggested fast-ship order (once PRs unblocked)
+## Suggested fast-ship order from here
 
-1. RU translation (Julia) + S&T copy → unblock PR #22
-2. Limit fix + env vars → PR #23 → Julia runs SQL → merge both
-3. Julia creates 9 Stripe Prices → PR 2
-4. PR 3 (hardest — careful review)
-5. PR 4 + PR 5 combined
-6. Welcome email + AI support email (1–2 sessions)
+1. **Fix Vercel pipeline** (urgent — blocks everything)
+2. Merge + test PR #27
+3. Re-scope PR 6 (likely already shipped via PR 3)
+4. Connect `mindreset.ai` DNS
+5. Clerk production keys
+6. Welcome email + AI support email
 7. `User.screeningResult` fix
-8. RU pre-launch translation pass
-9. Soft launch
-10. Auth-page i18n + remaining polish
+8. RU safety-scanner phrases
+9. Tier-downgrade edge case + Extended soft-cap notice
+10. Pre-launch native translation pass
+11. Auth-page i18n
+12. Soft launch
