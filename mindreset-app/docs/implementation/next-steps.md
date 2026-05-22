@@ -1,7 +1,8 @@
 # Next steps
 
 Tactical sequence as of **22 May 2026**. Last updated after Block B
-PRs 0–4 merged and PR 5 opened.
+fully shipped and verified (PRs 0–4, #27, #29, #30 merged; top-up
+flow tested end-to-end).
 
 > **Read `docs/SESSION_HANDOFF.md` FIRST** if you are starting a fresh
 > session. The handoff doc supersedes anything else here for the next
@@ -9,134 +10,176 @@ PRs 0–4 merged and PR 5 opened.
 
 ---
 
-## Immediate priority — fix Vercel production deploys
+## Block B — ✅ COMPLETE (22 May 2026)
 
-PR #26 was merged to `main` (commit `35d8338`) but Vercel did NOT
-fire a production deployment. Owner sees no Vercel activity in 20+
-hours. Until this is resolved we cannot:
+All six PRs shipped and verified:
 
-- Verify PR #26's at-cap banner / Customer Portal button live
-- Merge PR #27 (message counter) — no way to test it
-- Continue Block B in any form
+| PR | Scope | Status |
+|---|---|---|
+| PR 0 | Schema + Stripe products | ✅ merged |
+| PR 1 | Tier copy + checkout buttons | ✅ merged |
+| PR 2 | Checkout session creator | ✅ merged |
+| PR 3 | Stripe webhook + Purchase idempotency | ✅ merged |
+| PR 4 | Customer Portal | ✅ merged |
+| PR #27 | Message counter gate + at-cap banner | ✅ merged + tested |
+| PR #29 | `waitUntil` fix — serverless lifecycle | ✅ merged + tested |
+| PR #30 | At-cap banner shows mid-session (402 → banner) | ✅ merged + tested |
+| PR 6 | Top-up purchase flow | ✅ no-op — PR 3 already ships it |
 
-### Debug sequence (with the owner — do not write code)
-
-1. Owner opens Vercel → mindreset project → **Deployments** tab.
-   Clear all filters. Paste top 3 rows.
-2. Vercel → Settings → **Git**: confirm GitHub repo connected
-   (green checkmark) and "Production Branch" = `main`.
-3. Check "Ignored Build Step" — is it returning shell-exit 0?
-4. Investigate side-effects of the recent Deployment Protection
-   disable (could have disconnected something).
-5. If GitHub integration is broken: re-link via Vercel dashboard.
-   If Production Branch is wrong: fix it. If build is failing:
-   read the error and fix.
-
-**Do NOT merge PR #27 until Vercel deploys are green again.**
+End-to-end verified: counter increments, at-cap gate fires, mid-session
+402 shows proper banner, top-up credits and drains before cycle pool,
+top-up resets on billing anniversary.
 
 ---
 
-## Block B — open work
+## Pre-launch — code (next sessions, in priority order)
 
-### PR #27 — Message counter integration
+### 1. Welcome email — `[blocker:launch]`
 
-- **Branch**: `claude/block-b-pr5-message-counter`
-- **URL**: https://github.com/Juli2admin/mindreset/pull/27
-- **Status**: Open, owner-approved, awaiting merge
-- **Blocker**: Vercel deploys broken (see above)
+Resend is installed but no email is sent on sign-up. Email 1 only at
+launch.
 
-### PR 6 — Top-up purchase flow
+- Trigger: Clerk `user.created` webhook → Resend
+- Content: welcome + screening result context (EN + RU)
+- Julia to supply copy before session starts
+- See open question #11
 
-Likely a no-op — PR 3's webhook already credits
-`topUpMessagesRemaining += 200` on `checkout.session.completed` with
-`Purchase` idempotency. **Re-scope before starting**:
+### 2. `User.screeningResult` populate fix — `[blocker:launch]`
 
-- Read `app/api/stripe/webhook/route.ts` and `app/api/stripe/checkout/create/route.ts`
-- Confirm top-up flow is end-to-end working: owner can buy top-up,
-  webhook credits it, the credit is consumed before cycle pool, and
-  it expires at billing-period reset
-- If anything is missing, scope PR 6 against the gap. If nothing
-  is missing, close out Block B as fully shipped.
+Cookie-based screening row links to the new User on first `/account`
+visit, but `User.screeningResult` (denormalised field) is not written.
+Implementation sketch in `docs/carry-forward.md`. See open question #10.
+
+### 3. Voice input (mic button) — `[blocker:launch]`
+
+MiniMind chat is text-only. Owner wants voice input comparable to
+ChatGPT voice mode. **Locked decision: Groq Whisper API** (see open
+question #22 — ✅ LOCKED).
+
+Scope:
+- Mic button next to Send in `MiniMindClient.tsx`
+- Tap → record → tap stop → spinner → transcribed text fills textarea
+- User can review/edit before sending
+- Groq Whisper for transcription (multilingual, all 8 locales)
+- One T&C paragraph update: audio sent to Groq for transcription,
+  not retained; only text saved in conversation
+- Privacy policy note: voice audio processed transiently
+- **MiniMind prompt and behaviour are unchanged** — backend receives
+  text only; same system prompt, same model, same safety scanner
+
+Dependencies: Julia to confirm T&C paragraph wording before merge.
+
+### 4. T&C duplication fix — `[blocker:launch]`
+
+Pre-existing bug: T&C capture fires twice in the signup flow.
+See `docs/carry-forward.md`. Open question #16.
+
+### 5. Auth-page i18n — `[blocker:launch]`
+
+sign-in / sign-up / terms / privacy pages are currently EN-only.
+All other pages have full next-intl coverage.
+
+### 6. `/account` LanguagePicker — `[blocker:launch]`
+
+Currently Footer-only. Add to `/account` top bar so users can switch
+locale from the account page without scrolling to the footer.
+
+### 7. Extended soft-cap notice — `[non-blocking]`
+
+`isAtSoftCap()` helper exists in `lib/billing/limits.ts` but is not
+surfaced in UI. Show a gentle "approaching limit" notice for Extended
+users between 800–1,200 messages used. Small banner above chat input.
+See open question #20.
+
+### 8. Tier-downgrade edge case — `[non-blocking]`
+
+When a subscriber cancels and `currentTier` reverts to `'free'`, the
+user inherits their cumulative `lifetimeMessagesUsed`. If 50+, they
+land at-cap immediately. **Decision: Option A** — leave on free with
+cumulative count. Defensible, no abuse path. See open question #19.
+Implement: no code change needed (existing logic is already Option A);
+add copy hint at cancel surface.
+
+### 9. Native translation pass — `[blocker:launch]`
+
+Run `translate-missing.mjs` for fr/de/es/it/pl/pt after all EN copy
+is finalised (especially voice T&C paragraph and any new email copy).
+Confirm with native speakers if budget allows.
+
+### 10. Mobile responsiveness audit — `[blocker:launch]`
+
+Landing / Screening / Account / MiniMind — verify on mobile viewport
+before soft launch. Particular attention to mic button layout and
+at-cap banner on small screens.
 
 ---
 
-## After Block B closes
+## Pre-launch — content (Julia)
 
-In priority order:
+| # | Item | Status |
+|---|---|---|
+| A | AI support email Pattern A — spec needed | open Q #12 |
+| B | RU safety-scanner crisis phrases — owner-authored sensitive list | open Q #13 |
+| C | Welcome email copy (EN + RU) — Email 1 | needed before item 1 |
+| D | T&C paragraph for voice/audio processing | needed before item 3 |
 
-### 1. Vercel + DNS productionisation
+---
 
-- Connect `mindreset.ai` to Vercel (Julia + Vercel docs)
-- Verify SSL cert auto-provisioned
-- Update Stripe webhook URL from current bypass-token form to clean
-  `https://mindreset.ai/api/stripe/webhook`
-- Update Clerk allowed origins to include `mindreset.ai`
+## Pre-launch — external (Block F — Julia's work)
 
-### 2. Clerk production keys
+| # | Item | Notes |
+|---|---|---|
+| F1 | `mindreset.ai` DNS → Vercel | open Q #18; blocks clean Stripe webhook URL |
+| F2 | Clerk production keys | currently dev keys; needed before real users |
+| F3 | Update Stripe webhook URL to clean form | after F1 |
+| F4 | Update Clerk allowed origins to `mindreset.ai` | after F1 |
+| F5 | Designer pass on Landing / Account | roadmap Block F |
+| F6 | Solicitor review of T&Cs and Privacy | roadmap Block F |
+| F7 | UK Limited company registration | roadmap Block F |
+| F8 | ICO data-controller registration | roadmap Block F |
 
-Currently using dev keys. Production instance needs setup. Tracked
-in `docs/carry-forward.md`.
+---
 
-### 3. Welcome email (Resend, launch-critical)
+## Soft launch checklist
 
-Email 1 only at launch. Add Email 2/3 later if retention data
-suggests. See open question #11.
-
-### 4. AI support email Pattern A (launch-critical)
-
-Spec not yet defined. Owner to provide. See open question #12.
-
-### 5. `User.screeningResult` populate fix
-
-Cookie linkage doesn't write the field. Implementation sketch in
-`docs/carry-forward.md`. Open question #10.
-
-### 6. RU safety-scanner phrases
-
-Phase 3c keyword scanner is EN-only. Add RU crisis phrases before
-public launch. Owner-authored as a sensitive list. Open question #13.
-
-### 7. Auth-page i18n
-
-sign-in / sign-up / terms / privacy currently EN-only.
-
-### 8. `/account` LanguagePicker
-
-Currently Footer-only. Add to /account top bar.
-
-### 9. Pre-launch native translation pass
-
-Run `translate-missing.mjs` for fr/de/es/it/pl/pt. Confirm with
-native speakers if budget allows.
-
-### 10. T&C duplication investigation
-
-Pre-existing bug. T&C capture happens twice in signup flow.
-
-### 11. Tier-downgrade edge case (flagged in PR #27 audit)
-
-When a subscriber cancels and `currentTier` becomes 'free', the user
-inherits their cumulative `lifetimeMessagesUsed`. If they have 50+,
-they land at-cap immediately on free fallback. Product call needed:
-leave them on free with cumulative count, or grant fresh 50?
-
-### 12. Extended soft-cap notice
-
-`isAtSoftCap()` helper exists but isn't surfaced in UI. Add a gentle
-"approaching limit" notice for Extended users between 800–1,200 msgs.
+- [ ] End-to-end smoke test all 8 locales
+- [ ] Mobile responsiveness verified
+- [ ] Stripe production-mode test: one real subscribe + one real top-up + one cancel
+- [ ] Voice input tested on mobile (iOS Safari + Android Chrome)
+- [ ] Welcome email delivered and displays correctly
+- [ ] Safety scanner tested with EN + RU crisis phrases
+- [ ] Vercel preview Clerk whitelisting resolved (auth-protected pages testable on preview)
+- [ ] First batch of friend-of-Julia invites with promo code
 
 ---
 
 ## Block C (post-launch)
 
-States & Themes and The Journey content delivery — see Block B PR 0
-pricing for cost structure; reuses Block B billing infrastructure:
+States & Themes and The Journey content delivery — billing already
+wired in Block B; content delivery is Block C:
 
 - S&T block-by-block delivery + AI gating
 - Journey 8-block progression + time gates per block
-- 9 module prompts + 8 Journey prompts to design (significant
-  clinical-voice work)
-- module-player and Journey-player UI not built
+- 9 State/Theme module prompts (significant clinical-voice work — Julia)
+- 8 Journey block prompts (significant clinical-voice work — Julia)
+- module-player UI
+- Journey-player UI (block-by-block, time gates)
+- S&T subscriber-discount surface at checkout
+- Journey installment payment-tracking UI
+
+---
+
+## Post-launch — quality and scale
+
+- Admin control panel
+- User-facing progress page (per roadmap)
+- Feedback loop / NPS surface
+- Welcome email cadence Email 2 + Email 3 (if retention data warrants)
+- Promo code broader rollout (beyond friend-of-Julia)
+- Roadmap v2 refresh (v1 is out of date — pricing, Block B shipped)
+- Extended soft-cap notice (if not shipped pre-launch)
+- Tier-downgrade edge case cancel-surface copy
+- Block C voice input enhancements (streaming transcription if needed)
 
 ---
 
@@ -145,23 +188,32 @@ pricing for cost structure; reuses Block B billing infrastructure:
 - UK Limited company registration
 - ICO data-controller registration
 - Solicitor review of T&Cs and Privacy
-- Domain DNS final setup (in progress — see priority 1 above)
+- Domain DNS final setup → Vercel SSL → clean Stripe webhook URL
 - Designer pass on Landing / Account
-- Stripe Tax UK confirm OFF status — done
+- Stripe Tax UK confirm OFF status — ✅ done
 
 ---
 
-## Suggested fast-ship order from here
+## Operational debts (track, not blocking launch)
 
-1. **Fix Vercel pipeline** (urgent — blocks everything)
-2. Merge + test PR #27
-3. Re-scope PR 6 (likely already shipped via PR 3)
-4. Connect `mindreset.ai` DNS
-5. Clerk production keys
-6. Welcome email + AI support email
-7. `User.screeningResult` fix
-8. RU safety-scanner phrases
-9. Tier-downgrade edge case + Extended soft-cap notice
-10. Pre-launch native translation pass
-11. Auth-page i18n
-12. Soft launch
+- 11 npm vulnerabilities (2 moderate, 9 high) — pre-existing in
+  dependency tree; see `docs/security-deferrals.md`
+- Roadmap v1 (`docs/roadmap/MindReset_Roadmap_v1.md`) out of date
+  — pricing and Block B marked "not yet built". Refresh to v2
+  post-launch. See open question #14.
+- Orphaned remote branch `claude/adoring-babbage-itdRw` — harmless,
+  can be deleted from GitHub UI at any time
+
+---
+
+## Suggested session order from here
+
+1. **Welcome email** (code + Julia supplies EN/RU copy)
+2. **`User.screeningResult` fix** (small, fully codable)
+3. **Voice input — Groq Whisper mic button** (1 session, pre-launch)
+4. **T&C duplication fix** (pre-existing bug)
+5. **Auth-page i18n + `/account` LanguagePicker** (0.5 session)
+6. **Extended soft-cap notice** (small)
+7. **Native translation pass** (after all EN copy locked)
+8. **Mobile responsiveness audit** (manual + any fixes)
+9. **Soft launch** (pending Block F external items completing in parallel)
