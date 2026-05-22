@@ -9,6 +9,7 @@ import { logSafetyEvent } from '@/lib/minimind/safety/log';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
 import { updateDiagnosticProfile } from '@/lib/minimind/memory/updater';
 import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
+import { waitUntil } from '@vercel/functions';
 
 export const dynamic = 'force-dynamic';
 
@@ -387,9 +388,27 @@ export async function POST(req: NextRequest) {
     keywordMatched: keywordMatch.matched,
   };
 
-  // Fire-and-forget. Errors caught here only — never bubble to user.
-  runAsyncVerifier(verifierInput).catch((err) => {
+  // Captured as a promise so waitUntil() can keep the function alive until
+  // it completes. Vercel's serverless lifecycle can tear down the execution
+  // context once the response stream closes — a bare .catch chain is not
+  // enough to guarantee the verifier (and its SafetyEvent writes) finish.
+  // The .catch swallows errors so a verifier failure never bubbles up.
+  const verifierTask = runAsyncVerifier(verifierInput).catch((err) => {
     console.error('[minimind/chat] async verifier task failed:', err);
+  });
+
+  // Deferred trigger for post-stream background work. The profile-update
+  // promise is only created inside the ReadableStream's async callback
+  // (after we know the stream produced tokens), but waitUntil() must be
+  // called synchronously at the handler level before makeStreamResponse
+  // returns. We bridge with a resolver: the finally block calls
+  // triggerBackground(task), backgroundDone resolves when that task
+  // settles, and waitUntil holds the function open until then.
+  let triggerBackground!: (task: Promise<void>) => void;
+  const backgroundDone = new Promise<void>((resolve) => {
+    triggerBackground = (task) => {
+      task.then(resolve, resolve);
+    };
   });
 
   // Stream the Anthropic response.
@@ -435,6 +454,9 @@ export async function POST(req: NextRequest) {
               cleanupErr,
             );
           }
+          // No background work in the zero-token branch — resolve the
+          // deferred immediately so waitUntil() doesn't hold the function.
+          triggerBackground(Promise.resolve());
         } else {
           try {
             await prisma.message.create({
@@ -447,24 +469,36 @@ export async function POST(req: NextRequest) {
             });
             // Billing meter. Increment AFTER the assistant message is
             // saved so a DB failure on the message write doesn't charge
-            // for a turn the user can't see. consumeMessage() prefers
-            // the top-up pool over the cycle allowance — see
-            // lib/billing/limits.ts. Fire-and-forget swallow: if the
-            // increment fails, the user gets a free message rather
-            // than a delivered-but-uncharged-then-500 surprise.
-            consumeMessage(userId).catch((err) => {
+            // for a turn the user can't see. Awaited (not fire-and-
+            // forget) because Vercel's serverless lifecycle can tear
+            // down the execution before a bare promise resolves; the
+            // ~50ms wait happens after the last token reached the
+            // client, so the user perceives no delay. The try/catch
+            // preserves the original intent — a DB failure logs but
+            // does not 500 a successfully-delivered turn.
+            try {
+              await consumeMessage(userId);
+            } catch (err) {
               console.error('[minimind/chat] consumeMessage failed:', err);
-            });
+            }
             // Phase 3d: fire profile-update threshold check ONLY after the
-            // assistant message has been persisted. Fire-and-forget — must
-            // not block stream close. The check runs the count query and
-            // decides whether to trigger updateDiagnosticProfile.
-            void maybeFireProfileUpdate(userId);
+            // assistant message has been persisted. Handed to
+            // triggerBackground so waitUntil() keeps the function alive
+            // while it runs (up to ~12s on the every-20th-message Haiku
+            // call). The .catch keeps the promise chain from rejecting.
+            triggerBackground(
+              maybeFireProfileUpdate(userId).catch((err) =>
+                console.error('[memory] profile update failed:', err),
+              ),
+            );
           } catch (saveErr) {
             console.error(
               '[minimind/chat] failed to save assistant message:',
               saveErr,
             );
+            // Resolve the deferred so waitUntil() doesn't hold the function
+            // open after a message-save failure (no background work to do).
+            triggerBackground(Promise.resolve());
           }
         }
 
@@ -472,6 +506,12 @@ export async function POST(req: NextRequest) {
       }
     },
   });
+
+  // Register both background tasks with waitUntil so Vercel keeps the
+  // function execution context alive until they settle. Promise.allSettled
+  // (not Promise.all) so one task's rejection doesn't suppress the other,
+  // and an unhandled rejection doesn't terminate the wait early.
+  waitUntil(Promise.allSettled([verifierTask, backgroundDone]));
 
   return makeStreamResponse(stream, conversation.id);
 }
