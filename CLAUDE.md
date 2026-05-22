@@ -165,6 +165,36 @@ The MiniMind v2.3 system prompt exists in TWO places:
 | Locked decisions log (new) | `mindreset-app/docs/decisions/locked-decisions.md` |
 | Open questions log (new) | `mindreset-app/docs/decisions/open-questions.md` |
 
+## Deployment / domain — current state (as of 22 May 2026)
+
+- **`mindreset.ai` is NOT connected to Vercel yet.** Don't tell the
+  owner to test on `mindreset.ai`. The domain DNS is pending external
+  work (Block F).
+- **Production = whatever Vercel-provided URL the project is
+  serving** (e.g. `mindreset-*-julialoya-s-projects.vercel.app`).
+  Ask the owner what URL to test against if unclear.
+- **Vercel preview URLs are NOT whitelisted in Clerk.** Owner cannot
+  test auth-protected pages (account, MiniMind) on preview URLs.
+  Auth fails silently / redirects. Use production for those tests.
+- **Vercel Deployment Protection must stay OFF.** It was previously
+  blocking Stripe webhooks with 401 SSO redirects. If webhooks start
+  failing 401, check whether protection got re-enabled.
+- **Stripe webhook URL** currently uses
+  `https://mindreset.ai/api/stripe/webhook?x-vercel-protection-bypass=TOKEN`.
+  This is intentional from prior debugging. If the URL stops working,
+  check Deployment Protection state and consider updating to the
+  primary Vercel URL.
+- **If a `main` merge doesn't appear in Vercel deployments**, the
+  Vercel-GitHub integration is the most likely cause. Don't write
+  code to "fix" it — help the owner debug their Vercel dashboard.
+
+## Session handoff convention
+
+When a session is ended for context-reset reasons, write
+`mindreset-app/docs/SESSION_HANDOFF.md` with the structure used on
+2026-05-22. **The next session reads that doc first**, before
+CLAUDE.md.
+
 ## Tone of agent output
 
 Be tight. Short user-facing updates; no narrating internal deliberation. If

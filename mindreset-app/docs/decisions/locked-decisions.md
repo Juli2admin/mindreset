@@ -169,3 +169,71 @@ Annual savings copy: "Annual billing saves around 28%" (Essential) and
   credit, not cash).
 - Self-serve refund UI — manual via email.
 - S&T All Access subscription — removed from product structure entirely.
+
+## Block B — implementation locks (2026-05-22)
+
+Locked during the PR 3 / PR 4 / PR 5 build-out:
+
+26. **Cycle = billing period.** Counter resets driven by
+    `invoice.payment_succeeded` for `billing_reason: subscription_cycle`.
+    Monthly subscribers reset monthly; annual subscribers reset annually.
+    The word "cycle" in UI copy means the billing period.
+    **Locked 2026-05-22.**
+27. **Crisis / cooldown branches do NOT meter messages.** Safety
+    surfaces are not charged: (a) cooldown-within-floor canned text,
+    (b) cooldown-past-floor verifier + canned text, (c) Sev 4/5
+    keyword crisis canned text, (d) zero-token stream failure (user
+    message rolled back). Charging users in crisis is unacceptable.
+    **Locked 2026-05-22 (PR #27 audit).**
+28. **At-cap API response is HTTP 402** with `{ error: 'at-cap' }`.
+    Client falls back to existing generic error suffix; SSR banner
+    is the primary at-cap UX surface. No bespoke client-side 402
+    handling.
+    **Locked 2026-05-22.**
+29. **Counter incremented post-stream-success only.** Inside the
+    chat-route stream's `finally` block, only when
+    `accumulated.length > 0`. Fire-and-forget so an increment-DB
+    failure doesn't 500 a delivered turn.
+    **Locked 2026-05-22.**
+30. **Top-up pool consumed before cycle pool.** Mirrors
+    `hasCapacity()` priority. `consumeMessage()` and `hasCapacity()`
+    must stay in sync.
+    **Locked 2026-05-22.**
+31. **Top-up expires at billing-period reset.** `invoice.payment_succeeded`
+    zeros both `messagesUsedThisCycle` AND `topUpMessagesRemaining`.
+    Top-up is "extra headroom this cycle", not perpetual credit.
+    **Locked 2026-05-22.**
+32. **Webhook uses `updateMany` not `update`** for subscription/
+    invoice events. A missing `stripeCustomerId` silently no-ops
+    instead of throwing P2025 and triggering Stripe retries.
+    **Locked 2026-05-22.**
+33. **Top-up idempotency via `Purchase.stripeSessionId` unique
+    constraint.** Webhook creates `Purchase` row first; P2002 means
+    "already processed", skip the credit increment. Stripe retries
+    cannot double-credit.
+    **Locked 2026-05-22.**
+34. **`current_period_end` defensive read.** Webhook reads from both
+    `SubscriptionItem.current_period_end` (newer API: 2025-08-27.basil
+    and after) and `Subscription.current_period_end` (older).
+    SDK pinned to `2025-02-24.acacia` but webhook endpoint receives
+    `2026-04-22.dahlia` events.
+    **Locked 2026-05-22.**
+35. **Customer Portal "Activate" toggle is for shareable links
+    only.** API-based `billingPortal.sessions.create()` works without
+    enabling the toggle. Settings (cancel mode, enabled features) must
+    still be configured and saved.
+    **Locked 2026-05-22.**
+36. **Customer Portal cancel mode = "At end of billing period".**
+    Configured in Stripe Dashboard → Settings → Billing → Customer
+    portal. Aligns with locked decision #16 (no partial-cycle refunds
+    after 7-day window).
+    **Locked 2026-05-22.**
+37. **Vercel Deployment Protection must stay OFF** at the project
+    level. Was previously blocking Stripe webhooks with 401 SSO
+    redirects. Do not re-enable.
+    **Locked 2026-05-22.**
+38. **PR #27 (message counter) approach** — audit-approved by owner:
+    gate above all branches (so at-cap users can't pump messages
+    through cooldown), increment only on successful AI turn, top-up
+    consumed first, fire-and-forget consume call.
+    **Locked 2026-05-22.**
