@@ -7,7 +7,7 @@ import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import LanguagePicker from './LanguagePicker';
 
 type Props = {
-  omit?: 'terms' | 'privacy';
+  omit?: 'terms' | 'privacy' | 'faq';
   theme?: 'day' | 'night';
 };
 
@@ -44,6 +44,17 @@ export default async function Footer({ omit, theme = 'day' }: Props) {
               className="hover:underline underline-offset-2 transition-colors"
             >
               {t('privacy')}
+            </Link>
+            {' · '}
+          </>
+        )}
+        {omit !== 'faq' && (
+          <>
+            <Link
+              href="/faq"
+              className="hover:underline underline-offset-2 transition-colors"
+            >
+              {t('faq')}
             </Link>
             {' · '}
           </>
