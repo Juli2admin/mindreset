@@ -260,18 +260,43 @@ Schedule after Block B closes.
 
 **Logged**: 2026-05-22 (PR #27 audit, out of scope).
 
-### 21. PR 6 scope — top-up purchase flow — `[non-blocking]`
+### 21. PR 6 scope — top-up purchase flow — ✅ RESOLVED (2026-05-22)
 
 PR 3's webhook already handles `checkout.session.completed` for
 top-up, including idempotency via `Purchase.stripeSessionId` and the
-`topUpMessagesRemaining += 200` credit. PR 2's checkout flow includes
-the top-up case.
+`topUpMessagesRemaining += 200` credit. End-to-end tested live:
+buy → webhook credits → top-up drains before cycle pool → resets on
+billing anniversary. PR 6 is a no-op. Block B declared fully shipped.
 
-What's actually left for PR 6? Possibly nothing.
+**Logged**: 2026-05-22.
 
-**Recommendation**: when production deploys are working again, the
-next session should test the end-to-end top-up flow (buy → webhook
-credits → meter consumes top-up first → expires at cycle reset). If
-all four steps work, declare PR 6 complete and close Block B.
+### 22. Voice input — mic button in MiniMind chat — ✅ LOCKED (confirmed by Julia 2026-05-22)
+
+Owner wants voice input comparable to ChatGPT voice mode. MindReset
+is a deep self-help companion app where talking to the AI is a core
+interaction pattern — typing-only is a UX gap.
+
+**Decision**: Ship voice input **before launch**, using **Groq Whisper
+API** (same underlying model as ChatGPT, ~10× cheaper than OpenAI
+Whisper, sub-second response, multilingual — covers all 8 locales).
+
+**Scope locked**:
+- Mic button added to MiniMind chat input bar
+- Tap to start recording → tap to stop → spinner → transcribed text
+  fills textarea → user reviews/edits → sends normally
+- Groq Whisper handles transcription server-side (Next.js API route)
+- MiniMind prompt, model, safety scanner, and memory are **unchanged**
+  — backend only ever receives text
+- T&C and Privacy: one paragraph each covering transient audio
+  processing (audio sent to Groq, not retained; only text saved)
+- Julia to approve T&C wording before merge
+
+**Rejected alternatives**:
+- Browser-native `SpeechRecognition` — free and private but
+  noticeably worse for emotional/halting speech and RU locale;
+  poor iOS Safari support
+- OpenAI Whisper API — same model, 10× more expensive, no advantage
+- Post-launch deferral — owner preference is for voice at launch;
+  omitting it would misrepresent the product's intended UX
 
 **Logged**: 2026-05-22.
