@@ -111,7 +111,9 @@ export async function checkScreeningRateLimit(ip: string): Promise<RateLimitResu
     }
     return { limited: false };
   } catch (err) {
-    console.error('[rateLimit] Upstash error — failing closed with 503:', err);
-    return { limited: true, retryAfter: 60 };
+    // Screening is fail-open: a transient Redis error should never block a user
+    // from completing the one-time screening flow. Chat stays fail-closed (cost).
+    console.error('[rateLimit] Upstash error on screening check — failing open:', err);
+    return { limited: false };
   }
 }

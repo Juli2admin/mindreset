@@ -48,13 +48,20 @@ export async function POST(request: NextRequest) {
 
   const { result, reasonSummary, classifierVer } = classify(answers);
 
-  // Auth-aware linkage: if the request is from a signed-in user (re-screening
-  // post-signup), write userId directly AND denormalise the result into User.
-  // This closes the orphan-row gap where authed re-screening would create a
-  // userId=null row that the account-page cookie linkage never picks up.
-  const { userId } = await auth();
-
   try {
+    // Auth-aware linkage: if the request is from a signed-in user (re-screening
+    // post-signup), write userId directly AND denormalise the result into User.
+    // This closes the orphan-row gap where authed re-screening would create a
+    // userId=null row that the account-page cookie linkage never picks up.
+    // Wrapped in try so a Clerk auth() failure doesn't crash the whole handler.
+    let userId: string | null = null;
+    try {
+      const authResult = await auth();
+      userId = authResult.userId;
+    } catch (authErr) {
+      console.error('[screening] auth() failed — continuing with userId=null:', authErr);
+    }
+
     const screening = await prisma.screeningResponse.create({
       data: {
         userId: userId ?? null,
