@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { hasCapacity } from '@/lib/billing/limits';
+import { redirect } from '@/i18n/navigation';
 import MiniMindClient from './MiniMindClient';
 
 export const dynamic = 'force-dynamic';
@@ -9,7 +10,13 @@ const SNIPPET_MAX_CHARS = 80;
 const SNIPPET_DAYS_THRESHOLD = 14;
 const MESSAGE_HISTORY_LIMIT = 50;
 
-export default async function MiniMindPage() {
+export default async function MiniMindPage({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  const { locale } = params;
+
   const { userId } = await auth();
   if (!userId) {
     // Middleware's auth().protect() catches signed-out requests to
@@ -21,6 +28,21 @@ export default async function MiniMindPage() {
     throw new Error(
       'Unauthenticated request reached /minimind page — middleware matcher likely misconfigured',
     );
+  }
+
+  // Legal gate — server-side screening enforcement.
+  // Null screeningResult: user signed up via a path that bypassed the
+  // pre-signup screening flow (OAuth direct-link, expired cookie linkage).
+  // Red screeningResult: chat is not appropriate; /screening surfaces
+  // crisis resources. Disclaimer enforcement is handled by the layout-
+  // level DisclaimerGate modal; the chat API also gates server-side as
+  // defence-in-depth.
+  const screeningGate = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { screeningResult: true },
+  });
+  if (!screeningGate?.screeningResult || screeningGate.screeningResult === 'red') {
+    redirect({ href: '/screening', locale });
   }
 
   // Same query as /api/minimind/conversations, plus the last N messages so
