@@ -133,7 +133,7 @@ export async function loadUserMemoryContext(
       return { hasMemory: false, formattedBlock: '' };
     }
 
-    const profile = await prisma.diagnosticProfile.findUnique({
+    const profile = await prisma.wellbeingSnapshot.findUnique({
       where: { userId },
     });
 

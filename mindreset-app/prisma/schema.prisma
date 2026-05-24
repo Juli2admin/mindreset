@@ -50,7 +50,7 @@ model User {
 
   // Relations
   screeningResponses ScreeningResponse[]
-  diagnosticProfile  DiagnosticProfile?
+  wellbeingSnapshot  WellbeingSnapshot?
   conversations      Conversation[]
   safetyEvents       SafetyEvent[]
   purchases          Purchase[]
@@ -89,7 +89,7 @@ model ScreeningResponse {
 // Updated asynchronously after meaningful conversations.
 // User never sees this directly. Drives routing, recommendations, gating.
 // =============================================================================
-model DiagnosticProfile {
+model WellbeingSnapshot {
   id                         String   @id @default(cuid())
   user                       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                     String   @unique
@@ -165,10 +165,16 @@ model Conversation {
   // reply, at which point the column flips back to false.
   inCrisisCooldown Boolean @default(false)
 
+  // Sliding-window retention: updated on every new message via the chat route.
+  // The daily cron deletes Conversation rows where lastActivityAt < 12 months ago.
+  // Messages cascade (onDelete: Cascade on Message.conversationId).
+  lastActivityAt DateTime @default(now())
+
   messages     Message[]
   safetyEvents SafetyEvent[]
 
   @@index([userId, startedAt])
+  @@index([lastActivityAt])
 }
 
 model Message {
