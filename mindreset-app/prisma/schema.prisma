@@ -184,7 +184,7 @@ model Message {
   conversationId String
 
   role      String   // user | assistant | system
-  content   String   @db.Text  // encrypt at application layer before storing
+  content   String   @db.Text  // AES-256-GCM encrypted via lib/encrypt.ts (prefix enc:v1:); legacy rows are plaintext until backfill runs
   timestamp DateTime @default(now())
 
   // Signals extracted by the assessment engine in real time

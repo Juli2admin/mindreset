@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { decrypt } from '@/lib/encrypt';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,7 +55,7 @@ export async function GET() {
   // Sanitise the snippet: collapse whitespace, truncate to SNIPPET_MAX_CHARS.
   // No HTML escaping needed — this is JSON for a React client which escapes
   // text content on render.
-  const rawText = lastUserMessage.content;
+  const rawText = decrypt(lastUserMessage.content);
   const collapsed = rawText.replace(/\s+/g, ' ').trim();
   const snippet =
     collapsed.length > SNIPPET_MAX_CHARS
