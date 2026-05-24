@@ -110,25 +110,52 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 3. Billing cap gate. Defence-in-depth: the MiniMind page SSRs an
-  // at-cap banner that hides the textarea, so the client should not be
-  // calling this endpoint when at-cap. This catch handles stale UI,
-  // direct API hits, and the race where the last available message was
-  // consumed by a parallel request. Crisis/cooldown branches further
-  // down do NOT consume from the pool (safety surfaces are free), but
-  // the gate sits above them so an at-cap user still can't dump messages
-  // into a Sev 5 cooldown to bypass the meter — consistent with the
-  // page-level UI that hides the form regardless of branch.
+  // 3. Legal gates + billing cap. Fetched in one query.
+  //
+  // Legal gates (return 412 Precondition Failed):
+  //   - screening-required: User.screeningResult is null. Page-level SSR
+  //     redirects to /screening; this 412 catches direct API hits.
+  //   - screening-red: User screened Red. Chat is not appropriate; the
+  //     screening page surfaces crisis resources instead.
+  //   - disclaimer-required: User.disclaimerAcknowledgedAt is null. The
+  //     layout-level DisclaimerGate modal forces acknowledgement on every
+  //     page; this 412 catches users who bypassed the modal client-side.
+  //
+  // Billing cap (return 402): defence-in-depth — the MiniMind page SSRs
+  // an at-cap banner that hides the textarea, so the client should not be
+  // calling this endpoint when at-cap. This catches stale UI, direct API
+  // hits, and the race where the last available message was consumed by
+  // a parallel request. Crisis/cooldown branches further down do NOT
+  // consume from the pool (safety surfaces are free), but the gate sits
+  // above them so an at-cap user can't dump messages into a Sev 5
+  // cooldown to bypass the meter.
   const billingUser = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      currentTier:            true,
-      messagesUsedThisCycle:  true,
-      topUpMessagesRemaining: true,
-      lifetimeMessagesUsed:   true,
+      currentTier:              true,
+      messagesUsedThisCycle:    true,
+      topUpMessagesRemaining:   true,
+      lifetimeMessagesUsed:     true,
+      screeningResult:          true,
+      disclaimerAcknowledgedAt: true,
     },
   });
-  if (billingUser && !hasCapacity(billingUser)) {
+  if (!billingUser) {
+    // User row missing — Clerk webhook race or DB inconsistency. Treat as
+    // unauthorised rather than letting the request through with no
+    // billing/safety context.
+    return NextResponse.json({ error: 'user-not-found' }, { status: 412 });
+  }
+  if (!billingUser.screeningResult) {
+    return NextResponse.json({ error: 'screening-required' }, { status: 412 });
+  }
+  if (billingUser.screeningResult === 'red') {
+    return NextResponse.json({ error: 'screening-red' }, { status: 412 });
+  }
+  if (!billingUser.disclaimerAcknowledgedAt) {
+    return NextResponse.json({ error: 'disclaimer-required' }, { status: 412 });
+  }
+  if (!hasCapacity(billingUser)) {
     return NextResponse.json({ error: 'at-cap' }, { status: 402 });
   }
 
@@ -318,6 +345,24 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // SafetyEvent log FIRST, before delivering the canned crisis response or
+    // updating the conversation state. Audit trail integrity for Sev 4/5
+    // takes priority — a crisis must never be delivered without a logged
+    // event. logSafetyEvent swallows errors internally (logs [SAFETY LOG
+    // FAILED] with PII-free context) so a log failure does not block the
+    // crisis response below, but the ordering ensures the audit row exists
+    // before anything else commits.
+    await logSafetyEvent({
+      userId,
+      conversationId: conversation.id,
+      messageId: userMessageRow.id,
+      type: keywordMatch.type,
+      severity: keywordMatch.severity,
+      triggerExcerpt: keywordMatch.triggerExcerpt,
+      aiResponse: CRISIS_RESPONSE,
+      source: 'keyword',
+    });
+
     await prisma.message.create({
       data: {
         conversationId: conversation.id,
@@ -337,17 +382,6 @@ export async function POST(req: NextRequest) {
         data: { redFlagged: true, lastActivityAt: new Date() },
       });
     }
-
-    await logSafetyEvent({
-      userId,
-      conversationId: conversation.id,
-      messageId: userMessageRow.id,
-      type: keywordMatch.type,
-      severity: keywordMatch.severity,
-      triggerExcerpt: keywordMatch.triggerExcerpt,
-      aiResponse: CRISIS_RESPONSE,
-      source: 'keyword',
-    });
 
     return makeStreamResponse(
       cannedResponseStream(CRISIS_RESPONSE),

@@ -69,12 +69,30 @@ export type VerifierResult = {
   detectedState: DetectedState;
 };
 
-const FAIL_OPEN_RESULT: VerifierResult = {
-  verdict: 'clear_safe',
-  severity: null,
-  reasoning: 'verifier unavailable; defaulted to clear_safe (fail-open)',
-  detectedState: 'none',
-};
+// Fail-closed default. Returns 'ambiguous' so that:
+//   - Cooldown-lift path holds the cooldown (ambiguous ≠ safety_confirmation)
+//   - Async-regular path triggers Disagreement C and logs a Sev 3 SafetyEvent
+//     for human review — instead of silently dropping a potential miss
+// The previous fail-OPEN behaviour (default clear_safe) meant a verifier
+// crash on a real Sev 4/5 message that keywords missed would never produce
+// any audit row. That was a safeguarding gap. This default closes it.
+function failClosedResult(isCheckingCooldownLift: boolean): VerifierResult {
+  if (isCheckingCooldownLift) {
+    return {
+      verdict: 'ambiguous',
+      severity: null,
+      reasoning: 'verifier unavailable; defaulted to ambiguous (cooldown held)',
+      detectedState: 'none',
+    };
+  }
+  return {
+    verdict: 'ambiguous',
+    severity: 3,
+    type: 'other',
+    reasoning: 'verifier unavailable; defaulted to ambiguous for review',
+    detectedState: 'none',
+  };
+}
 
 // ============================================================================
 // SYSTEM PROMPT — Regular classification
@@ -424,7 +442,7 @@ export async function runVerifier(
   isCheckingCooldownLift: boolean,
 ): Promise<VerifierResult> {
   if (!userMessage || typeof userMessage !== 'string') {
-    return FAIL_OPEN_RESULT;
+    return failClosedResult(isCheckingCooldownLift);
   }
 
   const controller = new AbortController();
@@ -452,7 +470,7 @@ export async function runVerifier(
     const textBlock = response.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {
       console.error('[verifier] empty response from model');
-      return FAIL_OPEN_RESULT;
+      return failClosedResult(isCheckingCooldownLift);
     }
 
     let parsed: unknown;
@@ -460,7 +478,7 @@ export async function runVerifier(
       parsed = JSON.parse(stripCodeFences(textBlock.text));
     } catch (parseErr) {
       console.error('[verifier] JSON parse failed:', parseErr);
-      return FAIL_OPEN_RESULT;
+      return failClosedResult(isCheckingCooldownLift);
     }
 
     const result = isCheckingCooldownLift
@@ -469,7 +487,7 @@ export async function runVerifier(
 
     if (!result) {
       console.error('[verifier] invalid verdict shape:', parsed);
-      return FAIL_OPEN_RESULT;
+      return failClosedResult(isCheckingCooldownLift);
     }
 
     return result;
@@ -480,7 +498,7 @@ export async function runVerifier(
     } else {
       console.error('[verifier] error:', err);
     }
-    return FAIL_OPEN_RESULT;
+    return failClosedResult(isCheckingCooldownLift);
   } finally {
     clearTimeout(timeoutId);
   }
