@@ -1,10 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { AnswerSchema, classify } from '@/lib/screening/classify';
+import { checkScreeningRateLimit } from '@/lib/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    request.headers.get('x-real-ip') ??
+    'unknown';
+  const rateLimitResult = await checkScreeningRateLimit(ip);
+  if (rateLimitResult.limited) {
+    return NextResponse.json(
+      { error: 'Too many submissions. Please try again later.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(rateLimitResult.retryAfter) },
+      },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

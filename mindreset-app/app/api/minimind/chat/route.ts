@@ -7,7 +7,8 @@ import { scanForKeywords } from '@/lib/minimind/safety/keywords';
 import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
-import { updateDiagnosticProfile } from '@/lib/minimind/memory/updater';
+import { updateWellbeingSnapshot } from '@/lib/minimind/memory/updater';
+import { checkChatRateLimit } from '@/lib/rateLimit';
 import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
 import { waitUntil } from '@vercel/functions';
 
@@ -83,6 +84,8 @@ function makeStreamResponse(
 // ============================================================================
 // POST handler
 // ============================================================================
+const MESSAGE_MAX_CHARS = 8_000;
+
 export async function POST(req: NextRequest) {
   // 1. Auth
   const { userId } = await auth();
@@ -90,7 +93,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // 1b. Billing cap gate. Defence-in-depth: the MiniMind page SSRs an
+  // 2. Rate limiting — per-user + per-IP, both checked before billing/body parse
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    req.headers.get('x-real-ip') ??
+    'unknown';
+  const rateLimitResult = await checkChatRateLimit(userId, ip);
+  if (rateLimitResult.limited) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait before sending another message.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(rateLimitResult.retryAfter) },
+      },
+    );
+  }
+
+  // 3. Billing cap gate. Defence-in-depth: the MiniMind page SSRs an
   // at-cap banner that hides the textarea, so the client should not be
   // calling this endpoint when at-cap. This catch handles stale UI,
   // direct API hits, and the race where the last available message was
@@ -112,7 +131,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'at-cap' }, { status: 402 });
   }
 
-  // 2. Body parse + validate
+  // 4. Body parse + validate
   let message: string;
   let conversationId: string | undefined;
   try {
@@ -126,11 +145,17 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+    if (message.length > MESSAGE_MAX_CHARS) {
+      return NextResponse.json(
+        { error: `Message too long (max ${MESSAGE_MAX_CHARS} characters)` },
+        { status: 400 },
+      );
+    }
   } catch {
     return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 });
   }
 
-  // 3. Synchronous keyword scan (< 5 ms, no IO)
+  // 4. Synchronous keyword scan (< 5 ms, no IO)
   const keywordMatch = scanForKeywords(message);
 
   // 3b. Phase 3d — fire memory loader. Independent of conversation IO; runs
@@ -139,7 +164,7 @@ export async function POST(req: NextRequest) {
   // formattedBlock: '' } on any failure, so awaiting it cannot throw.
   const memoryPromise = loadUserMemoryContext(userId);
 
-  // 4. Get-or-create the Conversation (owner-scoped, kind-scoped)
+  // 5. Get-or-create the Conversation (owner-scoped, kind-scoped)
   let conversation;
   let conversationCreatedThisRequest = false;
   if (conversationId) {
@@ -159,7 +184,7 @@ export async function POST(req: NextRequest) {
   // Sync point for the parallel memory load.
   const memory = await memoryPromise;
 
-  // 5. Load last HISTORY_LIMIT messages (chronological).
+  // 6. Load last HISTORY_LIMIT messages (chronological).
   const recentReversed = await prisma.message.findMany({
     where: { conversationId: conversation.id },
     orderBy: { timestamp: 'desc' },
@@ -167,7 +192,7 @@ export async function POST(req: NextRequest) {
   });
   const history = recentReversed.reverse();
 
-  // 6. Server-side duplicate-request guard (belt-and-braces with UI debounce).
+  // 7. Server-side duplicate-request guard (belt-and-braces with UI debounce).
   const lastMessage = history[history.length - 1];
   if (lastMessage && lastMessage.role === 'user') {
     return NextResponse.json(
@@ -230,7 +255,7 @@ export async function POST(req: NextRequest) {
     if (verifier.verdict === 'safety_confirmation') {
       await prisma.conversation.update({
         where: { id: conversation.id },
-        data: { inCrisisCooldown: false },
+        data: { inCrisisCooldown: false, lastActivityAt: new Date() },
       });
       await prisma.message.create({
         data: {
@@ -300,12 +325,12 @@ export async function POST(req: NextRequest) {
     if (keywordMatch.severity === 5) {
       await prisma.conversation.update({
         where: { id: conversation.id },
-        data: { inCrisisCooldown: true, redFlagged: true },
+        data: { inCrisisCooldown: true, redFlagged: true, lastActivityAt: new Date() },
       });
     } else {
       await prisma.conversation.update({
         where: { id: conversation.id },
-        data: { redFlagged: true },
+        data: { redFlagged: true, lastActivityAt: new Date() },
       });
     }
 
@@ -338,6 +363,11 @@ export async function POST(req: NextRequest) {
       content: message,
     },
   });
+
+  // Slide the retention window on every user message.
+  void prisma.conversation
+    .update({ where: { id: conversation.id }, data: { lastActivityAt: new Date() } })
+    .catch((err) => console.error('[minimind/chat] lastActivityAt update failed:', err));
 
   // Sev 2/3 keyword hits: silent SafetyEvent log, MiniMind responds normally.
   if (keywordMatch.matched && keywordMatch.severity <= 3) {
@@ -533,7 +563,7 @@ async function maybeFireProfileUpdate(userId: string): Promise<void> {
       totalUserMessages > 0 &&
       totalUserMessages % PROFILE_UPDATE_EVERY_N_MESSAGES === 0
     ) {
-      updateDiagnosticProfile(userId).catch((err) => {
+      updateWellbeingSnapshot(userId).catch((err) => {
         console.error('[memory] profile update task failed:', err);
       });
     }
@@ -558,7 +588,7 @@ async function appendStateOccurrence(
   userId: string,
   state: string,
 ): Promise<void> {
-  const existing = await prisma.diagnosticProfile.findUnique({
+  const existing = await prisma.wellbeingSnapshot.findUnique({
     where: { userId },
     select: { recentStateOccurrences: true },
   });
@@ -572,7 +602,7 @@ async function appendStateOccurrence(
     { state, detectedAt: new Date().toISOString() },
   ].slice(-RECENT_STATE_OCCURRENCES_CAP);
 
-  await prisma.diagnosticProfile.upsert({
+  await prisma.wellbeingSnapshot.upsert({
     where: { userId },
     create: { userId, recentStateOccurrences: appended },
     update: { recentStateOccurrences: appended },

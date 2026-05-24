@@ -497,7 +497,7 @@ async function callHaiku(
 // ============================================================================
 // Public API
 // ============================================================================
-export async function updateDiagnosticProfile(userId: string): Promise<void> {
+export async function updateWellbeingSnapshot(userId: string): Promise<void> {
   try {
     const messagesDesc = await prisma.message.findMany({
       where: { role: 'user', conversation: { userId } },
@@ -521,7 +521,7 @@ export async function updateDiagnosticProfile(userId: string): Promise<void> {
     }
 
     const [profile, mostRecentConv] = await Promise.all([
-      prisma.diagnosticProfile.findUnique({ where: { userId } }),
+      prisma.wellbeingSnapshot.findUnique({ where: { userId } }),
       prisma.conversation.findFirst({
         where: { userId },
         orderBy: { startedAt: 'desc' },
@@ -574,7 +574,7 @@ export async function updateDiagnosticProfile(userId: string): Promise<void> {
       modelVersion: UPDATER_MODEL,
     };
 
-    await prisma.diagnosticProfile.upsert({
+    await prisma.wellbeingSnapshot.upsert({
       where: { userId },
       create: { userId, ...data },
       update: data,
