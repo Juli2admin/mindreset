@@ -42,6 +42,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import type { DetectedState } from '@/lib/minimind/safety/verifier';
+import { decrypt } from '@/lib/encrypt';
 
 const UPDATER_MODEL = 'claude-haiku-4-5-20251001';
 const UPDATER_MAX_TOKENS = 800;
@@ -505,7 +506,10 @@ export async function updateWellbeingSnapshot(userId: string): Promise<void> {
       take: MESSAGES_TO_LOAD,
       select: { content: true, timestamp: true },
     });
-    const messages = messagesDesc.reverse();
+    const messages = messagesDesc.reverse().map((m) => ({
+      ...m,
+      content: decrypt(m.content),
+    }));
 
     console.log('[memory] profile update starting', {
       userId,

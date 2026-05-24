@@ -8,6 +8,7 @@ import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
 import { updateWellbeingSnapshot } from '@/lib/minimind/memory/updater';
+import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkChatRateLimit } from '@/lib/rateLimit';
 import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
 import { waitUntil } from '@vercel/functions';
@@ -184,13 +185,16 @@ export async function POST(req: NextRequest) {
   // Sync point for the parallel memory load.
   const memory = await memoryPromise;
 
-  // 6. Load last HISTORY_LIMIT messages (chronological).
+  // 6. Load last HISTORY_LIMIT messages (chronological) and decrypt content.
   const recentReversed = await prisma.message.findMany({
     where: { conversationId: conversation.id },
     orderBy: { timestamp: 'desc' },
     take: HISTORY_LIMIT,
   });
-  const history = recentReversed.reverse();
+  const history = recentReversed.reverse().map((m) => ({
+    ...m,
+    content: decrypt(m.content),
+  }));
 
   // 7. Server-side duplicate-request guard (belt-and-braces with UI debounce).
   const lastMessage = history[history.length - 1];
@@ -219,13 +223,13 @@ export async function POST(req: NextRequest) {
 
     if (withinFloor) {
       await prisma.message.create({
-        data: { conversationId: conversation.id, role: 'user', content: message },
+        data: { conversationId: conversation.id, role: 'user', content: encrypt(message) },
       });
       await prisma.message.create({
         data: {
           conversationId: conversation.id,
           role: 'assistant',
-          content: COOLDOWN_HOLDING_MESSAGE,
+          content: encrypt(COOLDOWN_HOLDING_MESSAGE),
         },
       });
       return makeStreamResponse(
@@ -248,7 +252,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'user',
-        content: message,
+        content: encrypt(message),
       },
     });
 
@@ -261,7 +265,7 @@ export async function POST(req: NextRequest) {
         data: {
           conversationId: conversation.id,
           role: 'assistant',
-          content: COOLDOWN_LIFT_MESSAGE,
+          content: encrypt(COOLDOWN_LIFT_MESSAGE),
         },
       });
       return makeStreamResponse(
@@ -275,7 +279,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'assistant',
-        content: COOLDOWN_HOLDING_MESSAGE,
+        content: encrypt(COOLDOWN_HOLDING_MESSAGE),
       },
     });
 
@@ -310,7 +314,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'user',
-        content: message,
+        content: encrypt(message),
       },
     });
 
@@ -318,7 +322,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'assistant',
-        content: CRISIS_RESPONSE,
+        content: encrypt(CRISIS_RESPONSE),
       },
     });
 
@@ -360,7 +364,7 @@ export async function POST(req: NextRequest) {
     data: {
       conversationId: conversation.id,
       role: 'user',
-      content: message,
+      content: encrypt(message),
     },
   });
 
@@ -493,7 +497,7 @@ export async function POST(req: NextRequest) {
               data: {
                 conversationId: conversation.id,
                 role: 'assistant',
-                content: accumulated,
+                content: encrypt(accumulated),
                 partial: streamFailed,
               },
             });

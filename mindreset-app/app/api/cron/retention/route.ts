@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { safeEqual } from '@/lib/encrypt';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,8 +11,13 @@ const RETENTION_MONTHS = 12;
 // Messages cascade (onDelete: Cascade on Message.conversationId).
 // WellbeingSnapshot is per-user and NOT touched — it survives account-lifetime.
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) {
+    console.error('[cron/retention] CRON_SECRET env var is not set — refusing to run');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  const authHeader = req.headers.get('authorization') ?? '';
+  if (!safeEqual(authHeader, `Bearer ${secret}`)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
