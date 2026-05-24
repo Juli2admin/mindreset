@@ -9,7 +9,13 @@ const SNIPPET_MAX_CHARS = 80;
 const SNIPPET_DAYS_THRESHOLD = 14;
 
 export async function GET() {
-  const { userId } = await auth();
+  let userId: string | null = null;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -55,7 +61,13 @@ export async function GET() {
   // Sanitise the snippet: collapse whitespace, truncate to SNIPPET_MAX_CHARS.
   // No HTML escaping needed — this is JSON for a React client which escapes
   // text content on render.
-  const rawText = decrypt(lastUserMessage.content);
+  let rawText: string;
+  try {
+    rawText = decrypt(lastUserMessage.content);
+  } catch (err) {
+    console.error('[conversations] decrypt failed:', err);
+    rawText = '';
+  }
   const collapsed = rawText.replace(/\s+/g, ' ').trim();
   const snippet =
     collapsed.length > SNIPPET_MAX_CHARS

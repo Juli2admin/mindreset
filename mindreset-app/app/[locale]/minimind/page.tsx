@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { hasCapacity } from '@/lib/billing/limits';
+import { decrypt } from '@/lib/encrypt';
 import { redirect } from '@/i18n/navigation';
 import MiniMindClient from './MiniMindClient';
 
@@ -93,7 +94,7 @@ export default async function MiniMindPage({
         (Date.now() - lastMessageAt.getTime()) / (1000 * 60 * 60 * 24),
       );
       const showSnippet = daysAgo <= SNIPPET_DAYS_THRESHOLD;
-      const collapsed = lastUserMessage.content.replace(/\s+/g, ' ').trim();
+      const collapsed = decrypt(lastUserMessage.content).replace(/\s+/g, ' ').trim();
       const snippet =
         collapsed.length > SNIPPET_MAX_CHARS
           ? collapsed.slice(0, SNIPPET_MAX_CHARS).trimEnd() + '…'
@@ -113,7 +114,7 @@ export default async function MiniMindPage({
           .map((m) => ({
             id: m.id,
             role: m.role as 'user' | 'assistant',
-            content: m.content,
+            content: decrypt(m.content),
           })),
       };
     }

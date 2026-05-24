@@ -506,10 +506,16 @@ export async function updateWellbeingSnapshot(userId: string): Promise<void> {
       take: MESSAGES_TO_LOAD,
       select: { content: true, timestamp: true },
     });
-    const messages = messagesDesc.reverse().map((m) => ({
-      ...m,
-      content: decrypt(m.content),
-    }));
+    const messages = messagesDesc.reverse().map((m) => {
+      let content: string;
+      try {
+        content = decrypt(m.content);
+      } catch (err) {
+        console.error('[memory] decrypt failed for message, skipping content:', err);
+        content = '';
+      }
+      return { ...m, content };
+    });
 
     console.log('[memory] profile update starting', {
       userId,
