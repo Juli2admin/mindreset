@@ -1,9 +1,6 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
-// Lazy singleton — Redis client only created when first rate-limit check fires.
-// Avoids import-time errors when UPSTASH_REDIS_REST_URL is not set (e.g. in
-// unit tests or local dev without Redis).
 let _redis: Redis | null = null;
 
 function getRedis(): Redis {
@@ -19,7 +16,6 @@ function getRedis(): Redis {
   return _redis;
 }
 
-// Chat: 10 requests/min per authenticated user
 let _chatUser: Ratelimit | null = null;
 function getChatUserLimiter(): Ratelimit {
   if (!_chatUser) {
@@ -32,7 +28,6 @@ function getChatUserLimiter(): Ratelimit {
   return _chatUser;
 }
 
-// Chat: 30 requests/min per IP (blocks cheap-account-creation attacks)
 let _chatIp: Ratelimit | null = null;
 function getChatIpLimiter(): Ratelimit {
   if (!_chatIp) {
@@ -45,7 +40,6 @@ function getChatIpLimiter(): Ratelimit {
   return _chatIp;
 }
 
-// Screening: 5 submissions/hour per IP
 let _screeningIp: Ratelimit | null = null;
 function getScreeningIpLimiter(): Ratelimit {
   if (!_screeningIp) {
@@ -62,43 +56,62 @@ export type RateLimitResult =
   | { limited: false }
   | { limited: true; retryAfter: number };
 
-// Returns { limited: false } when both checks pass.
-// Returns { limited: true, retryAfter } on first violation (doesn't charge
-// the other limiter, saving Redis writes on already-blocked requests).
+// In production, missing Upstash env vars = fail-closed (throw).
+// In dev/test, missing env vars = skip silently (fail-open by design).
+function isRedisConfigured(): boolean {
+  return !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+}
+
+function assertRedisInProd(): void {
+  if (process.env.NODE_ENV === 'production' && !isRedisConfigured()) {
+    throw new Error(
+      'Rate limiting is not configured: UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set in production.',
+    );
+  }
+}
+
 export async function checkChatRateLimit(
   userId: string,
   ip: string,
 ): Promise<RateLimitResult> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    // Redis not configured — skip silently (local dev / test environments).
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
     return { limited: false };
   }
 
-  const [userResult, ipResult] = await Promise.all([
-    getChatUserLimiter().limit(userId),
-    getChatIpLimiter().limit(ip),
-  ]);
+  try {
+    const [userResult, ipResult] = await Promise.all([
+      getChatUserLimiter().limit(userId),
+      getChatIpLimiter().limit(ip),
+    ]);
 
-  if (!userResult.success) {
-    const retryAfter = Math.ceil((userResult.reset - Date.now()) / 1000);
-    return { limited: true, retryAfter };
+    if (!userResult.success) {
+      return { limited: true, retryAfter: Math.ceil((userResult.reset - Date.now()) / 1000) };
+    }
+    if (!ipResult.success) {
+      return { limited: true, retryAfter: Math.ceil((ipResult.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    console.error('[rateLimit] Upstash error — failing closed with 503:', err);
+    return { limited: true, retryAfter: 60 };
   }
-  if (!ipResult.success) {
-    const retryAfter = Math.ceil((ipResult.reset - Date.now()) / 1000);
-    return { limited: true, retryAfter };
-  }
-  return { limited: false };
 }
 
 export async function checkScreeningRateLimit(ip: string): Promise<RateLimitResult> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
     return { limited: false };
   }
 
-  const result = await getScreeningIpLimiter().limit(ip);
-  if (!result.success) {
-    const retryAfter = Math.ceil((result.reset - Date.now()) / 1000);
-    return { limited: true, retryAfter };
+  try {
+    const result = await getScreeningIpLimiter().limit(ip);
+    if (!result.success) {
+      return { limited: true, retryAfter: Math.ceil((result.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    console.error('[rateLimit] Upstash error — failing closed with 503:', err);
+    return { limited: true, retryAfter: 60 };
   }
-  return { limited: false };
 }
