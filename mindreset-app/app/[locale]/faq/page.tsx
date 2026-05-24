@@ -14,6 +14,7 @@ const FAQ_SLUGS = [
   'isTherapy',
   'whatIsMiniMind',
   'howToStart',
+  'voiceInput',
   'isItFree',
   'afterFreeMessages',
   'essentialVsExtended',

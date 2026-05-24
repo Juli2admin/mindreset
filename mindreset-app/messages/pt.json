@@ -347,6 +347,10 @@
         "question": "How do I get started?",
         "answer": "Open MiniMind and begin typing whenever you're ready. There's nothing to set up and no right way to start — even a few minutes is enough."
       },
+      "voiceInput": {
+        "question": "Can I speak instead of typing?",
+        "answer": "Yes. You can type or speak to MiniMind — whichever feels easier. If you speak, your words are turned into text so you can read them back and edit before sending. You can switch between typing and speaking any time."
+      },
       "isItFree": {
         "question": "Is it free?",
         "answer": "You begin with 50 free messages, and you don't need to enter a card to use them. There's no time limit on them, so you can use them whenever the moment matters."
