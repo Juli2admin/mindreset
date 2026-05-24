@@ -27,10 +27,29 @@ export default async function AccountPage({
 
   if (screeningCookie) {
     try {
-      await prisma.screeningResponse.updateMany({
+      // Find the anonymous screening row (userId null = not yet linked).
+      // findFirst + transaction so we can both link the row AND copy
+      // result + createdAt into the User's denormalised fields — MiniMind
+      // reads User.screeningResult to adapt care level per v2.3 prompt.
+      const screening = await prisma.screeningResponse.findFirst({
         where: { id: screeningCookie, userId: null },
-        data: { userId: user.id },
+        select: { id: true, result: true, createdAt: true },
       });
+      if (screening) {
+        await prisma.$transaction([
+          prisma.screeningResponse.update({
+            where: { id: screening.id },
+            data: { userId: user.id },
+          }),
+          prisma.user.update({
+            where: { id: user.id },
+            data: {
+              screeningResult: screening.result,
+              screeningResultAt: screening.createdAt,
+            },
+          }),
+        ]);
+      }
     } catch (err) {
       console.error('[account] screening linkage failed', err);
     }
