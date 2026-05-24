@@ -32,6 +32,7 @@ model User {
   disclaimerAcknowledgedAt DateTime?
   screeningResult   String?                      // green | yellow | red | null
   screeningResultAt DateTime?
+  welcomeEmailSentAt DateTime?                   // null = not yet sent; set on first send
 
   // Stripe billing identifiers
   stripeCustomerId        String?   @unique

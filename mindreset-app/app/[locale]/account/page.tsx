@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
+import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import AccountClient from './AccountClient';
 import Footer from '@/components/Footer';
 // Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
@@ -27,10 +29,29 @@ export default async function AccountPage({
 
   if (screeningCookie) {
     try {
-      await prisma.screeningResponse.updateMany({
+      // Find the anonymous screening row (userId null = not yet linked).
+      // findFirst + transaction so we can both link the row AND copy
+      // result + createdAt into the User's denormalised fields — MiniMind
+      // reads User.screeningResult to adapt care level per v2.3 prompt.
+      const screening = await prisma.screeningResponse.findFirst({
         where: { id: screeningCookie, userId: null },
-        data: { userId: user.id },
+        select: { id: true, result: true, createdAt: true },
       });
+      if (screening) {
+        await prisma.$transaction([
+          prisma.screeningResponse.update({
+            where: { id: screening.id },
+            data: { userId: user.id },
+          }),
+          prisma.user.update({
+            where: { id: user.id },
+            data: {
+              screeningResult: screening.result,
+              screeningResultAt: screening.createdAt,
+            },
+          }),
+        ]);
+      }
     } catch (err) {
       console.error('[account] screening linkage failed', err);
     }
@@ -46,8 +67,19 @@ export default async function AccountPage({
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { currentTier: true },
+    select: { currentTier: true, welcomeEmailSentAt: true },
   });
+
+  // Send welcome email once, after the page renders — locale-aware.
+  // waitUntil keeps the serverless function alive until the Resend call
+  // completes without delaying the page response to the user.
+  if (!dbUser?.welcomeEmailSentAt && primaryEmail) {
+    waitUntil(
+      sendWelcomeEmail({ userId: user.id, email: primaryEmail, locale }).catch((err) =>
+        console.error('[account] welcome email task failed:', err),
+      ),
+    );
+  }
 
   return (
     <AccountClient

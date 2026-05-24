@@ -5,6 +5,8 @@
 // Top-up:      +200 per purchase, consumed before the cycle pool.
 // Counter reset is driven by invoice.payment_succeeded webhook (Stripe anniversary).
 
+import prisma from '@/lib/prisma';
+
 export const TIER_CAPS = {
   free:     { lifetime: 50 },
   essential: { perCycle: 200 },
@@ -59,4 +61,39 @@ export function isAtSoftCap(user: BillingUser): boolean {
     user.messagesUsedThisCycle >= TIER_CAPS.extended.softCap &&
     user.messagesUsedThisCycle < TIER_CAPS.extended.hardCap
   );
+}
+
+// Atomically decrement the user's available pool by one message. Top-up
+// remainder is consumed before the cycle allowance — mirrors the priority
+// in hasCapacity(). lifetimeMessagesUsed is incremented unconditionally
+// (drives the free-tier cap; harmless for paid).
+//
+// Two updateMany calls so the top-up decrement is conditional on a
+// non-empty pool at the DB level — no read-modify-write race. If the
+// first updateMany matches zero rows (pool empty), fall through to the
+// cycle increment.
+//
+// Note: no User-row existence check. Callers are expected to have
+// authenticated via Clerk and the FK on Conversation → User would have
+// rejected an orphan upstream. If the row is somehow missing, both
+// updateMany calls no-op silently — failure mode is "free message",
+// which is preferable to throwing after the assistant turn has already
+// streamed to the user.
+export async function consumeMessage(userId: string): Promise<void> {
+  const decremented = await prisma.user.updateMany({
+    where: { id: userId, topUpMessagesRemaining: { gt: 0 } },
+    data: {
+      topUpMessagesRemaining: { decrement: 1 },
+      lifetimeMessagesUsed:   { increment: 1 },
+    },
+  });
+  if (decremented.count > 0) return;
+
+  await prisma.user.updateMany({
+    where: { id: userId },
+    data: {
+      messagesUsedThisCycle: { increment: 1 },
+      lifetimeMessagesUsed:  { increment: 1 },
+    },
+  });
 }
