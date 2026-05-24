@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
+import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import AccountClient from './AccountClient';
 import Footer from '@/components/Footer';
 // Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
@@ -65,8 +67,19 @@ export default async function AccountPage({
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { currentTier: true },
+    select: { currentTier: true, welcomeEmailSentAt: true },
   });
+
+  // Send welcome email once, after the page renders — locale-aware.
+  // waitUntil keeps the serverless function alive until the Resend call
+  // completes without delaying the page response to the user.
+  if (!dbUser?.welcomeEmailSentAt && primaryEmail) {
+    waitUntil(
+      sendWelcomeEmail({ userId: user.id, email: primaryEmail, locale }).catch((err) =>
+        console.error('[account] welcome email task failed:', err),
+      ),
+    );
+  }
 
   return (
     <AccountClient
