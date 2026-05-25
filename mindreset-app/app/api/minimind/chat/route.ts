@@ -636,7 +636,7 @@ async function maybeFireProfileUpdate(userId: string): Promise<void> {
 }
 
 // Append one { state, detectedAt } entry to the user's
-// DiagnosticProfile.recentStateOccurrences JSON array. Upsert pattern:
+// WellbeingSnapshot.recentStateOccurrences JSON array. Upsert pattern:
 // creates the row if missing.
 //
 // Read-modify-write — concurrent calls for the same user race; last
