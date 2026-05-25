@@ -11,7 +11,7 @@ export async function POST() {
   }
 
   try {
-    await prisma.user.update({
+    await prisma.user.updateMany({
       where: { id: user.id },
       data: { disclaimerAcknowledgedAt: new Date() },
     });

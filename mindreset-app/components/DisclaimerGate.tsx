@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
 import DisclaimerModal from './DisclaimerModal';
 
 const COOKIE_NAME = 'mr_disclaimer_acknowledged';
@@ -18,7 +17,6 @@ type Props = {
 };
 
 export default function DisclaimerGate({ initialShow, needsCookieBackfill }: Props) {
-  const { isSignedIn } = useUser();
   const [open, setOpen] = useState(initialShow);
 
   useEffect(() => {
@@ -28,12 +26,10 @@ export default function DisclaimerGate({ initialShow, needsCookieBackfill }: Pro
   const handleAcknowledge = async () => {
     setAckCookie();
     setOpen(false);
-    if (isSignedIn) {
-      try {
-        await fetch('/api/disclaimer/acknowledge', { method: 'POST' });
-      } catch (err) {
-        console.error('[disclaimer] server stamp failed:', err);
-      }
+    try {
+      await fetch('/api/disclaimer/acknowledge', { method: 'POST' });
+    } catch (err) {
+      console.error('[disclaimer] server stamp failed:', err);
     }
   };
 
