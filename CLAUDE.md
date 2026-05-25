@@ -122,8 +122,13 @@ Full spec: `mindreset-app/docs/implementation/block-b-stripe-plan.md`
 ## VAT / market
 
 - **Julia is NOT VAT-registered.** Stripe Tax stays OFF.
-- **UK-only at launch** — Stripe Checkout restricts billing to GB.
-- Prices are final (no VAT added at checkout).
+- **Open to all countries at launch.** No country restriction at
+  Stripe Checkout. Julia knowingly accepts EU/non-UK VAT
+  non-compliance risk at launch volume (no turnover threshold for
+  non-resident sellers — VAT applies from £1, unenforced at this
+  volume). See locked decision #44.
+- Prices are final, GBP-only (no VAT added at checkout). Stripe
+  handles FX automatically for non-GBP cards.
 
 ## MiniMind prompt — dual source of truth
 

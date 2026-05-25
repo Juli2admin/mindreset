@@ -80,7 +80,9 @@ or additional rule, see Section 4.
 - **UK-rooted services, never US substitutes.** `Samaritans 116 123`,
   `NHS 111`, `GP`, `A&E`, `999`. Never `911`, `988`, `Crisis Text Line`,
   or any US-coded resource — even when the target locale's actual users
-  might be elsewhere. MindReset is UK-only by owner decision.
+  might be elsewhere. MindReset is UK-operated; safety lines remain
+  UK-coded for every locale at launch. Localised crisis lines per
+  country are not on the roadmap.
 
 ### Structural elements (must be preserved byte-identical)
 

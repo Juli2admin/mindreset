@@ -61,6 +61,8 @@ Locked 2026-05-21 in a single planning session.
 
 1. **Tax / market**: UK-only at launch. Stripe Checkout restricts
    billing to GB. Stripe Tax stays OFF. Julia is not VAT-registered.
+   *(Superseded by decision #44, 2026-05-25 — market scope opened to
+   all countries; Stripe Tax remains OFF.)*
 2. **Existing users**: No grandfathering. PR 1 migration resets all
    users to `currentTier = 'free'`, counters zeroed.
 3. **PR 0 timing**: Standalone copy-only PR before any Stripe wiring.
@@ -237,3 +239,18 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     through cooldown), increment only on successful AI turn, top-up
     consumed first, fire-and-forget consume call.
     **Locked 2026-05-22.**
+
+## Market scope (2026-05-25)
+
+44. **Open to all countries at launch.** Supersedes decision #1
+    ("UK-only at launch"). No country restriction at Stripe Checkout
+    (none was ever built in code; the original lock was aspirational).
+    Julia is not VAT-registered; she knowingly accepts EU/non-UK VAT
+    non-compliance risk at launch volume — no turnover threshold
+    applies for non-resident sellers, but volume is too low to attract
+    enforcement. Prices remain GBP-only, inclusive (no VAT line at
+    checkout). Stripe handles FX automatically for non-GBP cards;
+    customers see GBP at checkout regardless of their card's
+    denomination (multi-currency pricing is locked out at launch — see
+    Out-of-scope above).
+    **Locked 2026-05-25.**

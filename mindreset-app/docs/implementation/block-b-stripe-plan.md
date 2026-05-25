@@ -261,7 +261,8 @@ discriminator:
 
 Features:
 - Creates Stripe Customer if `user.stripeCustomerId` is null
-- GB billing address restriction
+- Billing address collection required (no country restriction — see
+  locked decision #44)
 - Stripe-native promo code field at checkout
 - Digital content waiver checkbox for: top-up, S&T modules, Journey
 
@@ -331,7 +332,7 @@ In TEST MODE, create 9 products and prices:
 9. The Journey — Installment — recurring £55/week (12 weeks)
 
 Copy each `price_xxx` ID into Vercel env vars. Then confirm Stripe Tax
-is OFF and billing restricted to GB.
+is OFF. No country restriction at Checkout (see locked decision #44).
 
 ---
 
