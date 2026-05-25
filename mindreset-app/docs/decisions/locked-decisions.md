@@ -237,3 +237,18 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     through cooldown), increment only on successful AI turn, top-up
     consumed first, fire-and-forget consume call.
     **Locked 2026-05-22.**
+
+## Market scope (2026-05-25)
+
+44. **Open to all countries at launch.** Supersedes decision #1
+    ("UK-only at launch"). No country restriction at Stripe Checkout
+    (none was ever built in code; the original lock was aspirational).
+    Julia is not VAT-registered; she knowingly accepts EU/non-UK VAT
+    non-compliance risk at launch volume — no turnover threshold
+    applies for non-resident sellers, but volume is too low to attract
+    enforcement. Prices remain GBP-only, inclusive (no VAT line at
+    checkout). Stripe handles FX automatically for non-GBP cards;
+    customers see GBP at checkout regardless of their card's
+    denomination (multi-currency pricing is locked out at launch — see
+    Out-of-scope above).
+    **Locked 2026-05-25.**

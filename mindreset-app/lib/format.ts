@@ -56,14 +56,16 @@ export function formatNumber(
 
 /**
  * Format a currency value. Always rendered in en-GB regardless of UI
- * locale — this is a UK-only product and prices stay in British format
- * everywhere ("£9.99", never "9,99 £" or "9,99 £GB"). Reasoning:
+ * locale — prices stay in British format everywhere ("£9.99", never
+ * "9,99 £" or "9,99 £GB"). Reasoning:
  *   - Stripe checkout shows English-format GBP regardless of UI language,
  *     so picker switches in our UI shouldn't desync from checkout
  *   - Trauma-informed simplicity: avoids "is that 9.99 or 999" format
  *     ambiguity for users unfamiliar with comma-as-decimal conventions
  *   - Localisation work applies to labels AROUND the price
  *     ("/month" → "/месяц") not the price itself
+ *   - GBP-only at launch (locked decision #44); non-UK customers see
+ *     GBP and their bank handles FX on the card automatically.
  *
  * Defaults to GBP. Other ISO 4217 codes accepted in case we ever surface
  * a USD/EUR figure (e.g. a reference price), still in British format.
