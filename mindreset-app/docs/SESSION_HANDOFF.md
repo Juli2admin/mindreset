@@ -100,7 +100,9 @@ Branch: `claude/doc-cleanup`. Scope:
 4. `architecture.md:25,104` — DiagnosticProfile → WellbeingSnapshot.
 5. `communication-system.md:36,40,89` — rate-limit status updates +
    DiagnosticProfile rename.
-6. Delete `lib/billing/messageCounter.ts` (verified dead).
+6. `communication-system.md` — FAQ row in "Not built" table: mark as
+   ✅ Built at `/faq` (PR #34).
+7. Delete `lib/billing/messageCounter.ts` (verified dead).
 
 **Out of scope for this PR** (flagged separately):
 - `architecture.md:102` says `prisma migrate dev` — violates CLAUDE.md
@@ -114,7 +116,7 @@ Branch: `claude/doc-cleanup`. Scope:
 | # | Item | Status |
 |---|---|---|
 | 1 | Welcome email | Built; waiting on RESEND_API_KEY + DNS propagation |
-| 2 | Remove FAQ link from welcome email | Discussed; not done |
+| 2 | FAQ link in welcome email | ✅ Correct as-is — FAQ exists at `/faq` (PR #34) |
 | 3 | `User.screeningResult` backfill | ✅ Built (already!) — doc says it isn't |
 | 4 | Voice input (Groq Whisper) | Locked, not built; needs T&C audio paragraph |
 | 5 | T&C duplication fix on sign-up | ✅ Fixed in PR #46 |
@@ -147,7 +149,7 @@ Branch: `claude/doc-cleanup`. Scope:
 |---|---|---|
 | 39 | Support@ inbound = Option A (Resend Inbound + Pattern A) | Post-launch build (Block D) |
 | 40 | Marketing emails at launch = transactional only | PECR-safe |
-| 41 | FAQ page = remove link from welcome email, no static page | Build skipped |
+| 41 | FAQ page EXISTS at `/faq` (PR #34); keep FAQ link in welcome email | Earlier agent session was wrong — page is built and live |
 | 42 | Stripe sends successful-payment receipt automatically | No app-side receipt template needed |
 | 43 | Subagent workflow: product-gate → architecture-guardian → code-reviewer | Auto-invoke per agent's trigger |
 

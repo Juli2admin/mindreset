@@ -237,3 +237,36 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     through cooldown), increment only on successful AI turn, top-up
     consumed first, fire-and-forget consume call.
     **Locked 2026-05-22.**
+
+## Communication and email (2026-05-25)
+
+39. **Support@ inbound = Option A (Resend Inbound + Pattern A).**
+    Full webhook → AI categoriser → SupportTicket table → admin draft
+    queue. Post-launch build (Block D). At launch, `support@` is a
+    dead `mailto:` link until Pattern A ships and DNS connects.
+    **Locked 2026-05-25.**
+40. **Marketing emails at launch = transactional only.** No
+    re-engagement, milestone, or win-back emails before launch. PECR
+    opt-in/unsubscribe tokens not built. Revisit post-launch once user
+    behaviour is understood.
+    **Locked 2026-05-25.**
+41. **FAQ page exists at `/faq` (PR #34) and the welcome email link
+    to it is correct — keep it.** An earlier agent session incorrectly
+    proposed removing the FAQ link from the welcome email on the
+    assumption the page didn't exist. It does. The welcome email
+    template is correct as-is.
+    **Locked 2026-05-25.**
+42. **Stripe sends successful-payment receipts automatically.**
+    Confirmed in Stripe Dashboard. No app-side receipt template needed
+    for subscription confirmation or top-up. Stripe's PDF receipt
+    covers the legal obligation.
+    **Locked 2026-05-25.**
+
+## Workflow (2026-05-25)
+
+43. **Subagent workflow: product-gate → architecture-guardian →
+    code-reviewer.** Auto-invoke `product-gate` before any new feature
+    proposal; `architecture-guardian` after approval before writing
+    code; `code-reviewer` after writing code before showing diff to
+    Julia. Agents live in `.claude/agents/` and load at session start.
+    **Locked 2026-05-25.**
