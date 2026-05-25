@@ -304,60 +304,31 @@ future use.
 
 ---
 
-## `User.screeningResult` is never populated — screening → user backfill missing (launch-blocker)
+## `User.screeningResult` populated — RESOLVED 2026-05-25
 
-**Status: still a launch-blocker for screening-aware care.** MiniMind
-needs the user's screening result (GREEN / YELLOW / RED) to adapt
-care level — YELLOW users get slower pacing and more frequent state
-checks per the v2.3 prompt's SCREENING SIGNAL section. With this
-field null, every user is treated as `screeningResult: none`.
+**Status: shipped.** MiniMind now has access to the user's screening
+result for screening-aware care (YELLOW pacing, etc).
 
-### What was tried
+Implementation took two paths instead of the single sketched approach:
 
-Same abandoned branch as the preferredName work
-(`claude/carry-forward-user-fields`, preserved at tag
-`archive/preferred-name-backfill-2026-05-17`) attempted Path B1 —
-linkage via Clerk's `<SignUp unsafeMetadata={{ screeningId }} />`,
-webhook reading `data.unsafe_metadata.screeningId`, backfilling
-`User.screeningResult` + `User.screeningResultAt` from the matched
-`ScreeningResponse`.
+1. **Signed-in users**: `POST /api/screening` writes
+   `User.screeningResult` + `User.screeningResultAt` directly at
+   screening time (no cookie hop needed).
+2. **Anonymous-then-signed-up**: the `mr_screening` cookie carries the
+   pre-auth `ScreeningResponse.id`. On first `/minimind` page load,
+   the server component reads the linked row and backfills
+   `User.screeningResult` + `User.screeningResultAt` if still null.
 
-Same Clerk-SDK-metadata-propagation issue blocked it: the metadata
-never landed on Clerk's user object in our test runs, so the webhook
-saw no `screeningId` to look up. The Path B1 mechanism is **no longer
-being pursued**.
+The Clerk-SDK-metadata-propagation approach (Path B1, via
+`<SignUp unsafeMetadata={{ screeningId }} />`) was abandoned — the
+metadata never landed on Clerk's user object reliably. The cookie
+backfill is the durable solution.
 
-### Future approach (to evaluate in a later phase)
-
-The simpler alternative is **cookie-based post-signup link**: a
-client-side `useEffect` in a post-Clerk-callback handler that:
-
-1. Detects we just completed sign-up (e.g. by checking
-   `useUser().isSignedIn` transitioning to true on the landing page,
-   or by routing through a `/sign-up/complete` checkpoint).
-2. Reads the `mr_screening` cookie (still present at this point;
-   `httpOnly: false` per `/api/screening`).
-3. POSTs `{ screeningId }` to a new authenticated `/api/user/link-screening`
-   endpoint.
-4. Server route validates the user owns the request (Clerk auth) +
-   validates the screening exists + `userId IS NULL`, then atomically
-   sets `ScreeningResponse.userId = user.id` and copies
-   `result` + `createdAt` into `User.screeningResult` +
-   `User.screeningResultAt`.
-
-Properties: doesn't depend on Clerk SDK metadata propagation. Cookie
-is set on the screening submission and persists across the
-sign-up flow on same-device. Cross-device flow degrades gracefully —
-no cookie, no link, `screeningResult` stays null, MiniMind treats as
-`none`. Acceptable for v1; cross-device can be addressed post-launch
-via a "did you already screen?" account-settings flow.
-
-### Where the gap lives
-
-Between `app/api/screening/route.ts` (writes anonymous
-`ScreeningResponse` and sets the `mr_screening` cookie) and
-`app/api/webhooks/clerk/` (creates User on sign-up). Nothing currently
-bridges them.
+Cross-device edge case: if a user screens on mobile, clears cookies,
+then signs up on desktop, the cookie is lost and the screening result
+stays null. MiniMind treats this as `screeningResult: none`.
+Acceptable for v1; post-launch a "did you already screen?"
+account-settings flow can address it.
 
 ---
 

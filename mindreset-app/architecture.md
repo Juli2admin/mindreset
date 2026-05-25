@@ -22,7 +22,7 @@ the screening result (red/yellow/green) attached after Section 0.
 The structured answer set from the /screening flow. Stored raw so if classification
 rules change later, old responses can be re-evaluated against the new logic.
 
-### `DiagnosticProfile` — **the hidden sensor**
+### `WellbeingSnapshot` — **the hidden sensor**
 **One row per user. Updated by the AI after every meaningful conversation.**
 
 What it holds:
@@ -101,5 +101,5 @@ With these tables in place, we can:
 1. **Provision Postgres** — Vercel Postgres or Supabase (recommended for solo dev)
 2. **Run migrations** — `prisma migrate dev` generates the tables
 3. **Wire `/screening` to write `ScreeningResponse`** — first real data flow
-4. **Build the assessment engine** — the LLM-powered piece that reads conversations and writes to `DiagnosticProfile`
+4. **Build the assessment engine** — the LLM-powered piece that reads conversations and writes to `WellbeingSnapshot`
 5. **MiniMind chat MVP** — streaming Claude API integration with safety scanning

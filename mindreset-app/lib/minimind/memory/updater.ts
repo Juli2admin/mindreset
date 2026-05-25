@@ -1,7 +1,7 @@
 // Phase 3d diagnostic profile updater.
 //
 // Reads the user's last 30 user-messages across all Conversations and calls
-// Haiku to derive a hybrid update to the DiagnosticProfile row. Fire-and-
+// Haiku to derive a hybrid update to the WellbeingSnapshot row. Fire-and-
 // forget from Piece 5's route stream-finally block; never on the critical
 // path of user-facing chat.
 //
@@ -9,7 +9,7 @@
 //   - This updater is BATCH-DRIVEN. It runs every ~20 user messages and writes
 //     the headline observations (predominantState, channelPreference, themes,
 //     riskMarkers, narrative engineNotes).
-//   - The state-pattern counter (DiagnosticProfile.recentStateOccurrences) is
+//   - The state-pattern counter (WellbeingSnapshot.recentStateOccurrences) is
 //     EVENT-DRIVEN. Piece 5's async-verifier callback writes one entry per
 //     user message based on the verifier's detectedState. The updater does
 //     NOT touch recentStateOccurrences — that field is exclusively the

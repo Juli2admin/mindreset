@@ -19,7 +19,7 @@ language constraints.
 - **DB**: Prisma + Supabase Postgres (Prisma connects as `postgres.*` which
   has `BYPASSRLS`)
 - **AI**: Anthropic SDK (`@anthropic-ai/sdk` ^0.30.1) — current model is
-  `claude-opus-4-7`
+  `claude-sonnet-4-6`
 - **Payments**: Stripe SDK ^17 (installed; wiring in progress, Block B)
 - **Email**: Resend (installed; not yet wired)
 - **i18n**: next-intl v4.12, 8 locales (en + ru native; fr/de/es/it/pl/pt

@@ -1,6 +1,6 @@
 // Phase 3d memory loader.
 //
-// Reads User + DiagnosticProfile and composes a plain-text "USER CONTEXT FOR
+// Reads User + WellbeingSnapshot and composes a plain-text "USER CONTEXT FOR
 // THIS SESSION" block injected into MiniMind's system prompt on every chat
 // turn (see Piece 5 route integration). Plain text — not JSON — so Sonnet
 // can reference observations naturally without confusing them for tool data.
@@ -19,7 +19,7 @@
 // (Option B per Phase 3d architect decision), not on hasMemory. This means
 // new users still get their language + screening surfaced to MiniMind on
 // turn 1 — the empty-block variant below carries genuinely useful context
-// even without a DiagnosticProfile row.
+// even without a WellbeingSnapshot row.
 
 import prisma from '@/lib/prisma';
 
@@ -27,7 +27,7 @@ const STATE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const ENGINE_NOTES_DISPLAY_MAX = 2000;
 
 export type UserMemoryContext = {
-  hasMemory: boolean; // true iff a DiagnosticProfile row exists for this user
+  hasMemory: boolean; // true iff a WellbeingSnapshot row exists for this user
   formattedBlock: string; // ready-to-inject text; empty string only on loader failure
 };
 

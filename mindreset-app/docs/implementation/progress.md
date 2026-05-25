@@ -118,7 +118,7 @@ mind. Full notes in `docs/carry-forward.md`:
 - v2.3 type-to-practice categories run ahead of the named-practice
   catalog — known
 - Orphan DB columns from abandoned preferredName work — to be cleaned
-- DiagnosticProfile updates are async — race between update and read
+- WellbeingSnapshot updates are async — race between update and read
   not addressed
 - Tier downgrade edge case: subscriber cancels → inherits high
   `lifetimeMessagesUsed` → instantly at-cap on free fallback. Flagged

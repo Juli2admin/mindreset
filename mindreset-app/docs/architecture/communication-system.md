@@ -16,10 +16,11 @@
 | Resend SDK | `package.json` — `"resend": "^4.0.0"` | Installed; zero send calls in codebase |
 | Clerk webhook handler | `app/api/webhooks/clerk/route.ts` | Creates User on sign-up. Svix signature verified ✅ |
 | Stripe webhook handler | `app/api/stripe/webhook/route.ts` | Handles 6 events. Stripe signature verified ✅ |
-| Welcome email templates | `lib/email/welcome.ts`, `lib/email/resend.ts`, `lib/email/sendWelcome.ts` (PR #33 — not yet merged) | EN + RU copy locked. Integrated into `/account/page.tsx` via `waitUntil`. Missing: `welcomeEmailSentAt` field needs migration. |
+| Welcome email templates | `lib/email/welcome.ts`, `lib/email/resend.ts`, `lib/email/sendWelcome.ts` (PR #33 ✅ shipped) | EN + RU copy locked. Integrated into `/account/page.tsx` via `waitUntil`. Migration ran. Waiting on `RESEND_API_KEY` + DNS to go live. |
+| Static FAQ page | `app/[locale]/faq/page.tsx` (PR #34 ✅ shipped) | EN + RU, 21 Q&As. Linked from welcome email and Footer. |
+| Rate limiting + body cap | `lib/rateLimit.ts` + Upstash (PR #35 ✅ shipped) | Chat: 10/min/user. Screening: IP-based. Chat body capped at 8k chars. |
 
 ### Not built (confirmed by code search)
-- No FAQ page, route, component, or i18n string anywhere in the app
 - No inbound email webhook
 - No `EmailLog` table in Prisma schema
 - No `User.marketingConsent` field
@@ -33,11 +34,11 @@
 
 | Route | Auth | Signature | Rate limit | Body size limit |
 |---|---|---|---|---|
-| `POST /api/minimind/chat` | ✅ Clerk `auth()` | n/a | ❌ **MISSING** | ❌ **MISSING** |
+| `POST /api/minimind/chat` | ✅ Clerk `auth()` | n/a | ✅ Upstash 10/min/user (PR #35) | ✅ 8k char cap (PR #35) |
 | `POST /api/stripe/webhook` | n/a | ✅ `stripe.webhooks.constructEvent` | ❌ missing | n/a (raw body) |
 | `POST /api/webhooks/clerk` | n/a | ✅ svix `wh.verify` | ❌ missing | n/a (raw body) |
 | `POST /api/checkout/create` | ✅ Clerk `auth()` | n/a | ❌ missing | ❌ missing |
-| `POST /api/screening` | none (anonymous) | n/a | ❌ **MISSING** | ❌ missing |
+| `POST /api/screening` | none (anonymous) | n/a | ✅ Upstash IP-based (PR #35) | ❌ missing |
 | `POST /api/disclaimer/acknowledge` | none (anonymous) | n/a | ❌ missing | ❌ missing |
 | Future: `POST /api/webhooks/resend` | n/a | ⚠️ must add svix | ❌ must add | n/a |
 
@@ -86,7 +87,7 @@
 | Top-up receipt | `checkout.session.completed` (mode=payment) | No (contract) | Not built — Stripe sends its own |
 | T&C material change | Manual trigger by Julia | No (legal obligation) | Not built |
 | Re-engagement nudge | User inactive N days | **Yes (marketing)** | Not built |
-| Module suggestion | DiagnosticProfile pattern | **Yes (marketing)** | Not built — Block C |
+| Module suggestion | WellbeingSnapshot pattern | **Yes (marketing)** | Not built — Block C |
 | Win-back | Subscription cancelled | **Yes (marketing)** | Not built |
 | Milestone celebration | First week, first module, etc. | **Yes (marketing)** | Not built — Block C |
 
@@ -274,9 +275,9 @@ welcome email goes live, or that copy line needs updating.
 
 | PR | Branch | Scope | Dependencies |
 |---|---|---|---|
-| **#33** | `claude/welcome-email` | Welcome email — merge as-is after migration SQL runs | Julia: run migration + set up Resend |
-| **#34** | `claude/rate-limiting-chat` | Rate limiting on `/api/minimind/chat` + body size cap | None |
-| **#35** | `claude/static-faq` | Static FAQ page EN + RU — Julia provides FAQ content | Julia: write FAQ Q&A |
+| **#33** ✅ shipped | `claude/welcome-email` | Welcome email — EN + RU, locale-aware, idempotent | (waiting on RESEND_API_KEY + DNS to go live) |
+| **#34** ✅ shipped | `claude/static-faq` | Static FAQ page at `/faq` (EN + RU, 21 Q&As) | — |
+| **#35** ✅ shipped | `claude/rate-limiting-chat` | Rate limiting on `/api/minimind/chat` + `/api/screening` + 8k char cap + `WellbeingSnapshot` rename | — |
 | **#36** | `claude/email-foundation` | `EmailLog` table, `send.ts`, `marketingConsent` field, unsubscribe tokens, T&C clause | After PR #33 merged |
 | **#37** | `claude/subscription-lifecycle-emails` | Stripe lifecycle emails (confirmed / cancelled / payment-failed) using foundation from #36 | After PR #36 merged |
 | **#38** | `claude/support-email-forwarder` | Cloudflare Email Routing setup instructions + `support@` mailto links audit | Julia: DNS + Cloudflare |

@@ -125,7 +125,7 @@ The phases below assume a single-developer pace and a focus on safety-correctnes
 - ⬜ System prompt: "Stable-Compassion" voice + safety boundaries
 - ⬜ Real-time safety scanner (keyword + LLM verifier)
 - ⬜ `SafetyEvent` logging
-- ⬜ Assessment engine: read conversations → update `DiagnosticProfile`
+- ⬜ Assessment engine: read conversations → update `WellbeingSnapshot`
 - ⬜ Repeat-state counter → "deeper module" suggestion
 
 ### Phase 4 — Modules (States & Themes)
