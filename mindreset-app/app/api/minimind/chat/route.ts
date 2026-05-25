@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
@@ -159,7 +160,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'screening-red' }, { status: 412 });
   }
   if (!billingUser.disclaimerAcknowledgedAt) {
-    return NextResponse.json({ error: 'disclaimer-required' }, { status: 412 });
+    const hasCookie = cookies().get('mr_disclaimer_acknowledged')?.value === 'true';
+    if (!hasCookie) {
+      return NextResponse.json({ error: 'disclaimer-required' }, { status: 412 });
+    }
+    // Cookie present but DB not yet written — backfill asynchronously so the
+    // next request passes the DB check without adding latency to this one.
+    prisma.user.updateMany({
+      where: { id: userId, disclaimerAcknowledgedAt: null },
+      data: { disclaimerAcknowledgedAt: new Date() },
+    }).catch((err) => console.error('[chat] disclaimer backfill failed:', err));
   }
   if (!hasCapacity(billingUser)) {
     return NextResponse.json({ error: 'at-cap' }, { status: 402 });
