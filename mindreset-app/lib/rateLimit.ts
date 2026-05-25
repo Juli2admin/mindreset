@@ -5,12 +5,12 @@ let _redis: Redis | null = null;
 
 function getRedis(): Redis {
   if (!_redis) {
-    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-      throw new Error('UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
+    if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+      throw new Error('KV_REST_API_URL and KV_REST_API_TOKEN must be set');
     }
     _redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      url: process.env.KV_REST_API_URL,
+      token: process.env.KV_REST_API_TOKEN,
     });
   }
   return _redis;
@@ -59,13 +59,13 @@ export type RateLimitResult =
 // In production, missing Upstash env vars = fail-closed (throw).
 // In dev/test, missing env vars = skip silently (fail-open by design).
 function isRedisConfigured(): boolean {
-  return !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 }
 
 function assertRedisInProd(): void {
   if (process.env.NODE_ENV === 'production' && !isRedisConfigured()) {
     throw new Error(
-      'Rate limiting is not configured: UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set in production.',
+      'Rate limiting is not configured: KV_REST_API_URL and KV_REST_API_TOKEN must be set in production.',
     );
   }
 }

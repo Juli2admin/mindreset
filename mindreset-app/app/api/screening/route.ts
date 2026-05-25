@@ -48,23 +48,24 @@ export async function POST(request: NextRequest) {
 
   const { result, reasonSummary, classifierVer } = classify(answers);
 
+  // Auth check — wrapped so a Clerk failure never crashes the save.
+  let userId: string | null = null;
   try {
-    // Auth-aware linkage: if the request is from a signed-in user (re-screening
-    // post-signup), write userId directly AND denormalise the result into User.
-    // This closes the orphan-row gap where authed re-screening would create a
-    // userId=null row that the account-page cookie linkage never picks up.
-    // Wrapped in try so a Clerk auth() failure doesn't crash the whole handler.
-    let userId: string | null = null;
-    try {
-      const authResult = await auth();
-      userId = authResult.userId;
-    } catch (authErr) {
-      console.error('[screening] auth() failed — continuing with userId=null:', authErr);
-    }
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch (authErr) {
+    console.error('[screening] auth() failed — continuing as anonymous:', authErr);
+  }
 
+  try {
+    // Always create as anonymous (userId: null). This avoids a FK violation
+    // when the Clerk webhook hasn't yet created the User row (common for new
+    // sign-ups who reach /screening within seconds of account creation).
+    // The /minimind page and /account page both run cookie-based linkage that
+    // promotes the row to a named userId once the User row exists.
     const screening = await prisma.screeningResponse.create({
       data: {
-        userId: userId ?? null,
+        userId: null,
         exclusionFlags: answers.exclusion,
         functionalityScores: answers.functionality,
         emotionalScores: answers.emotional,
@@ -77,14 +78,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // For signed-in users: also write screeningResult directly onto the User
+    // row so the /minimind gate sees it immediately (avoids the cookie-linkage
+    // round-trip). Uses updateMany so it's a no-op if the User row doesn't
+    // exist yet — the cookie-based linkage on /minimind / /account will cover
+    // that case once the webhook fires.
     if (userId) {
-      // Denormalise the latest result onto the User row so the chat API
-      // and /minimind page gates see it immediately. Awaited (not fire-
-      // and-forget) so a failure here can't leave the user with a saved
-      // ScreeningResponse but a null User.screeningResult that loops them
-      // back to /screening on the next visit.
       try {
-        await prisma.user.update({
+        await prisma.user.updateMany({
           where: { id: userId },
           data: {
             screeningResult: result,
@@ -92,9 +93,7 @@ export async function POST(request: NextRequest) {
           },
         });
       } catch (err) {
-        console.error('[screening] user denorm update failed:', err);
-        // ScreeningResponse is already written; account-page cookie linkage
-        // will pick it up on next /account visit if the denorm stays missing.
+        console.error('[screening] user denorm updateMany failed:', err);
       }
     }
 
