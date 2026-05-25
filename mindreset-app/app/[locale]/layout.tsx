@@ -29,8 +29,10 @@ export const metadata: Metadata = {
 const DISCLAIMER_COOKIE_NAME = 'mr_disclaimer_acknowledged';
 
 // Pages where the disclaimer modal must NOT block content. Legal documents
-// should be openly readable without prerequisites.
-const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy', '/screening']);
+// should be openly readable without prerequisites. Sign-up paths are excluded
+// because /sign-up has its own T&C checkboxes and /sign-up/verify-email-address
+// is the Clerk email verification step — the modal has no place on either.
+const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy', '/screening', '/sign-up', '/sign-up/verify-email-address']);
 
 function pathnameWithoutLocale(pathname: string, locale: string): string {
   // Strip the leading /<locale> if present so the excluded-paths check
