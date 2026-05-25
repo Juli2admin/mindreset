@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { hasCapacity } from '@/lib/billing/limits';
 import { decrypt } from '@/lib/encrypt';
@@ -32,17 +33,51 @@ export default async function MiniMindPage({
   }
 
   // Legal gate — server-side screening enforcement.
-  // Null screeningResult: user signed up via a path that bypassed the
-  // pre-signup screening flow (OAuth direct-link, expired cookie linkage).
-  // Red screeningResult: chat is not appropriate; /screening surfaces
-  // crisis resources. Disclaimer enforcement is handled by the layout-
-  // level DisclaimerGate modal; the chat API also gates server-side as
-  // defence-in-depth.
   const screeningGate = await prisma.user.findUnique({
     where: { id: userId },
     select: { screeningResult: true },
   });
-  if (!screeningGate?.screeningResult || screeningGate.screeningResult === 'red') {
+
+  let resolvedScreeningResult = screeningGate?.screeningResult ?? null;
+
+  // Cookie-based screening linkage — mirrors /account page logic.
+  // Handles new users who reach /minimind before visiting /account, and
+  // the Clerk webhook race where User.screeningResult is still null even
+  // though the user just completed screening. If the anonymous
+  // ScreeningResponse exists (userId=null, id matches cookie), we promote
+  // it and write User.screeningResult so the gate passes immediately.
+  if (!resolvedScreeningResult) {
+    const cookieStore = cookies();
+    const screeningCookie = cookieStore.get('mr_screening')?.value;
+    if (screeningCookie) {
+      try {
+        const anonScreening = await prisma.screeningResponse.findFirst({
+          where: { id: screeningCookie, userId: null },
+          select: { id: true, result: true, createdAt: true },
+        });
+        if (anonScreening) {
+          await prisma.$transaction([
+            prisma.screeningResponse.update({
+              where: { id: anonScreening.id },
+              data: { userId },
+            }),
+            prisma.user.update({
+              where: { id: userId },
+              data: {
+                screeningResult: anonScreening.result,
+                screeningResultAt: anonScreening.createdAt,
+              },
+            }),
+          ]);
+          resolvedScreeningResult = anonScreening.result;
+        }
+      } catch (err) {
+        console.error('[minimind] screening cookie linkage failed:', err);
+      }
+    }
+  }
+
+  if (!resolvedScreeningResult || resolvedScreeningResult === 'red') {
     redirect({ href: '/screening', locale });
   }
 
