@@ -82,6 +82,25 @@ export default async function LocaleLayout({
     }
   }
 
+  // Backfill: signed-in user has the cookie but DB record is missing.
+  // Happens when the disclaimer was acknowledged while anonymous (pre-sign-up)
+  // — the cookie persists across sign-up but the DB write was skipped because
+  // there was no Clerk session at the time. Write server-side so the chat API's
+  // DB-only gate passes without waiting for the user to acknowledge again.
+  if (!isExcludedPath && hasCookie) {
+    try {
+      const user = await currentUser();
+      if (user) {
+        await prisma.user.updateMany({
+          where: { id: user.id, disclaimerAcknowledgedAt: null },
+          data: { disclaimerAcknowledgedAt: new Date() },
+        });
+      }
+    } catch (err) {
+      console.error('[layout] disclaimer cookie backfill failed:', err);
+    }
+  }
+
   const initialShow = !isExcludedPath && !hasCookie && !acknowledgedInDB;
   const needsCookieBackfill = !isExcludedPath && !hasCookie && acknowledgedInDB;
 
