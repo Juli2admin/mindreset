@@ -61,6 +61,8 @@ Locked 2026-05-21 in a single planning session.
 
 1. **Tax / market**: UK-only at launch. Stripe Checkout restricts
    billing to GB. Stripe Tax stays OFF. Julia is not VAT-registered.
+   *(Superseded by decision #44, 2026-05-25 — market scope opened to
+   all countries; Stripe Tax remains OFF.)*
 2. **Existing users**: No grandfathering. PR 1 migration resets all
    users to `currentTier = 'free'`, counters zeroed.
 3. **PR 0 timing**: Standalone copy-only PR before any Stripe wiring.
