@@ -30,7 +30,7 @@ const DISCLAIMER_COOKIE_NAME = 'mr_disclaimer_acknowledged';
 
 // Pages where the disclaimer modal must NOT block content. Legal documents
 // should be openly readable without prerequisites.
-const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy']);
+const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy', '/screening']);
 
 function pathnameWithoutLocale(pathname: string, locale: string): string {
   // Strip the leading /<locale> if present so the excluded-paths check
