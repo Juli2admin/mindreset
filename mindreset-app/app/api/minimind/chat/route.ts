@@ -89,7 +89,13 @@ const MESSAGE_MAX_CHARS = 8_000;
 
 export async function POST(req: NextRequest) {
   // 1. Auth
-  const { userId } = await auth();
+  let userId: string | null = null;
+  try {
+    const authResult = await auth();
+    userId = authResult.userId;
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -218,10 +224,16 @@ export async function POST(req: NextRequest) {
     orderBy: { timestamp: 'desc' },
     take: HISTORY_LIMIT,
   });
-  const history = recentReversed.reverse().map((m) => ({
-    ...m,
-    content: decrypt(m.content),
-  }));
+  const history = recentReversed.reverse().map((m) => {
+    let content: string;
+    try {
+      content = decrypt(m.content);
+    } catch (err) {
+      console.error('[chat] decrypt failed for message', m.id, err);
+      content = '';
+    }
+    return { ...m, content };
+  });
 
   // 7. Server-side duplicate-request guard (belt-and-braces with UI debounce).
   const lastMessage = history[history.length - 1];

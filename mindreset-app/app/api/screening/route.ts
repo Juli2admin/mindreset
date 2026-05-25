@@ -48,13 +48,20 @@ export async function POST(request: NextRequest) {
 
   const { result, reasonSummary, classifierVer } = classify(answers);
 
-  // Auth-aware linkage: if the request is from a signed-in user (re-screening
-  // post-signup), write userId directly AND denormalise the result into User.
-  // This closes the orphan-row gap where authed re-screening would create a
-  // userId=null row that the account-page cookie linkage never picks up.
-  const { userId } = await auth();
-
   try {
+    // Auth-aware linkage: if the request is from a signed-in user (re-screening
+    // post-signup), write userId directly AND denormalise the result into User.
+    // This closes the orphan-row gap where authed re-screening would create a
+    // userId=null row that the account-page cookie linkage never picks up.
+    // Wrapped in try so a Clerk auth() failure doesn't crash the whole handler.
+    let userId: string | null = null;
+    try {
+      const authResult = await auth();
+      userId = authResult.userId;
+    } catch (authErr) {
+      console.error('[screening] auth() failed — continuing with userId=null:', authErr);
+    }
+
     const screening = await prisma.screeningResponse.create({
       data: {
         userId: userId ?? null,
@@ -72,20 +79,23 @@ export async function POST(request: NextRequest) {
 
     if (userId) {
       // Denormalise the latest result onto the User row so the chat API
-      // and /minimind page gates see it immediately. Fire-and-forget — the
-      // screening row is the source of truth; the User denorm is best-
-      // effort. Account-page linkage covers the cold path.
-      prisma.user
-        .update({
+      // and /minimind page gates see it immediately. Awaited (not fire-
+      // and-forget) so a failure here can't leave the user with a saved
+      // ScreeningResponse but a null User.screeningResult that loops them
+      // back to /screening on the next visit.
+      try {
+        await prisma.user.update({
           where: { id: userId },
           data: {
             screeningResult: result,
             screeningResultAt: screening.createdAt,
           },
-        })
-        .catch((err) =>
-          console.error('[screening] user denorm update failed:', err),
-        );
+        });
+      } catch (err) {
+        console.error('[screening] user denorm update failed:', err);
+        // ScreeningResponse is already written; account-page cookie linkage
+        // will pick it up on next /account visit if the denorm stays missing.
+      }
     }
 
     const response = NextResponse.json({
