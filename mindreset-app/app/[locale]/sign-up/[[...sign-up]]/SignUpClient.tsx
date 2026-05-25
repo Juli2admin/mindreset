@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { SignUp } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
@@ -69,6 +70,15 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
 
+  // The Clerk catch-all serves both /sign-up (initial step) and sub-paths
+  // like /sign-up/verify-email-address. React re-mounts this component on
+  // route change, resetting the checkbox state — so on sub-paths we skip
+  // the checkbox gate entirely and render the Clerk widget directly. The
+  // user has already agreed on the initial step; there is nothing to re-
+  // capture, and any sub-path means an in-progress Clerk sign-up session.
+  const pathname = usePathname();
+  const isInitialStep = pathname.endsWith('/sign-up');
+
   return (
     <main
       className="min-h-screen flex flex-col items-center"
@@ -79,34 +89,36 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
             Trauma-informed friction-point clean-up. */}
         <TopBar align="centered" />
 
-        <div className="mt-10 mb-8">
-          <Checkbox checked={tcAccepted} onChange={setTcAccepted}>
-            I agree to the{' '}
-            <Link
-              href="/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2"
-              style={{ color: PALETTE.accent }}
-            >
-              Terms of Service
-            </Link>
-          </Checkbox>
-          <Checkbox checked={privacyAccepted} onChange={setPrivacyAccepted}>
-            I agree to the{' '}
-            <Link
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2"
-              style={{ color: PALETTE.accent }}
-            >
-              Privacy Policy
-            </Link>
-          </Checkbox>
-        </div>
+        {isInitialStep && (
+          <div className="mt-10 mb-8">
+            <Checkbox checked={tcAccepted} onChange={setTcAccepted}>
+              I agree to the{' '}
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+                style={{ color: PALETTE.accent }}
+              >
+                Terms of Service
+              </Link>
+            </Checkbox>
+            <Checkbox checked={privacyAccepted} onChange={setPrivacyAccepted}>
+              I agree to the{' '}
+              <Link
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+                style={{ color: PALETTE.accent }}
+              >
+                Privacy Policy
+              </Link>
+            </Checkbox>
+          </div>
+        )}
 
-        {ready ? (
+        {(!isInitialStep || ready) ? (
           <SignUp
             appearance={{
               variables: {
