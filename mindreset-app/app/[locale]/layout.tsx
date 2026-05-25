@@ -28,15 +28,18 @@ export const metadata: Metadata = {
 
 const DISCLAIMER_COOKIE_NAME = 'mr_disclaimer_acknowledged';
 
-// Pages where the disclaimer modal must NOT block content. Legal documents
-// should be openly readable without prerequisites. Sign-up paths are excluded
-// because /sign-up has its own T&C checkboxes and /sign-up/verify-email-address
-// is the Clerk email verification step — the modal has no place on either.
-const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy', '/screening', '/sign-up', '/sign-up/verify-email-address']);
+// Path prefixes that REQUIRE the trauma-informed disclaimer to be
+// acknowledged before content is interactive. Currently MiniMind only —
+// the chat surface is where the not-therapy / not-medical stance is
+// safety-critical. Everything else (landing, /faq, /account, /sign-in,
+// /checkout, legal pages) is open without prerequisite. The chat API
+// enforces ack via a DB check on every request, so this modal is purely
+// the UX surface that obtains that ack.
+const DISCLAIMER_REQUIRED_PREFIXES = ['/minimind'] as const;
 
 function pathnameWithoutLocale(pathname: string, locale: string): string {
-  // Strip the leading /<locale> if present so the excluded-paths check
-  // works for both /terms and /ru/terms.
+  // Strip the leading /<locale> if present so the prefix check
+  // works for both /minimind and /ru/minimind.
   const prefix = `/${locale}`;
   if (pathname === prefix) return '/';
   if (pathname.startsWith(`${prefix}/`)) return pathname.slice(prefix.length);
@@ -63,12 +66,14 @@ export default async function LocaleLayout({
 
   const pathname = headers().get('x-pathname') ?? '';
   const pathForCheck = pathnameWithoutLocale(pathname, locale);
-  const isExcludedPath = DISCLAIMER_EXCLUDED_PATHS.has(pathForCheck);
+  const requiresDisclaimer = DISCLAIMER_REQUIRED_PREFIXES.some(
+    (prefix) => pathForCheck === prefix || pathForCheck.startsWith(`${prefix}/`),
+  );
 
   const hasCookie = cookies().get(DISCLAIMER_COOKIE_NAME)?.value === 'true';
 
   let acknowledgedInDB = false;
-  if (!isExcludedPath && !hasCookie) {
+  if (requiresDisclaimer && !hasCookie) {
     try {
       const user = await currentUser();
       if (user) {
@@ -89,7 +94,7 @@ export default async function LocaleLayout({
   // — the cookie persists across sign-up but the DB write was skipped because
   // there was no Clerk session at the time. Write server-side so the chat API's
   // DB-only gate passes without waiting for the user to acknowledge again.
-  if (!isExcludedPath && hasCookie) {
+  if (requiresDisclaimer && hasCookie) {
     try {
       const user = await currentUser();
       if (user) {
@@ -103,8 +108,8 @@ export default async function LocaleLayout({
     }
   }
 
-  const initialShow = !isExcludedPath && !hasCookie && !acknowledgedInDB;
-  const needsCookieBackfill = !isExcludedPath && !hasCookie && acknowledgedInDB;
+  const initialShow = requiresDisclaimer && !hasCookie && !acknowledgedInDB;
+  const needsCookieBackfill = requiresDisclaimer && !hasCookie && acknowledgedInDB;
 
   const messages = await getMessages();
 
@@ -138,7 +143,7 @@ export default async function LocaleLayout({
         <body>
           <NextIntlClientProvider messages={messages}>
             {children}
-            {!isExcludedPath && (
+            {requiresDisclaimer && (
               <DisclaimerGate
                 initialShow={initialShow}
                 needsCookieBackfill={needsCookieBackfill}

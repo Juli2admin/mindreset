@@ -125,8 +125,9 @@ export async function POST(req: NextRequest) {
   //   - screening-red: User screened Red. Chat is not appropriate; the
   //     screening page surfaces crisis resources instead.
   //   - disclaimer-required: User.disclaimerAcknowledgedAt is null. The
-  //     layout-level DisclaimerGate modal forces acknowledgement on every
-  //     page; this 412 catches users who bypassed the modal client-side.
+  //     layout-level DisclaimerGate modal forces acknowledgement when the
+  //     user lands on /minimind; this 412 catches users who bypassed the
+  //     modal client-side or hit the API directly.
   //
   // Billing cap (return 402): defence-in-depth — the MiniMind page SSRs
   // an at-cap banner that hides the textarea, so the client should not be
