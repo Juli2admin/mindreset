@@ -74,7 +74,7 @@ From `architecture.md`:
    user), driving every interaction
 
 MiniMind is presented as a daily companion but functions as a sensor
-behind the scenes — building a `DiagnosticProfile` that gates depth
+behind the scenes — building a `WellbeingSnapshot` that gates depth
 progression and product recommendations.
 
 ## Authentication and gating
@@ -88,9 +88,10 @@ The legal/safety gate is `T&C → Privacy → Disclaimer → Screening`:
   past Yellow or Red, but only after acknowledging the limitations (this
   is locked in T&Cs Section 2)
 
-Caveat: `User.screeningResult` is not currently populated from the
-unauthenticated screening cookie. This is a known launch blocker; see
-`docs/carry-forward.md` "User.screeningResult is never populated".
+`User.screeningResult` is populated in two paths:
+`/api/screening` writes it directly for signed-in users at screening
+time; for anonymous-then-signed-up flows, the `mr_screening` cookie is
+backfilled to the new user on first `/minimind` load.
 
 ## i18n
 

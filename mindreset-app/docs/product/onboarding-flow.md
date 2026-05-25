@@ -28,21 +28,27 @@ The user's path from landing to first MiniMind message.
 | Sign-up | Clerk creates user → webhook `user.created` → Prisma upserts `User` with `tcAcceptedAt` and `privacyAcceptedAt` set to webhook timestamp |
 | First /account visit | If `mr_screening` cookie present, the cookie's `ScreeningResponse.userId` is backfilled to the new Clerk user id |
 | Disclaimer modal | `User.disclaimerAcknowledgedAt` populated via `POST /api/disclaimer/acknowledge` |
-| First MiniMind message | (Block B PR 5 — not yet built) `User.lifetimeMessagesUsed` starts counting toward the 20-message free taster cap |
+| First MiniMind message | `User.lifetimeMessagesUsed` increments per turn; capped at 50 messages lifetime for free taster (locked decision #25) |
+
+## How `User.screeningResult` is populated
+
+Two paths cover both flows:
+
+- **Signed-in users**: `POST /api/screening` writes the result directly
+  onto the User row at screening time (`User.screeningResult` +
+  `User.screeningResultAt`).
+- **Anonymous-then-signed-up**: the `mr_screening` cookie carries the
+  pre-auth `ScreeningResponse.id`. On first `/minimind` load, the server
+  component reads the linked row and backfills
+  `User.screeningResult` + `User.screeningResultAt` if they're still
+  null.
+
+Cross-device edge case: if a user screens on mobile, clears cookies,
+then signs up on desktop, the cookie is lost and the screening result
+stays null. MiniMind treats this as `screeningResult: none` — same as
+a user who never screened. Acceptable for v1.
 
 ## Known gaps
-
-### `User.screeningResult` is never populated
-
-The cookie-based screening row is linked to the user via the
-`/account` server component, but `User.screeningResult` (a denormalised
-copy of the classification) is **not currently written** at that point.
-This is a launch blocker — see `docs/carry-forward.md` →
-"User.screeningResult is never populated".
-
-Future approach (sketched but not implemented): when the cookie
-linkage happens, also read the linked `ScreeningResponse.result` and
-write it into `User.screeningResult` + `screeningResultAt`.
 
 ### Auth pages are EN-only
 

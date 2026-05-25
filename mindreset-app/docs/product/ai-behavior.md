@@ -87,11 +87,11 @@ The methodology defines four depths:
 
 Depth progression is gated by:
 
-- `DiagnosticProfile.regulationCapacity` (0–10) — the user's
+- `WellbeingSnapshot.regulationCapacity` (0–10) — the user's
   self-soothing ability
 - `Conversation.sscPassed` — Stabilisation+Satisfaction Criteria met at
   end of last session
-- `DiagnosticProfile.recentStateOccurrences` — the 3-in-7-days rule:
+- `WellbeingSnapshot.recentStateOccurrences` — the 3-in-7-days rule:
   same state appearing 3 times in 7 days triggers a deeper-module
   recommendation
 
@@ -99,7 +99,7 @@ The user never sees the gates directly. They appear as MiniMind
 *suggestions* ("there's a module on X that might help — want to take a
 look?") rather than as locks.
 
-## DiagnosticProfile — the sensor
+## WellbeingSnapshot — the sensor
 
 One row per user. Updated asynchronously after every meaningful
 conversation by the assessment engine. Holds:
@@ -125,7 +125,7 @@ There are **two distinct state vocabularies** in the codebase:
    (`lib/minimind/safety/verifier.ts`). These are the in-the-moment
    classifications the safety scanner uses.
 2. **4 deep States** — the methodological States the Journey programme
-   addresses. These appear in `DiagnosticProfile.predominantState`.
+   addresses. These appear in `WellbeingSnapshot.predominantState`.
 
 They share the word "state" but mean different things. Schema comments
 note this distinction. Future agents: don't conflate.
@@ -168,7 +168,7 @@ The full structure is in
 
 ## Anthropic SDK usage
 
-- Model: `claude-opus-4-7` (latest at time of writing)
+- Model: `claude-sonnet-4-6`
 - Streaming enabled — `/api/minimind/chat` streams to the client; on
   stream failure the saved Message row gets `partial = true`
 - Token limits: not currently set — relies on the model's defaults
