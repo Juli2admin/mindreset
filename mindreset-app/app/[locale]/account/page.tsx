@@ -52,10 +52,17 @@ export default async function AccountPage({
           }),
         ]);
       }
+      // Reached only when no exception — either linked successfully or
+      // no anonymous screening matched the cookie. Either way the cookie
+      // is no longer useful. On failure (Clerk-webhook race causing the
+      // User row to not be visible to the transaction yet) we KEEP the
+      // cookie so /minimind/page.tsx can retry the linkage on the next
+      // navigation, by which point the User row has propagated.
+      cookieToClear = true;
     } catch (err) {
       console.error('[account] screening linkage failed', err);
+      // Intentionally do NOT clear the cookie — /minimind retries.
     }
-    cookieToClear = true;
   }
 
   const primaryEmail =
