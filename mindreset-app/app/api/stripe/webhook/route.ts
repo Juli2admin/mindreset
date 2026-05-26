@@ -40,13 +40,39 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
   const tier = priceId ? priceToTier(priceId) : null;
   const active = sub.status === 'active' || sub.status === 'trialing';
   const periodEnd = getPeriodEnd(sub);
+  const willBePaid = active && tier;
+
+  // First-cycle credit reset: when a free-tier user activates a paid
+  // subscription, the prior messagesUsedThisCycle (which was the free
+  // 50-message lifetime counter) must be zeroed so they get the full
+  // cap they paid for. Detected by reading currentTier first; reset
+  // only when transitioning from 'free' to a paid+active state.
+  //
+  // Mid-cycle Essential ↔ Extended preserves the counter per locked
+  // decision #19 ("buying headroom, not a fresh allowance"). Top-up
+  // balance is NOT touched here — top-ups are paid credits and they
+  // expire only on cycle-renewal invoices per locked decision #31.
+  //
+  // Idempotent on Stripe retry: the second delivery reads currentTier
+  // already set to the paid tier, so resetCycleCounter is false and
+  // any messages the user sent between the two deliveries are not
+  // wiped.
+  let resetCycleCounter = false;
+  if (willBePaid) {
+    const existing = await prisma.user.findFirst({
+      where: { stripeCustomerId: cid },
+      select: { currentTier: true },
+    });
+    resetCycleCounter = existing?.currentTier === 'free';
+  }
 
   await prisma.user.updateMany({
     where: { stripeCustomerId: cid },
     data: {
       stripeSubscriptionId: sub.id,
-      currentTier: active && tier ? tier : 'free',
-      cycleResetAt: active && periodEnd ? new Date(periodEnd * 1000) : null,
+      currentTier: willBePaid ? tier : 'free',
+      cycleResetAt: willBePaid && periodEnd ? new Date(periodEnd * 1000) : null,
+      ...(resetCycleCounter ? { messagesUsedThisCycle: 0 } : {}),
     },
   });
 }
@@ -54,6 +80,11 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const cid = extractCustomerId(sub.customer);
   if (!cid) return;
+  // Counter is intentionally NOT reset here. If the user later re-subscribes,
+  // handleSubscriptionUpsert reads currentTier === 'free' (set below) and
+  // performs the first-cycle reset at that point. Preserving the counter on
+  // cancellation also avoids losing data if a deletion event arrives out of
+  // order with a subscription.updated event.
   await prisma.user.updateMany({
     where: { stripeCustomerId: cid },
     data: { currentTier: 'free', cycleResetAt: null },
