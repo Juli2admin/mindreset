@@ -182,6 +182,20 @@
     "welcomeBack": "Welcome back.",
     "conversationInProgress": "You have a conversation in progress.",
     "lastConversation": "Last conversation · {when}",
+    "voice": {
+      "startAria": "Start voice input",
+      "stopAria": "Stop recording",
+      "errors": {
+        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
+        "noMic": "No microphone found.",
+        "transcriptionFailed": "Couldn't transcribe — please try again.",
+        "rateLimited": "Please pause a moment, then try again.",
+        "unavailable": "Voice input is unavailable right now.",
+        "networkError": "Network error — please try again.",
+        "startFailed": "Couldn't start recording.",
+        "emptyAudio": "Didn't hear anything. Try again."
+      }
+    },
     "atCap": {
       "subscriberTitle": "You've used all your messages for this billing period.",
       "subscriberBody": "Your allowance resets on {date}. You can add 200 more messages now.",

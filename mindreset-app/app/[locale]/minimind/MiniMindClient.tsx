@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -18,6 +18,11 @@ import { formatRelativeTime } from '@/lib/format';
 import type { Locale } from '@/i18n/routing';
 
 const PALETTE = FULL_PALETTE.day;
+
+// Voice input — push-to-talk cap. Locked decision #22: 2 minutes per turn.
+// Protects against runaway sessions, bounds the upload payload, and keeps
+// Groq transcription latency predictable.
+const MAX_RECORDING_SECONDS = 120;
 
 const SOFT_SEPARATOR = '\n\n';
 const TEXTAREA_MIN_HEIGHT = 48;
@@ -271,7 +276,7 @@ function ChattingView({
 }: {
   messages: Message[];
   input: string;
-  setInput: (v: string) => void;
+  setInput: Dispatch<SetStateAction<string>>;
   sending: boolean;
   awaitingFirstToken: boolean;
   onSend: () => void;
@@ -284,6 +289,29 @@ function ChattingView({
   const locale = useLocale() as Locale;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Voice input state. Per locked decision #22: push-to-talk, transcribe
+  // server-side via Groq Whisper, fill the textarea with the result so the
+  // user can review/edit before sending. Audio is never persisted by us.
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Feature detection in an effect so the first render is SSR-stable (server
+  // can't know what the browser supports). If MediaRecorder is missing
+  // (older iOS Safari, some embedded browsers) we just don't render the
+  // mic button — typing UX is unaffected.
+  useEffect(() => {
+    setVoiceSupported(
+      typeof MediaRecorder !== 'undefined' &&
+        typeof navigator !== 'undefined' &&
+        !!navigator.mediaDevices?.getUserMedia,
+    );
+  }, []);
 
   // Initial-mount scroll: jump to bottom immediately (no animation) so a
   // Continue with 50 loaded messages opens at the newest, not the oldest.
@@ -304,6 +332,147 @@ function ChattingView({
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, TEXTAREA_MAX_HEIGHT) + 'px';
   }, [input]);
+
+  // Cleanup on unmount: stop any active recording and release the mic
+  // tracks. Without this a hot-reload or navigation mid-recording leaves
+  // the browser's recording indicator stuck on.
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  async function startRecording() {
+    setVoiceError(null);
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      const name = (err as Error).name;
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        setVoiceError(t('voice.errors.permissionDenied'));
+      } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+        setVoiceError(t('voice.errors.noMic'));
+      } else {
+        setVoiceError(t('voice.errors.startFailed'));
+      }
+      return;
+    }
+
+    const recorder = new MediaRecorder(stream);
+    const chunks: Blob[] = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((track) => track.stop());
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+      setRecording(false);
+      setRecordingSeconds(0);
+
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      if (blob.size === 0) {
+        setVoiceError(t('voice.errors.emptyAudio'));
+        return;
+      }
+
+      // Filename hint based on recorder mime — Groq auto-detects format
+      // from bytes, but a recognisable extension helps log/debug clarity.
+      const ext = recorder.mimeType.includes('mp4')
+        ? 'm4a'
+        : recorder.mimeType.includes('ogg')
+          ? 'ogg'
+          : 'webm';
+
+      setTranscribing(true);
+      try {
+        const form = new FormData();
+        form.append('audio', blob, `voice.${ext}`);
+        const res = await fetch('/api/minimind/transcribe', {
+          method: 'POST',
+          body: form,
+        });
+        if (!res.ok) {
+          if (res.status === 429) setVoiceError(t('voice.errors.rateLimited'));
+          else if (res.status === 503) setVoiceError(t('voice.errors.unavailable'));
+          else setVoiceError(t('voice.errors.transcriptionFailed'));
+          return;
+        }
+        const data: { text?: string } = await res.json();
+        if (data.text && data.text.trim().length > 0) {
+          // Append to existing input rather than replace — if the user
+          // started typing then switched to voice, we don't want to lose
+          // what they had. Functional-update form (not the closure value)
+          // so we read the latest input at apply-time, even though the
+          // textarea is disabled during recording so `input` shouldn't
+          // change. Belt and braces.
+          setInput((prev) => (prev.length > 0 ? `${prev} ${data.text}` : data.text!));
+          textareaRef.current?.focus();
+        } else {
+          setVoiceError(t('voice.errors.emptyAudio'));
+        }
+      } catch {
+        setVoiceError(t('voice.errors.networkError'));
+      } finally {
+        setTranscribing(false);
+      }
+    };
+
+    recorder.start();
+    mediaRecorderRef.current = recorder;
+    setRecording(true);
+    setRecordingSeconds(0);
+
+    // Tick the visible timer once a second and auto-stop at the cap.
+    recordingTimerRef.current = setInterval(() => {
+      setRecordingSeconds((prev) => {
+        const next = prev + 1;
+        if (next >= MAX_RECORDING_SECONDS) {
+          // Stop the recorder AND clear the interval immediately so the
+          // ticker doesn't keep firing during the async gap before
+          // onstop runs (which would briefly show 2:01, 2:02, etc.).
+          if (mediaRecorderRef.current?.state === 'recording') {
+            mediaRecorderRef.current.stop();
+          }
+          if (recordingTimerRef.current) {
+            clearInterval(recordingTimerRef.current);
+            recordingTimerRef.current = null;
+          }
+        }
+        return next;
+      });
+    }, 1000);
+  }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+  }
+
+  function handleMicClick() {
+    // Defensive: the button's `disabled` attribute already blocks clicks
+    // during transcribing, but guard here too so the invariant is local.
+    if (transcribing) return;
+    if (recording) stopRecording();
+    else startRecording();
+  }
+
+  function formatRecordingTime(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
 
   return (
     <main
@@ -344,45 +513,123 @@ function ChattingView({
             borderTop: `1px solid ${PALETTE.border}`,
           }}
         >
-          <div className="max-w-[700px] mx-auto flex gap-3 items-end">
-            <textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  onSend();
-                }
-              }}
-              placeholder={t('placeholder')}
-              rows={1}
-              disabled={sending}
-              className="flex-1 resize-none rounded-lg px-4 py-3 text-[15px] leading-[1.5] transition-colors focus:outline-none"
-              style={{
-                background: sending ? PALETTE.bgSubtle : PALETTE.bgCard,
-                color: PALETTE.text,
-                border: `1px solid ${PALETTE.border}`,
-                fontFamily: TOKENS.sans,
-                opacity: sending ? 0.6 : 1,
-                minHeight: TEXTAREA_MIN_HEIGHT,
-                maxHeight: TEXTAREA_MAX_HEIGHT,
-              }}
-            />
-            <button
-              type="submit"
-              disabled={sending || input.trim().length === 0}
-              className="h-12 px-6 rounded-full text-[14px] tracking-wide transition-all disabled:cursor-not-allowed"
-              style={{
-                background: PALETTE.accent,
-                color: PALETTE.accentText,
-                fontWeight: 500,
-                fontFamily: TOKENS.sans,
-                opacity: sending || input.trim().length === 0 ? 0.5 : 1,
-              }}
-            >
-              Send
-            </button>
+          <div className="max-w-[700px] mx-auto">
+            {voiceError && (
+              <div
+                className="mb-2 text-[13px]"
+                style={{ color: '#b91c1c', fontFamily: TOKENS.sans }}
+                role="alert"
+              >
+                {voiceError}
+              </div>
+            )}
+            {recording && (
+              <div
+                className="mb-2 text-[13px] flex items-center gap-2"
+                style={{ color: '#b91c1c', fontFamily: TOKENS.sans }}
+              >
+                <span
+                  className="inline-block w-2 h-2 rounded-full animate-pulse"
+                  style={{ background: '#b91c1c' }}
+                  aria-hidden
+                />
+                <span>
+                  {formatRecordingTime(recordingSeconds)} / {formatRecordingTime(MAX_RECORDING_SECONDS)}
+                </span>
+              </div>
+            )}
+            <div className="flex gap-3 items-end">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    onSend();
+                  }
+                }}
+                placeholder={t('placeholder')}
+                rows={1}
+                disabled={sending || recording || transcribing}
+                className="flex-1 resize-none rounded-lg px-4 py-3 text-[15px] leading-[1.5] transition-colors focus:outline-none"
+                style={{
+                  background: sending || recording || transcribing ? PALETTE.bgSubtle : PALETTE.bgCard,
+                  color: PALETTE.text,
+                  border: `1px solid ${PALETTE.border}`,
+                  fontFamily: TOKENS.sans,
+                  opacity: sending || recording || transcribing ? 0.6 : 1,
+                  minHeight: TEXTAREA_MIN_HEIGHT,
+                  maxHeight: TEXTAREA_MAX_HEIGHT,
+                }}
+              />
+              {voiceSupported && (
+                <button
+                  type="button"
+                  onClick={handleMicClick}
+                  disabled={sending || transcribing}
+                  aria-label={recording ? t('voice.stopAria') : t('voice.startAria')}
+                  className="h-12 w-12 rounded-full flex items-center justify-center transition-all disabled:cursor-not-allowed"
+                  style={{
+                    background: recording ? '#b91c1c' : 'transparent',
+                    color: recording ? '#fff' : PALETTE.textMuted,
+                    border: `1px solid ${recording ? '#b91c1c' : PALETTE.border}`,
+                    opacity: sending || transcribing ? 0.5 : 1,
+                  }}
+                >
+                  {transcribing ? (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      className="animate-spin"
+                      aria-hidden
+                    >
+                      <circle cx="12" cy="12" r="9" strokeDasharray="42" strokeDashoffset="14" strokeLinecap="round" />
+                    </svg>
+                  ) : recording ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                      <rect x="6" y="6" width="12" height="12" rx="1.5" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <rect x="9" y="2" width="6" height="11" rx="3" />
+                      <path d="M5 10v2a7 7 0 0 0 14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="22" />
+                      <line x1="8" y1="22" x2="16" y2="22" />
+                    </svg>
+                  )}
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={sending || recording || transcribing || input.trim().length === 0}
+                className="h-12 px-6 rounded-full text-[14px] tracking-wide transition-all disabled:cursor-not-allowed"
+                style={{
+                  background: PALETTE.accent,
+                  color: PALETTE.accentText,
+                  fontWeight: 500,
+                  fontFamily: TOKENS.sans,
+                  opacity:
+                    sending || recording || transcribing || input.trim().length === 0 ? 0.5 : 1,
+                }}
+              >
+                Send
+              </button>
+            </div>
           </div>
         </form>
       )}
