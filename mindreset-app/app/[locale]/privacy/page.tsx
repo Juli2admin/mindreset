@@ -299,10 +299,11 @@ export default function PrivacyPage() {
           <P>
             <Strong>Voice input.</Strong> If you choose to use voice input on MiniMind,
             your recorded audio is securely transmitted to our speech-to-text provider
-            for transcription. Audio is not stored by MindReset after transcription —
-            only the resulting text is saved as part of your conversation history. Audio
-            retention by the speech-to-text provider is subject to their data-processing
-            terms. You may use the Service entirely by typing if you prefer.
+            for transcription. We have enabled zero data retention with this provider —
+            audio is not stored after transcription on either MindReset infrastructure or
+            the provider&apos;s. Only the resulting text is saved as part of your
+            conversation history. You may use the Service entirely by typing if you
+            prefer.
           </P>
           <P>
             Specific providers may change over time. A current list of the service

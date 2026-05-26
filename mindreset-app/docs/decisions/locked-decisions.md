@@ -276,8 +276,9 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     
     Privacy commitments: audio is not persisted on our side at any
     layer (no DB write, no filesystem write, no logging of audio
-    content). Audio retention by Groq is governed by the Data Controls
-    policy configured in the Groq console.
+    content). Zero Data Retention is enabled in the Groq console —
+    audio is not retained by the speech-to-text provider after
+    transcription either.
     
     Defence-in-depth: auth required, dual user (20/min) + IP (60/min)
     rate limit on the transcribe route, 10 MB upload cap before

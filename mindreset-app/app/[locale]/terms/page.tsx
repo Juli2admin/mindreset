@@ -350,10 +350,11 @@ export default function TermsPage() {
           </P>
           <P>
             You may use voice input as an alternative to typing on the MiniMind chat
-            surface. Voice messages are securely transcribed; we do not store the audio
-            recording on MindReset infrastructure. Only the resulting text is saved to
-            your conversation history (encrypted at rest). Voice input is optional —
-            you may use the Service entirely by typing.
+            surface. Voice messages are securely transcribed and deleted after processing
+            — we do not store the audio recording, and our speech-to-text provider is
+            configured for zero data retention. Only the resulting text is saved to your
+            conversation history (encrypted at rest). Voice input is optional — you may
+            use the Service entirely by typing.
           </P>
 
           <H3 id="terms-section-7">7. Intellectual Property</H3>
