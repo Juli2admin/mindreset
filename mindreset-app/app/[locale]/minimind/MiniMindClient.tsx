@@ -434,7 +434,7 @@ function AtCapBanner({
         </p>
         <div className="flex flex-wrap gap-4">
           <a
-            href={`/${locale}/account`}
+            href={`/${locale}/pricing`}
             className="text-[14px] transition-opacity hover:opacity-70"
             style={{ color: PALETTE.accent, fontFamily: TOKENS.sans, fontWeight: 500 }}
           >
@@ -442,7 +442,7 @@ function AtCapBanner({
           </a>
           {!isFree && (
             <a
-              href={`/${locale}/account`}
+              href={`/${locale}/pricing`}
               className="text-[14px] transition-opacity hover:opacity-70"
               style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
             >

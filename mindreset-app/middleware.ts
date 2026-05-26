@@ -14,19 +14,23 @@ import { routing } from './i18n/routing';
 //      /privacy).
 //
 // Protected-route matcher patterns include an optional leading locale
-// segment: /(.*)?/account(.*) matches both /account (default English)
-// and /ru/account (locale-prefixed).
+// segment: /(.*)?/home(.*) matches both /home (default English) and
+// /ru/home (locale-prefixed). /account is intentionally NOT protected —
+// the page is a redirect to /home, and /home enforces auth from there.
+// /pricing is intentionally public so prospects can browse plans before
+// signing up; the Buy buttons in PricingClient detect anonymous state
+// and route to /sign-up instead of calling the checkout API.
 
 const intlMiddleware = createNextIntlMiddleware(routing);
 
 const isProtectedRoute = createRouteMatcher([
-  '/(.*)?/account(.*)',
+  '/(.*)?/home(.*)',
   '/(.*)?/minimind(.*)',
   '/(.*)?/modules(.*)',
   '/(.*)?/journey(.*)',
 ]);
 
-// Extract the locale segment from a pathname (e.g. /ru/account → 'ru').
+// Extract the locale segment from a pathname (e.g. /ru/home → 'ru').
 // Used to make Clerk's auth().protect() redirect locale-aware: without
 // this, a signed-out direct-link visitor to /ru/account would be
 // redirected to /sign-in (English), losing the locale. The ClerkProvider

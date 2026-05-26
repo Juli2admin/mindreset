@@ -61,8 +61,9 @@ export async function POST(request: NextRequest) {
     // Always create as anonymous (userId: null). This avoids a FK violation
     // when the Clerk webhook hasn't yet created the User row (common for new
     // sign-ups who reach /screening within seconds of account creation).
-    // The /minimind page and /account page both run cookie-based linkage that
-    // promotes the row to a named userId once the User row exists.
+    // The /home page (primary) and /minimind page (fallback) both run
+    // cookie-based linkage that promotes the row to a named userId once
+    // the User row exists.
     const screening = await prisma.screeningResponse.create({
       data: {
         userId: null,
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
     // For signed-in users: also write screeningResult directly onto the User
     // row so the /minimind gate sees it immediately (avoids the cookie-linkage
     // round-trip). Uses updateMany so it's a no-op if the User row doesn't
-    // exist yet — the cookie-based linkage on /minimind / /account will cover
+    // exist yet — the cookie-based linkage on /home / /minimind will cover
     // that case once the webhook fires.
     if (userId) {
       try {

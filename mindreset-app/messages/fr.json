@@ -1,9 +1,5 @@
 {
-  "Account": {
-    "welcomeKicker": "Your account",
-    "welcomeTitleWithName": "Welcome, {name}",
-    "welcomeTitleNoName": "Welcome",
-    "welcomeBody": "A quiet place to see where you are, and to choose what's next.",
+  "Pricing": {
     "comingSoon": "Coming soon",
     "tierOpen": "Open",
     "tierActive": "Active",
@@ -76,6 +72,29 @@
     "faq": "FAQ",
     "contact": "Contact",
     "languagePickerLabel": "Language"
+  },
+  "Home": {
+    "welcomeKicker": "Welcome back",
+    "welcomeTitleWithName": "Welcome back, {name}.",
+    "welcomeTitleNoName": "Welcome back.",
+    "welcomeBody": "A way back to yourself, one conversation at a time.",
+    "yourMiniMind": {
+      "kickerFree": "YOUR FREE TASTER",
+      "kickerPaid": "YOUR MINIMIND",
+      "remainingFree": "{count, plural, one {# message remaining} other {# messages remaining}}",
+      "remainingPaid": "{count, plural, one {# message remaining this cycle} other {# messages remaining this cycle}}",
+      "remainingWithTopUp": "{cycle} this cycle + {topUp} top-up",
+      "resetsOn": "Resets {date}",
+      "freeNote": "Free taster — 50 messages lifetime",
+      "openMinimind": "Open MiniMind",
+      "buyTopUp": "Buy a top-up",
+      "managePlan": "Manage subscription",
+      "seePlans": "See plans"
+    },
+    "comingSoon": {
+      "label": "More coming soon",
+      "note": "Themed modules and an 8-block journey are on their way."
+    }
   },
   "Landing": {
     "signIn": "Sign in",

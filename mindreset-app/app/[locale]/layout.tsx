@@ -109,16 +109,17 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   // Phase i18n.1a — locale-preserved Clerk redirects. Without these,
-  // auth().protect() on /ru/account would redirect a signed-out user to
+  // auth().protect() on /ru/home would redirect a signed-out user to
   // /sign-in (English) because Clerk's defaults come from
   // NEXT_PUBLIC_CLERK_SIGN_IN_URL env (an unprefixed path). next-intl
   // can only recover the locale on the follow-up request via the
   // mr_locale cookie, which a first-time direct-link visitor won't have.
   // getPathname respects localePrefix='as-needed': returns /sign-in for
-  // 'en' and /ru/sign-in for 'ru'.
+  // 'en' and /ru/sign-in for 'ru'. Post-auth landing is /home — the
+  // personal-space dashboard (formerly /account, which now redirects).
   const signInUrl = getPathname({ href: '/sign-in', locale });
   const signUpUrl = getPathname({ href: '/sign-up', locale });
-  const afterAuthUrl = getPathname({ href: '/account', locale });
+  const afterAuthUrl = getPathname({ href: '/home', locale });
 
   return (
     <ClerkProvider

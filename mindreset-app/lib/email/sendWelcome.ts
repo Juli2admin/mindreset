@@ -5,7 +5,7 @@ import { getWelcomeSubject, getWelcomePlainText, getWelcomeHtml, WelcomeLocale }
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mindreset.ai';
 
 // Sends the welcome email exactly once per user. Safe to call on every
-// /account visit — the updateMany guard ensures only the first call wins.
+// /home visit — the updateMany guard ensures only the first call wins.
 export async function sendWelcomeEmail({
   userId,
   email,

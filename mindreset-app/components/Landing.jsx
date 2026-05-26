@@ -111,7 +111,7 @@ function Header() {
       right={
         <>
           <Link
-            href={signedIn ? '/account' : '/sign-in'}
+            href={signedIn ? '/home' : '/sign-in'}
             className="text-[13px] transition-colors hover:underline underline-offset-2"
             style={{ ...sansStyle, color: c.textMuted }}
           >
