@@ -427,19 +427,21 @@ function CognitiveScreen({ step, total, onBack, onNext, value, setValue }) {
 
 function ConsentScreen({ step, total, onBack, onNext, value, setValue }) {
   const t = useTranslations('Screening');
+  const consentItems = t.raw('consent');
+  const allChecked = consentItems.every((_, i) => value[i] === true);
   return (
     <>
       <Header step={step} total={total} brand={t('brand')} showProgress />
       <ProgressBar step={step} total={total} />
       <SectionTitle kicker={t('secConsent')} title={t('consentTitle')} />
       <div>
-        {t.raw('consent').map((label, i) => (
+        {consentItems.map((label, i) => (
           <Check key={i} checked={value[i] || false} onChange={(v) => setValue({ ...value, [i]: v })}>
             {label}
           </Check>
         ))}
       </div>
-      <NavRow onBack={onBack} onNext={onNext} nextLabel={t('finish')} nextDisabled={false} />
+      <NavRow onBack={onBack} onNext={onNext} nextLabel={t('finish')} nextDisabled={!allChecked} />
     </>
   );
 }
