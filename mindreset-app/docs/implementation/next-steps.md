@@ -50,24 +50,18 @@ Cookie-based screening row links to the new User on first `/account`
 visit, but `User.screeningResult` (denormalised field) is not written.
 Implementation sketch in `docs/carry-forward.md`. See open question #10.
 
-### 3. Voice input (mic button) — `[blocker:launch]`
+### 3. Voice input (mic button) — ✅ SHIPPED (2026-05-26)
 
-MiniMind chat is text-only. Owner wants voice input comparable to
-ChatGPT voice mode. **Locked decision: Groq Whisper API** (see open
-question #22 — ✅ LOCKED).
+Shipped across three PRs:
+- **PR A** (#56): backend `/api/minimind/transcribe` route via Groq Whisper
+- **PR B** (#57): frontend mic button + recording UX in MiniMindClient
+- **PR C**: Terms (Section 6) + Privacy (Section 4) audio paragraphs;
+  locked decision #45 transcribed from open question #22
 
-Scope:
-- Mic button next to Send in `MiniMindClient.tsx`
-- Tap → record → tap stop → spinner → transcribed text fills textarea
-- User can review/edit before sending
-- Groq Whisper for transcription (multilingual, all 8 locales)
-- One T&C paragraph update: audio sent to Groq for transcription,
-  not retained; only text saved in conversation
-- Privacy policy note: voice audio processed transiently
-- **MiniMind prompt and behaviour are unchanged** — backend receives
-  text only; same system prompt, same model, same safety scanner
-
-Dependencies: Julia to confirm T&C paragraph wording before merge.
+Operational: owner-managed `GROQ_API_KEY` in Vercel; Groq Data Controls
+policy as configured per the owner's chosen plan. See locked decision
+#45 in `docs/decisions/locked-decisions.md` for the full architecture
+note. Mobile testing still pending — see launch checklist below.
 
 ### 4. T&C duplication fix — `[blocker:launch]`
 
@@ -121,7 +115,7 @@ at-cap banner on small screens.
 | A | AI support email Pattern A — spec needed | open Q #12 |
 | B | RU safety-scanner crisis phrases — owner-authored sensitive list | open Q #13 |
 | C | Welcome email copy (EN + RU) — Email 1 | needed before item 1 |
-| D | T&C paragraph for voice/audio processing | needed before item 3 |
+| D | T&C paragraph for voice/audio processing | ✅ shipped in PR C of voice rollout (2026-05-26) |
 
 ---
 

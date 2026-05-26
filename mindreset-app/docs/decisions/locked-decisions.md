@@ -254,3 +254,40 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     denomination (multi-currency pricing is locked out at launch — see
     Out-of-scope above).
     **Locked 2026-05-25.**
+
+<!--
+  Decision numbers #39–#43 were approved on 2026-05-22 and live in
+  SESSION_HANDOFF.md pending transcription to this log. The next free
+  number after the current section is #45, leaving the #39–#43 range
+  reserved.
+-->
+
+## Voice input (originally 2026-05-22, transcribed 2026-05-26)
+
+45. **Voice input on MiniMind chat — push-to-talk via Groq Whisper.**
+    Mic button on the chat input bar. Tap to record, tap to stop,
+    auto-stop at 2 minutes per turn. Audio uploads as multipart to
+    `/api/minimind/transcribe`, which forwards to Groq's
+    `whisper-large-v3-turbo` model (OpenAI-compatible endpoint). The
+    returned transcript fills the chat textarea; the user reviews and
+    edits before sending. The MiniMind prompt, safety scanner, memory
+    pipeline, and chat-route gating are unchanged — they only ever
+    receive text.
+    
+    Privacy commitments: audio is not persisted on our side at any
+    layer (no DB write, no filesystem write, no logging of audio
+    content). Audio retention by Groq is governed by the Data Controls
+    policy configured in the Groq console.
+    
+    Defence-in-depth: auth required, dual user (20/min) + IP (60/min)
+    rate limit on the transcribe route, 10 MB upload cap before
+    forwarding upstream, 503 (not 500) when GROQ_API_KEY is absent so
+    the failure mode is "voice input unavailable" not "server bug".
+    
+    Legal copy: one paragraph each in Terms (Section 6) and Privacy
+    (Section 4) covering transient audio handling. Provider name is
+    not in the legal copy (matches the existing pattern that does not
+    name Anthropic) — flexibility to switch providers later.
+    
+    **Originally locked 2026-05-22 (decision #22 in open-questions.md);
+    transcribed to this log 2026-05-26.**
