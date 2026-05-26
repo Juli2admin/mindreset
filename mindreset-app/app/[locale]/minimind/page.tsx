@@ -42,6 +42,7 @@ export default async function MiniMindPage({
   });
 
   let resolvedScreeningResult = screeningGate?.screeningResult ?? null;
+  let screeningCookieToClear = false;
 
   // Cookie-based screening linkage — mirrors /home page logic.
   // Handles new users who reach /minimind before /home has fired the
@@ -49,7 +50,9 @@ export default async function MiniMindPage({
   // is still null even though the user just completed screening. If the
   // anonymous ScreeningResponse exists (userId=null, id matches cookie),
   // we promote it and write User.screeningResult so the gate passes
-  // immediately.
+  // immediately. On success (or on a cookie that points to an
+  // already-linked row) we signal the client to clear the cookie so it
+  // doesn't keep travelling on every request for its 30-day TTL.
   if (!resolvedScreeningResult) {
     const cookieStore = cookies();
     const screeningCookie = cookieStore.get('mr_screening')?.value;
@@ -75,6 +78,14 @@ export default async function MiniMindPage({
           ]);
           resolvedScreeningResult = anonScreening.result;
         }
+        // Reached only when no exception — either linked successfully
+        // (anonScreening was found and promoted) or the cookie points
+        // to a row that's already linked (findFirst with userId=null
+        // returned null because the row's userId is now set, likely by
+        // /home's primary path). Either way the cookie has no remaining
+        // purpose; clear it. On caught failure (FK race etc.) we keep
+        // the cookie so the next navigation can retry.
+        screeningCookieToClear = true;
       } catch (err) {
         console.error('[minimind] screening cookie linkage failed:', err);
       }
@@ -212,6 +223,7 @@ export default async function MiniMindPage({
         atCap={atCap}
         currentTier={billingUser?.currentTier ?? null}
         cycleResetAt={billingUser?.cycleResetAt?.toISOString() ?? null}
+        screeningCookieToClear={screeningCookieToClear}
       />
       <DisclaimerGate
         initialShow={initialShow}

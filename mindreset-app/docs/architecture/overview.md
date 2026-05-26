@@ -42,13 +42,16 @@ Anthropic API (for /api/minimind/chat)
 mindreset-app/
 ├── app/
 │   ├── [locale]/
-│   │   ├── account/                — Account page (paywall + tier display)
-│   │   ├── disclaimer/             — Disclaimer-modal route
-│   │   ├── minimind/               — MiniMind chat UI
+│   │   ├── home/                   — Personal-space dashboard (post-sign-up landing; PR #54)
+│   │   ├── pricing/                — Tier cards + checkout (split from /account; public)
+│   │   ├── account/                — 307 redirect to /home (kept for backward links)
+│   │   ├── faq/                    — Static FAQ page
+│   │   ├── disclaimer/acknowledge  — Disclaimer-ack server API (modal lives in /minimind tree)
+│   │   ├── minimind/               — MiniMind chat UI (DisclaimerGate mounted here)
 │   │   ├── privacy/, terms/        — Legal pages (EN-only currently)
 │   │   ├── screening/              — Section 0 readiness check
 │   │   ├── sign-in/, sign-up/      — Clerk-rendered auth
-│   │   └── page.jsx                — Landing
+│   │   └── page.tsx                — Landing
 │   └── api/
 │       ├── disclaimer/acknowledge/
 │       ├── minimind/chat/          — Anthropic streaming endpoint
@@ -122,5 +125,5 @@ backfilled to the new user on first `/minimind` load.
 - Email sequences (Welcome, AI support pattern A)
 - States & Themes / Journey products (Block C, post-launch)
 - Cross-session AI memory beyond the conversation-level summary
-- `/account` language toggle
+- ~~`/account` language toggle~~ — resolved by TopBar integration; LanguagePicker renders on `/home`, `/pricing`, `/minimind`, and all legal pages
 - Auth-page translation (sign-in / sign-up / terms / privacy all EN-only)
