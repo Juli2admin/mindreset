@@ -1,9 +1,5 @@
 {
   "Pricing": {
-    "welcomeKicker": "Ваш аккаунт",
-    "welcomeTitleWithName": "Здравствуйте, {name}",
-    "welcomeTitleNoName": "Здравствуйте",
-    "welcomeBody": "Тихое место, чтобы увидеть, где вы сейчас, и выбрать, что дальше.",
     "comingSoon": "Скоро",
     "tierOpen": "Открыть",
     "tierActive": "Активна",

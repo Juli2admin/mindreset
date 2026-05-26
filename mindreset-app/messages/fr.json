@@ -1,9 +1,5 @@
 {
   "Pricing": {
-    "welcomeKicker": "Your account",
-    "welcomeTitleWithName": "Welcome, {name}",
-    "welcomeTitleNoName": "Welcome",
-    "welcomeBody": "A quiet place to see where you are, and to choose what's next.",
     "comingSoon": "Coming soon",
     "tierOpen": "Open",
     "tierActive": "Active",
