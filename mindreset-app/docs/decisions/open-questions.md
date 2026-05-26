@@ -270,7 +270,7 @@ billing anniversary. PR 6 is a no-op. Block B declared fully shipped.
 
 **Logged**: 2026-05-22.
 
-### 22. Voice input — mic button in MiniMind chat — ✅ LOCKED (confirmed by Julia 2026-05-22)
+### 22. Voice input — mic button in MiniMind chat — ✅ LOCKED + SHIPPED (2026-05-26 — see locked-decisions.md #45)
 
 Owner wants voice input comparable to ChatGPT voice mode. MindReset
 is a deep self-help companion app where talking to the AI is a core

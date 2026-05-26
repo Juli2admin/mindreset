@@ -9,7 +9,7 @@ const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-const LAST_UPDATED = '14 May 2026';
+const LAST_UPDATED = '26 May 2026';
 
 export const metadata = {
   title: 'Privacy Policy — MindReset',
@@ -290,11 +290,21 @@ export default function PrivacyPage() {
           <UL>
             <li>Cloud hosting and database services</li>
             <li>AI infrastructure (for the conversational and analytical features)</li>
+            <li>Speech-to-text transcription (for voice input)</li>
             <li>Authentication and account management</li>
             <li>Payment processing</li>
             <li>Transactional email delivery</li>
             <li>Website hosting</li>
           </UL>
+          <P>
+            <Strong>Voice input.</Strong> If you choose to use voice input on MiniMind,
+            your recorded audio is securely transmitted to our speech-to-text provider
+            for transcription. We have enabled zero data retention with this provider —
+            audio is not stored after transcription on either MindReset infrastructure or
+            the provider&apos;s. Only the resulting text is saved as part of your
+            conversation history. You may use the Service entirely by typing if you
+            prefer.
+          </P>
           <P>
             Specific providers may change over time. A current list of the service
             providers we use is available on request — email{' '}
