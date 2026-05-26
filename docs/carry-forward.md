@@ -480,6 +480,14 @@ plan before the public launch hits.
 
 ## Language toggle missing on `/account`
 
+> **UPDATED 2026-05-26:** Resolved. The shared `TopBar` component now
+> renders `LanguagePicker` next to the user menu on every page that
+> uses TopBar — including `/home`, `/pricing`, `/minimind`, and the
+> legal pages. (`/account` itself is now just a 307 redirect to
+> `/home` since PR #54.) The original gap is closed. Persistence to
+> `User.locale` is a separate post-launch question and not blocked by
+> this entry. Original entry preserved below for historical context.
+
 The language toggle (EN / RU) was hidden on `/account` during Phase 2
 as a holding pattern — see the
 "i18n + theme global providers (deferred to post-Phase-3b)" entry
