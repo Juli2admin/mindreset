@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { hasCapacity } from '@/lib/billing/limits';
 import { decrypt } from '@/lib/encrypt';
 import { redirect } from '@/i18n/navigation';
+import DisclaimerGate from '@/components/DisclaimerGate';
 import MiniMindClient from './MiniMindClient';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,8 @@ export const dynamic = 'force-dynamic';
 const SNIPPET_MAX_CHARS = 80;
 const SNIPPET_DAYS_THRESHOLD = 14;
 const MESSAGE_HISTORY_LIMIT = 50;
+
+const DISCLAIMER_COOKIE_NAME = 'mr_disclaimer_acknowledged';
 
 export default async function MiniMindPage({
   params,
@@ -164,17 +167,56 @@ export default async function MiniMindPage({
       topUpMessagesRemaining: true,
       lifetimeMessagesUsed: true,
       cycleResetAt: true,
+      disclaimerAcknowledgedAt: true,
     },
   });
+
+  // Disclaimer modal state — lives on /minimind only. The modal gates the
+  // chat surface specifically (acknowledging not-therapy / not-medical
+  // stance). Moved out of the root layout in this PR to remove the
+  // URL-detection problem the layout-level approach had: pages that don't
+  // render the component cannot show the modal.
+  //
+  // The chat API at /api/minimind/chat independently enforces
+  // disclaimerAcknowledgedAt via a DB check on every request, so the
+  // modal here is purely the UX surface that obtains that ack.
+  const disclaimerCookie = cookies().get(DISCLAIMER_COOKIE_NAME)?.value === 'true';
+  const disclaimerAcknowledgedInDB = billingUser?.disclaimerAcknowledgedAt != null;
+
+  // Backfill: signed-in user has the cookie but DB record is missing.
+  // Happens when the disclaimer was acknowledged while anonymous (pre-
+  // sign-up) — the cookie persists across sign-up but the DB write was
+  // skipped because there was no Clerk session at the time. Write
+  // server-side so the chat API's DB-only gate passes immediately
+  // without waiting for the user to acknowledge again.
+  if (disclaimerCookie && !disclaimerAcknowledgedInDB) {
+    try {
+      await prisma.user.updateMany({
+        where: { id: userId, disclaimerAcknowledgedAt: null },
+        data: { disclaimerAcknowledgedAt: new Date() },
+      });
+    } catch (err) {
+      console.error('[minimind] disclaimer cookie backfill failed:', err);
+    }
+  }
+
+  const initialShow = !disclaimerCookie && !disclaimerAcknowledgedInDB;
+  const needsCookieBackfill = !disclaimerCookie && disclaimerAcknowledgedInDB;
 
   const atCap = billingUser ? !hasCapacity(billingUser) : false;
 
   return (
-    <MiniMindClient
-      lastConvo={lastConvo}
-      atCap={atCap}
-      currentTier={billingUser?.currentTier ?? null}
-      cycleResetAt={billingUser?.cycleResetAt?.toISOString() ?? null}
-    />
+    <>
+      <MiniMindClient
+        lastConvo={lastConvo}
+        atCap={atCap}
+        currentTier={billingUser?.currentTier ?? null}
+        cycleResetAt={billingUser?.cycleResetAt?.toISOString() ?? null}
+      />
+      <DisclaimerGate
+        initialShow={initialShow}
+        needsCookieBackfill={needsCookieBackfill}
+      />
+    </>
   );
 }

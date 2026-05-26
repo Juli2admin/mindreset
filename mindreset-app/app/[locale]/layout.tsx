@@ -1,47 +1,35 @@
 import '../globals.css';
 import type { Metadata } from 'next';
-import { cookies, headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { ClerkProvider } from '@clerk/nextjs';
-import { currentUser } from '@clerk/nextjs/server';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import prisma from '@/lib/prisma';
-import DisclaimerGate from '@/components/DisclaimerGate';
 import { routing } from '@/i18n/routing';
 import { getPathname } from '@/i18n/navigation';
 
 // Phase i18n.1a — locale-scoped layout. Owns <html>/<body>/<head> so that
-// `lang={locale}` can be set per request, plus the providers that used to
-// live in app/layout.tsx: ClerkProvider, NextIntlClientProvider, and the
-// disclaimer-modal gate. Receives `params.locale` from next-intl middleware
-// via the [locale] segment.
+// `lang={locale}` can be set per request, plus the providers ClerkProvider
+// and NextIntlClientProvider. Receives `params.locale` from next-intl
+// middleware via the [locale] segment.
 //
 // The root app/layout.tsx is now a passthrough — Next.js permits this when
 // every reachable route lives under a child layout that renders <html><body>.
+//
+// Disclaimer modal: lives in app/[locale]/minimind/page.tsx, NOT here. The
+// modal acknowledges the not-therapy / not-medical stance and is only
+// relevant on the chat surface. Mounting it in the root layout previously
+// forced it on every page (landing, FAQ, /home, /pricing etc.), which was
+// a conversion killer for prospects and required a denylist of pages to
+// suppress it — a pattern that proved fragile (the x-pathname middleware
+// signal didn't propagate reliably to server components). Moving the
+// component into the /minimind subtree removes the URL-detection problem
+// entirely: pages that don't render the component cannot show the modal.
 
 export const metadata: Metadata = {
   title: 'MindReset.ai — A way back to yourself',
   description:
     'A trauma-informed self-help platform. Not therapy, not a crisis service — a structured digital reflection tool for emotional clarity.',
 };
-
-const DISCLAIMER_COOKIE_NAME = 'mr_disclaimer_acknowledged';
-
-// Pages where the disclaimer modal must NOT block content. Legal documents
-// should be openly readable without prerequisites. Sign-up paths are excluded
-// because /sign-up has its own T&C checkboxes and /sign-up/verify-email-address
-// is the Clerk email verification step — the modal has no place on either.
-const DISCLAIMER_EXCLUDED_PATHS = new Set(['/terms', '/privacy', '/screening', '/sign-up', '/sign-up/verify-email-address']);
-
-function pathnameWithoutLocale(pathname: string, locale: string): string {
-  // Strip the leading /<locale> if present so the excluded-paths check
-  // works for both /terms and /ru/terms.
-  const prefix = `/${locale}`;
-  if (pathname === prefix) return '/';
-  if (pathname.startsWith(`${prefix}/`)) return pathname.slice(prefix.length);
-  return pathname;
-}
 
 export default async function LocaleLayout({
   children,
@@ -60,51 +48,6 @@ export default async function LocaleLayout({
   // Tells next-intl this rendering pass is for a known locale (enables
   // getTranslations() etc. in child server components).
   setRequestLocale(locale);
-
-  const pathname = headers().get('x-pathname') ?? '';
-  const pathForCheck = pathnameWithoutLocale(pathname, locale);
-  const isExcludedPath = DISCLAIMER_EXCLUDED_PATHS.has(pathForCheck);
-
-  const hasCookie = cookies().get(DISCLAIMER_COOKIE_NAME)?.value === 'true';
-
-  let acknowledgedInDB = false;
-  if (!isExcludedPath && !hasCookie) {
-    try {
-      const user = await currentUser();
-      if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: { disclaimerAcknowledgedAt: true },
-        });
-        acknowledgedInDB = dbUser?.disclaimerAcknowledgedAt != null;
-      }
-    } catch (err) {
-      // Fail-safe: on DB error, default to showing the modal.
-      console.error('[layout] disclaimer status check failed:', err);
-    }
-  }
-
-  // Backfill: signed-in user has the cookie but DB record is missing.
-  // Happens when the disclaimer was acknowledged while anonymous (pre-sign-up)
-  // — the cookie persists across sign-up but the DB write was skipped because
-  // there was no Clerk session at the time. Write server-side so the chat API's
-  // DB-only gate passes without waiting for the user to acknowledge again.
-  if (!isExcludedPath && hasCookie) {
-    try {
-      const user = await currentUser();
-      if (user) {
-        await prisma.user.updateMany({
-          where: { id: user.id, disclaimerAcknowledgedAt: null },
-          data: { disclaimerAcknowledgedAt: new Date() },
-        });
-      }
-    } catch (err) {
-      console.error('[layout] disclaimer cookie backfill failed:', err);
-    }
-  }
-
-  const initialShow = !isExcludedPath && !hasCookie && !acknowledgedInDB;
-  const needsCookieBackfill = !isExcludedPath && !hasCookie && acknowledgedInDB;
 
   const messages = await getMessages();
 
@@ -139,12 +82,6 @@ export default async function LocaleLayout({
         <body>
           <NextIntlClientProvider messages={messages}>
             {children}
-            {!isExcludedPath && (
-              <DisclaimerGate
-                initialShow={initialShow}
-                needsCookieBackfill={needsCookieBackfill}
-              />
-            )}
           </NextIntlClientProvider>
         </body>
       </html>
