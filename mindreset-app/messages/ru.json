@@ -1,5 +1,5 @@
 {
-  "Account": {
+  "Pricing": {
     "welcomeKicker": "Ваш аккаунт",
     "welcomeTitleWithName": "Здравствуйте, {name}",
     "welcomeTitleNoName": "Здравствуйте",
@@ -76,6 +76,29 @@
     "faq": "Вопросы и ответы",
     "contact": "Контакты",
     "languagePickerLabel": "Язык"
+  },
+  "Home": {
+    "welcomeKicker": "Рады видеть вас снова",
+    "welcomeTitleWithName": "С возвращением, {name}.",
+    "welcomeTitleNoName": "С возвращением.",
+    "welcomeBody": "Путь к себе — разговор за разговором.",
+    "yourMiniMind": {
+      "kickerFree": "ВАШ ПРОБНЫЙ ДОСТУП",
+      "kickerPaid": "ВАШ MINIMIND",
+      "remainingFree": "{count, plural, one {Осталось # сообщение} few {Осталось # сообщения} many {Осталось # сообщений} other {Осталось # сообщений}}",
+      "remainingPaid": "{count, plural, one {# сообщение осталось в этом периоде} few {# сообщения осталось в этом периоде} many {# сообщений осталось в этом периоде} other {# сообщений осталось в этом периоде}}",
+      "remainingWithTopUp": "{cycle} в текущем периоде + {topUp} дополнительно",
+      "resetsOn": "Обновление {date}",
+      "freeNote": "Пробный доступ — 50 сообщений",
+      "openMinimind": "Открыть MiniMind",
+      "buyTopUp": "Пополнить сообщения",
+      "managePlan": "Управление подпиской",
+      "seePlans": "Тарифы"
+    },
+    "comingSoon": {
+      "label": "Скоро появится больше",
+      "note": "Тематические модули и The Journey — 8 блоков Пути к себе — уже скоро."
+    }
   },
   "Landing": {
     "signIn": "Войти",

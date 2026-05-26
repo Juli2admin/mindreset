@@ -1,29 +1,22 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
-import { UserButton } from '@clerk/nextjs';
+import { useState, type ReactNode } from 'react';
+import { UserButton, useUser } from '@clerk/nextjs';
 import { useTranslations, useLocale } from 'next-intl';
-// Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
-// Phase i18n.1d.2 — shared TopBar (client component) imported directly.
 import TopBar from '@/components/TopBar';
-// Phase i18n.2a — formatCurrency for price values; period words come
-// from message bundles via ICU template strings.
 import { formatCurrency } from '@/lib/format';
-// Footer arrives as a server-rendered slot via `footerSlot` — see
-// app/account/page.tsx.
 
 const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-// Block B PR 0 — Product tier data. Code, not content. Numeric values feed
-// formatCurrency() (en-GB locked per Phase 1c); period words are composed at
-// render via ICU templates in the Account.price.* namespace. The 'kind'
-// discriminator drives render: 'open' = Open badge + link, 'sub' = annual/
-// monthly price line, 'oneOff' = single price line, 'comingSoon' = badge
-// only, no price. S&T and Journey carry no prices until Block C ships them.
+// Block B — Product tier data. Code, not content. Numeric values feed
+// formatCurrency() (en-GB locked); period words are composed at render via
+// ICU templates in the Pricing.price.* namespace. The 'kind' discriminator
+// drives render: 'open' = Open badge + link, 'sub' = annual/monthly price
+// line, 'oneOff' = single price line, 'comingSoon' = badge only, no price.
 type TierData =
   | { id: 'freeTaster'; kind: 'open'; href: '/minimind' }
   | { id: 'miniMindEssential' | 'miniMindExtended'; kind: 'sub'; monthly: number; annual: number }
@@ -40,26 +33,26 @@ const TIERS: TierData[] = [
 ];
 
 type Props = {
-  firstName: string | null;
-  cookieToClear: boolean;
   currentTier: string | null;
   footerSlot: ReactNode;
 };
 
-export default function AccountClient({
-  firstName,
-  cookieToClear,
-  currentTier,
-  footerSlot,
-}: Props) {
-  const t = useTranslations('Account');
+export default function PricingClient({ currentTier, footerSlot }: Props) {
+  const t = useTranslations('Pricing');
   const locale = useLocale();
+  const { isSignedIn } = useUser();
   const [loading, setLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const userIsSubscribed = currentTier === 'essential' || currentTier === 'extended';
 
   async function handleCheckout(priceKey: string) {
+    if (!isSignedIn) {
+      // /pricing is public; an anonymous click on Buy redirects to sign-up.
+      // After sign-up the user lands on /home and can revisit /pricing.
+      window.location.href = `/${locale}/sign-up`;
+      return;
+    }
     setLoading(priceKey);
     setCheckoutError(null);
     try {
@@ -103,16 +96,6 @@ export default function AccountClient({
     }
   }
 
-  useEffect(() => {
-    if (cookieToClear) {
-      document.cookie = 'mr_screening=; Path=/; Max-Age=0; SameSite=Lax';
-    }
-  }, [cookieToClear]);
-
-  const welcomeTitle = firstName
-    ? t('welcomeTitleWithName', { name: firstName })
-    : t('welcomeTitleNoName');
-
   function renderTierPrice(tier: TierData): string | null {
     if (tier.kind === 'sub') {
       return t('price.perYearOrMonth', {
@@ -129,30 +112,9 @@ export default function AccountClient({
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar right={<UserButton />} />
+        <TopBar right={isSignedIn ? <UserButton /> : null} />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
-        <div className="mb-12">
-          <div
-            className="text-[11px] uppercase tracking-[0.22em] mb-3"
-            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
-          >
-            {t('welcomeKicker')}
-          </div>
-          <h2
-            className="text-[32px] leading-[1.15] mb-4"
-            style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-          >
-            {welcomeTitle}
-          </h2>
-          <p
-            className="text-[16px] leading-[1.65]"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-          >
-            {t('welcomeBody')}
-          </p>
-        </div>
-
         <div className="space-y-4">
           {TIERS.map((tier) => {
             const title = t(`tiers.${tier.id}.title`);
@@ -235,10 +197,13 @@ export default function AccountClient({
             );
 
             if (tier.kind === 'open') {
+              // Free taster card links into /minimind directly for signed-in
+              // users; for anonymous, send to /sign-up so they create an
+              // account before reaching the chat surface.
               return (
                 <Link
                   key={tier.id}
-                  href={tier.href}
+                  href={isSignedIn ? tier.href : '/sign-up'}
                   className="block rounded-lg p-6 transition-all"
                   style={{
                     background: PALETTE.bgCard,

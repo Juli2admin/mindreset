@@ -134,7 +134,7 @@ need urgent support, please contact your local emergency services or call
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
   <tr>
     <td style="background:#2D7A85;border-radius:6px;padding:12px 28px;">
-      <a href="${appUrl}/account" style="color:#F4F1EA;font-family:Georgia,serif;
+      <a href="${appUrl}/home" style="color:#F4F1EA;font-family:Georgia,serif;
          font-size:14px;text-decoration:none;letter-spacing:0.04em;">
         Open MiniMind →
       </a>
@@ -231,7 +231,7 @@ MiniMind подстраивается под вас и ваш ритм.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
   <tr>
     <td style="background:#2D7A85;border-radius:6px;padding:12px 28px;">
-      <a href="${appUrl}/account" style="color:#F4F1EA;font-family:Georgia,serif;
+      <a href="${appUrl}/home" style="color:#F4F1EA;font-family:Georgia,serif;
          font-size:14px;text-decoration:none;letter-spacing:0.04em;">
         Открыть MiniMind →
       </a>

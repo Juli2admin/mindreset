@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       mode: isSubscription ? 'subscription' : 'payment',
       line_items: [{ price: getPriceId(typedKey), quantity: 1 }],
       success_url: `${origin}/${locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/${locale}/account`,
+      cancel_url: `${origin}/${locale}/pricing`,
       billing_address_collection: 'required',
       automatic_tax: { enabled: false },
       allow_promotion_codes: true,

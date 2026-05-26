@@ -36,10 +36,10 @@ export default function CheckoutSuccessPage() {
             style={{ color: PALETTE.textMuted, fontFamily: SANS }}
           >
             Your purchase is confirmed. Subscription access activates within a
-            few seconds — head to your account to get started.
+            few seconds — head to your space to get started.
           </p>
           <Link
-            href="/account"
+            href="/home"
             className="inline-block px-8 py-3 rounded-full text-[14px]"
             style={{
               background: PALETTE.accent,
@@ -48,7 +48,7 @@ export default function CheckoutSuccessPage() {
               fontWeight: 500,
             }}
           >
-            Go to your account →
+            Go to your space →
           </Link>
         </div>
         <Footer />

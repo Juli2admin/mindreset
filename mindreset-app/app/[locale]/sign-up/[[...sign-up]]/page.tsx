@@ -3,8 +3,8 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import SignUpClient from './SignUpClient';
 import Footer from '@/components/Footer';
-// Phase i18n.1a — locale-aware redirect: redirect('/account') from a /ru/
-// page produces /ru/account, not /account.
+// Phase i18n.1a — locale-aware redirect: redirect('/home') from a /ru/
+// page produces /ru/home, not /home.
 import { redirect } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -18,10 +18,10 @@ export default async function SignUpPage({
 }) {
   const { locale } = params;
 
-  // 1. Already-signed-in users go to /account, not back through sign-up.
+  // 1. Already-signed-in users go to /home, not back through sign-up.
   const { userId } = await auth();
   if (userId) {
-    redirect({ href: '/account', locale });
+    redirect({ href: '/home', locale });
   }
 
   // 2. No screening cookie → user hasn't completed screening yet.

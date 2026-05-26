@@ -40,12 +40,13 @@ export default async function MiniMindPage({
 
   let resolvedScreeningResult = screeningGate?.screeningResult ?? null;
 
-  // Cookie-based screening linkage — mirrors /account page logic.
-  // Handles new users who reach /minimind before visiting /account, and
-  // the Clerk webhook race where User.screeningResult is still null even
-  // though the user just completed screening. If the anonymous
-  // ScreeningResponse exists (userId=null, id matches cookie), we promote
-  // it and write User.screeningResult so the gate passes immediately.
+  // Cookie-based screening linkage — mirrors /home page logic.
+  // Handles new users who reach /minimind before /home has fired the
+  // primary linkage, and the Clerk webhook race where User.screeningResult
+  // is still null even though the user just completed screening. If the
+  // anonymous ScreeningResponse exists (userId=null, id matches cookie),
+  // we promote it and write User.screeningResult so the gate passes
+  // immediately.
   if (!resolvedScreeningResult) {
     const cookieStore = cookies();
     const screeningCookie = cookieStore.get('mr_screening')?.value;
