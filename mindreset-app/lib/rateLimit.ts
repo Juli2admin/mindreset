@@ -52,6 +52,34 @@ function getScreeningIpLimiter(): Ratelimit {
   return _screeningIp;
 }
 
+// Voice transcription rate limit. Slightly looser than chat (20/min vs
+// 10/min) so users can retake a recording without hitting the limit, but
+// tight enough to keep Groq API spend predictable. IP limiter at 60/min
+// is defence against credential leak / abuse from a single source.
+let _transcribeUser: Ratelimit | null = null;
+function getTranscribeUserLimiter(): Ratelimit {
+  if (!_transcribeUser) {
+    _transcribeUser = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(20, '1 m'),
+      prefix: 'rl:transcribe:user',
+    });
+  }
+  return _transcribeUser;
+}
+
+let _transcribeIp: Ratelimit | null = null;
+function getTranscribeIpLimiter(): Ratelimit {
+  if (!_transcribeIp) {
+    _transcribeIp = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(60, '1 m'),
+      prefix: 'rl:transcribe:ip',
+    });
+  }
+  return _transcribeIp;
+}
+
 export type RateLimitResult =
   | { limited: false }
   | { limited: true; retryAfter: number };
@@ -115,5 +143,37 @@ export async function checkScreeningRateLimit(ip: string): Promise<RateLimitResu
     // from completing the one-time screening flow. Chat stays fail-closed (cost).
     console.error('[rateLimit] Upstash error on screening check — failing open:', err);
     return { limited: false };
+  }
+}
+
+// Voice transcribe rate limit — mirrors chat's fail-closed posture because
+// each transcription call is paid (Groq API). Dual user+IP guard matches
+// the chat limiter shape so abuse can't bypass via different accounts on
+// the same IP or vice versa.
+export async function checkTranscribeRateLimit(
+  userId: string,
+  ip: string,
+): Promise<RateLimitResult> {
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
+    return { limited: false };
+  }
+
+  try {
+    const [userResult, ipResult] = await Promise.all([
+      getTranscribeUserLimiter().limit(userId),
+      getTranscribeIpLimiter().limit(ip),
+    ]);
+
+    if (!userResult.success) {
+      return { limited: true, retryAfter: Math.ceil((userResult.reset - Date.now()) / 1000) };
+    }
+    if (!ipResult.success) {
+      return { limited: true, retryAfter: Math.ceil((ipResult.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    console.error('[rateLimit] Upstash error on transcribe check — failing closed with 503:', err);
+    return { limited: true, retryAfter: 60 };
   }
 }
