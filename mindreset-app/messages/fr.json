@@ -368,15 +368,15 @@
         "agreement": "En utilisant la plateforme d’auto-assistance MindReset AI (« Service »), disponible sur mindreset.ai, vous acceptez les présentes Conditions. Veuillez les lire attentivement. Si vous n’êtes pas d’accord, veuillez ne pas utiliser le Service."
       },
       "section1": {
-        "title": "1. What This Service Is — And What It Is Not",
-        "whatItIs": "<strong>What it is.</strong> The MindReset AI self-help platform (the \"Service\") is an AI-assisted self-help platform for general psychological wellbeing. It provides conversational reflection, structured self-exploration exercises, grounding practices, educational materials, and progress tracking. It draws on established frameworks including somatic regulation, parts-aware self-work, trauma-informed pacing principles, narrative reframing, and integrative identity formation. It is positioned as a <strong>wellbeing tool for non-clinical contexts.</strong>",
-        "whatItIsNotLabel": "<strong>What it is not.</strong>",
-        "notTherapyItem": "Not therapy, counselling, or psychiatric treatment",
-        "notMedicalItem": "Not a medical device",
-        "notSubstituteItem": "Not a substitute for a qualified clinician, doctor, or licensed mental health professional",
-        "notCrisisItem": "Not a crisis service, emergency service, or 24-hour helpline",
-        "notDiagnosticItem": "Not a diagnostic tool — it does not diagnose, treat, cure, or prevent any medical or psychological condition",
-        "closing": "If you require clinical care or are in distress that exceeds what self-help can support, please consult a qualified professional or contact emergency services. We provide signposting to such services within the Service."
+        "title": "1. Ce qu’est ce Service — et ce qu’il n’est pas",
+        "whatItIs": "<strong>Ce qu’est le Service.</strong> La plateforme d’auto-assistance MindReset AI (« Service ») est une plateforme d’auto-assistance assistée par IA destinée au bien-être psychologique général. Elle propose des échanges réflexifs, des exercices structurés d’exploration de soi, des pratiques d’ancrage, des contenus éducatifs et un suivi des progrès. Elle s’appuie sur des approches reconnues, notamment la régulation somatique, le travail conscient des différentes parties de soi, les principes de progression trauma-informed, le recadrage narratif et la formation intégrative de l’identité. Elle est positionnée comme un <strong>outil de bien-être destiné à des contextes non cliniques.</strong>",
+        "whatItIsNotLabel": "<strong>Ce que le Service n’est pas.</strong>",
+        "notTherapyItem": "N’est pas une thérapie, un conseil psychologique ou un traitement psychiatrique",
+        "notMedicalItem": "N’est pas un dispositif médical",
+        "notSubstituteItem": "Ne remplace pas un clinicien qualifié, un médecin ou un professionnel de santé mentale agréé",
+        "notCrisisItem": "N’est pas un service de crise, un service d’urgence ou une ligne d’assistance 24h/24",
+        "notDiagnosticItem": "N’est pas un outil de diagnostic — le Service ne diagnostique, ne traite, ne guérit ni ne prévient aucune condition médicale ou psychologique",
+        "closing": "Si vous avez besoin d’une prise en charge clinique ou traversez une détresse dépassant ce que l’auto-assistance peut soutenir, veuillez consulter un professionnel qualifié ou contacter les services d’urgence. Nous fournissons dans le Service des orientations vers ces services."
       },
       "section2": {
         "title": "2. The Readiness Check (Section 0) — Informational Only",

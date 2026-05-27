@@ -368,15 +368,15 @@
         "agreement": "Korzystając z platformy samopomocy MindReset AI („Usługa“), dostępnej pod adresem mindreset.ai, akceptujesz niniejsze Warunki. Prosimy o uważne zapoznanie się z nimi. Jeśli się z nimi nie zgadzasz, prosimy nie korzystać z Usługi."
       },
       "section1": {
-        "title": "1. What This Service Is — And What It Is Not",
-        "whatItIs": "<strong>What it is.</strong> The MindReset AI self-help platform (the \"Service\") is an AI-assisted self-help platform for general psychological wellbeing. It provides conversational reflection, structured self-exploration exercises, grounding practices, educational materials, and progress tracking. It draws on established frameworks including somatic regulation, parts-aware self-work, trauma-informed pacing principles, narrative reframing, and integrative identity formation. It is positioned as a <strong>wellbeing tool for non-clinical contexts.</strong>",
-        "whatItIsNotLabel": "<strong>What it is not.</strong>",
-        "notTherapyItem": "Not therapy, counselling, or psychiatric treatment",
-        "notMedicalItem": "Not a medical device",
-        "notSubstituteItem": "Not a substitute for a qualified clinician, doctor, or licensed mental health professional",
-        "notCrisisItem": "Not a crisis service, emergency service, or 24-hour helpline",
-        "notDiagnosticItem": "Not a diagnostic tool — it does not diagnose, treat, cure, or prevent any medical or psychological condition",
-        "closing": "If you require clinical care or are in distress that exceeds what self-help can support, please consult a qualified professional or contact emergency services. We provide signposting to such services within the Service."
+        "title": "1. Czym jest Usługa — a czym nie jest",
+        "whatItIs": "<strong>Czym jest Usługa.</strong> Platforma samopomocy MindReset AI („Usługa“) to wspierana przez AI platforma samopomocy przeznaczona do wspierania ogólnego dobrostanu psychicznego. Oferuje refleksję konwersacyjną, ustrukturyzowane ćwiczenia samopoznania, praktyki ugruntowujące, materiały edukacyjne oraz śledzenie postępów. Opiera się na uznanych podejściach, w tym regulacji somatycznej, pracy z częściami osobowości, trauma-informed zasadach stopniowego tempa, narracyjnym przeformułowaniu oraz integracyjnym kształtowaniu tożsamości. Jest pozycjonowana jako <strong>narzędzie wspierające dobrostan w kontekstach nieklinicznych.</strong>",
+        "whatItIsNotLabel": "<strong>Czym Usługa nie jest.</strong>",
+        "notTherapyItem": "Nie jest terapią, poradnictwem ani leczeniem psychiatrycznym",
+        "notMedicalItem": "Nie jest wyrobem medycznym",
+        "notSubstituteItem": "Nie zastępuje wykwalifikowanego klinicysty, lekarza ani licencjonowanego specjalisty zdrowia psychicznego",
+        "notCrisisItem": "Nie jest usługą kryzysową, służbą ratunkową ani całodobową linią wsparcia",
+        "notDiagnosticItem": "Nie jest narzędziem diagnostycznym — Usługa nie diagnozuje, nie leczy, nie uzdrawia ani nie zapobiega żadnym stanom medycznym lub psychologicznym",
+        "closing": "Jeśli potrzebujesz opieki klinicznej lub doświadczasz stanu wykraczającego poza możliwości wsparcia samopomocowego, skonsultuj się z wykwalifikowanym specjalistą lub skontaktuj się ze służbami ratunkowymi. W ramach Usługi udostępniamy informacje kierujące do takich usług."
       },
       "section2": {
         "title": "2. The Readiness Check (Section 0) — Informational Only",

@@ -343,15 +343,15 @@
         "agreement": "Используя платформу самопомощи MindReset AI («Сервис»), доступную на mindreset.ai, вы соглашаетесь с настоящими Условиями. Пожалуйста, внимательно ознакомьтесь с ними. Если вы не согласны, пожалуйста, не используйте Сервис."
       },
       "section1": {
-        "title": "1. What This Service Is — And What It Is Not",
-        "whatItIs": "<strong>What it is.</strong> The MindReset AI self-help platform (the \"Service\") is an AI-assisted self-help platform for general psychological wellbeing. It provides conversational reflection, structured self-exploration exercises, grounding practices, educational materials, and progress tracking. It draws on established frameworks including somatic regulation, parts-aware self-work, trauma-informed pacing principles, narrative reframing, and integrative identity formation. It is positioned as a <strong>wellbeing tool for non-clinical contexts.</strong>",
-        "whatItIsNotLabel": "<strong>What it is not.</strong>",
-        "notTherapyItem": "Not therapy, counselling, or psychiatric treatment",
-        "notMedicalItem": "Not a medical device",
-        "notSubstituteItem": "Not a substitute for a qualified clinician, doctor, or licensed mental health professional",
-        "notCrisisItem": "Not a crisis service, emergency service, or 24-hour helpline",
-        "notDiagnosticItem": "Not a diagnostic tool — it does not diagnose, treat, cure, or prevent any medical or psychological condition",
-        "closing": "If you require clinical care or are in distress that exceeds what self-help can support, please consult a qualified professional or contact emergency services. We provide signposting to such services within the Service."
+        "title": "1. Что представляет собой Сервис — и чем он не является",
+        "whatItIs": "<strong>Что представляет собой Сервис.</strong> Платформа самопомощи MindReset AI («Сервис») — это AI-платформа для самопомощи, предназначенная для общего психологического благополучия. Она предоставляет разговорную рефлексию, структурированные практики самопознания, техники заземления, образовательные материалы и отслеживание прогресса. Сервис основан на признанных подходах, включая соматическую регуляцию, работу с частями личности, trauma-informed принципы бережного темпа, нарративное переосмысление и интегративное формирование идентичности. Платформа позиционируется как <strong>инструмент поддержки благополучия для неклинического использования.</strong>",
+        "whatItIsNotLabel": "<strong>Чем Сервис не является.</strong>",
+        "notTherapyItem": "Не является терапией, консультированием или психиатрическим лечением",
+        "notMedicalItem": "Не является медицинским устройством",
+        "notSubstituteItem": "Не заменяет квалифицированного клинициста, врача или лицензированного специалиста в области психического здоровья",
+        "notCrisisItem": "Не является кризисной службой, экстренной службой или круглосуточной горячей линией",
+        "notDiagnosticItem": "Не является диагностическим инструментом — Сервис не диагностирует, не лечит, не излечивает и не предотвращает медицинские или психологические состояния",
+        "closing": "Если вам требуется клиническая помощь или вы испытываете состояние, выходящее за рамки возможностей самопомощи, пожалуйста, обратитесь к квалифицированному специалисту или в экстренные службы. Внутри Сервиса мы предоставляем информацию о том, как связаться с такими службами."
       },
       "section2": {
         "title": "2. The Readiness Check (Section 0) — Informational Only",

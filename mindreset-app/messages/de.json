@@ -368,15 +368,15 @@
         "agreement": "Durch die Nutzung der MindReset AI Selbsthilfeplattform („Service“), verfügbar unter mindreset.ai, stimmen Sie diesen Bedingungen zu. Bitte lesen Sie sie sorgfältig durch. Wenn Sie nicht zustimmen, nutzen Sie den Service bitte nicht."
       },
       "section1": {
-        "title": "1. What This Service Is — And What It Is Not",
-        "whatItIs": "<strong>What it is.</strong> The MindReset AI self-help platform (the \"Service\") is an AI-assisted self-help platform for general psychological wellbeing. It provides conversational reflection, structured self-exploration exercises, grounding practices, educational materials, and progress tracking. It draws on established frameworks including somatic regulation, parts-aware self-work, trauma-informed pacing principles, narrative reframing, and integrative identity formation. It is positioned as a <strong>wellbeing tool for non-clinical contexts.</strong>",
-        "whatItIsNotLabel": "<strong>What it is not.</strong>",
-        "notTherapyItem": "Not therapy, counselling, or psychiatric treatment",
-        "notMedicalItem": "Not a medical device",
-        "notSubstituteItem": "Not a substitute for a qualified clinician, doctor, or licensed mental health professional",
-        "notCrisisItem": "Not a crisis service, emergency service, or 24-hour helpline",
-        "notDiagnosticItem": "Not a diagnostic tool — it does not diagnose, treat, cure, or prevent any medical or psychological condition",
-        "closing": "If you require clinical care or are in distress that exceeds what self-help can support, please consult a qualified professional or contact emergency services. We provide signposting to such services within the Service."
+        "title": "1. Was dieser Service ist — und was er nicht ist",
+        "whatItIs": "<strong>Was der Service ist.</strong> Die MindReset AI Selbsthilfeplattform („Service“) ist eine KI-gestützte Selbsthilfeplattform für allgemeines psychologisches Wohlbefinden. Sie bietet reflektierende Gespräche, strukturierte Übungen zur Selbsterforschung, Grounding-Praktiken, Bildungsinhalte und Fortschrittsverfolgung. Der Service basiert auf etablierten Ansätzen, darunter somatische Regulation, teileorientierte Selbstarbeit, trauma-informed Prinzipien eines achtsamen Tempos, narrative Neubewertung und integrative Identitätsentwicklung. Der Service ist als <strong>Wellbeing-Tool für nicht-klinische Kontexte positioniert.</strong>",
+        "whatItIsNotLabel": "<strong>Was der Service nicht ist.</strong>",
+        "notTherapyItem": "Keine Therapie, Beratung oder psychiatrische Behandlung",
+        "notMedicalItem": "Kein Medizinprodukt",
+        "notSubstituteItem": "Kein Ersatz für einen qualifizierten Kliniker, Arzt oder zugelassenen Fachmann für psychische Gesundheit",
+        "notCrisisItem": "Kein Krisendienst, Notfalldienst oder 24-Stunden-Hilfetelefon",
+        "notDiagnosticItem": "Kein Diagnosetool — der Service diagnostiziert, behandelt, heilt oder verhindert keine medizinischen oder psychologischen Erkrankungen",
+        "closing": "Wenn Sie klinische Unterstützung benötigen oder sich in einer Belastungssituation befinden, die über die Möglichkeiten der Selbsthilfe hinausgeht, wenden Sie sich bitte an eine qualifizierte Fachkraft oder an den Notdienst. Innerhalb des Services stellen wir Hinweise auf entsprechende Dienste bereit."
       },
       "section2": {
         "title": "2. The Readiness Check (Section 0) — Informational Only",
