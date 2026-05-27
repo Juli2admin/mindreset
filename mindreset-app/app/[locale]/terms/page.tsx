@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { getTranslations } from 'next-intl/server';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
@@ -125,7 +126,8 @@ function ExtLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const t = await getTranslations('Terms');
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-3xl mx-auto px-6 py-4">
@@ -137,7 +139,7 @@ export default function TermsPage() {
           className="text-[11px] uppercase tracking-[0.22em] mb-16"
           style={{ color: PALETTE.textHint, fontFamily: SANS, fontWeight: 500 }}
         >
-          Last updated · {LAST_UPDATED}
+          {t('lastUpdated', { date: LAST_UPDATED })}
         </p>
 
         {/* ─── 1. Terms of Service ────────────────────────────── */}
@@ -784,22 +786,17 @@ export default function TermsPage() {
 
         {/* ─── 3. Medical & Crisis Disclaimer ─────────────────── */}
         <article className="mb-8">
-          <H2>Medical &amp; Crisis Disclaimer</H2>
+          <H2>{t('disclaimer.title')}</H2>
           <P>
-            <Strong>
-              MindReset is a wellbeing tool — not therapy, not a medical device, not a
-              crisis service.
-            </Strong>
+            {t.rich('disclaimer.primary', {
+              strong: (chunks) => <Strong>{chunks}</Strong>,
+            })}
           </P>
+          <P>{t('disclaimer.secondary')}</P>
           <P>
-            The AI here cannot diagnose, treat, or replace a clinician. If you are in
-            crisis, in danger, or experiencing severe psychological symptoms — please reach
-            out to professional support.
-          </P>
-          <P>
-            <Strong>UK:</Strong> Samaritans <Strong>116 123</Strong> (24/7). NHS{' '}
-            <Strong>111</Strong> option 2. Your GP. In an emergency: <Strong>999</Strong>{' '}
-            or A&amp;E.
+            {t.rich('disclaimer.ukCrisis', {
+              strong: (chunks) => <Strong>{chunks}</Strong>,
+            })}
           </P>
         </article>
 
