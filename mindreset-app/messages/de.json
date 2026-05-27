@@ -406,16 +406,16 @@
         "firstBlockItem": "Sobald auf den ersten Block zugegriffen wurde, gilt das Widerrufsrecht nicht mehr"
       },
       "howto": {
-        "title": "How to request a refund (where eligible)",
-        "intro": "Email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line so we can route it quickly. Include:",
-        "orderIdItem": "Your order ID",
-        "emailItem": "The email address associated with your account",
-        "reasonItem": "Reason for the refund request",
-        "outro": "Eligibility will be assessed based on the rules above. Approved refunds are processed to the original payment method within 10 business days."
+        "title": "So beantragen Sie eine Rückerstattung (sofern berechtigt)",
+        "intro": "Senden Sie eine E-Mail an <mail>support@mindreset.ai</mail> mit „REFUND“ im Betreff, damit wir Ihre Anfrage schneller bearbeiten können. Bitte geben Sie Folgendes an:",
+        "orderIdItem": "Ihre Bestellnummer",
+        "emailItem": "Die mit Ihrem Konto verknüpfte E-Mail-Adresse",
+        "reasonItem": "Grund für die Rückerstattungsanfrage",
+        "outro": "Die Berechtigung wird anhand der oben genannten Regeln geprüft. Genehmigte Rückerstattungen werden innerhalb von 10 Werktagen auf die ursprüngliche Zahlungsmethode zurückerstattet."
       },
       "faulty": {
-        "title": "Faulty content (statutory rights preserved)",
-        "body": "Nothing in this Refund Policy excludes your statutory rights under the <strong>Consumer Rights Act 2015</strong>. If digital content is faulty, not as described, or fails to function as expected, we will repair, replace, or refund the content as required by law, regardless of the waiver you signed at checkout. Contact us at <mail>support@mindreset.ai</mail> with details."
+        "title": "Fehlerhafte Inhalte (gesetzliche Rechte bleiben bestehen)",
+        "body": "Nichts in dieser Rückerstattungsrichtlinie schließt Ihre gesetzlichen Rechte gemäß dem <strong>Consumer Rights Act 2015</strong> aus. Wenn digitale Inhalte fehlerhaft sind, nicht der Beschreibung entsprechen oder nicht wie erwartet funktionieren, werden wir die Inhalte reparieren, ersetzen oder gemäß den gesetzlichen Anforderungen erstatten, unabhängig von dem beim Checkout bestätigten Verzicht. Kontaktieren Sie uns unter <mail>support@mindreset.ai</mail> mit einer Beschreibung des Problems."
       }
     },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",

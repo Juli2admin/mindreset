@@ -406,16 +406,16 @@
         "firstBlockItem": "Une fois le premier bloc consulté, le droit au délai de rétractation ne s’applique plus"
       },
       "howto": {
-        "title": "How to request a refund (where eligible)",
-        "intro": "Email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line so we can route it quickly. Include:",
-        "orderIdItem": "Your order ID",
-        "emailItem": "The email address associated with your account",
-        "reasonItem": "Reason for the refund request",
-        "outro": "Eligibility will be assessed based on the rules above. Approved refunds are processed to the original payment method within 10 business days."
+        "title": "Comment demander un remboursement (si applicable)",
+        "intro": "Envoyez un email à <mail>support@mindreset.ai</mail> avec « REFUND » dans l’objet afin que nous puissions traiter votre demande rapidement. Incluez :",
+        "orderIdItem": "Votre numéro de commande",
+        "emailItem": "L’adresse email associée à votre compte",
+        "reasonItem": "Motif de la demande de remboursement",
+        "outro": "L’éligibilité sera évaluée conformément aux règles ci-dessus. Les remboursements approuvés sont effectués sur le mode de paiement d’origine dans un délai de 10 jours ouvrables."
       },
       "faulty": {
-        "title": "Faulty content (statutory rights preserved)",
-        "body": "Nothing in this Refund Policy excludes your statutory rights under the <strong>Consumer Rights Act 2015</strong>. If digital content is faulty, not as described, or fails to function as expected, we will repair, replace, or refund the content as required by law, regardless of the waiver you signed at checkout. Contact us at <mail>support@mindreset.ai</mail> with details."
+        "title": "Contenu défectueux (droits légaux préservés)",
+        "body": "Rien dans cette Politique de remboursement n’exclut vos droits légaux au titre du <strong>Consumer Rights Act 2015</strong>. Si un contenu numérique est défectueux, ne correspond pas à sa description ou ne fonctionne pas comme prévu, nous réparerons, remplacerons ou rembourserons le contenu conformément à la loi, indépendamment de la renonciation confirmée lors du paiement. Contactez-nous à <mail>support@mindreset.ai</mail> avec les détails du problème."
       }
     },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",

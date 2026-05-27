@@ -406,16 +406,16 @@
         "firstBlockItem": "Po uzyskaniu dostępu do pierwszego bloku prawo do okresu odstąpienia od umowy przestaje obowiązywać"
       },
       "howto": {
-        "title": "How to request a refund (where eligible)",
-        "intro": "Email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line so we can route it quickly. Include:",
-        "orderIdItem": "Your order ID",
-        "emailItem": "The email address associated with your account",
-        "reasonItem": "Reason for the refund request",
-        "outro": "Eligibility will be assessed based on the rules above. Approved refunds are processed to the original payment method within 10 business days."
+        "title": "Jak ubiegać się o zwrot środków (jeśli dotyczy)",
+        "intro": "Wyślij email na adres <mail>support@mindreset.ai</mail> z dopiskiem „REFUND“ w temacie wiadomości, abyśmy mogli szybciej rozpatrzyć zgłoszenie. Podaj:",
+        "orderIdItem": "Numer zamówienia",
+        "emailItem": "Adres email powiązany z Twoim kontem",
+        "reasonItem": "Powód wniosku o zwrot środków",
+        "outro": "Uprawnienie do zwrotu zostanie ocenione zgodnie z powyższymi zasadami. Zatwierdzone zwroty są realizowane na pierwotną metodę płatności w ciągu 10 dni roboczych."
       },
       "faulty": {
-        "title": "Faulty content (statutory rights preserved)",
-        "body": "Nothing in this Refund Policy excludes your statutory rights under the <strong>Consumer Rights Act 2015</strong>. If digital content is faulty, not as described, or fails to function as expected, we will repair, replace, or refund the content as required by law, regardless of the waiver you signed at checkout. Contact us at <mail>support@mindreset.ai</mail> with details."
+        "title": "Wadliwa treść (ustawowe prawa pozostają zachowane)",
+        "body": "Żadne postanowienie niniejszej Polityki zwrotów nie wyłącza Twoich ustawowych praw wynikających z <strong>Consumer Rights Act 2015</strong>. Jeśli treść cyfrowa okaże się wadliwa, niezgodna z opisem lub nie działa zgodnie z oczekiwaniami, naprawimy, wymienimy lub zwrócimy środki za treść zgodnie z wymogami prawa, niezależnie od zrzeczenia potwierdzonego podczas płatności. Skontaktuj się z nami pod adresem <mail>support@mindreset.ai</mail> i opisz problem."
       }
     },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",

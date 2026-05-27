@@ -381,16 +381,16 @@
         "firstBlockItem": "После открытия первого блока право на период охлаждения больше не применяется"
       },
       "howto": {
-        "title": "How to request a refund (where eligible)",
-        "intro": "Email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line so we can route it quickly. Include:",
-        "orderIdItem": "Your order ID",
-        "emailItem": "The email address associated with your account",
-        "reasonItem": "Reason for the refund request",
-        "outro": "Eligibility will be assessed based on the rules above. Approved refunds are processed to the original payment method within 10 business days."
+        "title": "Как запросить возврат средств (если применимо)",
+        "intro": "Напишите на <mail>support@mindreset.ai</mail>, указав «REFUND» в теме письма, чтобы мы могли быстрее обработать запрос. Укажите:",
+        "orderIdItem": "Номер вашего заказа",
+        "emailItem": "Email-адрес, связанный с вашим аккаунтом",
+        "reasonItem": "Причина запроса на возврат средств",
+        "outro": "Право на возврат оценивается в соответствии с указанными выше правилами. Одобренные возвраты средств зачисляются на исходный способ оплаты в течение 10 рабочих дней."
       },
       "faulty": {
-        "title": "Faulty content (statutory rights preserved)",
-        "body": "Nothing in this Refund Policy excludes your statutory rights under the <strong>Consumer Rights Act 2015</strong>. If digital content is faulty, not as described, or fails to function as expected, we will repair, replace, or refund the content as required by law, regardless of the waiver you signed at checkout. Contact us at <mail>support@mindreset.ai</mail> with details."
+        "title": "Неисправный контент (законные права сохраняются)",
+        "body": "Ничто в настоящей Политике возврата средств не ограничивает ваши законные права в соответствии с <strong>Consumer Rights Act 2015</strong>. Если цифровой контент оказался неисправным, не соответствует описанию или работает не так, как ожидалось, мы отремонтируем, заменим или вернём средства за контент в соответствии с требованиями закона, независимо от отказа, подтверждённого вами при оформлении покупки. Свяжитесь с нами по адресу <mail>support@mindreset.ai</mail> и опишите проблему."
       }
     },
     "freeTasterCount": "Каждый новый пользователь получает 50 бесплатных сообщений с MiniMind.",
