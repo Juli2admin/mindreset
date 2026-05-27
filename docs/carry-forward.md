@@ -12,6 +12,16 @@ whose rationale would otherwise be lost.
 
 ## Disclaimer modal — exclusion list
 
+> **UPDATED 2026-05-26 (PR #55):** the layout-level exclusion approach
+> described below was abandoned. The DisclaimerGate component is now
+> mounted inside `app/[locale]/minimind/page.tsx`, not the root layout.
+> Pages that don't render the component cannot show the modal — no URL
+> detection, no middleware dependency. The denylist set and the
+> `x-pathname` reliance are gone. The original entry below is kept for
+> historical context.
+
+### Historical (pre-PR #55)
+
 The first-visit Medical & Crisis Disclaimer modal triggers on every page by
 default (via the cookie + DB check in `app/layout.tsx`). As of commit
 `23814e9`, the modal is **excluded from `/terms` and `/privacy`**.
@@ -24,9 +34,9 @@ at their own pace, including reading rules first. Anyone deep-linking to
 disclaimer remains mandatory on all other pages (`/`, `/screening`,
 `/sign-in`, `/sign-up`, `/account`).
 
-**Where it lives:** `app/layout.tsx` — the `DISCLAIMER_EXCLUDED_PATHS` set.
-The pathname is read from a custom `x-pathname` request header set by
-`middleware.ts`.
+**Where it lives (pre-PR #55):** `app/layout.tsx` — the
+`DISCLAIMER_EXCLUDED_PATHS` set. The pathname is read from a custom
+`x-pathname` request header set by `middleware.ts`.
 
 **If we add more legal pages** (e.g. `/cookies`, `/accessibility`, `/refunds`
 if we split it out from `/terms`), add them to `DISCLAIMER_EXCLUDED_PATHS` in
@@ -469,6 +479,14 @@ plan before the public launch hits.
 ---
 
 ## Language toggle missing on `/account`
+
+> **UPDATED 2026-05-26:** Resolved. The shared `TopBar` component now
+> renders `LanguagePicker` next to the user menu on every page that
+> uses TopBar — including `/home`, `/pricing`, `/minimind`, and the
+> legal pages. (`/account` itself is now just a 307 redirect to
+> `/home` since PR #54.) The original gap is closed. Persistence to
+> `User.locale` is a separate post-launch question and not blocked by
+> this entry. Original entry preserved below for historical context.
 
 The language toggle (EN / RU) was hidden on `/account` during Phase 2
 as a holding pattern — see the

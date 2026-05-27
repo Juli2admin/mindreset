@@ -73,10 +73,13 @@ See `docs/carry-forward.md`. Open question #16.
 sign-in / sign-up / terms / privacy pages are currently EN-only.
 All other pages have full next-intl coverage.
 
-### 6. `/account` LanguagePicker — `[blocker:launch]`
+### 6. `/account` LanguagePicker — ✅ RESOLVED
 
-Currently Footer-only. Add to `/account` top bar so users can switch
-locale from the account page without scrolling to the footer.
+Resolved by TopBar integration. The shared `TopBar` component renders
+`LanguagePicker` next to the user menu on every page that uses TopBar:
+`/home`, `/pricing`, `/minimind`, and the legal pages. (`/account`
+itself is now just a 307 redirect to `/home`.) The original concern
+was Footer-only; that's no longer the case.
 
 ### 7. Extended soft-cap notice — `[non-blocking]`
 
@@ -206,7 +209,7 @@ wired in Block B; content delivery is Block C:
 2. **`User.screeningResult` fix** (small, fully codable)
 3. **Voice input — Groq Whisper mic button** (1 session, pre-launch)
 4. **T&C duplication fix** (pre-existing bug)
-5. **Auth-page i18n + `/account` LanguagePicker** (0.5 session)
+5. **Auth-page i18n** (0.5 session) — LanguagePicker on signed-in surfaces was resolved by TopBar integration; sign-in/sign-up/legal-page translation remains.
 6. **Extended soft-cap notice** (small)
 7. **Native translation pass** (after all EN copy locked)
 8. **Mobile responsiveness audit** (manual + any fixes)

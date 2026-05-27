@@ -16,7 +16,7 @@
 | Resend SDK | `package.json` — `"resend": "^4.0.0"` | Installed; zero send calls in codebase |
 | Clerk webhook handler | `app/api/webhooks/clerk/route.ts` | Creates User on sign-up. Svix signature verified ✅ |
 | Stripe webhook handler | `app/api/stripe/webhook/route.ts` | Handles 6 events. Stripe signature verified ✅ |
-| Welcome email templates | `lib/email/welcome.ts`, `lib/email/resend.ts`, `lib/email/sendWelcome.ts` (PR #33 ✅ shipped) | EN + RU copy locked. Integrated into `/account/page.tsx` via `waitUntil`. Migration ran. Waiting on `RESEND_API_KEY` + DNS to go live. |
+| Welcome email templates | `lib/email/welcome.ts`, `lib/email/resend.ts`, `lib/email/sendWelcome.ts` (PR #33 ✅ shipped) | EN + RU copy locked. Integrated into `/home/page.tsx` via `waitUntil` (trigger moved from `/account/page.tsx` in PR #54). Resend live; emails sending. |
 | Static FAQ page | `app/[locale]/faq/page.tsx` (PR #34 ✅ shipped) | EN + RU, 21 Q&As. Linked from welcome email and Footer. |
 | Rate limiting + body cap | `lib/rateLimit.ts` + Upstash (PR #35 ✅ shipped) | Chat: 10/min/user. Screening: IP-based. Chat body capped at 8k chars. |
 
@@ -80,7 +80,7 @@
 
 | Type | When | Consent required? | Template |
 |---|---|---|---|
-| Welcome | First `/account` visit | No (transactional) | ✅ EN + RU written |
+| Welcome | First `/home` visit | No (transactional) | ✅ EN + RU written |
 | Subscription confirmed | `customer.subscription.created` webhook | No (contract) | Not built |
 | Subscription cancelled | `customer.subscription.deleted` webhook | No (contract) | Not built |
 | Payment failed | `invoice.payment_failed` webhook | No (contract) | Not built |

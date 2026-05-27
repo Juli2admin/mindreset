@@ -70,6 +70,11 @@ type Props = {
   atCap: boolean;
   currentTier: string | null;
   cycleResetAt: string | null;
+  // True when /minimind/page.tsx successfully ran the cookie-based
+  // screening linkage (or when it found the row was already linked).
+  // The client clears the cookie on mount so it doesn't keep
+  // travelling with every subsequent request for its 30-day TTL.
+  screeningCookieToClear: boolean;
 };
 
 function MiniMindHeader({
@@ -688,13 +693,46 @@ function AtCapBanner({
             {isFree ? t('seePlans') : t('buyTopUp')}
           </a>
           {!isFree && (
-            <a
-              href={`/${locale}/pricing`}
-              className="text-[14px] transition-opacity hover:opacity-70"
-              style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+            <button
+              type="button"
+              onClick={async () => {
+                // Subscriber wants to manage their plan from the at-cap
+                // moment. Call the Stripe portal directly rather than
+                // routing through /pricing — the latter would just be an
+                // extra hop to find the same Manage button on the active
+                // tier card. Mirrors PricingClient.handlePortal and
+                // HomeClient.handlePortal.
+                try {
+                  const res = await fetch('/api/stripe/portal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ locale }),
+                  });
+                  const data: { url?: string } = await res.json();
+                  if (data.url) {
+                    window.location.href = data.url;
+                  } else {
+                    // Fallback: portal call failed (no Stripe customer
+                    // record, missing env, etc.) — send the user to the
+                    // /pricing surface where they can still see their
+                    // tier state and surface the same Manage button.
+                    window.location.href = `/${locale}/pricing`;
+                  }
+                } catch {
+                  window.location.href = `/${locale}/pricing`;
+                }
+              }}
+              className="text-[14px] transition-opacity hover:opacity-70 cursor-pointer"
+              style={{
+                color: PALETTE.textMuted,
+                fontFamily: TOKENS.sans,
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+              }}
             >
               {t('managePlan')}
-            </a>
+            </button>
           )}
         </div>
       </div>
@@ -702,12 +740,29 @@ function AtCapBanner({
   );
 }
 
-export default function MiniMindClient({ lastConvo, atCap, currentTier, cycleResetAt }: Props) {
+export default function MiniMindClient({
+  lastConvo,
+  atCap,
+  currentTier,
+  cycleResetAt,
+  screeningCookieToClear,
+}: Props) {
   const t = useTranslations('MiniMind');
   // Resolved up-front so they're stable across event-handler closures.
   // These were const-at-module-scope strings pre-2a; now bundle-driven.
   const opener = t('opener');
   const streamErrorSuffix = t('streamErrorSuffix');
+
+  // Clear the screening cookie once /minimind has successfully linked
+  // it server-side (mirrors the /account-era pattern now lived on /home).
+  // The cookie's only purpose is letting an anonymous ScreeningResponse
+  // be promoted to a userId after sign-up; once that's done it has no
+  // further use and shouldn't keep travelling with every request.
+  useEffect(() => {
+    if (screeningCookieToClear) {
+      document.cookie = 'mr_screening=; Path=/; Max-Age=0; SameSite=Lax';
+    }
+  }, [screeningCookieToClear]);
   // Local mirror of the server-computed atCap so we can flip into the
   // AtCapBanner mid-session when the chat route returns 402 (counter
   // catches up between page load and send).

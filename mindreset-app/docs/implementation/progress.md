@@ -91,8 +91,9 @@ These need attention before public launch but are out of Block B scope:
   instance needs setup. Tracked in `docs/carry-forward.md`.
 - **Auth-page translation** — sign-in / sign-up / terms / privacy are
   EN-only.
-- **`/account` language toggle restoration** — LanguagePicker only in
-  Footer.
+- ~~`/account` language toggle restoration~~ — ✅ resolved by TopBar
+  integration; `LanguagePicker` renders on every TopBar-using surface
+  (`/home`, `/pricing`, `/minimind`, legal pages).
 - **RU phrases in safety scanner** — Phase 3c keyword scanner is
   EN-only.
 - **Pre-launch native translation pass** for fr/de/es/it/pl/pt — use
