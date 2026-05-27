@@ -376,12 +376,12 @@
         "noPartialItem": "<strong>Não são emitidos reembolsos parciais ou proporcionais</strong> para cancelamentos após o período de 7 dias"
       },
       "topup": {
-        "title": "MiniMind Message Top-up",
-        "priceItem": "£4.99 one-off purchase — adds 200 messages to your current billing cycle",
-        "immediateUseItem": "Delivered for immediate use as digital content",
-        "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access",
-        "nonRefundableItem": "<strong>Non-refundable once purchased</strong>",
-        "expiryItem": "Top-up messages expire at the end of the current billing cycle"
+        "title": "Recarga de mensagens MiniMind",
+        "priceItem": "Compra única de £4.99 — adiciona 200 mensagens ao seu ciclo de faturação atual",
+        "immediateUseItem": "Fornecido para utilização imediata como conteúdo digital",
+        "waiverItem": "No checkout, confirma a renúncia ao direito de cancelamento de 14 dias ao abrigo do Consumer Contracts Regulations 2013, em troca de acesso imediato",
+        "nonRefundableItem": "<strong>Não reembolsável após a compra</strong>",
+        "expiryItem": "As mensagens adicionais expiram no final do ciclo de faturação atual"
       },
       "modules": {
         "title": "States & Themes — individual module purchases",

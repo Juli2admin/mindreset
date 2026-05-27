@@ -351,12 +351,12 @@
         "noPartialItem": "<strong>Частичный или пропорциональный возврат средств</strong> после окончания 7-дневного периода не предоставляется"
       },
       "topup": {
-        "title": "MiniMind Message Top-up",
-        "priceItem": "£4.99 one-off purchase — adds 200 messages to your current billing cycle",
-        "immediateUseItem": "Delivered for immediate use as digital content",
-        "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access",
-        "nonRefundableItem": "<strong>Non-refundable once purchased</strong>",
-        "expiryItem": "Top-up messages expire at the end of the current billing cycle"
+        "title": "Дополнительные сообщения MiniMind",
+        "priceItem": "Разовая покупка за £4.99 — добавляет 200 сообщений к текущему платёжному периоду",
+        "immediateUseItem": "Предоставляется для немедленного использования как цифровой контент",
+        "waiverItem": "При оформлении покупки вы подтверждаете отказ от 14-дневного права на отмену в соответствии с Consumer Contracts Regulations 2013 в обмен на немедленный доступ",
+        "nonRefundableItem": "<strong>После покупки возврат средств не предусмотрен</strong>",
+        "expiryItem": "Дополнительные сообщения сгорают в конце текущего платёжного периода"
       },
       "modules": {
         "title": "States & Themes — individual module purchases",
