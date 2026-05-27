@@ -450,31 +450,31 @@
         "noCommercialItem": "Utilizar el Servicio o su contenido con fines comerciales"
       },
       "section8": {
-        "title": "8. Paid Products",
-        "intro": "The Service offers three product types. <strong>Current pricing is always displayed at checkout</strong> before any payment is taken. We may change pricing, offer promotional discounts, run sales, or adjust pricing for any product at any time; such changes do not affect any product you have already purchased.",
+        "title": "8. Productos de pago",
+        "intro": "El Servicio ofrece tres tipos de productos. <strong>Los precios vigentes siempre se muestran en el checkout</strong> antes de realizar cualquier pago. Podemos cambiar precios, ofrecer descuentos promocionales, realizar ventas o ajustar el precio de cualquier producto en cualquier momento; dichos cambios no afectan a productos ya adquiridos.",
         "minimind": {
           "title": "MiniMind",
-          "freeTaster": "<strong>Free taster.</strong> Every new account receives 50 messages with MiniMind at no cost. The taster does not require a card, has no time limit, and is limited to one per email address.",
+          "freeTaster": "<strong>Prueba gratuita.</strong> Cada nueva cuenta recibe 50 mensajes con MiniMind sin coste. La prueba no requiere tarjeta, no tiene límite de tiempo y está limitada a una por dirección email.",
           "subs": {
-            "title": "MiniMind subscriptions",
-            "intro": "Two tiers, each billed monthly or annually:",
-            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/month or £129/year. 200 messages per billing cycle.",
-            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
-            "billingItem": "Charged to your chosen payment method until you cancel",
-            "resetItem": "Message allowance resets at the start of each billing cycle and does not roll over",
-            "refundWindowItem": "<strong>7-day refund window:</strong> you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days or 30 messages used, the standard cancellation policy applies.",
-            "cancellationItem": "<strong>Cancellation:</strong> you may cancel at any time via your account billing settings. When you cancel:",
-            "cancelNoFurtherItem": "No further payments will be taken",
-            "cancelRetainItem": "You retain access until the end of your current billing cycle",
-            "cancelAutoEndItem": "Access ends automatically at the end of the current cycle",
-            "noPartialItem": "No partial-cycle refunds are issued for cancellations after the 7-day window"
+            "title": "Suscripciones MiniMind",
+            "intro": "Dos niveles, facturados mensual o anualmente:",
+            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/mes o £129/año. 200 mensajes por ciclo de facturación.",
+            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/mes o £209/año. 800 a 1,200 mensajes por ciclo de facturación.",
+            "billingItem": "Se cobrará al método de pago elegido hasta que cancele",
+            "resetItem": "La asignación de mensajes se reinicia al inicio de cada ciclo de facturación y no se acumula",
+            "refundWindowItem": "<strong>Periodo de reembolso de 7 días:</strong> puede solicitar un reembolso completo dentro de los 7 días posteriores a la compra inicial de la suscripción, habiendo utilizado menos de 30 mensajes, enviando un email a <mail>support@mindreset.ai</mail> con «REFUND» en el asunto. Después de 7 días o de haber utilizado 30 mensajes, se aplica la política de cancelación estándar.",
+            "cancellationItem": "<strong>Cancelación:</strong> puede cancelar en cualquier momento desde la configuración de facturación de su cuenta. Cuando cancela:",
+            "cancelNoFurtherItem": "No se realizarán más cobros",
+            "cancelRetainItem": "Mantendrá el acceso hasta el final del ciclo de facturación actual",
+            "cancelAutoEndItem": "El acceso finaliza automáticamente al final del ciclo actual",
+            "noPartialItem": "No se emiten reembolsos parciales después del periodo de reembolso de 7 días"
           },
           "topup": {
-            "title": "Message top-up",
-            "priceItem": "£4.99 one-off charge — adds 200 messages to your current billing cycle",
-            "expiryItem": "Top-up messages expire when your billing cycle resets",
-            "availableItem": "Available to both Essential and Extended subscribers; stackable",
-            "nonRefundableItem": "<strong>Non-refundable</strong> — top-ups are delivered for immediate use as digital content"
+            "title": "Recarga de mensajes",
+            "priceItem": "Cargo único de £4.99 — añade 200 mensajes al ciclo de facturación actual",
+            "expiryItem": "Los mensajes adicionales expiran cuando se reinicia el ciclo de facturación",
+            "availableItem": "Disponible para suscriptores Essential y Extended; acumulable",
+            "nonRefundableItem": "<strong>No reembolsable</strong> — las recargas se entregan para uso inmediato como contenido digital"
           }
         },
         "modules": {

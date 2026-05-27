@@ -425,31 +425,31 @@
         "noCommercialItem": "Использовать Сервис или его контент в коммерческих целях"
       },
       "section8": {
-        "title": "8. Paid Products",
-        "intro": "The Service offers three product types. <strong>Current pricing is always displayed at checkout</strong> before any payment is taken. We may change pricing, offer promotional discounts, run sales, or adjust pricing for any product at any time; such changes do not affect any product you have already purchased.",
+        "title": "8. Платные продукты",
+        "intro": "Сервис предлагает три типа продуктов. <strong>Актуальные цены всегда отображаются при оформлении заказа</strong> до проведения оплаты. Мы можем изменять цены, предлагать промо-скидки, проводить распродажи или корректировать стоимость любого продукта в любое время; такие изменения не затрагивают продукты, уже приобретённые вами.",
         "minimind": {
           "title": "MiniMind",
-          "freeTaster": "<strong>Free taster.</strong> Every new account receives 50 messages with MiniMind at no cost. The taster does not require a card, has no time limit, and is limited to one per email address.",
+          "freeTaster": "<strong>Бесплатный пробный доступ.</strong> Каждый новый аккаунт получает 50 сообщений в MiniMind бесплатно. Пробный доступ не требует банковской карты, не ограничен по времени и предоставляется один раз на один email-адрес.",
           "subs": {
-            "title": "MiniMind subscriptions",
-            "intro": "Two tiers, each billed monthly or annually:",
-            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/month or £129/year. 200 messages per billing cycle.",
-            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
-            "billingItem": "Charged to your chosen payment method until you cancel",
-            "resetItem": "Message allowance resets at the start of each billing cycle and does not roll over",
-            "refundWindowItem": "<strong>7-day refund window:</strong> you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days or 30 messages used, the standard cancellation policy applies.",
-            "cancellationItem": "<strong>Cancellation:</strong> you may cancel at any time via your account billing settings. When you cancel:",
-            "cancelNoFurtherItem": "No further payments will be taken",
-            "cancelRetainItem": "You retain access until the end of your current billing cycle",
-            "cancelAutoEndItem": "Access ends automatically at the end of the current cycle",
-            "noPartialItem": "No partial-cycle refunds are issued for cancellations after the 7-day window"
+            "title": "Подписки MiniMind",
+            "intro": "Два тарифа с ежемесячной или ежегодной оплатой:",
+            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/месяц или £129/год. 200 сообщений за расчётный период.",
+            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/месяц или £209/год. От 800 до 1,200 сообщений за расчётный период.",
+            "billingItem": "Оплата списывается с выбранного вами способа оплаты до момента отмены подписки",
+            "resetItem": "Лимит сообщений обновляется в начале каждого расчётного периода и не переносится на следующий период",
+            "refundWindowItem": "<strong>7-дневный период возврата:</strong> вы можете запросить полный возврат средств в течение 7 дней с момента первой покупки подписки, использовав менее 30 сообщений, написав на <mail>support@mindreset.ai</mail> с темой «REFUND». После 7 дней или использования 30 сообщений применяется стандартная политика отмены.",
+            "cancellationItem": "<strong>Отмена:</strong> вы можете отменить подписку в любое время через настройки биллинга аккаунта. При отмене:",
+            "cancelNoFurtherItem": "Дальнейшие списания прекращаются",
+            "cancelRetainItem": "Вы сохраняете доступ до конца текущего расчётного периода",
+            "cancelAutoEndItem": "Доступ автоматически прекращается в конце текущего периода",
+            "noPartialItem": "Частичные возвраты за расчётный период после 7-дневного периода возврата не предоставляются"
           },
           "topup": {
-            "title": "Message top-up",
-            "priceItem": "£4.99 one-off charge — adds 200 messages to your current billing cycle",
-            "expiryItem": "Top-up messages expire when your billing cycle resets",
-            "availableItem": "Available to both Essential and Extended subscribers; stackable",
-            "nonRefundableItem": "<strong>Non-refundable</strong> — top-ups are delivered for immediate use as digital content"
+            "title": "Докупка сообщений",
+            "priceItem": "Разовый платёж £4.99 — добавляет 200 сообщений к текущему расчётному периоду",
+            "expiryItem": "Дополнительные сообщения истекают при обновлении расчётного периода",
+            "availableItem": "Доступно для подписчиков Essential и Extended; можно суммировать",
+            "nonRefundableItem": "<strong>Без возврата средств</strong> — докупленные сообщения предоставляются для немедленного использования как цифровой контент"
           }
         },
         "modules": {
