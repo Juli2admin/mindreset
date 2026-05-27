@@ -399,11 +399,11 @@
         "noRefundsItem": "Dopo l’acquisto non vengono concessi rimborsi in nessuna circostanza, salvo quanto previsto dal Consumer Rights Act 2015 per contenuti difettosi"
       },
       "journeyInstalment": {
-        "title": "The Journey — Weekly instalment plan",
-        "scheduleItem": "12 weekly payments of £55 — each payment unlocks the next block of content",
-        "stopAnytimeItem": "You may stop future payments at any time",
-        "nonRefundablePaymentsItem": "Any weekly payments already made are non-refundable; previously unlocked content remains accessible after stopping payments",
-        "firstBlockItem": "Once the first block has been accessed, the right to a cooling-off period no longer applies"
+        "title": "The Journey — piano di pagamento settimanale",
+        "scheduleItem": "12 pagamenti settimanali da £55 — ogni pagamento sblocca il blocco successivo di contenuti",
+        "stopAnytimeItem": "Puoi interrompere i pagamenti futuri in qualsiasi momento",
+        "nonRefundablePaymentsItem": "I pagamenti settimanali già effettuati non sono rimborsabili; i contenuti precedentemente sbloccati rimangono accessibili dopo l’interruzione dei pagamenti",
+        "firstBlockItem": "Una volta effettuato l’accesso al primo blocco, il diritto al periodo di recesso non si applica più"
       },
       "howto": {
         "title": "How to request a refund (where eligible)",

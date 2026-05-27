@@ -374,11 +374,11 @@
         "noRefundsItem": "После покупки возврат средств не осуществляется ни при каких обстоятельствах, за исключением случаев, предусмотренных Consumer Rights Act 2015 для неисправного контента"
       },
       "journeyInstalment": {
-        "title": "The Journey — Weekly instalment plan",
-        "scheduleItem": "12 weekly payments of £55 — each payment unlocks the next block of content",
-        "stopAnytimeItem": "You may stop future payments at any time",
-        "nonRefundablePaymentsItem": "Any weekly payments already made are non-refundable; previously unlocked content remains accessible after stopping payments",
-        "firstBlockItem": "Once the first block has been accessed, the right to a cooling-off period no longer applies"
+        "title": "The Journey — еженедельный план оплаты",
+        "scheduleItem": "12 еженедельных платежей по £55 — каждый платёж открывает следующий блок контента",
+        "stopAnytimeItem": "Вы можете остановить дальнейшие платежи в любой момент",
+        "nonRefundablePaymentsItem": "Уже произведённые еженедельные платежи возврату не подлежат; ранее открытый контент остаётся доступным после прекращения платежей",
+        "firstBlockItem": "После открытия первого блока право на период охлаждения больше не применяется"
       },
       "howto": {
         "title": "How to request a refund (where eligible)",
