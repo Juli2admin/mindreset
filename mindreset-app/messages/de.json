@@ -379,17 +379,17 @@
         "closing": "Wenn Sie klinische Unterstützung benötigen oder sich in einer Belastungssituation befinden, die über die Möglichkeiten der Selbsthilfe hinausgeht, wenden Sie sich bitte an eine qualifizierte Fachkraft oder an den Notdienst. Innerhalb des Services stellen wir Hinweise auf entsprechende Dienste bereit."
       },
       "section2": {
-        "title": "2. The Readiness Check (Section 0) — Informational Only",
-        "intro": "Before engaging with the deeper materials of the Service, you are invited to complete a short Readiness Check. The Readiness Check is provided as <strong>informational guidance only.</strong> It is not a medical or psychological assessment, not a diagnosis, and not a clinical gate.",
-        "classificationLabel": "The Readiness Check classifies your responses into one of three informational categories:",
-        "greenItem": "<strong>Green</strong> — Your responses suggest the Service may be suitable for you at this time.",
-        "yellowItem": "<strong>Yellow</strong> — Your responses suggest you may benefit from a careful, paced introduction. Some materials may not be appropriate at this time.",
-        "redItem": "<strong>Red</strong> — Your responses suggest the Service may not be appropriate for you at this time, and that professional support would serve you better.",
-        "importantLabel": "<strong>Important.</strong> The Readiness Check provides information; it does not gate access to the Service. You may choose to proceed regardless of the result. If you choose to proceed despite a Red or Yellow result, or to retake the Readiness Check with different responses, you do so on your own responsibility and confirm by your continued use that:",
-        "understoodItem": "You have read and understood the Readiness Check result and the limitations of the Service stated in these Terms;",
-        "notForCrisisItem": "You understand the Service is not appropriate for active crisis, severe psychiatric symptoms, active suicidality, recent psychosis, dissociation requiring clinical care, or other conditions that exceed self-help support;",
-        "acceptResponsibilityItem": "You accept full responsibility for your decision to use the Service;",
-        "releaseLiabilityItem": "You release the operator of the Service (MindReset AI Ltd) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate."
+        "title": "2. Readiness Check (Section 0) — ausschließlich zu Informationszwecken",
+        "intro": "Bevor Sie auf die tiefergehenden Inhalte des Services zugreifen, werden Sie eingeladen, einen kurzen Readiness Check durchzuführen. Der Readiness Check dient <strong>ausschließlich zu Informationszwecken.</strong> Er stellt weder eine medizinische oder psychologische Bewertung noch eine Diagnose oder klinische Zugangsbeschränkung dar.",
+        "classificationLabel": "Der Readiness Check ordnet Ihre Antworten einer von drei Informationskategorien zu:",
+        "greenItem": "<strong>Green</strong> — Ihre Antworten deuten darauf hin, dass der Service derzeit für Sie geeignet sein könnte.",
+        "yellowItem": "<strong>Yellow</strong> — Ihre Antworten deuten darauf hin, dass ein vorsichtiger und schrittweiser Einstieg sinnvoll sein könnte. Einige Inhalte könnten derzeit nicht geeignet sein.",
+        "redItem": "<strong>Red</strong> — Ihre Antworten deuten darauf hin, dass der Service derzeit möglicherweise nicht für Sie geeignet ist und professionelle Unterstützung hilfreicher wäre.",
+        "importantLabel": "<strong>Wichtig.</strong> Der Readiness Check dient ausschließlich der Information und beschränkt den Zugang zum Service nicht. Sie können unabhängig vom Ergebnis fortfahren. Wenn Sie sich trotz eines Red- oder Yellow-Ergebnisses für die weitere Nutzung entscheiden oder den Readiness Check mit anderen Antworten erneut durchführen, tun Sie dies in eigener Verantwortung und bestätigen durch Ihre fortgesetzte Nutzung, dass:",
+        "understoodItem": "Sie das Ergebnis des Readiness Checks sowie die in diesen Bedingungen beschriebenen Einschränkungen des Services gelesen und verstanden haben;",
+        "notForCrisisItem": "Sie verstehen, dass der Service nicht für akute Krisen, schwere psychiatrische Symptome, akute Suizidalität, kürzlich aufgetretene Psychosen, klinisch behandlungsbedürftige Dissoziation oder andere Zustände geeignet ist, die über Selbsthilfe hinausgehen;",
+        "acceptResponsibilityItem": "Sie die volle Verantwortung für Ihre Entscheidung zur Nutzung des Services übernehmen;",
+        "releaseLiabilityItem": "Sie den Betreiber des Services (MindReset AI Ltd) von jeglicher Haftung für Schäden freistellen, die aus Ihrer Nutzung des Services entstehen, wenn der Readiness Check angezeigt hat, dass der Service möglicherweise nicht geeignet für Sie ist."
       },
       "section3": {
         "title": "3. Acceptance and Age",

@@ -379,17 +379,17 @@
         "closing": "Si necesita atención clínica o está atravesando una situación que excede lo que la autoayuda puede apoyar, consulte a un profesional cualificado o contacte con los servicios de emergencia. Dentro del Servicio proporcionamos orientación hacia dichos servicios."
       },
       "section2": {
-        "title": "2. The Readiness Check (Section 0) — Informational Only",
-        "intro": "Before engaging with the deeper materials of the Service, you are invited to complete a short Readiness Check. The Readiness Check is provided as <strong>informational guidance only.</strong> It is not a medical or psychological assessment, not a diagnosis, and not a clinical gate.",
-        "classificationLabel": "The Readiness Check classifies your responses into one of three informational categories:",
-        "greenItem": "<strong>Green</strong> — Your responses suggest the Service may be suitable for you at this time.",
-        "yellowItem": "<strong>Yellow</strong> — Your responses suggest you may benefit from a careful, paced introduction. Some materials may not be appropriate at this time.",
-        "redItem": "<strong>Red</strong> — Your responses suggest the Service may not be appropriate for you at this time, and that professional support would serve you better.",
-        "importantLabel": "<strong>Important.</strong> The Readiness Check provides information; it does not gate access to the Service. You may choose to proceed regardless of the result. If you choose to proceed despite a Red or Yellow result, or to retake the Readiness Check with different responses, you do so on your own responsibility and confirm by your continued use that:",
-        "understoodItem": "You have read and understood the Readiness Check result and the limitations of the Service stated in these Terms;",
-        "notForCrisisItem": "You understand the Service is not appropriate for active crisis, severe psychiatric symptoms, active suicidality, recent psychosis, dissociation requiring clinical care, or other conditions that exceed self-help support;",
-        "acceptResponsibilityItem": "You accept full responsibility for your decision to use the Service;",
-        "releaseLiabilityItem": "You release the operator of the Service (MindReset AI Ltd) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate."
+        "title": "2. Comprobación de preparación (Section 0) — solo con fines informativos",
+        "intro": "Antes de acceder a los materiales más profundos del Servicio, se le invita a completar una breve Comprobación de preparación. La Comprobación de preparación se proporciona <strong>únicamente con fines informativos.</strong> No constituye una evaluación médica o psicológica, un diagnóstico ni un filtro clínico.",
+        "classificationLabel": "La Comprobación de preparación clasifica sus respuestas en una de las siguientes tres categorías informativas:",
+        "greenItem": "<strong>Green</strong> — Sus respuestas sugieren que el Servicio puede ser adecuado para usted en este momento.",
+        "yellowItem": "<strong>Yellow</strong> — Sus respuestas sugieren que podría beneficiarse de una introducción cuidadosa y gradual. Algunos materiales podrían no ser apropiados en este momento.",
+        "redItem": "<strong>Red</strong> — Sus respuestas sugieren que el Servicio puede no ser apropiado para usted en este momento y que el apoyo profesional sería más adecuado.",
+        "importantLabel": "<strong>Importante.</strong> La Comprobación de preparación proporciona información; no limita el acceso al Servicio. Usted puede decidir continuar independientemente del resultado. Si decide continuar a pesar de un resultado Red o Yellow, o repetir la Comprobación de preparación con respuestas diferentes, lo hace bajo su propia responsabilidad y confirma mediante el uso continuado que:",
+        "understoodItem": "Ha leído y comprendido el resultado de la Comprobación de preparación y las limitaciones del Servicio descritas en estos Términos;",
+        "notForCrisisItem": "Comprende que el Servicio no es apropiado para crisis activas, síntomas psiquiátricos graves, suicidabilidad activa, psicosis reciente, disociación que requiera atención clínica u otras condiciones que excedan el apoyo de autoayuda;",
+        "acceptResponsibilityItem": "Acepta plena responsabilidad por su decisión de utilizar el Servicio;",
+        "releaseLiabilityItem": "Libera al operador del Servicio (MindReset AI Ltd) de responsabilidad por cualquier daño derivado del uso del Servicio cuando la Comprobación de preparación haya indicado que podría no ser apropiado para usted."
       },
       "section3": {
         "title": "3. Acceptance and Age",

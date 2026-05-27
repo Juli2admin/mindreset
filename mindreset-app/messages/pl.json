@@ -379,17 +379,17 @@
         "closing": "Jeśli potrzebujesz opieki klinicznej lub doświadczasz stanu wykraczającego poza możliwości wsparcia samopomocowego, skonsultuj się z wykwalifikowanym specjalistą lub skontaktuj się ze służbami ratunkowymi. W ramach Usługi udostępniamy informacje kierujące do takich usług."
       },
       "section2": {
-        "title": "2. The Readiness Check (Section 0) — Informational Only",
-        "intro": "Before engaging with the deeper materials of the Service, you are invited to complete a short Readiness Check. The Readiness Check is provided as <strong>informational guidance only.</strong> It is not a medical or psychological assessment, not a diagnosis, and not a clinical gate.",
-        "classificationLabel": "The Readiness Check classifies your responses into one of three informational categories:",
-        "greenItem": "<strong>Green</strong> — Your responses suggest the Service may be suitable for you at this time.",
-        "yellowItem": "<strong>Yellow</strong> — Your responses suggest you may benefit from a careful, paced introduction. Some materials may not be appropriate at this time.",
-        "redItem": "<strong>Red</strong> — Your responses suggest the Service may not be appropriate for you at this time, and that professional support would serve you better.",
-        "importantLabel": "<strong>Important.</strong> The Readiness Check provides information; it does not gate access to the Service. You may choose to proceed regardless of the result. If you choose to proceed despite a Red or Yellow result, or to retake the Readiness Check with different responses, you do so on your own responsibility and confirm by your continued use that:",
-        "understoodItem": "You have read and understood the Readiness Check result and the limitations of the Service stated in these Terms;",
-        "notForCrisisItem": "You understand the Service is not appropriate for active crisis, severe psychiatric symptoms, active suicidality, recent psychosis, dissociation requiring clinical care, or other conditions that exceed self-help support;",
-        "acceptResponsibilityItem": "You accept full responsibility for your decision to use the Service;",
-        "releaseLiabilityItem": "You release the operator of the Service (MindReset AI Ltd) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate."
+        "title": "2. Check gotowości (Section 0) — wyłącznie informacyjny",
+        "intro": "Przed rozpoczęciem korzystania z bardziej pogłębionych materiałów Usługi zostaniesz poproszony(-a) o ukończenie krótkiego Checku gotowości. Check gotowości jest udostępniany <strong>wyłącznie w celach informacyjnych.</strong> Nie stanowi oceny medycznej ani psychologicznej, diagnozy ani klinicznego ograniczenia dostępu.",
+        "classificationLabel": "Check gotowości klasyfikuje Twoje odpowiedzi do jednej z trzech kategorii informacyjnych:",
+        "greenItem": "<strong>Green</strong> — Twoje odpowiedzi sugerują, że Usługa może być dla Ciebie odpowiednia w tym momencie.",
+        "yellowItem": "<strong>Yellow</strong> — Twoje odpowiedzi sugerują, że możesz skorzystać na ostrożnym i stopniowym wprowadzeniu. Niektóre materiały mogą być obecnie nieodpowiednie.",
+        "redItem": "<strong>Red</strong> — Twoje odpowiedzi sugerują, że Usługa może nie być dla Ciebie odpowiednia w tym momencie i że lepszym rozwiązaniem byłoby profesjonalne wsparcie.",
+        "importantLabel": "<strong>Ważne.</strong> Check gotowości ma charakter wyłącznie informacyjny i nie ogranicza dostępu do Usługi. Możesz kontynuować niezależnie od wyniku. Jeśli zdecydujesz się kontynuować mimo wyniku Red lub Yellow albo ponownie przejść Check gotowości z innymi odpowiedziami, robisz to na własną odpowiedzialność i potwierdzasz dalszym korzystaniem, że:",
+        "understoodItem": "Przeczytałeś(-aś) i zrozumiałeś(-aś) wynik Checku gotowości oraz ograniczenia Usługi określone w niniejszych Warunkach;",
+        "notForCrisisItem": "Rozumiesz, że Usługa nie jest odpowiednia dla aktywnego kryzysu, ciężkich objawów psychiatrycznych, aktywnej suicydalności, niedawnej psychozy, dysocjacji wymagającej opieki klinicznej ani innych stanów wykraczających poza wsparcie samopomocowe;",
+        "acceptResponsibilityItem": "Przyjmujesz pełną odpowiedzialność za swoją decyzję o korzystaniu z Usługi;",
+        "releaseLiabilityItem": "Zwalniasz operatora Usługi (MindReset AI Ltd) z odpowiedzialności za wszelkie szkody wynikające z korzystania z Usługi w sytuacji, gdy Check gotowości wskazał, że Usługa może być dla Ciebie nieodpowiednia."
       },
       "section3": {
         "title": "3. Acceptance and Age",
