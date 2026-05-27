@@ -326,6 +326,11 @@
     "greenCta": "Continue → Create your account",
     "sessionRef": "Reference"
   },
+  "SignUp": {
+    "agreeToTerms": "I agree to the <link>Terms of Service</link>",
+    "agreeToPrivacy": "I agree to the <link>Privacy Policy</link>",
+    "acceptBothHint": "Please accept both to continue."
+  },
   "Terms": {
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
     "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",

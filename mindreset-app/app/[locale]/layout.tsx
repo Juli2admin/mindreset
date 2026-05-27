@@ -2,10 +2,39 @@ import '../globals.css';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ClerkProvider } from '@clerk/nextjs';
+import {
+  enUS,
+  ruRU,
+  frFR,
+  deDE,
+  esES,
+  itIT,
+  plPL,
+  ptBR,
+} from '@clerk/localizations';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { getPathname } from '@/i18n/navigation';
+
+// Clerk widget translation — maps our app locale codes to the localisation
+// objects shipped by @clerk/localizations. Used on the SignIn / SignUp
+// widgets and the Clerk-rendered UserButton menu. Without this, Clerk
+// renders in English regardless of the user's UI locale.
+//
+// 'pt' is mapped to Brazilian Portuguese (ptBR) — @clerk/localizations
+// does not ship a European Portuguese (ptPT) bundle at v3, and ptBR is
+// the closer reading for any pt-speaking user than English fallback.
+const CLERK_LOCALIZATIONS = {
+  en: enUS,
+  ru: ruRU,
+  fr: frFR,
+  de: deDE,
+  es: esES,
+  it: itIT,
+  pl: plPL,
+  pt: ptBR,
+} as const;
 
 // Phase i18n.1a — locale-scoped layout. Owns <html>/<body>/<head> so that
 // `lang={locale}` can be set per request, plus the providers ClerkProvider
@@ -66,6 +95,7 @@ export default async function LocaleLayout({
 
   return (
     <ClerkProvider
+      localization={CLERK_LOCALIZATIONS[locale as keyof typeof CLERK_LOCALIZATIONS] ?? enUS}
       signInUrl={signInUrl}
       signUpUrl={signUpUrl}
       signInFallbackRedirectUrl={afterAuthUrl}

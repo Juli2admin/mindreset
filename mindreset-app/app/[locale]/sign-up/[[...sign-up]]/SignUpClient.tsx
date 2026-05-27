@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { SignUp } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
@@ -66,6 +67,7 @@ type SignUpClientProps = {
 };
 
 export default function SignUpClient({ footerSlot }: SignUpClientProps) {
+  const t = useTranslations('SignUp');
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;
@@ -92,28 +94,34 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
         {isInitialStep && (
           <div className="mt-10 mb-8">
             <Checkbox checked={tcAccepted} onChange={setTcAccepted}>
-              I agree to the{' '}
-              <Link
-                href="/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-                style={{ color: PALETTE.accent }}
-              >
-                Terms of Service
-              </Link>
+              {t.rich('agreeToTerms', {
+                link: (chunks) => (
+                  <Link
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2"
+                    style={{ color: PALETTE.accent }}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </Checkbox>
             <Checkbox checked={privacyAccepted} onChange={setPrivacyAccepted}>
-              I agree to the{' '}
-              <Link
-                href="/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-                style={{ color: PALETTE.accent }}
-              >
-                Privacy Policy
-              </Link>
+              {t.rich('agreeToPrivacy', {
+                link: (chunks) => (
+                  <Link
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2"
+                    style={{ color: PALETTE.accent }}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </Checkbox>
           </div>
         )}
@@ -148,7 +156,7 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
             className="text-[14px] leading-[1.65] italic"
             style={{ fontFamily: TOKENS.sans, color: PALETTE.textMuted }}
           >
-            Please accept both the Terms of Service and the Privacy Policy to continue.
+            {t('acceptBothHint')}
           </p>
         )}
 
