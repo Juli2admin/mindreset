@@ -368,12 +368,12 @@
       "title": "Política de reembolso e cancelamento",
       "intro": "Esta Política de Reembolso faz parte dos nossos Termos de Serviço. Os preços atuais de todos os produtos são apresentados no checkout.",
       "minimind": {
-        "title": "MiniMind Subscriptions (Essential and Extended)",
-        "windowItem": "<strong>7-day refund window from initial purchase</strong> — for both monthly and annual plans. Request via <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days the standard cancellation policy applies.",
-        "cancelAnytimeItem": "Cancel anytime in your account billing settings",
-        "whenCancelItem": "When you cancel: <strong>no further payments are taken</strong>, and your access continues until the end of the current billing cycle",
-        "endOfCycleItem": "Access ends automatically at the end of the current cycle",
-        "noPartialItem": "<strong>No partial-cycle or pro-rata refunds</strong> are issued for cancellations after the 7-day window"
+        "title": "Subscrições MiniMind (Essential e Extended)",
+        "windowItem": "<strong>Período de reembolso de 7 dias a partir da compra inicial</strong> — aplicável a planos mensais e anuais. O pedido deve ser enviado para <mail>support@mindreset.ai</mail> com “REFUND” no assunto. Após 7 dias, aplica-se a política padrão de cancelamento.",
+        "cancelAnytimeItem": "Pode cancelar a subscrição a qualquer momento nas definições de faturação da sua conta",
+        "whenCancelItem": "Ao cancelar: <strong>não serão efetuados pagamentos adicionais</strong>, e o seu acesso continuará até ao final do ciclo de faturação atual",
+        "endOfCycleItem": "O acesso termina automaticamente no final do ciclo atual",
+        "noPartialItem": "<strong>Não são emitidos reembolsos parciais ou proporcionais</strong> para cancelamentos após o período de 7 dias"
       },
       "topup": {
         "title": "MiniMind Message Top-up",

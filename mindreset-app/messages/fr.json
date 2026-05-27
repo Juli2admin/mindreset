@@ -368,12 +368,12 @@
       "title": "Politique de remboursement et d’annulation",
       "intro": "Cette Politique de remboursement fait partie de nos Conditions d’utilisation. Les tarifs actuels de tous les produits sont affichés lors du paiement.",
       "minimind": {
-        "title": "MiniMind Subscriptions (Essential and Extended)",
-        "windowItem": "<strong>7-day refund window from initial purchase</strong> — for both monthly and annual plans. Request via <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days the standard cancellation policy applies.",
-        "cancelAnytimeItem": "Cancel anytime in your account billing settings",
-        "whenCancelItem": "When you cancel: <strong>no further payments are taken</strong>, and your access continues until the end of the current billing cycle",
-        "endOfCycleItem": "Access ends automatically at the end of the current cycle",
-        "noPartialItem": "<strong>No partial-cycle or pro-rata refunds</strong> are issued for cancellations after the 7-day window"
+        "title": "Abonnements MiniMind (Essential et Extended)",
+        "windowItem": "<strong>Délai de remboursement de 7 jours à compter de l’achat initial</strong> — applicable aux abonnements mensuels et annuels. Demande à envoyer via <mail>support@mindreset.ai</mail> avec « REFUND » dans l’objet. Après 7 jours, les conditions d’annulation standard s’appliquent.",
+        "cancelAnytimeItem": "Vous pouvez annuler à tout moment dans les paramètres de facturation de votre compte",
+        "whenCancelItem": "En cas d’annulation : <strong>aucun paiement supplémentaire ne sera prélevé</strong>, et votre accès continuera jusqu’à la fin du cycle de facturation en cours",
+        "endOfCycleItem": "L’accès prend automatiquement fin à la fin du cycle en cours",
+        "noPartialItem": "<strong>Aucun remboursement partiel ou au prorata</strong> n’est accordé pour les annulations après le délai de 7 jours"
       },
       "topup": {
         "title": "MiniMind Message Top-up",

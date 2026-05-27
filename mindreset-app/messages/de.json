@@ -368,12 +368,12 @@
       "title": "Rückerstattungs- und Kündigungsrichtlinie",
       "intro": "Diese Rückerstattungsrichtlinie ist Bestandteil unserer Nutzungsbedingungen. Die aktuellen Preise aller Produkte werden beim Checkout angezeigt.",
       "minimind": {
-        "title": "MiniMind Subscriptions (Essential and Extended)",
-        "windowItem": "<strong>7-day refund window from initial purchase</strong> — for both monthly and annual plans. Request via <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days the standard cancellation policy applies.",
-        "cancelAnytimeItem": "Cancel anytime in your account billing settings",
-        "whenCancelItem": "When you cancel: <strong>no further payments are taken</strong>, and your access continues until the end of the current billing cycle",
-        "endOfCycleItem": "Access ends automatically at the end of the current cycle",
-        "noPartialItem": "<strong>No partial-cycle or pro-rata refunds</strong> are issued for cancellations after the 7-day window"
+        "title": "MiniMind-Abonnements (Essential und Extended)",
+        "windowItem": "<strong>7-tägiges Rückerstattungsfenster ab dem Erstkauf</strong> — gilt sowohl für monatliche als auch jährliche Pläne. Anfrage über <mail>support@mindreset.ai</mail> mit „REFUND“ im Betreff. Nach Ablauf von 7 Tagen gelten die regulären Kündigungsbedingungen.",
+        "cancelAnytimeItem": "Sie können Ihr Abonnement jederzeit in den Abrechnungseinstellungen Ihres Kontos kündigen",
+        "whenCancelItem": "Wenn Sie kündigen: <strong>werden keine weiteren Zahlungen eingezogen</strong>, und Ihr Zugang bleibt bis zum Ende des aktuellen Abrechnungszeitraums bestehen",
+        "endOfCycleItem": "Der Zugang endet automatisch am Ende des aktuellen Zeitraums",
+        "noPartialItem": "<strong>Keine teilweisen oder anteiligen Rückerstattungen</strong> für Kündigungen nach Ablauf des 7-Tage-Fensters"
       },
       "topup": {
         "title": "MiniMind Message Top-up",

@@ -343,12 +343,12 @@
       "title": "Политика возврата средств и отмены подписки",
       "intro": "Настоящая Политика возврата средств является частью наших Условий использования. Актуальные цены на все продукты отображаются при оформлении покупки.",
       "minimind": {
-        "title": "MiniMind Subscriptions (Essential and Extended)",
-        "windowItem": "<strong>7-day refund window from initial purchase</strong> — for both monthly and annual plans. Request via <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days the standard cancellation policy applies.",
-        "cancelAnytimeItem": "Cancel anytime in your account billing settings",
-        "whenCancelItem": "When you cancel: <strong>no further payments are taken</strong>, and your access continues until the end of the current billing cycle",
-        "endOfCycleItem": "Access ends automatically at the end of the current cycle",
-        "noPartialItem": "<strong>No partial-cycle or pro-rata refunds</strong> are issued for cancellations after the 7-day window"
+        "title": "Подписки MiniMind (Essential и Extended)",
+        "windowItem": "<strong>7-дневный период возврата с момента первой покупки</strong> — действует как для месячных, так и для годовых планов. Запрос отправляется через <mail>support@mindreset.ai</mail> с темой письма \"REFUND\". По истечении 7 дней применяются стандартные условия отмены подписки.",
+        "cancelAnytimeItem": "Вы можете отменить подписку в любой момент в настройках оплаты аккаунта",
+        "whenCancelItem": "При отмене подписки: <strong>дальнейшие списания производиться не будут</strong>, а доступ сохранится до конца текущего платёжного периода",
+        "endOfCycleItem": "Доступ автоматически прекращается в конце текущего периода",
+        "noPartialItem": "<strong>Частичный или пропорциональный возврат средств</strong> после окончания 7-дневного периода не предоставляется"
       },
       "topup": {
         "title": "MiniMind Message Top-up",
