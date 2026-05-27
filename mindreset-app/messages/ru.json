@@ -332,6 +332,13 @@
     "acceptBothHint": "Чтобы продолжить, пожалуйста, примите оба условия."
   },
   "Terms": {
+    "lastUpdated": "Last updated · {date}",
+    "disclaimer": {
+      "title": "Medical & Crisis Disclaimer",
+      "primary": "<strong>MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.</strong>",
+      "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
+      "ukCrisis": "<strong>UK:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong> option 2. Your GP. In an emergency: <strong>999</strong> or A&E."
+    },
     "freeTasterCount": "Каждый новый пользователь получает 50 бесплатных сообщений с MiniMind.",
     "freeTasterNoCard": "Банковская карта не требуется, а пробный доступ не ограничен по времени.",
     "subsIntro": "Доступны два тарифа с ежемесячной или годовой оплатой.",
