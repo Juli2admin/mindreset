@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-// Phase i18n.1b — locale-aware Link.
-import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
@@ -152,7 +151,12 @@ function TD({ children }: { children: ReactNode }) {
   );
 }
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const t = await getTranslations('Privacy');
+  const strongRich = { strong: (c: ReactNode) => <Strong>{c}</Strong> };
+  const mailRich = { mail: () => <MailLink to="support@mindreset.ai" /> };
+  const strongMailRich = { ...strongRich, ...mailRich };
+
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-3xl mx-auto px-6 py-4">
@@ -164,318 +168,225 @@ export default function PrivacyPage() {
           className="text-[11px] uppercase tracking-[0.22em] mb-16"
           style={{ color: PALETTE.textHint, fontFamily: SANS, fontWeight: 500 }}
         >
-          Last updated · {LAST_UPDATED}
+          {t('lastUpdated', { date: LAST_UPDATED })}
         </p>
 
         {/* ─── Privacy Policy ─────────────────────────────────── */}
         <article className="mb-8">
-          <H2>Privacy Policy</H2>
+          <H2>{t('title')}</H2>
 
           <P>
-            <Strong>Data Controller:</Strong>{' '}
-            <Strong>MindReset AI self-help platform</Strong>, operated by Julia Loya
-            (sole proprietor), London, United Kingdom — <MailLink to="support@mindreset.ai" />
+            <Strong>{t('preamble.controllerLabel')}</Strong>{' '}
+            {t.rich('preamble.controllerBody', strongMailRich)}
           </P>
-          <Note>
-            [NOTE: ICO Registration to be obtained at ico.org.uk before public launch.
-            Annual fee ~£40-60. Register before any marketing or public availability.]
-          </Note>
+          <Note>{t('preamble.note')}</Note>
 
-          <H3 id="privacy-section-1">1. What This Policy Covers</H3>
-          <P>
-            This Privacy Policy explains what personal data we collect about you when
-            you use the Service, why we collect it, how we secure it, with whom we
-            share it, how long we keep it, and what rights you have under UK GDPR and
-            (where applicable) EU GDPR.
-          </P>
+          <H3 id="privacy-section-1">{t('section1.title')}</H3>
+          <P>{t('section1.body')}</P>
 
-          <H3 id="privacy-section-2">2. Data We Collect</H3>
+          <H3 id="privacy-section-2">{t('section2.title')}</H3>
           <Table>
             <THead>
               <TR>
-                <TH>Category</TH>
-                <TH>Examples</TH>
-                <TH>Purpose</TH>
-                <TH>Lawful basis</TH>
+                <TH>{t('section2.table.headerCategory')}</TH>
+                <TH>{t('section2.table.headerExamples')}</TH>
+                <TH>{t('section2.table.headerPurpose')}</TH>
+                <TH>{t('section2.table.headerLawfulBasis')}</TH>
               </TR>
             </THead>
             <tbody>
               <TR>
-                <TD><Strong>Account data</Strong></TD>
-                <TD>email address, hashed password, country (inferred from IP), preferred language</TD>
-                <TD>create and manage your account; deliver the Service</TD>
-                <TD>Contract</TD>
+                <TD><Strong>{t('section2.table.account.category')}</Strong></TD>
+                <TD>{t('section2.table.account.examples')}</TD>
+                <TD>{t('section2.table.account.purpose')}</TD>
+                <TD>{t('section2.table.account.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Screening data</Strong></TD>
-                <TD>your responses to the Readiness Check, resulting classification (Green / Yellow / Red), reason summary</TD>
-                <TD>classify whether the Service is appropriate for you; protect users from potential harm</TD>
-                <TD>Explicit consent (Art 9 §2 a UK GDPR)</TD>
+                <TD><Strong>{t('section2.table.screening.category')}</Strong></TD>
+                <TD>{t('section2.table.screening.examples')}</TD>
+                <TD>{t('section2.table.screening.purpose')}</TD>
+                <TD>{t('section2.table.screening.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Conversation data</Strong> (special category)</TD>
-                <TD>the messages you send to MiniMind or modules; reflections and answers in exercises; mood and energy check-ins</TD>
-                <TD>AI analysis to suggest practices; personalised wellbeing support; tracking your progress</TD>
-                <TD>Explicit consent (Art 9 §2 a UK GDPR)</TD>
+                <TD><Strong>{t('section2.table.conversation.category')}</Strong></TD>
+                <TD>{t('section2.table.conversation.examples')}</TD>
+                <TD>{t('section2.table.conversation.purpose')}</TD>
+                <TD>{t('section2.table.conversation.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Wellbeing profile</Strong></TD>
-                <TD>derived patterns (e.g., &ldquo;elevated anxiety&rdquo;, &ldquo;recent stable period&rdquo;), state and theme observations</TD>
-                <TD>personalisation; smart routing to appropriate practices and modules</TD>
-                <TD>Explicit consent (Art 9 §2 a UK GDPR)</TD>
+                <TD><Strong>{t('section2.table.wellbeing.category')}</Strong></TD>
+                <TD>{t('section2.table.wellbeing.examples')}</TD>
+                <TD>{t('section2.table.wellbeing.purpose')}</TD>
+                <TD>{t('section2.table.wellbeing.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Safety events</Strong></TD>
-                <TD>flagged conversation moments that triggered our safety protocol, our automated response, optional manual review notes</TD>
-                <TD>safety protocol audit; compliance with Online Safety Act 2023 priority offences obligations</TD>
-                <TD>Legitimate interest (audit trail for safety) / Legal obligation</TD>
+                <TD><Strong>{t('section2.table.safety.category')}</Strong></TD>
+                <TD>{t('section2.table.safety.examples')}</TD>
+                <TD>{t('section2.table.safety.purpose')}</TD>
+                <TD>{t('section2.table.safety.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Usage data</Strong></TD>
-                <TD>device type, browser, IP address, cookies, timestamps, page views</TD>
-                <TD>security, anti-abuse, service improvement, anonymous analytics</TD>
-                <TD>Legitimate interest</TD>
+                <TD><Strong>{t('section2.table.usage.category')}</Strong></TD>
+                <TD>{t('section2.table.usage.examples')}</TD>
+                <TD>{t('section2.table.usage.purpose')}</TD>
+                <TD>{t('section2.table.usage.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Payment data</Strong></TD>
-                <TD>last 4 digits of card, transaction ID, billing email (full card data is held by the payment processor, not us)</TD>
-                <TD>billing, fraud prevention, financial record-keeping</TD>
-                <TD>Contract / Legal obligation (tax law)</TD>
+                <TD><Strong>{t('section2.table.payment.category')}</Strong></TD>
+                <TD>{t('section2.table.payment.examples')}</TD>
+                <TD>{t('section2.table.payment.purpose')}</TD>
+                <TD>{t('section2.table.payment.lawfulBasis')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Support messages</Strong></TD>
-                <TD>emails you send to <MailLink to="support@mindreset.ai" /> or our other addresses</TD>
-                <TD>responding to inquiries; resolving issues</TD>
-                <TD>Legitimate interest</TD>
+                <TD><Strong>{t('section2.table.support.category')}</Strong></TD>
+                <TD>{t.rich('section2.table.support.examples', mailRich)}</TD>
+                <TD>{t('section2.table.support.purpose')}</TD>
+                <TD>{t('section2.table.support.lawfulBasis')}</TD>
               </TR>
             </tbody>
           </Table>
-          <P>
-            We do not request your real name, physical address, date of birth, or
-            government identifiers. Please avoid sharing personally identifying details
-            about yourself or others inside conversations with the AI.
-          </P>
+          <P>{t('section2.closing')}</P>
 
-          <H3 id="privacy-section-3">3. How We Use AI</H3>
-          <P>
-            Your conversation data is processed by our AI engine to generate responses
-            and suggest practices.
-          </P>
+          <H3 id="privacy-section-3">{t('section3.title')}</H3>
+          <P>{t('section3.intro')}</P>
           <UL>
-            <li>
-              The AI creates non-medical wellbeing observations (e.g., &ldquo;the user
-              describes physical tension when discussing work&rdquo;) to better
-              personalise practices
-            </li>
-            <li>The AI does not make medical diagnoses</li>
-            <li>The AI does not make decisions that have legal effects on you</li>
-            <li>
-              You may contact us at <MailLink to="support@mindreset.ai" /> if you
-              believe an automated response is incorrect or harmful; a human will review
-            </li>
+            <li>{t('section3.observationsItem')}</li>
+            <li>{t('section3.noDiagnosisItem')}</li>
+            <li>{t('section3.noLegalItem')}</li>
+            <li>{t.rich('section3.contactItem', mailRich)}</li>
           </UL>
-          <P>
-            Under Article 22 of UK GDPR, you have the right not to be subject to a
-            decision based solely on automated processing that produces legal or
-            similarly significant effects. The wellbeing observations and practice
-            suggestions made by our AI do not constitute such decisions.
-          </P>
+          <P>{t('section3.article22')}</P>
 
-          <H3 id="privacy-section-4">4. With Whom We Share Data</H3>
-          <P>
-            We <Strong>never</Strong> sell or rent your personal data. We share it
-            only with categories of service providers necessary to deliver the
-            Service:
-          </P>
+          <H3 id="privacy-section-4">{t('section4.title')}</H3>
+          <P>{t.rich('section4.intro', strongRich)}</P>
           <UL>
-            <li>Cloud hosting and database services</li>
-            <li>AI infrastructure (for the conversational and analytical features)</li>
-            <li>Speech-to-text transcription (for voice input)</li>
-            <li>Authentication and account management</li>
-            <li>Payment processing</li>
-            <li>Transactional email delivery</li>
-            <li>Website hosting</li>
+            <li>{t('section4.cloudItem')}</li>
+            <li>{t('section4.aiItem')}</li>
+            <li>{t('section4.speechItem')}</li>
+            <li>{t('section4.authItem')}</li>
+            <li>{t('section4.paymentItem')}</li>
+            <li>{t('section4.emailItem')}</li>
+            <li>{t('section4.hostingItem')}</li>
           </UL>
-          <P>
-            <Strong>Voice input.</Strong> If you choose to use voice input on MiniMind,
-            your recorded audio is securely transmitted to our speech-to-text provider
-            for transcription. We have enabled zero data retention with this provider —
-            audio is not stored after transcription on either MindReset infrastructure or
-            the provider&apos;s. Only the resulting text is saved as part of your
-            conversation history. You may use the Service entirely by typing if you
-            prefer.
-          </P>
-          <P>
-            Specific providers may change over time. A current list of the service
-            providers we use is available on request — email{' '}
-            <MailLink to="support@mindreset.ai" />.
-          </P>
-          <P>
-            We may also disclose your data when legally compelled by a court order or
-            similar legal process.
-          </P>
-          <P>
-            We use <Strong>Standard Contractual Clauses</Strong> (or equivalent UK IDTA
-            mechanisms) for any international data transfers, supplemented where
-            necessary by additional safeguards including encryption in transit and at
-            rest.
-          </P>
+          <P>{t.rich('section4.voiceInput', strongRich)}</P>
+          <P>{t.rich('section4.providersList', mailRich)}</P>
+          <P>{t('section4.legalDisclosure')}</P>
+          <P>{t.rich('section4.sccs', strongRich)}</P>
 
-          <H3 id="privacy-section-5">5. International Transfers</H3>
-          <P>
-            Your data may be processed outside the UK and EU, primarily in the United
-            States. Where this happens we rely on either:
-          </P>
+          <H3 id="privacy-section-5">{t('section5.title')}</H3>
+          <P>{t('section5.intro')}</P>
           <UL>
-            <li>An adequacy decision by the UK or EU (where one exists)</li>
-            <li>Standard Contractual Clauses approved by the European Commission or the UK ICO</li>
-            <li>Other appropriate safeguards permitted under UK GDPR or EU GDPR</li>
+            <li>{t('section5.adequacyItem')}</li>
+            <li>{t('section5.sccsItem')}</li>
+            <li>{t('section5.safeguardsItem')}</li>
           </UL>
-          <P>
-            You may request details of the specific safeguards in place for any
-            transfer by emailing <MailLink to="support@mindreset.ai" />.
-          </P>
+          <P>{t.rich('section5.requestDetails', mailRich)}</P>
 
-          <H3 id="privacy-section-6">6. Security</H3>
-          <P>
-            We implement appropriate technical and organisational measures to protect
-            your data:
-          </P>
+          <H3 id="privacy-section-6">{t('section6.title')}</H3>
+          <P>{t('section6.intro')}</P>
           <UL>
-            <li><Strong>TLS 1.2 or higher</Strong> for all data in transit</li>
-            <li><Strong>AES-256 encryption at rest</Strong> for stored data (provided by Supabase)</li>
-            <li><Strong>Hashed passwords</Strong> using industry-standard algorithms (managed by Clerk)</li>
-            <li><Strong>Role-based access</Strong> to our backend systems; access logged and audited</li>
-            <li><Strong>Confidentiality obligations</Strong> for anyone with access to data</li>
-            <li><Strong>Regular security reviews</Strong> and dependency vulnerability monitoring</li>
-            <li><Strong>Encrypted backups</Strong> with limited retention</li>
+            <li>{t.rich('section6.tlsItem', strongRich)}</li>
+            <li>{t.rich('section6.encryptionItem', strongRich)}</li>
+            <li>{t.rich('section6.hashedItem', strongRich)}</li>
+            <li>{t.rich('section6.accessItem', strongRich)}</li>
+            <li>{t.rich('section6.confidentialityItem', strongRich)}</li>
+            <li>{t.rich('section6.reviewsItem', strongRich)}</li>
+            <li>{t.rich('section6.backupsItem', strongRich)}</li>
           </UL>
-          <P>
-            No security system is 100% impenetrable. In the event of a data breach
-            affecting your rights and freedoms, we will notify the ICO within 72 hours
-            and, where required, notify affected users without undue delay.
-          </P>
+          <P>{t('section6.breach')}</P>
 
-          <H3 id="privacy-section-7">7. Retention</H3>
+          <H3 id="privacy-section-7">{t('section7.title')}</H3>
           <Table>
             <THead>
               <TR>
-                <TH>Data category</TH>
-                <TH>Retention period</TH>
+                <TH>{t('section7.table.headerCategory')}</TH>
+                <TH>{t('section7.table.headerPeriod')}</TH>
               </TR>
             </THead>
             <tbody>
               <TR>
-                <TD><Strong>Account data</Strong></TD>
-                <TD>Active account: until you delete it. Inactive account: deleted 12 months after last sign-in.</TD>
+                <TD><Strong>{t('section7.table.account.category')}</Strong></TD>
+                <TD>{t('section7.table.account.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Screening data</Strong></TD>
-                <TD>12 months after last sign-in, or immediately upon account deletion</TD>
+                <TD><Strong>{t('section7.table.screening.category')}</Strong></TD>
+                <TD>{t('section7.table.screening.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Conversation data</Strong></TD>
-                <TD>12 months after last sign-in, or immediately upon account deletion</TD>
+                <TD><Strong>{t('section7.table.conversation.category')}</Strong></TD>
+                <TD>{t('section7.table.conversation.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Wellbeing profile</Strong></TD>
-                <TD>Same as Conversation data</TD>
+                <TD><Strong>{t('section7.table.wellbeing.category')}</Strong></TD>
+                <TD>{t('section7.table.wellbeing.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Safety events</Strong></TD>
-                <TD>7 years (legal audit trail obligation) — depersonalised after account deletion</TD>
+                <TD><Strong>{t('section7.table.safety.category')}</Strong></TD>
+                <TD>{t('section7.table.safety.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Payment records</Strong></TD>
-                <TD>6 years (UK tax law requirement)</TD>
+                <TD><Strong>{t('section7.table.payment.category')}</Strong></TD>
+                <TD>{t('section7.table.payment.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Backups</Strong></TD>
-                <TD>Maximum 30 days</TD>
+                <TD><Strong>{t('section7.table.backups.category')}</Strong></TD>
+                <TD>{t('section7.table.backups.period')}</TD>
               </TR>
               <TR>
-                <TD><Strong>Support messages</Strong></TD>
-                <TD>24 months from last contact</TD>
+                <TD><Strong>{t('section7.table.support.category')}</Strong></TD>
+                <TD>{t('section7.table.support.period')}</TD>
               </TR>
             </tbody>
           </Table>
+          <P>{t('section7.deletion')}</P>
+
+          <H3 id="privacy-section-8">{t('section8.title')}</H3>
+          <P>{t('section8.intro')}</P>
+          <UL>
+            <li>{t.rich('section8.accessItem', strongRich)}</li>
+            <li>{t.rich('section8.rectificationItem', strongRich)}</li>
+            <li>{t.rich('section8.erasureItem', strongRich)}</li>
+            <li>{t.rich('section8.restrictionItem', strongRich)}</li>
+            <li>{t.rich('section8.objectionItem', strongRich)}</li>
+            <li>{t.rich('section8.portabilityItem', strongRich)}</li>
+            <li>{t.rich('section8.withdrawConsentItem', strongRich)}</li>
+          </UL>
+          <P>{t('section8.exerciseLabel')}</P>
+          <UL>
+            <li>{t('section8.dataSectionItem')}</li>
+            <li>{t.rich('section8.emailItem', mailRich)}</li>
+          </UL>
+          <P>{t('section8.responseTime')}</P>
           <P>
-            You may request earlier deletion of any data, except where we have a legal
-            obligation to retain it (e.g., financial records under tax law, safety
-            events under Online Safety Act).
+            {t.rich('section8.icoComplaint', {
+              ico: (c) => <ExtLink href="https://ico.org.uk">{c}</ExtLink>,
+            })}
           </P>
 
-          <H3 id="privacy-section-8">8. Your Rights</H3>
-          <P>Under UK GDPR (and EU GDPR where applicable), you have the right to:</P>
+          <H3 id="privacy-section-9">{t('section9.title')}</H3>
+          <P>{t('section9.intro')}</P>
           <UL>
-            <li><Strong>Access</Strong> — request a copy of the personal data we hold about you</li>
-            <li><Strong>Rectification</Strong> — correct inaccurate data</li>
-            <li><Strong>Erasure</Strong> — request deletion of your data (&ldquo;right to be forgotten&rdquo;), subject to legal retention obligations</li>
-            <li><Strong>Restriction</Strong> — request that we limit how we process your data</li>
-            <li><Strong>Objection</Strong> — object to processing based on legitimate interests</li>
-            <li><Strong>Portability</Strong> — receive your data in a structured, commonly-used, machine-readable format</li>
-            <li><Strong>Withdraw consent</Strong> — for any processing based on consent</li>
+            <li>{t.rich('section9.necessaryItem', strongRich)}</li>
+            <li>{t.rich('section9.analyticsItem', strongRich)}</li>
           </UL>
-          <P>To exercise any of these rights:</P>
-          <UL>
-            <li>Use the &ldquo;Data&rdquo; section in your account settings (when available), or</li>
-            <li>Email <MailLink to="support@mindreset.ai" /> with your request</li>
-          </UL>
-          <P>
-            We will respond within one month, or notify you within one month if we
-            need additional time (up to a further two months) due to complexity.
-          </P>
-          <P>
-            If you are unsatisfied with our handling of your data, you have the right
-            to lodge a complaint with the UK Information Commissioner&apos;s Office
-            (ICO) at <ExtLink href="https://ico.org.uk">ico.org.uk</ExtLink>, or with
-            your local data protection authority in the EU.
-          </P>
+          <P>{t('section9.noAds')}</P>
 
-          <H3 id="privacy-section-9">9. Cookies</H3>
-          <P>We use:</P>
+          <H3 id="privacy-section-10">{t('section10.title')}</H3>
+          <P>{t.rich('section10.body', mailRich)}</P>
+
+          <H3 id="privacy-section-11">{t('section11.title')}</H3>
+          <P>{t('section11.body')}</P>
+
+          <H3 id="privacy-section-12">{t('section12.title')}</H3>
+          <P>{t('section12.intro')}</P>
           <UL>
             <li>
-              <Strong>Strictly necessary cookies</Strong> — for authentication (Clerk
-              session), security, and basic site function. These cannot be disabled
+              <Strong>{t('section12.emailLabel')}</Strong>{' '}
+              <MailLink to="support@mindreset.ai" />
             </li>
             <li>
-              <Strong>Optional analytics cookies</Strong> — for understanding usage
-              patterns and improving the Service. You will be asked to accept or
-              decline these on your first visit
-            </li>
-          </UL>
-          <P>
-            We do not use advertising cookies, tracking pixels for marketing, or
-            third-party trackers.
-          </P>
-
-          <H3 id="privacy-section-10">10. Children&apos;s Data</H3>
-          <P>
-            The Service is for adults aged 18 and over. We do not knowingly collect
-            personal data from individuals under 18. If you believe a child under 18
-            has provided us with personal data, please contact us at{' '}
-            <MailLink to="support@mindreset.ai" /> and we will delete it.
-          </P>
-
-          <H3 id="privacy-section-11">11. Changes to This Policy</H3>
-          <P>
-            We may update this Privacy Policy from time to time to reflect changes in
-            our practices or in applicable law. Material changes will be announced by
-            email and/or in-app at least 30 days before they take effect. Continued
-            use of the Service after the effective date constitutes acceptance of the
-            updated Policy.
-          </P>
-
-          <H3 id="privacy-section-12">12. Contact</H3>
-          <P>For privacy-related questions or to exercise your rights:</P>
-          <UL>
-            <li><Strong>Email:</Strong> <MailLink to="support@mindreset.ai" /></li>
-            <li>
-              <Strong>Postal address:</Strong>{' '}
-              <Note inline>
-                [NOTE: To be added when a registered business address is available.]
-              </Note>
+              <Strong>{t('section12.postalLabel')}</Strong>{' '}
+              <Note inline>{t('section12.postalNote')}</Note>
             </li>
           </UL>
         </article>
