@@ -503,9 +503,9 @@
         "statutoryRights": "Ничто в настоящих Terms не влияет на ваши законные права как потребителя в соответствии с <strong>Consumer Rights Act 2015</strong> или <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
       },
       "section11": {
-        "title": "11. Data Protection",
-        "specialCategory": "We process personal and special-category data as described in our <privacy>Privacy Policy</privacy>. Special-category data (including data about your mental health and wellbeing) is processed only with your explicit consent, which you grant by accepting these Terms and using the Service for its intended purpose.",
-        "lawfulBasis": "The lawful basis for processing this data is <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> and the equivalent provision of EU GDPR. You may withdraw this consent at any time by deleting your account, at which point your conversational data will be deleted in accordance with our retention schedule."
+        "title": "11. Защита данных",
+        "specialCategory": "Мы обрабатываем персональные данные и special-category data, как описано в нашей <privacy>Политике конфиденциальности</privacy>. Special-category data (включая данные о вашем психическом здоровье и wellbeing) обрабатываются исключительно с вашего явного согласия, которое вы предоставляете, принимая настоящие Terms и используя Сервис по его назначению.",
+        "lawfulBasis": "Правовым основанием для обработки данных является <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> и эквивалентное положение EU GDPR. Вы можете отозвать это согласие в любое время, удалив свой аккаунт; в этом случае ваши conversational data будут удалены в соответствии с нашей retention schedule."
       },
       "section12": {
         "title": "12. Compliance with Applicable Law",

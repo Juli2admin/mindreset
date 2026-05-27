@@ -528,9 +528,9 @@
         "statutoryRights": "Nulla nelle presenti Terms pregiudica i tuoi diritti statutari come consumatore ai sensi del <strong>Consumer Rights Act 2015</strong> o del <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
       },
       "section11": {
-        "title": "11. Data Protection",
-        "specialCategory": "We process personal and special-category data as described in our <privacy>Privacy Policy</privacy>. Special-category data (including data about your mental health and wellbeing) is processed only with your explicit consent, which you grant by accepting these Terms and using the Service for its intended purpose.",
-        "lawfulBasis": "The lawful basis for processing this data is <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> and the equivalent provision of EU GDPR. You may withdraw this consent at any time by deleting your account, at which point your conversational data will be deleted in accordance with our retention schedule."
+        "title": "11. Protezione dei dati",
+        "specialCategory": "Trattiamo dati personali e special-category data come descritto nella nostra <privacy>Informativa sulla Privacy</privacy>. I special-category data (compresi i dati relativi alla tua salute mentale e wellbeing) vengono trattati esclusivamente con il tuo consenso esplicito, che concedi accettando queste Terms e utilizzando il Servizio per la finalità prevista.",
+        "lawfulBasis": "La base giuridica per il trattamento di tali dati è il <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> e la disposizione equivalente del EU GDPR. Puoi revocare tale consenso in qualsiasi momento eliminando il tuo account; in tal caso, i tuoi conversational data saranno eliminati conformemente al nostro retention schedule."
       },
       "section12": {
         "title": "12. Compliance with Applicable Law",
