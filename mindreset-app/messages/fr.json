@@ -361,11 +361,11 @@
     "article1": {
       "title": "Terms of Service",
       "preamble": {
-        "operatorLabel": "Operator:",
-        "operatorBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, a company registered in England & Wales, based in London, United Kingdom.",
-        "note": "[NOTE: Company registration number and registered office address to be inserted. The methodology and product structure remain the same.]",
-        "contactLabel": "Contact:",
-        "agreement": "By using the MindReset AI self-help platform (the \"Service\"), available at mindreset.ai, you agree to these Terms. Read them carefully. If you do not agree, please do not use the Service."
+        "operatorLabel": "Opérateur :",
+        "operatorBody": "<strong>Plateforme d’auto-assistance MindReset AI</strong>, exploitée par <strong>MindReset AI Ltd</strong>, société enregistrée en Angleterre et au Pays de Galles, basée à Londres, Royaume-Uni.",
+        "note": "[NOTE : Le numéro d’enregistrement de la société et l’adresse du siège social seront ajoutés ultérieurement. La méthodologie et la structure du produit resteront inchangées.]",
+        "contactLabel": "Contact :",
+        "agreement": "En utilisant la plateforme d’auto-assistance MindReset AI (« Service »), disponible sur mindreset.ai, vous acceptez les présentes Conditions. Veuillez les lire attentivement. Si vous n’êtes pas d’accord, veuillez ne pas utiliser le Service."
       },
       "section1": {
         "title": "1. What This Service Is — And What It Is Not",
