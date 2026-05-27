@@ -365,8 +365,8 @@
       "ukCrisis": "<strong>Wielka Brytania:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, opcja 2. Twój GP. W nagłym przypadku: <strong>999</strong> lub A&E."
     },
     "refund": {
-      "title": "Refund & Cancellation Policy",
-      "intro": "This Refund Policy forms part of our Terms of Service. Current pricing for all products is shown at checkout.",
+      "title": "Polityka zwrotów i anulowania",
+      "intro": "Niniejsza Polityka zwrotów stanowi część naszych Warunków korzystania z usługi. Aktualne ceny wszystkich produktów są wyświetlane podczas płatności.",
       "minimind": {
         "title": "MiniMind Subscriptions (Essential and Extended)",
         "windowItem": "<strong>7-day refund window from initial purchase</strong> — for both monthly and annual plans. Request via <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days the standard cancellation policy applies.",
