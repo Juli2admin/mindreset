@@ -359,12 +359,12 @@
         "expiryItem": "Дополнительные сообщения сгорают в конце текущего платёжного периода"
       },
       "modules": {
-        "title": "States & Themes — individual module purchases",
-        "priceItem": "£59 per module (non-subscribers) — one-off, permanent access",
-        "subscriberDiscountItem": "Active MiniMind subscribers (Essential or Extended) pay £29 per module — discount applied automatically at checkout",
-        "immediateAccessItem": "Access begins immediately upon successful payment",
-        "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject",
-        "openedNonRefundableItem": "<strong>Once a module has been opened, the purchase is non-refundable</strong>"
+        "title": "States & Themes — отдельные покупки модулей",
+        "priceItem": "£59 за модуль (для пользователей без подписки) — разовая покупка с постоянным доступом",
+        "subscriberDiscountItem": "Активные подписчики MiniMind (Essential или Extended) оплачивают £29 за модуль — скидка применяется автоматически при оформлении покупки",
+        "immediateAccessItem": "Доступ предоставляется сразу после успешной оплаты",
+        "waiverItem": "При оформлении покупки вы подтверждаете отказ от 14-дневного права на отмену в соответствии с Consumer Contracts Regulations 2013 в обмен на немедленный доступ. Если вы не откроете модуль в течение 14 дней после покупки, вы можете запросить полный возврат средств, отправив письмо на <mail>support@mindreset.ai</mail> с темой \"REFUND\"",
+        "openedNonRefundableItem": "<strong>После открытия модуля покупка возврату не подлежит</strong>"
       },
       "journeyOnetime": {
         "title": "The Journey — One-time payment",
