@@ -53,9 +53,18 @@
   "CrisisResources": {
     "crisisLabel": "Need help right now?",
     "crisisItems": [
-      { "name": "Samaritans", "detail": "Call 116 123 — 24/7, free" },
-      { "name": "Shout", "detail": "Text SHOUT to 85258 — 24/7" },
-      { "name": "NHS 111", "detail": "Mental health crisis line — option 2" }
+      {
+        "name": "Samaritans",
+        "detail": "Call 116 123 — 24/7, free"
+      },
+      {
+        "name": "Shout",
+        "detail": "Text SHOUT to 85258 — 24/7"
+      },
+      {
+        "name": "NHS 111",
+        "detail": "Mental health crisis line — option 2"
+      }
     ],
     "disclaimer": "MindReset is a wellbeing tool — not therapy, not a medical device, and not a substitute for professional care. If you are in immediate danger, please use one of the lines above or call 999."
   },
@@ -111,7 +120,11 @@
     "whatKicker": "What this is",
     "whatTitle": "Structure, not advice.",
     "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
-    "whatNot": ["therapy", "coaching", "a crisis service"],
+    "whatNot": [
+      "therapy",
+      "coaching",
+      "a crisis service"
+    ],
     "notWord": "Not",
     "whatHelpsLead": "It helps you:",
     "whatHelpsItems": [
@@ -297,10 +310,22 @@
     "redBody": "What you described needs more than an AI companion can safely offer. That is not a failure on your part — it just means a real human, with proper training, is the right next step. Please reach out today, not tomorrow.",
     "redResourcesTitle": "Where to turn now",
     "redResources": [
-      { "name": "Samaritans", "detail": "Call 116 123 — free, 24/7, any reason" },
-      { "name": "NHS 111", "detail": "Press option 2 for the mental health line" },
-      { "name": "Your GP", "detail": "Ask for an urgent same-day appointment" },
-      { "name": "A&E or 999", "detail": "If you feel unsafe right now" }
+      {
+        "name": "Samaritans",
+        "detail": "Call 116 123 — free, 24/7, any reason"
+      },
+      {
+        "name": "NHS 111",
+        "detail": "Press option 2 for the mental health line"
+      },
+      {
+        "name": "Your GP",
+        "detail": "Ask for an urgent same-day appointment"
+      },
+      {
+        "name": "A&E or 999",
+        "detail": "If you feel unsafe right now"
+      }
     ],
     "redFooter": "We are not the right service for this moment, but the people above are. You deserve to be heard by someone who can really help.",
     "yellowKicker": "Caution path",
