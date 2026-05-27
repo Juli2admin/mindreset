@@ -493,14 +493,14 @@
         "oneOffItem": "<strong>Разовые продукты:</strong> отправьте email на <mail>support@mindreset.ai</mail> с темой «REFUND», указав ID заказа, email аккаунта и причину запроса на возврат"
       },
       "section10": {
-        "title": "10. Limitation of Liability",
-        "asIs": "The Service is provided <strong>\"as is\" and \"as available\"</strong> without warranties of any kind, express or implied, to the fullest extent permitted by law.",
-        "fullestExtentLabel": "To the fullest extent permitted by applicable law:",
-        "aggregateItem": "Our total aggregate liability to you for any claim arising from your use of the Service is limited to the greater of (a) the amount you paid us in the six (6) months preceding the claim, or (b) £100.",
-        "indirectItem": "We are not liable for indirect, incidental, special, consequential, or punitive damages of any kind.",
-        "decisionsItem": "We are not liable for any decisions you make, actions you take, or harm you experience as a result of using the Service, except where such liability cannot be excluded by law.",
-        "nothingItem": "Nothing in these Terms excludes our liability for death or personal injury caused by our negligence, for fraud, or for any other liability that cannot lawfully be excluded.",
-        "statutoryRights": "Nothing in these Terms affects your statutory rights as a consumer under the <strong>Consumer Rights Act 2015</strong> or the <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
+        "title": "10. Ограничение ответственности",
+        "asIs": "Сервис предоставляется <strong>«as is» и «as available»</strong> без каких-либо гарантий, явных или подразумеваемых, в максимально допустимой законом степени.",
+        "fullestExtentLabel": "В максимально допустимой применимым законодательством степени:",
+        "aggregateItem": "Наша совокупная ответственность перед вами по любым требованиям, связанным с использованием Сервиса, ограничивается большей из следующих сумм: (a) суммой, уплаченной вами нам за шесть (6) месяцев, предшествующих предъявлению требования, либо (b) £100.",
+        "indirectItem": "Мы не несём ответственности за любые косвенные, случайные, специальные, последующие или штрафные убытки любого рода.",
+        "decisionsItem": "Мы не несём ответственности за любые решения, действия или вред, возникшие в результате использования Сервиса, за исключением случаев, когда такая ответственность не может быть исключена законом.",
+        "nothingItem": "Ничто в настоящих Terms не исключает нашу ответственность за смерть или причинение вреда здоровью вследствие нашей небрежности, за мошенничество или за любую иную ответственность, которая не может быть законно исключена.",
+        "statutoryRights": "Ничто в настоящих Terms не влияет на ваши законные права как потребителя в соответствии с <strong>Consumer Rights Act 2015</strong> или <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
       },
       "section11": {
         "title": "11. Data Protection",

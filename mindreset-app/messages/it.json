@@ -518,14 +518,14 @@
         "oneOffItem": "<strong>Prodotti una tantum:</strong> invia un email a <mail>support@mindreset.ai</mail> con «REFUND» nell’oggetto, indicando ID dell’ordine, email dell’account e motivo della richiesta di rimborso"
       },
       "section10": {
-        "title": "10. Limitation of Liability",
-        "asIs": "The Service is provided <strong>\"as is\" and \"as available\"</strong> without warranties of any kind, express or implied, to the fullest extent permitted by law.",
-        "fullestExtentLabel": "To the fullest extent permitted by applicable law:",
-        "aggregateItem": "Our total aggregate liability to you for any claim arising from your use of the Service is limited to the greater of (a) the amount you paid us in the six (6) months preceding the claim, or (b) £100.",
-        "indirectItem": "We are not liable for indirect, incidental, special, consequential, or punitive damages of any kind.",
-        "decisionsItem": "We are not liable for any decisions you make, actions you take, or harm you experience as a result of using the Service, except where such liability cannot be excluded by law.",
-        "nothingItem": "Nothing in these Terms excludes our liability for death or personal injury caused by our negligence, for fraud, or for any other liability that cannot lawfully be excluded.",
-        "statutoryRights": "Nothing in these Terms affects your statutory rights as a consumer under the <strong>Consumer Rights Act 2015</strong> or the <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
+        "title": "10. Limitazione di responsabilità",
+        "asIs": "Il Servizio è fornito <strong>«as is» e «as available»</strong> senza garanzie di alcun tipo, espresse o implicite, nella misura massima consentita dalla legge.",
+        "fullestExtentLabel": "Nella misura massima consentita dalla legge applicabile:",
+        "aggregateItem": "La nostra responsabilità complessiva totale nei tuoi confronti per qualsiasi reclamo derivante dall’utilizzo del Servizio è limitata al maggiore tra: (a) l’importo da te pagato a noi nei sei (6) mesi precedenti al reclamo, oppure (b) £100.",
+        "indirectItem": "Non siamo responsabili per danni indiretti, incidentali, speciali, consequenziali o punitivi di qualsiasi tipo.",
+        "decisionsItem": "Non siamo responsabili per decisioni prese, azioni intraprese o danni subiti a seguito dell’utilizzo del Servizio, salvo laddove tale responsabilità non possa essere esclusa per legge.",
+        "nothingItem": "Nulla nelle presenti Terms esclude la nostra responsabilità per morte o lesioni personali causate dalla nostra negligenza, per frode o per qualsiasi altra responsabilità che non possa essere legalmente esclusa.",
+        "statutoryRights": "Nulla nelle presenti Terms pregiudica i tuoi diritti statutari come consumatore ai sensi del <strong>Consumer Rights Act 2015</strong> o del <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
       },
       "section11": {
         "title": "11. Data Protection",
