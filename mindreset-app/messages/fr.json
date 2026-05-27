@@ -358,6 +358,207 @@
   },
   "Terms": {
     "lastUpdated": "Dernière mise à jour · {date}",
+    "article1": {
+      "title": "Terms of Service",
+      "preamble": {
+        "operatorLabel": "Opérateur :",
+        "operatorBody": "<strong>Plateforme d’auto-assistance MindReset AI</strong>, exploitée par <strong>MindReset AI Ltd</strong>, société enregistrée en Angleterre et au Pays de Galles, basée à Londres, Royaume-Uni.",
+        "note": "[NOTE : Le numéro d’enregistrement de la société et l’adresse du siège social seront ajoutés ultérieurement. La méthodologie et la structure du produit resteront inchangées.]",
+        "contactLabel": "Contact :",
+        "agreement": "En utilisant la plateforme d’auto-assistance MindReset AI (« Service »), disponible sur mindreset.ai, vous acceptez les présentes Conditions. Veuillez les lire attentivement. Si vous n’êtes pas d’accord, veuillez ne pas utiliser le Service."
+      },
+      "section1": {
+        "title": "1. Ce qu’est ce Service — et ce qu’il n’est pas",
+        "whatItIs": "<strong>Ce qu’est le Service.</strong> La plateforme d’auto-assistance MindReset AI (« Service ») est une plateforme d’auto-assistance assistée par IA destinée au bien-être psychologique général. Elle propose des échanges réflexifs, des exercices structurés d’exploration de soi, des pratiques d’ancrage, des contenus éducatifs et un suivi des progrès. Elle s’appuie sur des approches reconnues, notamment la régulation somatique, le travail conscient des différentes parties de soi, les principes de progression trauma-informed, le recadrage narratif et la formation intégrative de l’identité. Elle est positionnée comme un <strong>outil de bien-être destiné à des contextes non cliniques.</strong>",
+        "whatItIsNotLabel": "<strong>Ce que le Service n’est pas.</strong>",
+        "notTherapyItem": "N’est pas une thérapie, un conseil psychologique ou un traitement psychiatrique",
+        "notMedicalItem": "N’est pas un dispositif médical",
+        "notSubstituteItem": "Ne remplace pas un clinicien qualifié, un médecin ou un professionnel de santé mentale agréé",
+        "notCrisisItem": "N’est pas un service de crise, un service d’urgence ou une ligne d’assistance 24h/24",
+        "notDiagnosticItem": "N’est pas un outil de diagnostic — le Service ne diagnostique, ne traite, ne guérit ni ne prévient aucune condition médicale ou psychologique",
+        "closing": "Si vous avez besoin d’une prise en charge clinique ou traversez une détresse dépassant ce que l’auto-assistance peut soutenir, veuillez consulter un professionnel qualifié ou contacter les services d’urgence. Nous fournissons dans le Service des orientations vers ces services."
+      },
+      "section2": {
+        "title": "2. Vérification de préparation (Section 0) — à titre informatif uniquement",
+        "intro": "Avant d’accéder aux contenus plus approfondis du Service, il vous est proposé de compléter une courte Vérification de préparation. La Vérification de préparation est fournie <strong>à titre informatif uniquement.</strong> Elle ne constitue ni une évaluation médicale ou psychologique, ni un diagnostic, ni un filtre clinique.",
+        "classificationLabel": "La Vérification de préparation classe vos réponses dans l’une des trois catégories informatives suivantes :",
+        "greenItem": "<strong>Green</strong> — Vos réponses suggèrent que le Service peut vous convenir actuellement.",
+        "yellowItem": "<strong>Yellow</strong> — Vos réponses suggèrent qu’une introduction prudente et progressive pourrait être préférable. Certains contenus pourraient ne pas être adaptés à votre situation actuelle.",
+        "redItem": "<strong>Red</strong> — Vos réponses suggèrent que le Service pourrait ne pas être approprié pour vous actuellement et qu’un accompagnement professionnel serait plus adapté.",
+        "importantLabel": "<strong>Important.</strong> La Vérification de préparation fournit des informations ; elle ne limite pas l’accès au Service. Vous pouvez choisir de continuer indépendamment du résultat. Si vous choisissez de continuer malgré un résultat Red ou Yellow, ou de refaire la Vérification de préparation avec des réponses différentes, vous le faites sous votre propre responsabilité et confirmez par votre utilisation continue que :",
+        "understoodItem": "Vous avez lu et compris le résultat de la Vérification de préparation ainsi que les limites du Service décrites dans les présentes Conditions ;",
+        "notForCrisisItem": "Vous comprenez que le Service n’est pas adapté aux situations de crise active, symptômes psychiatriques sévères, suicidabilité active, psychose récente, dissociation nécessitant une prise en charge clinique ou toute autre condition dépassant le cadre de l’auto-assistance ;",
+        "acceptResponsibilityItem": "Vous acceptez l’entière responsabilité de votre décision d’utiliser le Service ;",
+        "releaseLiabilityItem": "Vous déchargez l’opérateur du Service (MindReset AI Ltd) de toute responsabilité pour tout préjudice résultant de votre utilisation du Service lorsque la Vérification de préparation a indiqué qu’il pourrait ne pas être approprié pour vous."
+      },
+      "section3": {
+        "title": "3. Acceptation et âge",
+        "intro": "En créant un compte ou en utilisant toute partie du Service, vous confirmez que :",
+        "ageItem": "Vous avez au moins <strong>18 ans</strong>",
+        "acceptTermsItem": "Vous acceptez pleinement les présentes Conditions d’utilisation",
+        "acceptPrivacyItem": "Vous acceptez notre Politique de confidentialité",
+        "jurisdictionItem": "Vous accédez au Service depuis une juridiction où cela est légal",
+        "readDisclaimerItem": "Vous avez lu le Medical & Crisis Disclaimer",
+        "under18": "Si vous avez moins de 18 ans, vous n’êtes pas autorisé à utiliser le Service."
+      },
+      "section4": {
+        "title": "4. Absence de service d’urgence ou de traitement professionnel",
+        "intro": "Le Service <strong>n’est pas conçu pour les urgences ou les crises actives de santé mentale.</strong>",
+        "experiencingLabel": "<strong>Si vous présentez l’un des éléments suivants, cessez immédiatement d’utiliser le Service et contactez une aide professionnelle appropriée :</strong>",
+        "suicidalItem": "Pensées suicidaires ou intention de vous faire du mal",
+        "harmOthersItem": "Pensées visant à faire du mal à autrui",
+        "acuteSymptomsItem": "Symptômes psychiatriques aigus (psychose, dissociation sévère, manie)",
+        "withdrawalItem": "Sevrage actif de substances",
+        "dangerItem": "Tout danger physique immédiat pour vous-même ou autrui",
+        "ukResourcesLabel": "<strong>Ressources de crise au Royaume-Uni :</strong>",
+        "samaritansItem": "<strong>Samaritans</strong> — 116 123 (gratuit, 24h/24, tous les jours)",
+        "nhsItem": "<strong>NHS 111</strong> — option 2 pour la santé mentale (24h/24)",
+        "gpItem": "<strong>Your GP</strong> — pour un soutien non urgent en santé mentale",
+        "aeItem": "<strong>A&E or 999</strong> — pour toute urgence médicale ou psychiatrique",
+        "outsideUk": "Si vous êtes en dehors du Royaume-Uni, veuillez contacter vos services d’urgence locaux ou une ligne locale de soutien de crise.",
+        "liability": "L’opérateur du Service et le Service lui-même ne sont pas responsables des décisions ou actions prises sur la base des suggestions de l’AI ou du contenu fourni via le Service."
+      },
+      "section5": {
+        "title": "5. Comptes et sécurité",
+        "registerItem": "Vous pouvez vous inscrire en utilisant votre email et un mot de passe. Vous pouvez utiliser un pseudonyme.",
+        "responsibilityItem": "Vous êtes responsable de la protection de vos identifiants de connexion et de toute activité effectuée sous votre compte.",
+        "legalContentItem": "Vous acceptez de ne pas partager de contenu illégal, menaçant, diffamatoire ou abusif dans le Service.",
+        "safetyItem": "Vous acceptez de ne pas tenter de contourner ou d’interférer avec les protocoles de sécurité, filtres de contenu ou protections techniques du Service.",
+        "harmItem": "Vous acceptez de ne pas utiliser le Service pour nuire à autrui, enfreindre des droits ou violer toute loi applicable."
+      },
+      "section6": {
+        "title": "6. AI et traitement automatisé",
+        "intro": "Le Service utilise l’intelligence artificielle (large language models fournis par un third-party AI infrastructure partner) afin de générer des réponses conversationnelles, suggérer des pratiques et personnaliser le contenu éducatif.",
+        "acknowledgeLabel": "Vous reconnaissez et acceptez que :",
+        "inaccurateItem": "Les réponses générées par l’AI sont automatiques et peuvent être inexactes, incomplètes ou inadaptées à votre situation",
+        "notKnowItem": "L’AI ne vous « connaît » ni ne vous « comprend » comme le ferait un praticien humain",
+        "notJudgmentItem": "L’AI ne peut remplacer le jugement clinique d’un professionnel qualifié",
+        "informationalItem": "Le contenu généré par l’AI doit être considéré comme informatif et non comme un conseil personnel",
+        "consultItem": "Vous ne devez pas vous appuyer sur les suggestions de l’AI pour des décisions ayant des conséquences importantes sans consulter un professionnel qualifié",
+        "profile": "L’AI traite vos conversations afin de générer un profil privé de wellbeing (par exemple « elevated anxiety patterns ») pour mieux adapter les pratiques. Ce profil ne constitue pas un diagnostic et n’est pas partagé avec des tiers à des fins marketing ou de recherche. Vous pouvez demander à consulter, corriger ou supprimer ce profil à tout moment.",
+        "humanReview": "Une procédure de révision humaine est disponible si vous estimez qu’une réponse automatisée est matériellement incorrecte ou nuisible. Contactez-nous à <mail>support@mindreset.ai</mail>.",
+        "voiceInput": "Vous pouvez utiliser le voice input comme alternative à la saisie dans le chat MiniMind. Les messages vocaux sont transcrits de manière sécurisée puis supprimés après traitement — nous ne stockons pas les enregistrements audio et notre speech-to-text provider est configuré avec zero data retention. Seul le texte résultant est conservé dans votre historique de conversation (encrypted at rest). Le voice input est optionnel — vous pouvez utiliser le Service entièrement par saisie texte."
+      },
+      "section7": {
+        "title": "7. Propriété intellectuelle",
+        "ip": "Tous les textes, contenus audio, codes, designs, méthodologies, éléments d’identité de marque et autres matériaux du Service sont © Julia Loya, sauf lorsque le contenu tiers est clairement identifié.",
+        "license": "Vous recevez une licence personnelle, non transférable, non exclusive et non commerciale vous permettant d’accéder au contenu du Service et de l’utiliser pour votre propre wellbeing personnel pendant la durée de votre abonnement ou achat.",
+        "agreeNotToLabel": "Vous acceptez de ne pas :",
+        "noRedistributeItem": "Redistribuer, revendre, publier ou partager le contenu du Service",
+        "noScrapeItem": "Extraire, scraper ou collecter d’une autre manière les réponses de l’AI dans le but d’entraîner un autre système d’AI",
+        "noReverseItem": "Effectuer du reverse-engineering, décompiler ou tenter d’extraire le code source du Service",
+        "noCommercialItem": "Utiliser le Service ou son contenu à des fins commerciales"
+      },
+      "section8": {
+        "title": "8. Produits payants",
+        "intro": "Le Service propose trois types de produits. <strong>Les tarifs en vigueur sont toujours affichés au moment du paiement</strong> avant toute transaction. Nous pouvons modifier les prix, proposer des réductions promotionnelles, organiser des ventes ou ajuster les prix de tout produit à tout moment ; ces modifications n’affectent pas les produits déjà achetés.",
+        "minimind": {
+          "title": "MiniMind",
+          "freeTaster": "<strong>Essai gratuit.</strong> Chaque nouveau compte reçoit 50 messages avec MiniMind sans frais. L’essai ne nécessite pas de carte bancaire, n’a pas de limite de temps et est limité à un par adresse email.",
+          "subs": {
+            "title": "Abonnements MiniMind",
+            "intro": "Deux niveaux, facturés mensuellement ou annuellement :",
+            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/mois ou £129/an. 200 messages par cycle de facturation.",
+            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/mois ou £209/an. 800 à 1,200 messages par cycle de facturation.",
+            "billingItem": "Facturé sur votre moyen de paiement choisi jusqu’à annulation",
+            "resetItem": "Le quota de messages est réinitialisé au début de chaque cycle de facturation et n’est pas reporté",
+            "refundWindowItem": "<strong>Délai de remboursement de 7 jours :</strong> vous pouvez demander un remboursement intégral dans les 7 jours suivant votre premier achat d’abonnement, après avoir utilisé moins de 30 messages, en envoyant un email à <mail>support@mindreset.ai</mail> avec « REFUND » dans l’objet. Après 7 jours ou 30 messages utilisés, la politique d’annulation standard s’applique.",
+            "cancellationItem": "<strong>Annulation :</strong> vous pouvez annuler à tout moment via les paramètres de facturation de votre compte. En cas d’annulation :",
+            "cancelNoFurtherItem": "Aucun paiement supplémentaire ne sera prélevé",
+            "cancelRetainItem": "Vous conservez l’accès jusqu’à la fin du cycle de facturation en cours",
+            "cancelAutoEndItem": "L’accès prend automatiquement fin à la fin du cycle en cours",
+            "noPartialItem": "Aucun remboursement partiel n’est accordé après le délai de remboursement de 7 jours"
+          },
+          "topup": {
+            "title": "Recharge de messages",
+            "priceItem": "Paiement unique de £4.99 — ajoute 200 messages à votre cycle de facturation actuel",
+            "expiryItem": "Les messages supplémentaires expirent lors de la réinitialisation du cycle de facturation",
+            "availableItem": "Disponible pour les abonnés Essential et Extended ; cumulable",
+            "nonRefundableItem": "<strong>Non remboursable</strong> — les recharges sont fournies pour un usage immédiat en tant que contenu numérique"
+          }
+        },
+        "modules": {
+          "title": "States & Themes — achats individuels de modules",
+          "priceItem": "£59 par module (achat unique, accès permanent)",
+          "subscriberDiscountItem": "Les abonnés actifs MiniMind (Essential ou Extended) paient £29 par module — remise appliquée automatiquement au checkout lorsque vous êtes connecté avec un abonnement actif",
+          "immediateAccessItem": "L’accès commence immédiatement après validation du paiement",
+          "waiverItem": "Lors du checkout, vous confirmez renoncer au droit d’annulation de 14 jours prévu par le Consumer Contracts Regulations 2013, en échange d’un accès immédiat. Si vous n’ouvrez pas le module dans les 14 jours suivant l’achat, vous pouvez demander un remboursement intégral en envoyant un email à <mail>support@mindreset.ai</mail> avec « REFUND » dans l’objet",
+          "openedNonRefundableItem": "<strong>Une fois le module ouvert, l’achat n’est plus remboursable</strong>"
+        },
+        "journey": {
+          "title": "The Journey",
+          "note": "[NOTE: Le nom du produit est finalisé sous la forme « The Journey ». La méthodologie est décrite comme le framework en huit étapes Reset 8 Blocks — terminologie interne uniquement.]",
+          "optionsLabel": "Deux options d’achat :",
+          "onetime": {
+            "title": "Option A — Programme complet, paiement unique :",
+            "accessItem": "L’accès aux huit blocs commence immédiatement après validation du paiement",
+            "nonRefundableItem": "<strong>Non remboursable à partir du moment de l’achat.</strong> Il s’agit d’un contenu numérique fourni pour un usage immédiat",
+            "regulationsItem": "En vertu du Consumer Contracts Regulations 2013, le droit d’annulation de 14 jours ne s’applique pas lorsque le consommateur y a explicitement renoncé en échange d’un accès immédiat",
+            "confirmWaiverItem": "<strong>Il vous sera demandé de confirmer cette renonciation lors du checkout</strong> avant tout paiement",
+            "noRefundsItem": "Aucun remboursement n’est accordé après l’achat, sauf lorsque cela est requis par le Consumer Rights Act 2015 concernant un contenu défectueux (voir Refund Policy ci-dessous)"
+          },
+          "instalment": {
+            "title": "Option B — Plan de paiement hebdomadaire :",
+            "scheduleItem": "12 paiements hebdomadaires de £55 — chaque paiement débloque le bloc de contenu suivant",
+            "stopAnytimeItem": "Vous pouvez interrompre les paiements futurs à tout moment",
+            "nonRefundableItem": "Les paiements hebdomadaires déjà effectués ne sont pas remboursables ; le contenu déjà débloqué reste accessible après l’arrêt des paiements",
+            "firstBlockItem": "Une fois le premier bloc accessible, le droit au cooling-off period ne s’applique plus",
+            "confirmWaiverItem": "Il vous sera demandé de confirmer la renonciation à l’accès immédiat lors du checkout"
+          }
+        },
+        "payment": {
+          "title": "Traitement des paiements",
+          "processor": "Tous les paiements sont traités par un prestataire de paiement tiers réglementé, agissant en tant que data controller indépendant pour les informations relatives aux cartes bancaires selon ses propres conditions. Nous ne stockons pas les numéros complets de cartes ni les codes CVV.",
+          "taxes": "Tous les prix incluent la VAT lorsque applicable. Nous pouvons ajouter ou retirer des taxes de vente selon votre billing location conformément aux exigences légales."
+        }
+      },
+      "section9": {
+        "title": "9. Annulation",
+        "subscriptionsItem": "<strong>Abonnements :</strong> vous pouvez annuler à tout moment dans les paramètres de facturation de votre compte ; aucun frais supplémentaire ne sera prélevé",
+        "oneOffItem": "<strong>Produits à achat unique :</strong> envoyez un email à <mail>support@mindreset.ai</mail> avec « REFUND » dans l’objet, votre ID de commande, l’email associé au compte et la raison de la demande de remboursement"
+      },
+      "section10": {
+        "title": "10. Limitation de responsabilité",
+        "asIs": "Le Service est fourni <strong>« as is » et « as available »</strong> sans aucune garantie, expresse ou implicite, dans toute la mesure permise par la loi.",
+        "fullestExtentLabel": "Dans toute la mesure permise par la loi applicable :",
+        "aggregateItem": "Notre responsabilité totale cumulée envers vous pour toute réclamation liée à votre utilisation du Service est limitée au montant le plus élevé entre (a) le montant que vous nous avez payé au cours des six (6) mois précédant la réclamation, ou (b) £100.",
+        "indirectItem": "Nous ne sommes pas responsables des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs de quelque nature que ce soit.",
+        "decisionsItem": "Nous ne sommes pas responsables des décisions que vous prenez, des actions que vous entreprenez ou des préjudices que vous subissez à la suite de l’utilisation du Service, sauf lorsque cette responsabilité ne peut être exclue par la loi.",
+        "nothingItem": "Rien dans les présentes Terms n’exclut notre responsabilité en cas de décès ou de blessure corporelle causés par notre négligence, de fraude ou de toute autre responsabilité qui ne peut légalement être exclue.",
+        "statutoryRights": "Rien dans les présentes Terms n’affecte vos droits statutaires en tant que consommateur en vertu du <strong>Consumer Rights Act 2015</strong> ou du <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
+      },
+      "section11": {
+        "title": "11. Protection des données",
+        "specialCategory": "Nous traitons les données personnelles et les special-category data comme décrit dans notre <privacy>Politique de confidentialité</privacy>. Les special-category data (y compris les données concernant votre santé mentale et votre wellbeing) sont traitées uniquement avec votre consentement explicite, que vous accordez en acceptant les présentes Terms et en utilisant le Service conformément à sa finalité prévue.",
+        "lawfulBasis": "La base légale du traitement de ces données est le <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> ainsi que la disposition équivalente du EU GDPR. Vous pouvez retirer ce consentement à tout moment en supprimant votre compte ; dans ce cas, vos conversational data seront supprimées conformément à notre retention schedule."
+      },
+      "section12": {
+        "title": "12. Conformité avec la législation applicable",
+        "intro": "Le Service fonctionne conformément au droit applicable du Royaume-Uni et de l’UE en vigueur au moment de la dernière mise à jour des présentes Terms, y compris notamment :",
+        "gdprItem": "<strong>UK GDPR</strong> et le Data Protection Act 2018",
+        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (entrant en vigueur le 5 février 2026)",
+        "euGdprItem": "<strong>EU GDPR</strong> (lorsqu’applicable aux utilisateurs de l’UE)",
+        "aiActItem": "<strong>EU AI Act</strong> (lorsqu’applicable ; le Service est positionné comme un limited-risk AI system destiné au soutien général du wellbeing, et non comme un high-risk AI system)",
+        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (lorsqu’applicable ; nous maintenons des protocoles de modération de contenu et de sécurité incluant, sans limitation, la détection et la réponse aux contenus liés au self-harm et à d’autres priority harms)",
+        "craItem": "<strong>Consumer Rights Act 2015</strong>",
+        "dmccItem": "<strong>Digital Markets, Competition and Consumers Act 2024</strong>",
+        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — le Service n’est pas un dispositif médical et ne formule aucune allégation médicale",
+        "minors": "Nous ne ciblons pas les utilisateurs de moins de 18 ans et ne traitons pas sciemment les données personnelles de mineurs."
+      },
+      "section13": {
+        "title": "13. Droit applicable et litiges",
+        "governing": "Les présentes Terms sont régies par les lois de <strong>England & Wales</strong>. Tout litige découlant des présentes Terms sera soumis aux tribunaux d’England & Wales, sauf si le droit impératif de la consommation de votre pays de résidence (au Royaume-Uni ou dans l’UE) vous autorise à introduire une action devant vos juridictions locales.",
+        "odr": "Pour les utilisateurs de l’UE, vous pouvez également avoir le droit d’utiliser la plateforme Online Dispute Resolution de la Commission européenne : <odr>https://ec.europa.eu/consumers/odr</odr>"
+      },
+      "section14": {
+        "title": "14. Modifications des présentes Terms",
+        "body": "Nous pouvons mettre à jour les présentes Terms de temps à autre. Si nous apportons des modifications substantielles, nous vous en informerons par email et/ou via un avis affiché dans le Service au moins 30 jours avant l’entrée en vigueur des modifications. La poursuite de l’utilisation du Service après la date d’entrée en vigueur constitue votre acceptation des Terms mises à jour. Si vous n’acceptez pas les Terms mises à jour, vous pouvez résilier votre compte à tout moment avant la date d’entrée en vigueur et obtenir un remboursement au prorata pour toute période d’abonnement inutilisée."
+      },
+      "section15": {
+        "title": "15. Contact",
+        "body": "Pour toute question concernant les présentes Terms : <mail>support@mindreset.ai</mail>"
+      }
+    },
     "disclaimer": {
       "title": "Avertissement médical et de crise",
       "primary": "<strong>MindReset est un outil de bien-être — et non une thérapie, un dispositif médical ou un service de crise.</strong>",
