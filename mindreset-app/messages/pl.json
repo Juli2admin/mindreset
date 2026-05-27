@@ -440,14 +440,14 @@
         "voiceInput": "Możesz używać voice input jako alternatywy dla pisania w czacie MiniMind. Wiadomości głosowe są bezpiecznie transkrybowane i usuwane po przetworzeniu — nie przechowujemy nagrań audio, a nasz speech-to-text provider jest skonfigurowany z zero data retention. W historii rozmowy zapisywany jest wyłącznie wynikowy tekst (encrypted at rest). Voice input jest opcjonalny — możesz korzystać z Usługi wyłącznie poprzez wpisywanie tekstu."
       },
       "section7": {
-        "title": "7. Intellectual Property",
-        "ip": "All texts, audio, code, design, methodology, brand identity, and other materials within the Service are © Julia Loya, except where third-party content is clearly marked.",
-        "license": "You receive a personal, non-transferable, non-exclusive, non-commercial licence to access and use the content of the Service for your own personal wellbeing during your subscription or purchase term.",
-        "agreeNotToLabel": "You agree not to:",
-        "noRedistributeItem": "Redistribute, resell, publish, or share the Service's content",
-        "noScrapeItem": "Extract, scrape, or otherwise harvest AI responses for the purpose of training another AI system",
-        "noReverseItem": "Reverse-engineer, decompile, or attempt to extract the source code of the Service",
-        "noCommercialItem": "Use the Service or its content for commercial gain"
+        "title": "7. Własność intelektualna",
+        "ip": "Wszystkie teksty, nagrania audio, kod, projekt, metodologia, identyfikacja marki oraz inne materiały dostępne w Usłudze stanowią © Julia Loya, chyba że treści podmiotów trzecich zostały wyraźnie oznaczone.",
+        "license": "Otrzymujesz osobistą, niezbywalną, niewyłączną i niekomercyjną licencję na dostęp do treści Usługi oraz korzystanie z nich wyłącznie dla własnego wellbeing podczas okresu subskrypcji lub zakupu.",
+        "agreeNotToLabel": "Zgadzasz się nie:",
+        "noRedistributeItem": "Rozpowszechniać, odsprzedawać, publikować ani udostępniać treści Usługi",
+        "noScrapeItem": "Pozyskiwać, scrapować ani w inny sposób gromadzić odpowiedzi AI w celu trenowania innego systemu AI",
+        "noReverseItem": "Prowadzić reverse-engineering, dekompilować ani próbować pozyskać kodu źródłowego Usługi",
+        "noCommercialItem": "Wykorzystywać Usługi lub jej treści do celów komercyjnych"
       },
       "section8": {
         "title": "8. Paid Products",
