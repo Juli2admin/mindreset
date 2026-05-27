@@ -665,120 +665,104 @@ export default async function TermsPage() {
 
         {/* ─── 2. Refund & Cancellation Policy ────────────────── */}
         <article className="mb-12">
-          <H2>Refund &amp; Cancellation Policy</H2>
+          <H2>{t('refund.title')}</H2>
+          <P>{t('refund.intro')}</P>
+
+          <H3 id="terms-refund-minimind">{t('refund.minimind.title')}</H3>
+          <UL>
+            <li>
+              {t.rich('refund.minimind.windowItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+                mail: () => <MailLink to="support@mindreset.ai" />,
+              })}
+            </li>
+            <li>{t('refund.minimind.cancelAnytimeItem')}</li>
+            <li>
+              {t.rich('refund.minimind.whenCancelItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+            <li>{t('refund.minimind.endOfCycleItem')}</li>
+            <li>
+              {t.rich('refund.minimind.noPartialItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+          </UL>
+
+          <H3 id="terms-refund-minimind-topup">{t('refund.topup.title')}</H3>
+          <UL>
+            <li>{t('refund.topup.priceItem')}</li>
+            <li>{t('refund.topup.immediateUseItem')}</li>
+            <li>{t('refund.topup.waiverItem')}</li>
+            <li>
+              {t.rich('refund.topup.nonRefundableItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+            <li>{t('refund.topup.expiryItem')}</li>
+          </UL>
+
+          <H3 id="terms-refund-modules-individual">{t('refund.modules.title')}</H3>
+          <UL>
+            <li>{t('refund.modules.priceItem')}</li>
+            <li>{t('refund.modules.subscriberDiscountItem')}</li>
+            <li>{t('refund.modules.immediateAccessItem')}</li>
+            <li>
+              {t.rich('refund.modules.waiverItem', {
+                mail: () => <MailLink to="support@mindreset.ai" />,
+              })}
+            </li>
+            <li>
+              {t.rich('refund.modules.openedNonRefundableItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+          </UL>
+
+          <H3 id="terms-refund-recode-onetime">{t('refund.journeyOnetime.title')}</H3>
+          <UL>
+            <li>
+              {t.rich('refund.journeyOnetime.immediateUseItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+            <li>{t('refund.journeyOnetime.waiverItem')}</li>
+            <li>
+              {t.rich('refund.journeyOnetime.nonRefundableItem', {
+                strong: (c) => <Strong>{c}</Strong>,
+              })}
+            </li>
+            <li>{t('refund.journeyOnetime.noRefundsItem')}</li>
+          </UL>
+
+          <H3 id="terms-refund-recode-installment">{t('refund.journeyInstalment.title')}</H3>
+          <UL>
+            <li>{t('refund.journeyInstalment.scheduleItem')}</li>
+            <li>{t('refund.journeyInstalment.stopAnytimeItem')}</li>
+            <li>{t('refund.journeyInstalment.nonRefundablePaymentsItem')}</li>
+            <li>{t('refund.journeyInstalment.firstBlockItem')}</li>
+          </UL>
+
+          <H3 id="terms-refund-howto">{t('refund.howto.title')}</H3>
           <P>
-            This Refund Policy forms part of our Terms of Service. Current pricing for all
-            products is shown at checkout.
-          </P>
-
-          <H3 id="terms-refund-minimind">MiniMind Subscriptions (Essential and Extended)</H3>
-          <UL>
-            <li>
-              <Strong>7-day refund window from initial purchase</Strong> — for both
-              monthly and annual plans. Request via{' '}
-              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
-              subject. After 7 days the standard cancellation policy applies.
-            </li>
-            <li>Cancel anytime in your account billing settings</li>
-            <li>
-              When you cancel: <Strong>no further payments are taken</Strong>, and your
-              access continues until the end of the current billing cycle
-            </li>
-            <li>Access ends automatically at the end of the current cycle</li>
-            <li>
-              <Strong>No partial-cycle or pro-rata refunds</Strong> are issued for
-              cancellations after the 7-day window
-            </li>
-          </UL>
-
-          <H3 id="terms-refund-minimind-topup">MiniMind Message Top-up</H3>
-          <UL>
-            <li>
-              £4.99 one-off purchase — adds 200 messages to your current billing cycle
-            </li>
-            <li>Delivered for immediate use as digital content</li>
-            <li>
-              At checkout, you confirm a waiver of the 14-day cancellation right under
-              the Consumer Contracts Regulations 2013, in exchange for immediate access
-            </li>
-            <li><Strong>Non-refundable once purchased</Strong></li>
-            <li>Top-up messages expire at the end of the current billing cycle</li>
-          </UL>
-
-          <H3 id="terms-refund-modules-individual">States &amp; Themes — individual module purchases</H3>
-          <UL>
-            <li>£59 per module (non-subscribers) — one-off, permanent access</li>
-            <li>
-              Active MiniMind subscribers (Essential or Extended) pay £29 per module —
-              discount applied automatically at checkout
-            </li>
-            <li>Access begins immediately upon successful payment</li>
-            <li>
-              At checkout, you confirm a waiver of the 14-day cancellation right under the
-              Consumer Contracts Regulations 2013, in exchange for immediate access. If you
-              do not open the module within 14 days of purchase, you may request a full
-              refund by emailing{' '}
-              <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in the
-              subject
-            </li>
-            <li>
-              <Strong>Once a module has been opened, the purchase is non-refundable</Strong>
-            </li>
-          </UL>
-
-          <H3 id="terms-refund-recode-onetime">The Journey — One-time payment</H3>
-          <UL>
-            <li>
-              Content is delivered for <Strong>immediate use</Strong> across all eight
-              blocks
-            </li>
-            <li>
-              At checkout, you will be asked to confirm a waiver of the 14-day cancellation
-              right in exchange for immediate access
-            </li>
-            <li><Strong>Non-refundable from the moment of purchase</Strong></li>
-            <li>
-              No refunds are issued under any circumstances after purchase, except as
-              required by the Consumer Rights Act 2015 for faulty content
-            </li>
-          </UL>
-
-          <H3 id="terms-refund-recode-installment">The Journey — Weekly instalment plan</H3>
-          <UL>
-            <li>12 weekly payments of £55 — each payment unlocks the next block of content</li>
-            <li>You may stop future payments at any time</li>
-            <li>
-              Any weekly payments already made are non-refundable; previously unlocked
-              content remains accessible after stopping payments
-            </li>
-            <li>
-              Once the first block has been accessed, the right to a cooling-off period no
-              longer applies
-            </li>
-          </UL>
-
-          <H3 id="terms-refund-howto">How to request a refund (where eligible)</H3>
-          <P>
-            Email <MailLink to="support@mindreset.ai" /> with &ldquo;REFUND&rdquo; in
-            the subject line so we can route it quickly. Include:
+            {t.rich('refund.howto.intro', {
+              mail: () => <MailLink to="support@mindreset.ai" />,
+            })}
           </P>
           <UL>
-            <li>Your order ID</li>
-            <li>The email address associated with your account</li>
-            <li>Reason for the refund request</li>
+            <li>{t('refund.howto.orderIdItem')}</li>
+            <li>{t('refund.howto.emailItem')}</li>
+            <li>{t('refund.howto.reasonItem')}</li>
           </UL>
-          <P>
-            Eligibility will be assessed based on the rules above. Approved refunds are
-            processed to the original payment method within 10 business days.
-          </P>
+          <P>{t('refund.howto.outro')}</P>
 
-          <H3 id="terms-refund-faulty">Faulty content (statutory rights preserved)</H3>
+          <H3 id="terms-refund-faulty">{t('refund.faulty.title')}</H3>
           <P>
-            Nothing in this Refund Policy excludes your statutory rights under the{' '}
-            <Strong>Consumer Rights Act 2015</Strong>. If digital content is faulty, not
-            as described, or fails to function as expected, we will repair, replace, or
-            refund the content as required by law, regardless of the waiver you signed at
-            checkout. Contact us at <MailLink to="support@mindreset.ai" /> with details.
+            {t.rich('refund.faulty.body', {
+              strong: (c) => <Strong>{c}</Strong>,
+              mail: () => <MailLink to="support@mindreset.ai" />,
+            })}
           </P>
         </article>
 

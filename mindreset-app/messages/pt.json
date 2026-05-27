@@ -364,6 +364,60 @@
       "secondary": "A IA utilizada aqui não pode diagnosticar, tratar ou substituir um profissional de saúde. Se estiver em crise, em perigo ou a experienciar sintomas psicológicos graves, procure apoio profissional.",
       "ukCrisis": "<strong>Reino Unido:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, opção 2. O seu GP. Em caso de emergência: <strong>999</strong> ou A&E."
     },
+    "refund": {
+      "title": "Política de reembolso e cancelamento",
+      "intro": "Esta Política de Reembolso faz parte dos nossos Termos de Serviço. Os preços atuais de todos os produtos são apresentados no checkout.",
+      "minimind": {
+        "title": "Subscrições MiniMind (Essential e Extended)",
+        "windowItem": "<strong>Período de reembolso de 7 dias a partir da compra inicial</strong> — aplicável a planos mensais e anuais. O pedido deve ser enviado para <mail>support@mindreset.ai</mail> com “REFUND” no assunto. Após 7 dias, aplica-se a política padrão de cancelamento.",
+        "cancelAnytimeItem": "Pode cancelar a subscrição a qualquer momento nas definições de faturação da sua conta",
+        "whenCancelItem": "Ao cancelar: <strong>não serão efetuados pagamentos adicionais</strong>, e o seu acesso continuará até ao final do ciclo de faturação atual",
+        "endOfCycleItem": "O acesso termina automaticamente no final do ciclo atual",
+        "noPartialItem": "<strong>Não são emitidos reembolsos parciais ou proporcionais</strong> para cancelamentos após o período de 7 dias"
+      },
+      "topup": {
+        "title": "Recarga de mensagens MiniMind",
+        "priceItem": "Compra única de £4.99 — adiciona 200 mensagens ao seu ciclo de faturação atual",
+        "immediateUseItem": "Fornecido para utilização imediata como conteúdo digital",
+        "waiverItem": "No checkout, confirma a renúncia ao direito de cancelamento de 14 dias ao abrigo do Consumer Contracts Regulations 2013, em troca de acesso imediato",
+        "nonRefundableItem": "<strong>Não reembolsável após a compra</strong>",
+        "expiryItem": "As mensagens adicionais expiram no final do ciclo de faturação atual"
+      },
+      "modules": {
+        "title": "States & Themes — compras individuais de módulos",
+        "priceItem": "£59 por módulo (utilizadores sem subscrição) — compra única com acesso permanente",
+        "subscriberDiscountItem": "Os subscritores ativos do MiniMind (Essential ou Extended) pagam £29 por módulo — desconto aplicado automaticamente no checkout",
+        "immediateAccessItem": "O acesso começa imediatamente após a confirmação do pagamento",
+        "waiverItem": "No checkout, confirma a renúncia ao direito de cancelamento de 14 dias ao abrigo do Consumer Contracts Regulations 2013, em troca de acesso imediato. Caso não abra o módulo no prazo de 14 dias após a compra, poderá solicitar um reembolso total enviando um email para <mail>support@mindreset.ai</mail> com “REFUND” no assunto",
+        "openedNonRefundableItem": "<strong>Depois de aberto o módulo, a compra deixa de ser reembolsável</strong>"
+      },
+      "journeyOnetime": {
+        "title": "The Journey — pagamento único",
+        "immediateUseItem": "O conteúdo é disponibilizado para <strong>utilização imediata</strong> em todos os oito blocos",
+        "waiverItem": "No checkout, ser-lhe-á pedido que confirme a renúncia ao direito de cancelamento de 14 dias em troca de acesso imediato",
+        "nonRefundableItem": "<strong>Não reembolsável a partir do momento da compra</strong>",
+        "noRefundsItem": "Não são efetuados reembolsos em quaisquer circunstâncias após a compra, exceto quando exigido pelo Consumer Rights Act 2015 no caso de conteúdo defeituoso"
+      },
+      "journeyInstalment": {
+        "title": "The Journey — plano de pagamento semanal",
+        "scheduleItem": "12 pagamentos semanais de £55 — cada pagamento desbloqueia o bloco seguinte de conteúdo",
+        "stopAnytimeItem": "Pode interromper pagamentos futuros a qualquer momento",
+        "nonRefundablePaymentsItem": "Quaisquer pagamentos semanais já efetuados não são reembolsáveis; o conteúdo anteriormente desbloqueado permanece acessível após a interrupção dos pagamentos",
+        "firstBlockItem": "Depois de o primeiro bloco ter sido acedido, o direito ao período de reflexão deixa de se aplicar"
+      },
+      "howto": {
+        "title": "Como solicitar um reembolso (quando aplicável)",
+        "intro": "Envie um email para <mail>support@mindreset.ai</mail> com «REFUND» no assunto para que possamos encaminhar rapidamente o pedido. Inclua:",
+        "orderIdItem": "O número da sua encomenda",
+        "emailItem": "O endereço de email associado à sua conta",
+        "reasonItem": "Motivo do pedido de reembolso",
+        "outro": "A elegibilidade será avaliada de acordo com as regras acima. Os reembolsos aprovados são processados para o método de pagamento original no prazo de 10 dias úteis."
+      },
+      "faulty": {
+        "title": "Conteúdo defeituoso (os direitos legais permanecem preservados)",
+        "body": "Nada nesta Política de Reembolso exclui os seus direitos legais ao abrigo do <strong>Consumer Rights Act 2015</strong>. Se o conteúdo digital estiver defeituoso, não corresponder à descrição ou não funcionar conforme esperado, iremos reparar, substituir ou reembolsar o conteúdo conforme exigido por lei, independentemente da renúncia confirmada no checkout. Contacte-nos através de <mail>support@mindreset.ai</mail> com os detalhes do problema."
+      }
+    },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
     "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
     "subsIntro": "Two tiers, each billed monthly or annually:",

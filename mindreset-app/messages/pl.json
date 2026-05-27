@@ -364,6 +364,60 @@
       "secondary": "AI wykorzystywana tutaj nie może diagnozować, leczyć ani zastępować specjalisty. Jeśli znajdujesz się w kryzysie, jesteś w niebezpieczeństwie lub doświadczasz poważnych objawów psychologicznych, skontaktuj się z profesjonalnym wsparciem.",
       "ukCrisis": "<strong>Wielka Brytania:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, opcja 2. Twój GP. W nagłym przypadku: <strong>999</strong> lub A&E."
     },
+    "refund": {
+      "title": "Polityka zwrotów i anulowania",
+      "intro": "Niniejsza Polityka zwrotów stanowi część naszych Warunków korzystania z usługi. Aktualne ceny wszystkich produktów są wyświetlane podczas płatności.",
+      "minimind": {
+        "title": "Subskrypcje MiniMind (Essential i Extended)",
+        "windowItem": "<strong>7-dniowy okres zwrotu od momentu pierwszego zakupu</strong> — dotyczy zarówno planów miesięcznych, jak i rocznych. Wniosek należy wysłać na <mail>support@mindreset.ai</mail> z tematem „REFUND”. Po upływie 7 dni obowiązują standardowe zasady anulowania.",
+        "cancelAnytimeItem": "Możesz anulować subskrypcję w dowolnym momencie w ustawieniach płatności swojego konta",
+        "whenCancelItem": "Po anulowaniu: <strong>nie będą pobierane dalsze płatności</strong>, a dostęp pozostanie aktywny do końca bieżącego cyklu rozliczeniowego",
+        "endOfCycleItem": "Dostęp wygasa automatycznie z końcem bieżącego cyklu",
+        "noPartialItem": "<strong>Brak częściowych lub proporcjonalnych zwrotów</strong> za anulowanie po upływie 7 dni"
+      },
+      "topup": {
+        "title": "Doładowanie wiadomości MiniMind",
+        "priceItem": "Jednorazowy zakup za £4.99 — dodaje 200 wiadomości do bieżącego cyklu rozliczeniowego",
+        "immediateUseItem": "Dostarczane do natychmiastowego wykorzystania jako treść cyfrowa",
+        "waiverItem": "Podczas płatności potwierdzasz zrzeczenie się 14-dniowego prawa do anulowania zgodnie z Consumer Contracts Regulations 2013 w zamian za natychmiastowy dostęp",
+        "nonRefundableItem": "<strong>Brak możliwości zwrotu po zakupie</strong>",
+        "expiryItem": "Dodatkowe wiadomości wygasają z końcem bieżącego cyklu rozliczeniowego"
+      },
+      "modules": {
+        "title": "States & Themes — indywidualne zakupy modułów",
+        "priceItem": "£59 za moduł (dla użytkowników bez subskrypcji) — jednorazowy zakup z trwałym dostępem",
+        "subscriberDiscountItem": "Aktywni subskrybenci MiniMind (Essential lub Extended) płacą £29 za moduł — zniżka naliczana automatycznie podczas płatności",
+        "immediateAccessItem": "Dostęp rozpoczyna się natychmiast po pomyślnym dokonaniu płatności",
+        "waiverItem": "Podczas płatności potwierdzasz zrzeczenie się 14-dniowego prawa do anulowania zgodnie z Consumer Contracts Regulations 2013 w zamian za natychmiastowy dostęp. Jeśli nie otworzysz modułu w ciągu 14 dni od zakupu, możesz ubiegać się o pełny zwrot środków, wysyłając wiadomość na <mail>support@mindreset.ai</mail> z tematem „REFUND”",
+        "openedNonRefundableItem": "<strong>Po otwarciu modułu zakup nie podlega zwrotowi</strong>"
+      },
+      "journeyOnetime": {
+        "title": "The Journey — płatność jednorazowa",
+        "immediateUseItem": "Treść jest dostarczana do <strong>natychmiastowego użytku</strong> we wszystkich ośmiu blokach",
+        "waiverItem": "Podczas płatności zostaniesz poproszony o potwierdzenie zrzeczenia się 14-dniowego prawa do anulowania w zamian za natychmiastowy dostęp",
+        "nonRefundableItem": "<strong>Brak możliwości zwrotu od momentu zakupu</strong>",
+        "noRefundsItem": "Po dokonaniu zakupu zwroty środków nie są przyznawane w żadnych okolicznościach, z wyjątkiem przypadków wymaganych przez Consumer Rights Act 2015 w odniesieniu do wadliwej treści"
+      },
+      "journeyInstalment": {
+        "title": "The Journey — tygodniowy plan ratalny",
+        "scheduleItem": "12 cotygodniowych płatności po £55 — każda płatność odblokowuje kolejny blok treści",
+        "stopAnytimeItem": "Możesz zatrzymać przyszłe płatności w dowolnym momencie",
+        "nonRefundablePaymentsItem": "Wszelkie dokonane już płatności tygodniowe nie podlegają zwrotowi; wcześniej odblokowane treści pozostają dostępne po zatrzymaniu płatności",
+        "firstBlockItem": "Po uzyskaniu dostępu do pierwszego bloku prawo do okresu odstąpienia od umowy przestaje obowiązywać"
+      },
+      "howto": {
+        "title": "Jak ubiegać się o zwrot środków (jeśli dotyczy)",
+        "intro": "Wyślij email na adres <mail>support@mindreset.ai</mail> z dopiskiem „REFUND“ w temacie wiadomości, abyśmy mogli szybciej rozpatrzyć zgłoszenie. Podaj:",
+        "orderIdItem": "Numer zamówienia",
+        "emailItem": "Adres email powiązany z Twoim kontem",
+        "reasonItem": "Powód wniosku o zwrot środków",
+        "outro": "Uprawnienie do zwrotu zostanie ocenione zgodnie z powyższymi zasadami. Zatwierdzone zwroty są realizowane na pierwotną metodę płatności w ciągu 10 dni roboczych."
+      },
+      "faulty": {
+        "title": "Wadliwa treść (ustawowe prawa pozostają zachowane)",
+        "body": "Żadne postanowienie niniejszej Polityki zwrotów nie wyłącza Twoich ustawowych praw wynikających z <strong>Consumer Rights Act 2015</strong>. Jeśli treść cyfrowa okaże się wadliwa, niezgodna z opisem lub nie działa zgodnie z oczekiwaniami, naprawimy, wymienimy lub zwrócimy środki za treść zgodnie z wymogami prawa, niezależnie od zrzeczenia potwierdzonego podczas płatności. Skontaktuj się z nami pod adresem <mail>support@mindreset.ai</mail> i opisz problem."
+      }
+    },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
     "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
     "subsIntro": "Two tiers, each billed monthly or annually:",

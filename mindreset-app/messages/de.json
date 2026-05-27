@@ -364,6 +364,60 @@
       "secondary": "Die hier verwendete KI kann keine Diagnosen stellen, keine Behandlungen durchführen und keine medizinische Fachkraft ersetzen. Wenn Sie sich in einer Krise befinden, in Gefahr sind oder unter schweren psychischen Symptomen leiden, wenden Sie sich bitte an professionelle Unterstützung.",
       "ukCrisis": "<strong>UK:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, Option 2. Ihr GP. Im Notfall: <strong>999</strong> oder A&E."
     },
+    "refund": {
+      "title": "Rückerstattungs- und Kündigungsrichtlinie",
+      "intro": "Diese Rückerstattungsrichtlinie ist Bestandteil unserer Nutzungsbedingungen. Die aktuellen Preise aller Produkte werden beim Checkout angezeigt.",
+      "minimind": {
+        "title": "MiniMind-Abonnements (Essential und Extended)",
+        "windowItem": "<strong>7-tägiges Rückerstattungsfenster ab dem Erstkauf</strong> — gilt sowohl für monatliche als auch jährliche Pläne. Anfrage über <mail>support@mindreset.ai</mail> mit „REFUND“ im Betreff. Nach Ablauf von 7 Tagen gelten die regulären Kündigungsbedingungen.",
+        "cancelAnytimeItem": "Sie können Ihr Abonnement jederzeit in den Abrechnungseinstellungen Ihres Kontos kündigen",
+        "whenCancelItem": "Wenn Sie kündigen: <strong>werden keine weiteren Zahlungen eingezogen</strong>, und Ihr Zugang bleibt bis zum Ende des aktuellen Abrechnungszeitraums bestehen",
+        "endOfCycleItem": "Der Zugang endet automatisch am Ende des aktuellen Zeitraums",
+        "noPartialItem": "<strong>Keine teilweisen oder anteiligen Rückerstattungen</strong> für Kündigungen nach Ablauf des 7-Tage-Fensters"
+      },
+      "topup": {
+        "title": "MiniMind Nachrichten-Aufladung",
+        "priceItem": "Einmaliger Kauf für £4.99 — fügt Ihrem aktuellen Abrechnungszeitraum 200 Nachrichten hinzu",
+        "immediateUseItem": "Bereitgestellt zur sofortigen Nutzung als digitaler Inhalt",
+        "waiverItem": "Beim Checkout bestätigen Sie den Verzicht auf das 14-tägige Widerrufsrecht gemäß den Consumer Contracts Regulations 2013 im Austausch für sofortigen Zugang",
+        "nonRefundableItem": "<strong>Nach dem Kauf nicht erstattungsfähig</strong>",
+        "expiryItem": "Zusätzliche Nachrichten verfallen am Ende des aktuellen Abrechnungszeitraums"
+      },
+      "modules": {
+        "title": "States & Themes — einzelne Modulkäufe",
+        "priceItem": "£59 pro Modul (für Nicht-Abonnenten) — einmaliger Kauf mit dauerhaftem Zugriff",
+        "subscriberDiscountItem": "Aktive MiniMind-Abonnenten (Essential oder Extended) zahlen £29 pro Modul — Rabatt wird automatisch beim Checkout angewendet",
+        "immediateAccessItem": "Der Zugang beginnt unmittelbar nach erfolgreicher Zahlung",
+        "waiverItem": "Beim Checkout bestätigen Sie den Verzicht auf das 14-tägige Widerrufsrecht gemäß den Consumer Contracts Regulations 2013 im Austausch für sofortigen Zugang. Wenn Sie das Modul innerhalb von 14 Tagen nach dem Kauf nicht öffnen, können Sie eine vollständige Rückerstattung beantragen, indem Sie eine E-Mail an <mail>support@mindreset.ai</mail> mit „REFUND“ im Betreff senden",
+        "openedNonRefundableItem": "<strong>Sobald ein Modul geöffnet wurde, ist der Kauf nicht erstattungsfähig</strong>"
+      },
+      "journeyOnetime": {
+        "title": "The Journey — Einmalzahlung",
+        "immediateUseItem": "Der Inhalt wird zur <strong>sofortigen Nutzung</strong> über alle acht Blöcke hinweg bereitgestellt",
+        "waiverItem": "Beim Checkout werden Sie aufgefordert, den Verzicht auf das 14-tägige Widerrufsrecht im Austausch für sofortigen Zugang zu bestätigen",
+        "nonRefundableItem": "<strong>Ab dem Zeitpunkt des Kaufs nicht erstattungsfähig</strong>",
+        "noRefundsItem": "Nach dem Kauf werden unter keinen Umständen Rückerstattungen gewährt, außer soweit dies nach dem Consumer Rights Act 2015 für fehlerhafte Inhalte erforderlich ist"
+      },
+      "journeyInstalment": {
+        "title": "The Journey — wöchentlicher Ratenzahlungsplan",
+        "scheduleItem": "12 wöchentliche Zahlungen von £55 — jede Zahlung schaltet den nächsten Inhaltsblock frei",
+        "stopAnytimeItem": "Sie können zukünftige Zahlungen jederzeit stoppen",
+        "nonRefundablePaymentsItem": "Bereits geleistete wöchentliche Zahlungen sind nicht erstattungsfähig; zuvor freigeschaltete Inhalte bleiben nach dem Stopp der Zahlungen weiterhin zugänglich",
+        "firstBlockItem": "Sobald auf den ersten Block zugegriffen wurde, gilt das Widerrufsrecht nicht mehr"
+      },
+      "howto": {
+        "title": "So beantragen Sie eine Rückerstattung (sofern berechtigt)",
+        "intro": "Senden Sie eine E-Mail an <mail>support@mindreset.ai</mail> mit „REFUND“ im Betreff, damit wir Ihre Anfrage schneller bearbeiten können. Bitte geben Sie Folgendes an:",
+        "orderIdItem": "Ihre Bestellnummer",
+        "emailItem": "Die mit Ihrem Konto verknüpfte E-Mail-Adresse",
+        "reasonItem": "Grund für die Rückerstattungsanfrage",
+        "outro": "Die Berechtigung wird anhand der oben genannten Regeln geprüft. Genehmigte Rückerstattungen werden innerhalb von 10 Werktagen auf die ursprüngliche Zahlungsmethode zurückerstattet."
+      },
+      "faulty": {
+        "title": "Fehlerhafte Inhalte (gesetzliche Rechte bleiben bestehen)",
+        "body": "Nichts in dieser Rückerstattungsrichtlinie schließt Ihre gesetzlichen Rechte gemäß dem <strong>Consumer Rights Act 2015</strong> aus. Wenn digitale Inhalte fehlerhaft sind, nicht der Beschreibung entsprechen oder nicht wie erwartet funktionieren, werden wir die Inhalte reparieren, ersetzen oder gemäß den gesetzlichen Anforderungen erstatten, unabhängig von dem beim Checkout bestätigten Verzicht. Kontaktieren Sie uns unter <mail>support@mindreset.ai</mail> mit einer Beschreibung des Problems."
+      }
+    },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
     "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
     "subsIntro": "Two tiers, each billed monthly or annually:",
