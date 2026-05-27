@@ -358,6 +358,206 @@
   },
   "Terms": {
     "lastUpdated": "Zuletzt aktualisiert · {date}",
+    "article1": {
+      "title": "Terms of Service",
+      "preamble": {
+        "operatorLabel": "Operator:",
+        "operatorBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>Julia Loya</strong> (sole proprietor), based in London, United Kingdom.",
+        "note": "[NOTE: To be updated when a UK Limited company is registered. The corporate entity, registration number, registered address, and trading name (if changed) will replace this line. The methodology and product structure remain the same.]",
+        "contactLabel": "Contact:",
+        "agreement": "By using the MindReset AI self-help platform (the \"Service\"), available at mindreset.ai, you agree to these Terms. Read them carefully. If you do not agree, please do not use the Service."
+      },
+      "section1": {
+        "title": "1. What This Service Is — And What It Is Not",
+        "whatItIs": "<strong>What it is.</strong> The MindReset AI self-help platform (the \"Service\") is an AI-assisted self-help platform for general psychological wellbeing. It provides conversational reflection, structured self-exploration exercises, grounding practices, educational materials, and progress tracking. It draws on established frameworks including somatic regulation, parts-aware self-work, trauma-informed pacing principles, narrative reframing, and integrative identity formation. It is positioned as a <strong>wellbeing tool for non-clinical contexts.</strong>",
+        "whatItIsNotLabel": "<strong>What it is not.</strong>",
+        "notTherapyItem": "Not therapy, counselling, or psychiatric treatment",
+        "notMedicalItem": "Not a medical device",
+        "notSubstituteItem": "Not a substitute for a qualified clinician, doctor, or licensed mental health professional",
+        "notCrisisItem": "Not a crisis service, emergency service, or 24-hour helpline",
+        "notDiagnosticItem": "Not a diagnostic tool — it does not diagnose, treat, cure, or prevent any medical or psychological condition",
+        "closing": "If you require clinical care or are in distress that exceeds what self-help can support, please consult a qualified professional or contact emergency services. We provide signposting to such services within the Service."
+      },
+      "section2": {
+        "title": "2. The Readiness Check (Section 0) — Informational Only",
+        "intro": "Before engaging with the deeper materials of the Service, you are invited to complete a short Readiness Check. The Readiness Check is provided as <strong>informational guidance only.</strong> It is not a medical or psychological assessment, not a diagnosis, and not a clinical gate.",
+        "classificationLabel": "The Readiness Check classifies your responses into one of three informational categories:",
+        "greenItem": "<strong>Green</strong> — Your responses suggest the Service may be suitable for you at this time.",
+        "yellowItem": "<strong>Yellow</strong> — Your responses suggest you may benefit from a careful, paced introduction. Some materials may not be appropriate at this time.",
+        "redItem": "<strong>Red</strong> — Your responses suggest the Service may not be appropriate for you at this time, and that professional support would serve you better.",
+        "importantLabel": "<strong>Important.</strong> The Readiness Check provides information; it does not gate access to the Service. You may choose to proceed regardless of the result. If you choose to proceed despite a Red or Yellow result, or to retake the Readiness Check with different responses, you do so on your own responsibility and confirm by your continued use that:",
+        "understoodItem": "You have read and understood the Readiness Check result and the limitations of the Service stated in these Terms;",
+        "notForCrisisItem": "You understand the Service is not appropriate for active crisis, severe psychiatric symptoms, active suicidality, recent psychosis, dissociation requiring clinical care, or other conditions that exceed self-help support;",
+        "acceptResponsibilityItem": "You accept full responsibility for your decision to use the Service;",
+        "releaseLiabilityItem": "You release the operator of the Service (currently Julia Loya, sole proprietor) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate."
+      },
+      "section3": {
+        "title": "3. Acceptance and Age",
+        "intro": "By creating an account or using any part of the Service you confirm that:",
+        "ageItem": "You are at least <strong>18 years of age</strong>",
+        "acceptTermsItem": "You accept these Terms of Service in full",
+        "acceptPrivacyItem": "You accept our Privacy Policy",
+        "jurisdictionItem": "You are accessing the Service from a jurisdiction where it is legal to do so",
+        "readDisclaimerItem": "You have read the Medical & Crisis Disclaimer",
+        "under18": "If you are under 18, you are not permitted to use the Service."
+      },
+      "section4": {
+        "title": "4. No Emergency or Professional Treatment",
+        "intro": "The Service is <strong>not designed for emergencies or active mental health crises.</strong>",
+        "experiencingLabel": "<strong>If you are experiencing any of the following, stop using the Service immediately and contact appropriate professional support:</strong>",
+        "suicidalItem": "Suicidal thoughts or intent to harm yourself",
+        "harmOthersItem": "Thoughts of harming others",
+        "acuteSymptomsItem": "Acute psychiatric symptoms (psychosis, severe dissociation, mania)",
+        "withdrawalItem": "Active substance withdrawal",
+        "dangerItem": "Any immediate physical danger to yourself or others",
+        "ukResourcesLabel": "<strong>UK crisis resources:</strong>",
+        "samaritansItem": "<strong>Samaritans</strong> — 116 123 (free, 24 hours, every day)",
+        "nhsItem": "<strong>NHS 111</strong> — option 2 for mental health (24 hours)",
+        "gpItem": "<strong>Your GP</strong> — for non-urgent mental health support",
+        "aeItem": "<strong>A&E or 999</strong> — for any medical or psychiatric emergency",
+        "liability": "The operator of the Service and the Service itself are not liable for any decision or action you take based on AI suggestions or content provided through the Service."
+      },
+      "section5": {
+        "title": "5. Accounts and Security",
+        "registerItem": "You may register using your email address and a password. You may use a pseudonym.",
+        "responsibilityItem": "You are responsible for safeguarding your login credentials and for all activity that occurs under your account.",
+        "legalContentItem": "You agree not to share illegal, threatening, defamatory, or abusive content within the Service.",
+        "safetyItem": "You agree not to attempt to circumvent or interfere with the Service's safety protocols, content filters, or technical safeguards.",
+        "harmItem": "You agree not to use the Service to harm others, infringe rights, or violate any applicable law."
+      },
+      "section6": {
+        "title": "6. AI and Automated Processing",
+        "intro": "The Service uses artificial intelligence (large language models provided by a third-party AI infrastructure partner) to generate conversational responses, suggest practices, and personalise educational content.",
+        "acknowledgeLabel": "You acknowledge and accept that:",
+        "inaccurateItem": "AI responses are generated automatically and may be inaccurate, incomplete, or unsuitable for your circumstances",
+        "notKnowItem": "AI does not \"know\" or \"understand\" you in the way a human practitioner does",
+        "notJudgmentItem": "AI cannot replace the clinical judgment of a qualified professional",
+        "informationalItem": "AI-generated content should be treated as informational, not as personal advice",
+        "consultItem": "You should not rely on AI suggestions for decisions with significant life consequences without consulting a qualified professional",
+        "profile": "The AI processes your conversations to generate a private wellbeing profile (e.g., \"elevated anxiety patterns\") to better tailor practices. This profile is not a diagnosis and is not shared with third parties for marketing or research purposes. You may request to view, correct, or delete this profile at any time.",
+        "humanReview": "A human review process is available if you believe an automated response is materially incorrect or harmful. Contact <mail>support@mindreset.ai</mail>.",
+        "voiceInput": "You may use voice input as an alternative to typing on the MiniMind chat surface. Voice messages are securely transcribed and deleted after processing — we do not store the audio recording, and our speech-to-text provider is configured for zero data retention. Only the resulting text is saved to your conversation history (encrypted at rest). Voice input is optional — you may use the Service entirely by typing."
+      },
+      "section7": {
+        "title": "7. Intellectual Property",
+        "ip": "All texts, audio, code, design, methodology, brand identity, and other materials within the Service are © Julia Loya, except where third-party content is clearly marked.",
+        "license": "You receive a personal, non-transferable, non-exclusive, non-commercial licence to access and use the content of the Service for your own personal wellbeing during your subscription or purchase term.",
+        "agreeNotToLabel": "You agree not to:",
+        "noRedistributeItem": "Redistribute, resell, publish, or share the Service's content",
+        "noScrapeItem": "Extract, scrape, or otherwise harvest AI responses for the purpose of training another AI system",
+        "noReverseItem": "Reverse-engineer, decompile, or attempt to extract the source code of the Service",
+        "noCommercialItem": "Use the Service or its content for commercial gain"
+      },
+      "section8": {
+        "title": "8. Paid Products",
+        "intro": "The Service offers three product types. <strong>Current pricing is always displayed at checkout</strong> before any payment is taken. We may change pricing, offer promotional discounts, run sales, or adjust pricing for any product at any time; such changes do not affect any product you have already purchased.",
+        "minimind": {
+          "title": "MiniMind",
+          "freeTaster": "<strong>Free taster.</strong> Every new account receives 50 messages with MiniMind at no cost. The taster does not require a card, has no time limit, and is limited to one per email address.",
+          "subs": {
+            "title": "MiniMind subscriptions",
+            "intro": "Two tiers, each billed monthly or annually:",
+            "essentialItem": "<strong>MiniMind Essential</strong> — £14.99/month or £129/year. 200 messages per billing cycle.",
+            "extendedItem": "<strong>MiniMind Extended</strong> — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
+            "billingItem": "Charged to your chosen payment method until you cancel",
+            "resetItem": "Message allowance resets at the start of each billing cycle and does not roll over",
+            "refundWindowItem": "<strong>7-day refund window:</strong> you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject. After 7 days or 30 messages used, the standard cancellation policy applies.",
+            "cancellationItem": "<strong>Cancellation:</strong> you may cancel at any time via your account billing settings. When you cancel:",
+            "cancelNoFurtherItem": "No further payments will be taken",
+            "cancelRetainItem": "You retain access until the end of your current billing cycle",
+            "cancelAutoEndItem": "Access ends automatically at the end of the current cycle",
+            "noPartialItem": "No partial-cycle refunds are issued for cancellations after the 7-day window"
+          },
+          "topup": {
+            "title": "Message top-up",
+            "priceItem": "£4.99 one-off charge — adds 200 messages to your current billing cycle",
+            "expiryItem": "Top-up messages expire when your billing cycle resets",
+            "availableItem": "Available to both Essential and Extended subscribers; stackable",
+            "nonRefundableItem": "<strong>Non-refundable</strong> — top-ups are delivered for immediate use as digital content"
+          }
+        },
+        "modules": {
+          "title": "States & Themes — individual module purchases",
+          "priceItem": "£59 per module (one-off, permanent access)",
+          "subscriberDiscountItem": "Active MiniMind subscribers (Essential or Extended) pay £29 per module — discount applied automatically at checkout when logged in with an active subscription",
+          "immediateAccessItem": "Access begins immediately upon successful payment",
+          "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject",
+          "openedNonRefundableItem": "<strong>Once a module has been opened, the purchase is non-refundable</strong>"
+        },
+        "journey": {
+          "title": "The Journey",
+          "note": "[NOTE: Product name finalised as \"The Journey\". Methodology described as the eight-stage Reset 8 Blocks framework — internal terminology only.]",
+          "optionsLabel": "Two purchase options:",
+          "onetime": {
+            "title": "Option A — Full programme, one-time payment:",
+            "accessItem": "Access to all eight blocks begins immediately upon successful payment",
+            "nonRefundableItem": "<strong>Non-refundable from the moment of purchase.</strong> This is digital content delivered for immediate use",
+            "regulationsItem": "Under the Consumer Contracts Regulations 2013, the 14-day cancellation right does not apply where the consumer has explicitly waived it in exchange for immediate access",
+            "confirmWaiverItem": "<strong>You will be asked to confirm this waiver at checkout</strong> before payment is taken",
+            "noRefundsItem": "No refunds are issued under any circumstances after purchase, except where required by the Consumer Rights Act 2015 for faulty content (see Refund Policy below)"
+          },
+          "instalment": {
+            "title": "Option B — Weekly instalment plan:",
+            "scheduleItem": "12 weekly payments of £55 — each payment unlocks the next block of content",
+            "stopAnytimeItem": "You may stop future payments at any time",
+            "nonRefundableItem": "Any weekly payments already made are non-refundable; previously unlocked content remains accessible after stopping payments",
+            "firstBlockItem": "Once the first block has been accessed, the right to a cooling-off period no longer applies",
+            "confirmWaiverItem": "You will be asked to confirm the immediate-access waiver at checkout"
+          }
+        },
+        "payment": {
+          "title": "Payment processing",
+          "processor": "All payments are processed by a regulated third-party payment processor, which acts as an independent data controller for payment card information under its own terms. We do not store full card numbers or CVV codes.",
+          "taxes": "All prices include VAT where applicable. We may add or remove sales taxes based on your billing location as required by law."
+        }
+      },
+      "section9": {
+        "title": "9. Cancellation",
+        "subscriptionsItem": "<strong>Subscriptions:</strong> cancel anytime in your account billing settings; no further charges will be made",
+        "oneOffItem": "<strong>One-off products:</strong> email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line, your order ID, account email, and reason for refund"
+      },
+      "section10": {
+        "title": "10. Limitation of Liability",
+        "asIs": "The Service is provided <strong>\"as is\" and \"as available\"</strong> without warranties of any kind, express or implied, to the fullest extent permitted by law.",
+        "fullestExtentLabel": "To the fullest extent permitted by applicable law:",
+        "aggregateItem": "Our total aggregate liability to you for any claim arising from your use of the Service is limited to the greater of (a) the amount you paid us in the six (6) months preceding the claim, or (b) £100.",
+        "indirectItem": "We are not liable for indirect, incidental, special, consequential, or punitive damages of any kind.",
+        "decisionsItem": "We are not liable for any decisions you make, actions you take, or harm you experience as a result of using the Service, except where such liability cannot be excluded by law.",
+        "nothingItem": "Nothing in these Terms excludes our liability for death or personal injury caused by our negligence, for fraud, or for any other liability that cannot lawfully be excluded.",
+        "statutoryRights": "Nothing in these Terms affects your statutory rights as a consumer under the <strong>Consumer Rights Act 2015</strong> or the <strong>Digital Markets, Competition and Consumers Act 2024</strong>."
+      },
+      "section11": {
+        "title": "11. Data Protection",
+        "specialCategory": "We process personal and special-category data as described in our <privacy>Privacy Policy</privacy>. Special-category data (including data about your mental health and wellbeing) is processed only with your explicit consent, which you grant by accepting these Terms and using the Service for its intended purpose.",
+        "lawfulBasis": "The lawful basis for processing this data is <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> and the equivalent provision of EU GDPR. You may withdraw this consent at any time by deleting your account, at which point your conversational data will be deleted in accordance with our retention schedule."
+      },
+      "section12": {
+        "title": "12. Compliance with Applicable Law",
+        "intro": "The Service operates in compliance with applicable UK and EU law as it stands at the time of last update of these Terms, including but not limited to:",
+        "gdprItem": "<strong>UK GDPR</strong> and the Data Protection Act 2018",
+        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (in force from 5 February 2026)",
+        "euGdprItem": "<strong>EU GDPR</strong> (where applicable to EU users)",
+        "aiActItem": "<strong>EU AI Act</strong> (where applicable; the Service is positioned as a limited-risk AI system for general wellbeing support, not a high-risk AI system)",
+        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (where applicable; we maintain content moderation and safety protocols including, without limitation, detection and response to content involving self-harm and other priority harms)",
+        "craItem": "<strong>Consumer Rights Act 2015</strong>",
+        "dmccItem": "<strong>Digital Markets, Competition and Consumers Act 2024</strong>",
+        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — the Service is not a medical device and does not make medical claims",
+        "minors": "We do not target users under 18 and do not knowingly process the personal data of minors."
+      },
+      "section13": {
+        "title": "13. Governing Law and Disputes",
+        "governing": "These Terms are governed by the laws of <strong>England & Wales</strong>. Any dispute arising under these Terms shall be submitted to the courts of England & Wales, unless mandatory consumer law in your country of residence (within the UK or EU) allows you to bring a claim in your local courts.",
+        "odr": "For EU users, you may also have the right to use the European Commission's Online Dispute Resolution platform: <odr>https://ec.europa.eu/consumers/odr</odr>"
+      },
+      "section14": {
+        "title": "14. Changes to These Terms",
+        "body": "We may update these Terms from time to time. If we make material changes, we will notify you by email and/or by displaying notice within the Service at least 30 days before the changes take effect. Continued use of the Service after the effective date constitutes your acceptance of the updated Terms. If you do not agree with the updated Terms, you may terminate your account at any time before the effective date and obtain a pro rata refund for any unused subscription period."
+      },
+      "section15": {
+        "title": "15. Contact",
+        "body": "For questions about these Terms: <mail>support@mindreset.ai</mail>"
+      }
+    },
     "disclaimer": {
       "title": "Medizinischer Hinweis und Krisenhinweis",
       "primary": "<strong>MindReset ist ein Tool für Wohlbefinden — keine Therapie, kein Medizinprodukt und kein Krisendienst.</strong>",
