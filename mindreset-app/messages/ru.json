@@ -332,12 +332,12 @@
     "acceptBothHint": "Чтобы продолжить, пожалуйста, примите оба условия."
   },
   "Terms": {
-    "lastUpdated": "Last updated · {date}",
+    "lastUpdated": "Последнее обновление · {date}",
     "disclaimer": {
-      "title": "Medical & Crisis Disclaimer",
-      "primary": "<strong>MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.</strong>",
-      "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
-      "ukCrisis": "<strong>UK:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong> option 2. Your GP. In an emergency: <strong>999</strong> or A&E."
+      "title": "Медицинское предупреждение и информация о кризисной поддержке",
+      "primary": "<strong>MindReset — это инструмент поддержки благополучия, а не терапия, не медицинское устройство и не кризисная служба.</strong>",
+      "secondary": "MindReset не предназначен для диагностики, лечения или замены профессиональной медицинской или психологической помощи. Если вы переживаете кризис, чувствуете угрозу своей безопасности или сталкиваетесь с тяжёлыми психологическими симптомами — пожалуйста, обратитесь за профессиональной поддержкой.",
+      "ukCrisis": "<strong>Великобритания:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, вариант 2. Ваш GP. В экстренной ситуации: <strong>999</strong> или A&E."
     },
     "freeTasterCount": "Каждый новый пользователь получает 50 бесплатных сообщений с MiniMind.",
     "freeTasterNoCard": "Банковская карта не требуется, а пробный доступ не ограничен по времени.",

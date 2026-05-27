@@ -332,12 +332,12 @@
     "acceptBothHint": "Please accept both to continue."
   },
   "Terms": {
-    "lastUpdated": "Last updated · {date}",
+    "lastUpdated": "Última atualização · {date}",
     "disclaimer": {
-      "title": "Medical & Crisis Disclaimer",
-      "primary": "<strong>MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.</strong>",
-      "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
-      "ukCrisis": "<strong>UK:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong> option 2. Your GP. In an emergency: <strong>999</strong> or A&E."
+      "title": "Aviso médico e de crise",
+      "primary": "<strong>MindReset é uma ferramenta de bem-estar — não terapia, dispositivo médico ou serviço de crise.</strong>",
+      "secondary": "A IA utilizada aqui não pode diagnosticar, tratar ou substituir um profissional de saúde. Se estiver em crise, em perigo ou a experienciar sintomas psicológicos graves, procure apoio profissional.",
+      "ukCrisis": "<strong>Reino Unido:</strong> Samaritans <strong>116 123</strong> (24/7). NHS <strong>111</strong>, opção 2. O seu GP. Em caso de emergência: <strong>999</strong> ou A&E."
     },
     "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
     "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
