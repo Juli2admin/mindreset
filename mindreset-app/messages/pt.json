@@ -507,9 +507,9 @@
           }
         },
         "payment": {
-          "title": "Payment processing",
-          "processor": "All payments are processed by a regulated third-party payment processor, which acts as an independent data controller for payment card information under its own terms. We do not store full card numbers or CVV codes.",
-          "taxes": "All prices include VAT where applicable. We may add or remove sales taxes based on your billing location as required by law."
+          "title": "Processamento de pagamentos",
+          "processor": "Todos os pagamentos são processados por um processador de pagamentos terceiro regulamentado, que atua como data controller independente relativamente às informações de cartões bancários ao abrigo dos seus próprios termos. Não armazenamos números completos de cartões nem códigos CVV.",
+          "taxes": "Todos os preços incluem VAT quando aplicável. Podemos adicionar ou remover impostos sobre vendas com base no seu billing location conforme exigido por lei."
         }
       },
       "section9": {
