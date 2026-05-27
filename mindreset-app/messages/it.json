@@ -533,17 +533,17 @@
         "lawfulBasis": "La base giuridica per il trattamento di tali dati è il <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> e la disposizione equivalente del EU GDPR. Puoi revocare tale consenso in qualsiasi momento eliminando il tuo account; in tal caso, i tuoi conversational data saranno eliminati conformemente al nostro retention schedule."
       },
       "section12": {
-        "title": "12. Compliance with Applicable Law",
-        "intro": "The Service operates in compliance with applicable UK and EU law as it stands at the time of last update of these Terms, including but not limited to:",
-        "gdprItem": "<strong>UK GDPR</strong> and the Data Protection Act 2018",
-        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (in force from 5 February 2026)",
-        "euGdprItem": "<strong>EU GDPR</strong> (where applicable to EU users)",
-        "aiActItem": "<strong>EU AI Act</strong> (where applicable; the Service is positioned as a limited-risk AI system for general wellbeing support, not a high-risk AI system)",
-        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (where applicable; we maintain content moderation and safety protocols including, without limitation, detection and response to content involving self-harm and other priority harms)",
+        "title": "12. Conformità alla legge applicabile",
+        "intro": "Il Servizio opera in conformità con la legge applicabile del Regno Unito e dell’UE vigente al momento dell’ultimo aggiornamento di queste Terms, inclusi, a titolo esemplificativo ma non esaustivo:",
+        "gdprItem": "<strong>UK GDPR</strong> e il Data Protection Act 2018",
+        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (in vigore dal 5 febbraio 2026)",
+        "euGdprItem": "<strong>EU GDPR</strong> (ove applicabile agli utenti UE)",
+        "aiActItem": "<strong>EU AI Act</strong> (ove applicabile; il Servizio è posizionato come limited-risk AI system per supporto generale al wellbeing e non come high-risk AI system)",
+        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (ove applicabile; manteniamo protocolli di moderazione dei contenuti e sicurezza inclusi, senza limitazione, rilevamento e risposta a contenuti relativi a self-harm e altri priority harms)",
         "craItem": "<strong>Consumer Rights Act 2015</strong>",
         "dmccItem": "<strong>Digital Markets, Competition and Consumers Act 2024</strong>",
-        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — the Service is not a medical device and does not make medical claims",
-        "minors": "We do not target users under 18 and do not knowingly process the personal data of minors."
+        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — il Servizio non è un dispositivo medico e non formula dichiarazioni mediche",
+        "minors": "Non rivolgiamo il Servizio a utenti di età inferiore ai 18 anni e non trattiamo consapevolmente dati personali di minori."
       },
       "section13": {
         "title": "13. Governing Law and Disputes",

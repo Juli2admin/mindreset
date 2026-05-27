@@ -508,17 +508,17 @@
         "lawfulBasis": "Правовым основанием для обработки данных является <strong>explicit consent under Article 9(2)(a) UK GDPR</strong> и эквивалентное положение EU GDPR. Вы можете отозвать это согласие в любое время, удалив свой аккаунт; в этом случае ваши conversational data будут удалены в соответствии с нашей retention schedule."
       },
       "section12": {
-        "title": "12. Compliance with Applicable Law",
-        "intro": "The Service operates in compliance with applicable UK and EU law as it stands at the time of last update of these Terms, including but not limited to:",
-        "gdprItem": "<strong>UK GDPR</strong> and the Data Protection Act 2018",
-        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (in force from 5 February 2026)",
-        "euGdprItem": "<strong>EU GDPR</strong> (where applicable to EU users)",
-        "aiActItem": "<strong>EU AI Act</strong> (where applicable; the Service is positioned as a limited-risk AI system for general wellbeing support, not a high-risk AI system)",
-        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (where applicable; we maintain content moderation and safety protocols including, without limitation, detection and response to content involving self-harm and other priority harms)",
+        "title": "12. Соблюдение применимого законодательства",
+        "intro": "Сервис функционирует в соответствии с применимым законодательством Великобритании и ЕС в редакции, действующей на момент последнего обновления настоящих Terms, включая, помимо прочего:",
+        "gdprItem": "<strong>UK GDPR</strong> и Data Protection Act 2018",
+        "duaItem": "<strong>Data (Use and Access) Act 2025</strong> (вступает в силу с 5 февраля 2026 года)",
+        "euGdprItem": "<strong>EU GDPR</strong> (где применимо к пользователям из ЕС)",
+        "aiActItem": "<strong>EU AI Act</strong> (где применимо; Сервис позиционируется как limited-risk AI system для общей wellbeing-поддержки, а не как high-risk AI system)",
+        "onlineSafetyItem": "<strong>Online Safety Act 2023</strong> (где применимо; мы поддерживаем протоколы модерации контента и безопасности, включая, помимо прочего, выявление и реагирование на контент, связанный с self-harm и другими priority harms)",
         "craItem": "<strong>Consumer Rights Act 2015</strong>",
         "dmccItem": "<strong>Digital Markets, Competition and Consumers Act 2024</strong>",
-        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — the Service is not a medical device and does not make medical claims",
-        "minors": "We do not target users under 18 and do not knowingly process the personal data of minors."
+        "mdrItem": "<strong>Medical Devices Regulations 2002</strong> — Сервис не является медицинским устройством и не делает медицинских заявлений",
+        "minors": "Мы не ориентируем Сервис на пользователей младше 18 лет и сознательно не обрабатываем персональные данные несовершеннолетних."
       },
       "section13": {
         "title": "13. Governing Law and Disputes",
