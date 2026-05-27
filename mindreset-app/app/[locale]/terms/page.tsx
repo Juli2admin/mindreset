@@ -275,6 +275,7 @@ export default async function TermsPage() {
               })}
             </li>
           </UL>
+          <P>{t('article1.section4.outsideUk')}</P>
           <P>{t('article1.section4.liability')}</P>
 
           <H3 id="terms-section-5">{t('article1.section5.title')}</H3>

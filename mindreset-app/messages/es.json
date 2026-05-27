@@ -415,6 +415,7 @@
         "nhsItem": "<strong>NHS 111</strong> — option 2 para salud mental (24 horas)",
         "gpItem": "<strong>Your GP</strong> — para apoyo de salud mental no urgente",
         "aeItem": "<strong>A&E or 999</strong> — para cualquier emergencia médica o psiquiátrica",
+        "outsideUk": "If you are outside the UK, please contact your local emergency services or crisis support line.",
         "liability": "El operador del Servicio y el propio Servicio no son responsables de ninguna decisión o acción tomada sobre la base de sugerencias de AI o contenido proporcionado a través del Servicio."
       },
       "section5": {
