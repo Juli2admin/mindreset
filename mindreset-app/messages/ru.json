@@ -390,16 +390,16 @@
         "nhsItem": "<strong>NHS 111</strong> — option 2 для поддержки психического здоровья (24 часа)",
         "gpItem": "<strong>Your GP</strong> — для неэкстренной поддержки психического здоровья",
         "aeItem": "<strong>A&E or 999</strong> — при любой медицинской или психиатрической экстренной ситуации",
-        "outsideUk": "If you are outside the UK, please contact your local emergency services or crisis support line.",
+        "outsideUk": "Если вы находитесь за пределами Великобритании, пожалуйста, обратитесь в местные экстренные службы или на местную кризисную линию поддержки.",
         "liability": "Оператор Сервиса и сам Сервис не несут ответственности за любые решения или действия, которые вы принимаете на основании рекомендаций AI или контента, предоставленного через Сервис."
       },
       "section5": {
-        "title": "5. Accounts and Security",
-        "registerItem": "You may register using your email address and a password. You may use a pseudonym.",
-        "responsibilityItem": "You are responsible for safeguarding your login credentials and for all activity that occurs under your account.",
-        "legalContentItem": "You agree not to share illegal, threatening, defamatory, or abusive content within the Service.",
-        "safetyItem": "You agree not to attempt to circumvent or interfere with the Service's safety protocols, content filters, or technical safeguards.",
-        "harmItem": "You agree not to use the Service to harm others, infringe rights, or violate any applicable law."
+        "title": "5. Аккаунты и безопасность",
+        "registerItem": "Вы можете зарегистрироваться, используя email и пароль. Допускается использование псевдонима.",
+        "responsibilityItem": "Вы несёте ответственность за сохранность своих данных для входа и за всю активность, происходящую под вашим аккаунтом.",
+        "legalContentItem": "Вы соглашаетесь не размещать в Сервисе незаконный, угрожающий, клеветнический или оскорбительный контент.",
+        "safetyItem": "Вы соглашаетесь не пытаться обходить или нарушать протоколы безопасности Сервиса, фильтры контента или технические механизмы защиты.",
+        "harmItem": "Вы соглашаетесь не использовать Сервис для причинения вреда другим лицам, нарушения прав или нарушения применимого законодательства."
       },
       "section6": {
         "title": "6. AI and Automated Processing",

@@ -415,16 +415,16 @@
         "nhsItem": "<strong>NHS 111</strong> — option 2 para saúde mental (24 horas)",
         "gpItem": "<strong>Your GP</strong> — para apoio de saúde mental não urgente",
         "aeItem": "<strong>A&E or 999</strong> — para qualquer emergência médica ou psiquiátrica",
-        "outsideUk": "If you are outside the UK, please contact your local emergency services or crisis support line.",
+        "outsideUk": "Se estiver fora do Reino Unido, contacte os serviços de emergência locais ou uma linha local de apoio em crise.",
         "liability": "O operador do Serviço e o próprio Serviço não são responsáveis por quaisquer decisões ou ações tomadas com base em sugestões da AI ou conteúdo fornecido através do Serviço."
       },
       "section5": {
-        "title": "5. Accounts and Security",
-        "registerItem": "You may register using your email address and a password. You may use a pseudonym.",
-        "responsibilityItem": "You are responsible for safeguarding your login credentials and for all activity that occurs under your account.",
-        "legalContentItem": "You agree not to share illegal, threatening, defamatory, or abusive content within the Service.",
-        "safetyItem": "You agree not to attempt to circumvent or interfere with the Service's safety protocols, content filters, or technical safeguards.",
-        "harmItem": "You agree not to use the Service to harm others, infringe rights, or violate any applicable law."
+        "title": "5. Contas e segurança",
+        "registerItem": "Pode registar-se utilizando o seu endereço de email e uma palavra-passe. Pode utilizar um pseudónimo.",
+        "responsibilityItem": "É responsável pela proteção das suas credenciais de acesso e por toda a atividade realizada através da sua conta.",
+        "legalContentItem": "Concorda em não partilhar conteúdo ilegal, ameaçador, difamatório ou abusivo dentro do Serviço.",
+        "safetyItem": "Concorda em não tentar contornar ou interferir com os protocolos de segurança, filtros de conteúdo ou mecanismos técnicos de proteção do Serviço.",
+        "harmItem": "Concorda em não utilizar o Serviço para prejudicar terceiros, infringir direitos ou violar qualquer legislação aplicável."
       },
       "section6": {
         "title": "6. AI and Automated Processing",

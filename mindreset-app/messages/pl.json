@@ -415,16 +415,16 @@
         "nhsItem": "<strong>NHS 111</strong> — option 2 dla zdrowia psychicznego (24 godziny)",
         "gpItem": "<strong>Your GP</strong> — w przypadku niepilnego wsparcia zdrowia psychicznego",
         "aeItem": "<strong>A&E or 999</strong> — w przypadku każdego nagłego medycznego lub psychiatrycznego zagrożenia",
-        "outsideUk": "If you are outside the UK, please contact your local emergency services or crisis support line.",
+        "outsideUk": "Jeśli znajdujesz się poza Wielką Brytanią, skontaktuj się z lokalnymi służbami ratunkowymi lub lokalną linią wsparcia kryzysowego.",
         "liability": "Operator Usługi oraz sama Usługa nie ponoszą odpowiedzialności za decyzje lub działania podjęte na podstawie sugestii AI lub treści udostępnionych za pośrednictwem Usługi."
       },
       "section5": {
-        "title": "5. Accounts and Security",
-        "registerItem": "You may register using your email address and a password. You may use a pseudonym.",
-        "responsibilityItem": "You are responsible for safeguarding your login credentials and for all activity that occurs under your account.",
-        "legalContentItem": "You agree not to share illegal, threatening, defamatory, or abusive content within the Service.",
-        "safetyItem": "You agree not to attempt to circumvent or interfere with the Service's safety protocols, content filters, or technical safeguards.",
-        "harmItem": "You agree not to use the Service to harm others, infringe rights, or violate any applicable law."
+        "title": "5. Konta i bezpieczeństwo",
+        "registerItem": "Możesz zarejestrować się przy użyciu adresu email i hasła. Możesz używać pseudonimu.",
+        "responsibilityItem": "Ponosisz odpowiedzialność za ochronę swoich danych logowania oraz za wszelką aktywność wykonywaną w ramach Twojego konta.",
+        "legalContentItem": "Zgadzasz się nie udostępniać w Usłudze treści nielegalnych, grożących, zniesławiających ani obraźliwych.",
+        "safetyItem": "Zgadzasz się nie podejmować prób obchodzenia lub zakłócania protokołów bezpieczeństwa Usługi, filtrów treści ani technicznych zabezpieczeń.",
+        "harmItem": "Zgadzasz się nie wykorzystywać Usługi do wyrządzania szkody innym osobom, naruszania praw lub łamania obowiązującego prawa."
       },
       "section6": {
         "title": "6. AI and Automated Processing",
