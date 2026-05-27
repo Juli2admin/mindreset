@@ -427,17 +427,17 @@
         "harmItem": "Usted acepta no utilizar el Servicio para perjudicar a otras personas, infringir derechos o violar cualquier ley aplicable."
       },
       "section6": {
-        "title": "6. AI and Automated Processing",
-        "intro": "The Service uses artificial intelligence (large language models provided by a third-party AI infrastructure partner) to generate conversational responses, suggest practices, and personalise educational content.",
-        "acknowledgeLabel": "You acknowledge and accept that:",
-        "inaccurateItem": "AI responses are generated automatically and may be inaccurate, incomplete, or unsuitable for your circumstances",
-        "notKnowItem": "AI does not \"know\" or \"understand\" you in the way a human practitioner does",
-        "notJudgmentItem": "AI cannot replace the clinical judgment of a qualified professional",
-        "informationalItem": "AI-generated content should be treated as informational, not as personal advice",
-        "consultItem": "You should not rely on AI suggestions for decisions with significant life consequences without consulting a qualified professional",
-        "profile": "The AI processes your conversations to generate a private wellbeing profile (e.g., \"elevated anxiety patterns\") to better tailor practices. This profile is not a diagnosis and is not shared with third parties for marketing or research purposes. You may request to view, correct, or delete this profile at any time.",
-        "humanReview": "A human review process is available if you believe an automated response is materially incorrect or harmful. Contact <mail>support@mindreset.ai</mail>.",
-        "voiceInput": "You may use voice input as an alternative to typing on the MiniMind chat surface. Voice messages are securely transcribed and deleted after processing — we do not store the audio recording, and our speech-to-text provider is configured for zero data retention. Only the resulting text is saved to your conversation history (encrypted at rest). Voice input is optional — you may use the Service entirely by typing."
+        "title": "6. AI y procesamiento automatizado",
+        "intro": "El Servicio utiliza inteligencia artificial (large language models proporcionados por un third-party AI infrastructure partner) para generar respuestas conversacionales, sugerir prácticas y personalizar contenido educativo.",
+        "acknowledgeLabel": "Usted reconoce y acepta que:",
+        "inaccurateItem": "Las respuestas generadas por AI son automáticas y pueden ser inexactas, incompletas o inadecuadas para sus circunstancias",
+        "notKnowItem": "La AI no le «conoce» ni le «comprende» de la manera en que lo haría un profesional humano",
+        "notJudgmentItem": "La AI no puede sustituir el criterio clínico de un profesional cualificado",
+        "informationalItem": "El contenido generado por AI debe considerarse informativo y no asesoramiento personal",
+        "consultItem": "No debe depender de sugerencias de AI para decisiones con consecuencias importantes en la vida sin consultar previamente a un profesional cualificado",
+        "profile": "La AI procesa sus conversaciones para generar un perfil privado de wellbeing (por ejemplo, «elevated anxiety patterns») con el fin de adaptar mejor las prácticas. Este perfil no constituye un diagnóstico y no se comparte con terceros con fines de marketing o investigación. Puede solicitar ver, corregir o eliminar este perfil en cualquier momento.",
+        "humanReview": "Existe un proceso de revisión humana disponible si considera que una respuesta automatizada es materialmente incorrecta o perjudicial. Contacte con nosotros en <mail>support@mindreset.ai</mail>.",
+        "voiceInput": "Puede utilizar voice input como alternativa a escribir en el chat MiniMind. Los mensajes de voz se transcriben de forma segura y se eliminan después del procesamiento — no almacenamos grabaciones de audio y nuestro speech-to-text provider está configurado con zero data retention. Solo el texto resultante se guarda en el historial de conversación (encrypted at rest). El uso de voice input es opcional — puede utilizar el Servicio completamente mediante texto."
       },
       "section7": {
         "title": "7. Intellectual Property",
