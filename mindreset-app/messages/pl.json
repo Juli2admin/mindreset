@@ -392,11 +392,11 @@
         "openedNonRefundableItem": "<strong>Po otwarciu modułu zakup nie podlega zwrotowi</strong>"
       },
       "journeyOnetime": {
-        "title": "The Journey — One-time payment",
-        "immediateUseItem": "Content is delivered for <strong>immediate use</strong> across all eight blocks",
-        "waiverItem": "At checkout, you will be asked to confirm a waiver of the 14-day cancellation right in exchange for immediate access",
-        "nonRefundableItem": "<strong>Non-refundable from the moment of purchase</strong>",
-        "noRefundsItem": "No refunds are issued under any circumstances after purchase, except as required by the Consumer Rights Act 2015 for faulty content"
+        "title": "The Journey — płatność jednorazowa",
+        "immediateUseItem": "Treść jest dostarczana do <strong>natychmiastowego użytku</strong> we wszystkich ośmiu blokach",
+        "waiverItem": "Podczas płatności zostaniesz poproszony o potwierdzenie zrzeczenia się 14-dniowego prawa do anulowania w zamian za natychmiastowy dostęp",
+        "nonRefundableItem": "<strong>Brak możliwości zwrotu od momentu zakupu</strong>",
+        "noRefundsItem": "Po dokonaniu zakupu zwroty środków nie są przyznawane w żadnych okolicznościach, z wyjątkiem przypadków wymaganych przez Consumer Rights Act 2015 w odniesieniu do wadliwej treści"
       },
       "journeyInstalment": {
         "title": "The Journey — Weekly instalment plan",
