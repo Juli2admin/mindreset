@@ -649,12 +649,12 @@
     "journeyInstalment": "The Journey is also available as a 12-week instalment plan at £55 per week. Each weekly payment unlocks the next block of content. You may stop future payments at any time; however, payments already made are non-refundable, and previously unlocked content remains accessible. Once the first block has been accessed, the right to a cooling-off period no longer applies."
   },
   "Privacy": {
-    "lastUpdated": "Last updated · {date}",
+    "lastUpdated": "Ultimo aggiornamento · {date}",
     "title": "Privacy Policy",
     "preamble": {
       "controllerLabel": "Data Controller:",
-      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, a company registered in England & Wales, based in London, United Kingdom — <mail>support@mindreset.ai</mail>",
-      "note": "[NOTE: ICO Registration to be obtained at ico.org.uk before public launch. Annual fee ~£40-60. Register before any marketing or public availability.]"
+      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, società registrata in England & Wales, con sede a Londra, Regno Unito — <mail>support@mindreset.ai</mail>",
+      "note": "[NOTE: La registrazione ICO deve essere ottenuta tramite ico.org.uk prima del lancio pubblico. Costo annuale ~£40-60. La registrazione deve essere completata prima di qualsiasi attività di marketing o disponibilità pubblica.]"
     },
     "section1": {
       "title": "1. What This Policy Covers",

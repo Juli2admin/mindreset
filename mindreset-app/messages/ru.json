@@ -624,12 +624,12 @@
     "journeyInstalment": "The Journey также доступен в формате 12-недельной рассрочки по £55 в неделю. Каждый еженедельный платёж открывает следующий блок контента. Вы можете остановить дальнейшие платежи в любой момент, однако уже произведённые оплаты не возвращаются, а ранее открытый контент остаётся доступным. После открытия первого блока право на период охлаждения не применяется."
   },
   "Privacy": {
-    "lastUpdated": "Last updated · {date}",
+    "lastUpdated": "Последнее обновление · {date}",
     "title": "Privacy Policy",
     "preamble": {
       "controllerLabel": "Data Controller:",
-      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, a company registered in England & Wales, based in London, United Kingdom — <mail>support@mindreset.ai</mail>",
-      "note": "[NOTE: ICO Registration to be obtained at ico.org.uk before public launch. Annual fee ~£40-60. Register before any marketing or public availability.]"
+      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, компания, зарегистрированная в England & Wales, расположенная в Лондоне, Соединённое Королевство — <mail>support@mindreset.ai</mail>",
+      "note": "[NOTE: Регистрация в ICO должна быть получена через ico.org.uk до публичного запуска. Ежегодный сбор ~£40-60. Регистрация должна быть завершена до начала любого маркетинга или публичной доступности.]"
     },
     "section1": {
       "title": "1. What This Policy Covers",
