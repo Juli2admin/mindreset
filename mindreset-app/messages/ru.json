@@ -488,9 +488,9 @@
         }
       },
       "section9": {
-        "title": "9. Cancellation",
-        "subscriptionsItem": "<strong>Subscriptions:</strong> cancel anytime in your account billing settings; no further charges will be made",
-        "oneOffItem": "<strong>One-off products:</strong> email <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject line, your order ID, account email, and reason for refund"
+        "title": "9. Отмена",
+        "subscriptionsItem": "<strong>Подписки:</strong> вы можете отменить подписку в любое время в настройках биллинга аккаунта; дальнейшие списания производиться не будут",
+        "oneOffItem": "<strong>Разовые продукты:</strong> отправьте email на <mail>support@mindreset.ai</mail> с темой «REFUND», указав ID заказа, email аккаунта и причину запроса на возврат"
       },
       "section10": {
         "title": "10. Limitation of Liability",
