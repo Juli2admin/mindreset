@@ -462,23 +462,23 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: Product name finalised as \"The Journey\". Methodology described as the eight-stage Reset 8 Blocks framework — internal terminology only.]",
-          "optionsLabel": "Two purchase options:",
+          "note": "[NOTE: Название продукта утверждено как «The Journey». Методология описывается как восьмиэтапная framework Reset 8 Blocks — исключительно внутренняя терминология.]",
+          "optionsLabel": "Доступны два варианта покупки:",
           "onetime": {
-            "title": "Option A — Full programme, one-time payment:",
-            "accessItem": "Access to all eight blocks begins immediately upon successful payment",
-            "nonRefundableItem": "<strong>Non-refundable from the moment of purchase.</strong> This is digital content delivered for immediate use",
-            "regulationsItem": "Under the Consumer Contracts Regulations 2013, the 14-day cancellation right does not apply where the consumer has explicitly waived it in exchange for immediate access",
-            "confirmWaiverItem": "<strong>You will be asked to confirm this waiver at checkout</strong> before payment is taken",
-            "noRefundsItem": "No refunds are issued under any circumstances after purchase, except where required by the Consumer Rights Act 2015 for faulty content (see Refund Policy below)"
+            "title": "Вариант A — Полная программа, единоразовая оплата:",
+            "accessItem": "Доступ ко всем восьми блокам предоставляется сразу после успешной оплаты",
+            "nonRefundableItem": "<strong>Возврат средств невозможен с момента покупки.</strong> Это цифровой контент, предоставляемый для немедленного использования",
+            "regulationsItem": "Согласно Consumer Contracts Regulations 2013, право на 14-дневную отмену не применяется, если пользователь явно отказался от него в обмен на немедленный доступ",
+            "confirmWaiverItem": "<strong>Перед списанием оплаты вам будет предложено подтвердить данный отказ при checkout</strong>",
+            "noRefundsItem": "После покупки возврат средств не производится ни при каких обстоятельствах, кроме случаев, предусмотренных Consumer Rights Act 2015 для неисправного контента (см. Refund Policy ниже)"
           },
           "instalment": {
-            "title": "Option B — Weekly instalment plan:",
-            "scheduleItem": "12 weekly payments of £55 — each payment unlocks the next block of content",
-            "stopAnytimeItem": "You may stop future payments at any time",
-            "nonRefundableItem": "Any weekly payments already made are non-refundable; previously unlocked content remains accessible after stopping payments",
-            "firstBlockItem": "Once the first block has been accessed, the right to a cooling-off period no longer applies",
-            "confirmWaiverItem": "You will be asked to confirm the immediate-access waiver at checkout"
+            "title": "Вариант B — Еженедельный план оплаты:",
+            "scheduleItem": "12 еженедельных платежей по £55 — каждый платёж открывает следующий блок контента",
+            "stopAnytimeItem": "Вы можете остановить будущие платежи в любое время",
+            "nonRefundableItem": "Уже произведённые еженедельные платежи не подлежат возврату; ранее открытый контент остаётся доступным после прекращения платежей",
+            "firstBlockItem": "После открытия первого блока право на cooling-off period больше не применяется",
+            "confirmWaiverItem": "При checkout вам будет предложено подтвердить отказ от периода отмены в обмен на немедленный доступ"
           }
         },
         "payment": {

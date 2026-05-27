@@ -487,23 +487,23 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: Product name finalised as \"The Journey\". Methodology described as the eight-stage Reset 8 Blocks framework — internal terminology only.]",
-          "optionsLabel": "Two purchase options:",
+          "note": "[NOTE: Nazwa produktu została ostatecznie ustalona jako „The Journey“. Metodologia opisywana jest jako ośmiostopniowy framework Reset 8 Blocks — wyłącznie terminologia wewnętrzna.]",
+          "optionsLabel": "Dwie opcje zakupu:",
           "onetime": {
-            "title": "Option A — Full programme, one-time payment:",
-            "accessItem": "Access to all eight blocks begins immediately upon successful payment",
-            "nonRefundableItem": "<strong>Non-refundable from the moment of purchase.</strong> This is digital content delivered for immediate use",
-            "regulationsItem": "Under the Consumer Contracts Regulations 2013, the 14-day cancellation right does not apply where the consumer has explicitly waived it in exchange for immediate access",
-            "confirmWaiverItem": "<strong>You will be asked to confirm this waiver at checkout</strong> before payment is taken",
-            "noRefundsItem": "No refunds are issued under any circumstances after purchase, except where required by the Consumer Rights Act 2015 for faulty content (see Refund Policy below)"
+            "title": "Opcja A — Pełny program, jednorazowa płatność:",
+            "accessItem": "Dostęp do wszystkich ośmiu bloków rozpoczyna się natychmiast po pomyślnym dokonaniu płatności",
+            "nonRefundableItem": "<strong>Bezzwrotne od momentu zakupu.</strong> Są to treści cyfrowe dostarczane do natychmiastowego wykorzystania",
+            "regulationsItem": "Zgodnie z Consumer Contracts Regulations 2013, 14-dniowe prawo do odstąpienia nie ma zastosowania, gdy konsument wyraźnie zrzekł się go w zamian za natychmiastowy dostęp",
+            "confirmWaiverItem": "<strong>Przed pobraniem płatności podczas checkoutu zostaniesz poproszony(-a) o potwierdzenie tego zrzeczenia</strong>",
+            "noRefundsItem": "Po zakupie zwroty środków nie są przyznawane w żadnych okolicznościach, z wyjątkiem sytuacji wymaganych przez Consumer Rights Act 2015 w przypadku wadliwych treści (zob. Refund Policy poniżej)"
           },
           "instalment": {
-            "title": "Option B — Weekly instalment plan:",
-            "scheduleItem": "12 weekly payments of £55 — each payment unlocks the next block of content",
-            "stopAnytimeItem": "You may stop future payments at any time",
-            "nonRefundableItem": "Any weekly payments already made are non-refundable; previously unlocked content remains accessible after stopping payments",
-            "firstBlockItem": "Once the first block has been accessed, the right to a cooling-off period no longer applies",
-            "confirmWaiverItem": "You will be asked to confirm the immediate-access waiver at checkout"
+            "title": "Opcja B — Tygodniowy plan ratalny:",
+            "scheduleItem": "12 tygodniowych płatności po £55 — każda płatność odblokowuje kolejny blok treści",
+            "stopAnytimeItem": "Możesz zatrzymać przyszłe płatności w dowolnym momencie",
+            "nonRefundableItem": "Wszelkie już dokonane tygodniowe płatności są bezzwrotne; wcześniej odblokowane treści pozostają dostępne po zatrzymaniu płatności",
+            "firstBlockItem": "Po uzyskaniu dostępu do pierwszego bloku prawo do cooling-off period przestaje obowiązywać",
+            "confirmWaiverItem": "Podczas checkoutu zostaniesz poproszony(-a) o potwierdzenie zrzeczenia się prawa do natychmiastowego dostępu"
           }
         },
         "payment": {
