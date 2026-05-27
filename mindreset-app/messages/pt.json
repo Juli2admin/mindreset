@@ -392,14 +392,14 @@
         "releaseLiabilityItem": "Isenta o operador do Serviço (MindReset AI Ltd) de responsabilidade por quaisquer danos resultantes da utilização do Serviço quando a Verificação de prontidão tiver indicado que o Serviço poderá não ser apropriado para si."
       },
       "section3": {
-        "title": "3. Acceptance and Age",
-        "intro": "By creating an account or using any part of the Service you confirm that:",
-        "ageItem": "You are at least <strong>18 years of age</strong>",
-        "acceptTermsItem": "You accept these Terms of Service in full",
-        "acceptPrivacyItem": "You accept our Privacy Policy",
-        "jurisdictionItem": "You are accessing the Service from a jurisdiction where it is legal to do so",
-        "readDisclaimerItem": "You have read the Medical & Crisis Disclaimer",
-        "under18": "If you are under 18, you are not permitted to use the Service."
+        "title": "3. Aceitação e idade mínima",
+        "intro": "Ao criar uma conta ou utilizar qualquer parte do Serviço, confirma que:",
+        "ageItem": "Tem pelo menos <strong>18 anos</strong>",
+        "acceptTermsItem": "Aceita integralmente estes Termos de Serviço",
+        "acceptPrivacyItem": "Aceita a nossa Política de Privacidade",
+        "jurisdictionItem": "Está a aceder ao Serviço a partir de uma jurisdição onde isso é legal",
+        "readDisclaimerItem": "Leu o Medical & Crisis Disclaimer",
+        "under18": "Se tiver menos de 18 anos, não está autorizado(a) a utilizar o Serviço."
       },
       "section4": {
         "title": "4. No Emergency or Professional Treatment",
