@@ -546,17 +546,17 @@
         "minors": "Não direcionamos o Serviço a utilizadores menores de 18 anos e não processamos conscientemente dados pessoais de menores."
       },
       "section13": {
-        "title": "13. Governing Law and Disputes",
-        "governing": "These Terms are governed by the laws of <strong>England & Wales</strong>. Any dispute arising under these Terms shall be submitted to the courts of England & Wales, unless mandatory consumer law in your country of residence (within the UK or EU) allows you to bring a claim in your local courts.",
-        "odr": "For EU users, you may also have the right to use the European Commission's Online Dispute Resolution platform: <odr>https://ec.europa.eu/consumers/odr</odr>"
+        "title": "13. Lei aplicável e litígios",
+        "governing": "Estas Terms são regidas pelas leis de <strong>England & Wales</strong>. Qualquer litígio decorrente destas Terms será submetido aos tribunais de England & Wales, salvo se a legislação obrigatória de defesa do consumidor do seu país de residência (no Reino Unido ou na UE) lhe permitir apresentar uma ação nos tribunais locais.",
+        "odr": "Os utilizadores da UE poderão também ter o direito de utilizar a plataforma Online Dispute Resolution da Comissão Europeia: <odr>https://ec.europa.eu/consumers/odr</odr>"
       },
       "section14": {
-        "title": "14. Changes to These Terms",
-        "body": "We may update these Terms from time to time. If we make material changes, we will notify you by email and/or by displaying notice within the Service at least 30 days before the changes take effect. Continued use of the Service after the effective date constitutes your acceptance of the updated Terms. If you do not agree with the updated Terms, you may terminate your account at any time before the effective date and obtain a pro rata refund for any unused subscription period."
+        "title": "14. Alterações a estas Terms",
+        "body": "Poderemos atualizar estas Terms periodicamente. Caso efetuemos alterações materiais, notificá-lo-emos por email e/ou através de aviso apresentado no Serviço pelo menos 30 dias antes de as alterações entrarem em vigor. A continuação da utilização do Serviço após a data de entrada em vigor constitui a sua aceitação das Terms atualizadas. Caso não concorde com as Terms atualizadas, poderá encerrar a sua conta a qualquer momento antes da data de entrada em vigor e obter um reembolso proporcional relativo a qualquer período de subscrição não utilizado."
       },
       "section15": {
-        "title": "15. Contact",
-        "body": "For questions about these Terms: <mail>support@mindreset.ai</mail>"
+        "title": "15. Contacto",
+        "body": "Para questões relacionadas com estas Terms: <mail>support@mindreset.ai</mail>"
       }
     },
     "disclaimer": {

@@ -546,17 +546,17 @@
         "minors": "Nie kierujemy Usługi do użytkowników poniżej 18 roku życia i świadomie nie przetwarzamy danych osobowych osób małoletnich."
       },
       "section13": {
-        "title": "13. Governing Law and Disputes",
-        "governing": "These Terms are governed by the laws of <strong>England & Wales</strong>. Any dispute arising under these Terms shall be submitted to the courts of England & Wales, unless mandatory consumer law in your country of residence (within the UK or EU) allows you to bring a claim in your local courts.",
-        "odr": "For EU users, you may also have the right to use the European Commission's Online Dispute Resolution platform: <odr>https://ec.europa.eu/consumers/odr</odr>"
+        "title": "13. Prawo właściwe i spory",
+        "governing": "Niniejsze Terms podlegają prawu <strong>England & Wales</strong>. Wszelkie spory wynikające z niniejszych Terms będą rozstrzygane przez sądy England & Wales, chyba że bezwzględnie obowiązujące przepisy konsumenckie kraju Twojego miejsca zamieszkania (na terenie Wielkiej Brytanii lub UE) pozwalają Ci dochodzić roszczeń przed lokalnymi sądami.",
+        "odr": "Użytkownicy z UE mogą również mieć prawo do korzystania z platformy Online Dispute Resolution Komisji Europejskiej: <odr>https://ec.europa.eu/consumers/odr</odr>"
       },
       "section14": {
-        "title": "14. Changes to These Terms",
-        "body": "We may update these Terms from time to time. If we make material changes, we will notify you by email and/or by displaying notice within the Service at least 30 days before the changes take effect. Continued use of the Service after the effective date constitutes your acceptance of the updated Terms. If you do not agree with the updated Terms, you may terminate your account at any time before the effective date and obtain a pro rata refund for any unused subscription period."
+        "title": "14. Zmiany niniejszych Terms",
+        "body": "Możemy okresowo aktualizować niniejsze Terms. Jeśli wprowadzimy istotne zmiany, poinformujemy Cię o tym drogą emailową i/lub poprzez komunikat wyświetlany w Usłudze co najmniej 30 dni przed wejściem zmian w życie. Dalsze korzystanie z Usługi po dacie wejścia zmian w życie oznacza akceptację zaktualizowanych Terms. Jeśli nie zgadzasz się ze zaktualizowanymi Terms, możesz zamknąć konto w dowolnym momencie przed datą wejścia zmian w życie i uzyskać proporcjonalny zwrot środków za niewykorzystany okres subskrypcji."
       },
       "section15": {
-        "title": "15. Contact",
-        "body": "For questions about these Terms: <mail>support@mindreset.ai</mail>"
+        "title": "15. Kontakt",
+        "body": "W przypadku pytań dotyczących niniejszych Terms: <mail>support@mindreset.ai</mail>"
       }
     },
     "disclaimer": {

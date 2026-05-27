@@ -521,17 +521,17 @@
         "minors": "Мы не ориентируем Сервис на пользователей младше 18 лет и сознательно не обрабатываем персональные данные несовершеннолетних."
       },
       "section13": {
-        "title": "13. Governing Law and Disputes",
-        "governing": "These Terms are governed by the laws of <strong>England & Wales</strong>. Any dispute arising under these Terms shall be submitted to the courts of England & Wales, unless mandatory consumer law in your country of residence (within the UK or EU) allows you to bring a claim in your local courts.",
-        "odr": "For EU users, you may also have the right to use the European Commission's Online Dispute Resolution platform: <odr>https://ec.europa.eu/consumers/odr</odr>"
+        "title": "13. Применимое право и споры",
+        "governing": "Настоящие Terms регулируются законодательством <strong>England & Wales</strong>. Любой спор, возникающий в связи с настоящими Terms, подлежит рассмотрению судами England & Wales, если только обязательное потребительское законодательство вашей страны проживания (в пределах Великобритании или ЕС) не предоставляет вам право предъявлять иск в местных судах.",
+        "odr": "Для пользователей из ЕС также может быть доступно право использовать платформу Online Dispute Resolution Европейской комиссии: <odr>https://ec.europa.eu/consumers/odr</odr>"
       },
       "section14": {
-        "title": "14. Changes to These Terms",
-        "body": "We may update these Terms from time to time. If we make material changes, we will notify you by email and/or by displaying notice within the Service at least 30 days before the changes take effect. Continued use of the Service after the effective date constitutes your acceptance of the updated Terms. If you do not agree with the updated Terms, you may terminate your account at any time before the effective date and obtain a pro rata refund for any unused subscription period."
+        "title": "14. Изменения настоящих Terms",
+        "body": "Мы можем время от времени обновлять настоящие Terms. Если мы вносим существенные изменения, мы уведомим вас по email и/или посредством уведомления внутри Сервиса не менее чем за 30 дней до вступления изменений в силу. Продолжение использования Сервиса после даты вступления изменений в силу означает ваше согласие с обновлёнными Terms. Если вы не согласны с обновлёнными Terms, вы можете прекратить использование аккаунта в любое время до даты вступления изменений в силу и получить пропорциональный возврат средств за неиспользованный период подписки."
       },
       "section15": {
-        "title": "15. Contact",
-        "body": "For questions about these Terms: <mail>support@mindreset.ai</mail>"
+        "title": "15. Контакты",
+        "body": "По вопросам, связанным с настоящими Terms: <mail>support@mindreset.ai</mail>"
       }
     },
     "disclaimer": {
