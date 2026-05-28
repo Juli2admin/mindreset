@@ -743,12 +743,12 @@
       "sccs": "Utilizziamo le <strong>Standard Contractual Clauses</strong> (o meccanismi equivalenti UK IDTA) per qualsiasi international data transfer, integrate ove necessario da safeguards aggiuntive, inclusa encryption in transit e at rest."
     },
     "section5": {
-      "title": "5. International Transfers",
-      "intro": "Your data may be processed outside the UK and EU, primarily in the United States. Where this happens we rely on either:",
-      "adequacyItem": "An adequacy decision by the UK or EU (where one exists)",
-      "sccsItem": "Standard Contractual Clauses approved by the European Commission or the UK ICO",
-      "safeguardsItem": "Other appropriate safeguards permitted under UK GDPR or EU GDPR",
-      "requestDetails": "You may request details of the specific safeguards in place for any transfer by emailing <mail>support@mindreset.ai</mail>."
+      "title": "5. Trasferimenti internazionali",
+      "intro": "I tuoi dati possono essere trattati al di fuori del Regno Unito e dell’UE, principalmente negli Stati Uniti. Quando ciò avviene, facciamo affidamento su:",
+      "adequacyItem": "Una adequacy decision del Regno Unito o dell’UE (ove disponibile)",
+      "sccsItem": "Standard Contractual Clauses approvate dalla Commissione Europea o dalla UK ICO",
+      "safeguardsItem": "Altre safeguards appropriate consentite ai sensi del UK GDPR o del EU GDPR",
+      "requestDetails": "Puoi richiedere dettagli sulle safeguards specifiche applicate a qualsiasi trasferimento inviando un email a <mail>support@mindreset.ai</mail>."
     },
     "section6": {
       "title": "6. Security",
