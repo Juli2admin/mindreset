@@ -9,10 +9,11 @@ import type { PublicTestimonial } from '@/lib/testimonials/queries';
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-// Renders a curated set of approved testimonials. The parent server
-// component fetches them and passes them as a prop, returning null when
-// there are fewer than the minimum to display — this client component
-// just renders what it's given.
+// Editorial treatment — no card chrome, just typography. The brand is
+// literary, not e-commerce; the previous bgCard=#FFF treatment read as
+// product-review boxes on cream paper. Each entry sits in its own
+// vertical rhythm with a thin opening-quote mark in the accent colour
+// and a small-caps attribution beneath.
 export default function TestimonialsSection({
   testimonials,
 }: {
@@ -25,36 +26,43 @@ export default function TestimonialsSection({
 
   return (
     <section
-      className="py-20"
+      className="py-24"
       style={{ borderTop: `1px solid ${PALETTE.border}` }}
     >
-      <div
-        className="text-[11px] uppercase tracking-[0.22em] mb-4 text-center"
-        style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
-      >
-        {t('kicker')}
+      <div className="text-center mb-16">
+        <div
+          className="text-[11px] uppercase tracking-[0.22em] mb-4"
+          style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
+        >
+          {t('kicker')}
+        </div>
+        <h2
+          className="text-[32px] sm:text-[40px] leading-[1.15] -tracking-[0.01em]"
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+        >
+          {t('title')}
+        </h2>
       </div>
-      <h2
-        className="text-[32px] sm:text-[40px] leading-[1.1] mb-12 text-center"
-        style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-      >
-        {t('title')}
-      </h2>
 
-      <div className="space-y-8">
+      <div className="space-y-16">
         {testimonials.map((entry) => (
-          <figure
-            key={entry.id}
-            className="rounded-lg p-6 sm:p-8"
-            style={{
-              background: PALETTE.bgCard,
-              border: `1px solid ${PALETTE.border}`,
-            }}
-          >
-            <blockquote
-              className="text-[17px] leading-[1.7] mb-5"
+          <figure key={entry.id} className="max-w-[34rem] mx-auto text-center">
+            <span
+              aria-hidden
+              className="block text-[64px] leading-none mb-2 select-none"
               style={{
                 fontFamily: SERIF,
+                color: PALETTE.accent,
+                opacity: 0.55,
+              }}
+            >
+              &ldquo;
+            </span>
+            <blockquote
+              className="text-[19px] sm:text-[20px] leading-[1.65] mb-6"
+              style={{
+                fontFamily: SERIF,
+                fontStyle: 'italic',
                 fontWeight: 400,
                 color: PALETTE.text,
                 whiteSpace: 'pre-wrap',
@@ -63,12 +71,19 @@ export default function TestimonialsSection({
               {entry.story}
             </blockquote>
             <figcaption
-              className="text-[13px]"
-              style={{ fontFamily: SANS, color: PALETTE.textMuted, letterSpacing: '0.04em' }}
+              className="text-[11px] uppercase"
+              style={{
+                fontFamily: SANS,
+                color: PALETTE.textMuted,
+                letterSpacing: '0.18em',
+                fontWeight: 500,
+              }}
             >
-              — {entry.publicName}
+              {entry.publicName}
               {entry.ageRange && (
-                <span style={{ marginLeft: 8 }}>· {entry.ageRange}</span>
+                <span style={{ marginLeft: 10, color: PALETTE.textHint }}>
+                  · {entry.ageRange}
+                </span>
               )}
             </figcaption>
           </figure>
@@ -76,8 +91,8 @@ export default function TestimonialsSection({
       </div>
 
       <p
-        className="mt-12 text-center text-[14px]"
-        style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.7 }}
+        className="mt-20 text-center text-[14px] leading-[1.7]"
+        style={{ color: PALETTE.textMuted, fontFamily: SANS }}
       >
         {t('shareInvite')}{' '}
         <Link
