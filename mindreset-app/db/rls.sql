@@ -60,6 +60,7 @@ ALTER TABLE public."Purchase"          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."ModuleProgress"    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."RecodeProgress"    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."Practice"          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."AccountDeletionToken" ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- Block 2: Strip the table-level grants from anon and authenticated.
@@ -80,5 +81,6 @@ REVOKE ALL ON public."Purchase"          FROM anon, authenticated;
 REVOKE ALL ON public."ModuleProgress"    FROM anon, authenticated;
 REVOKE ALL ON public."RecodeProgress"    FROM anon, authenticated;
 REVOKE ALL ON public."Practice"          FROM anon, authenticated;
+REVOKE ALL ON public."AccountDeletionToken" FROM anon, authenticated;
 
 COMMIT;
