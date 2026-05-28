@@ -22,7 +22,7 @@ export default function SignInPage() {
                 colorBackground: PALETTE.bgCard,
                 colorText: PALETTE.text,
                 colorTextSecondary: PALETTE.textMuted,
-                colorInputBackground: '#FFFFFF',
+                colorInputBackground: PALETTE.bgCard,
                 colorInputText: PALETTE.text,
                 fontFamily: TOKENS.sans,
                 borderRadius: '10px',
