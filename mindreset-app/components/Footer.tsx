@@ -33,6 +33,12 @@ export default async function Footer({ omit }: Props) {
         className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 text-[13px] tracking-wide"
         style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
       >
+        <Link
+          href="/pricing"
+          className="py-2 hover:underline underline-offset-2 transition-colors"
+        >
+          {t('pricing')}
+        </Link>
         {omit !== 'terms' && (
           <Link
             href="/terms"
