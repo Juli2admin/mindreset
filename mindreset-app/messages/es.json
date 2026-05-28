@@ -820,25 +820,25 @@
     },
     "section9": {
       "title": "9. Cookies",
-      "intro": "We use:",
-      "necessaryItem": "<strong>Strictly necessary cookies</strong> — for authentication (Clerk session), security, and basic site function. These cannot be disabled",
-      "analyticsItem": "<strong>Optional analytics cookies</strong> — for understanding usage patterns and improving the Service. You will be asked to accept or decline these on your first visit",
-      "noAds": "We do not use advertising cookies, tracking pixels for marketing, or third-party trackers."
+      "intro": "Utilizamos:",
+      "necessaryItem": "<strong>Cookies estrictamente necesarias</strong> — para la autenticación (sesión de Clerk), la seguridad y el funcionamiento básico del sitio. Estas cookies no pueden deshabilitarse",
+      "analyticsItem": "<strong>Cookies analíticas opcionales</strong> — para comprender los patrones de uso y mejorar el Servicio. En su primera visita, se le solicitará que acepte o rechace dichas cookies",
+      "noAds": "No utilizamos cookies publicitarias, píxeles de seguimiento con fines de marketing ni rastreadores de terceros."
     },
     "section10": {
-      "title": "10. Children's Data",
-      "body": "The Service is for adults aged 18 and over. We do not knowingly collect personal data from individuals under 18. If you believe a child under 18 has provided us with personal data, please contact us at <mail>support@mindreset.ai</mail> and we will delete it."
+      "title": "10. Datos de menores",
+      "body": "El Servicio está destinado a adultos mayores de 18 años. No recopilamos conscientemente datos personales de personas menores de 18 años. Si considera que un menor de 18 años nos ha proporcionado datos personales, póngase en contacto con nosotros en <mail>support@mindreset.ai</mail> y eliminaremos dichos datos."
     },
     "section11": {
-      "title": "11. Changes to This Policy",
-      "body": "We may update this Privacy Policy from time to time to reflect changes in our practices or in applicable law. Material changes will be announced by email and/or in-app at least 30 days before they take effect. Continued use of the Service after the effective date constitutes acceptance of the updated Policy."
+      "title": "11. Cambios en esta Política",
+      "body": "Podemos actualizar esta Política de Privacidad periódicamente para reflejar cambios en nuestras prácticas o en la legislación aplicable. Los cambios sustanciales se comunicarán por correo electrónico y/o dentro de la aplicación al menos 30 días antes de su entrada en vigor. El uso continuado del Servicio después de la fecha de entrada en vigor constituye la aceptación de la Política actualizada."
     },
     "section12": {
-      "title": "12. Contact",
-      "intro": "For privacy-related questions or to exercise your rights:",
-      "emailLabel": "Email:",
-      "postalLabel": "Postal address:",
-      "postalNote": "[NOTE: To be added when a registered business address is available.]"
+      "title": "12. Contacto",
+      "intro": "Para consultas relacionadas con la privacidad o para ejercer sus derechos:",
+      "emailLabel": "Correo electrónico:",
+      "postalLabel": "Dirección postal:",
+      "postalNote": "[NOTA: Se añadirá cuando esté disponible una dirección comercial registrada.]"
     }
   },
   "TopBar": {

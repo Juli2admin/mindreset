@@ -819,26 +819,26 @@
       "icoComplaint": "Jeżeli nie są Państwo zadowoleni ze sposobu, w jaki przetwarzamy Państwa dane, mają Państwo prawo złożyć skargę do brytyjskiego Information Commissioner’s Office (ICO) pod adresem <ico>ico.org.uk</ico> lub do lokalnego organu ochrony danych w UE."
     },
     "section9": {
-      "title": "9. Cookies",
-      "intro": "We use:",
-      "necessaryItem": "<strong>Strictly necessary cookies</strong> — for authentication (Clerk session), security, and basic site function. These cannot be disabled",
-      "analyticsItem": "<strong>Optional analytics cookies</strong> — for understanding usage patterns and improving the Service. You will be asked to accept or decline these on your first visit",
-      "noAds": "We do not use advertising cookies, tracking pixels for marketing, or third-party trackers."
+      "title": "9. Pliki cookie",
+      "intro": "Używamy:",
+      "necessaryItem": "<strong>Ściśle niezbędnych plików cookie</strong> — do uwierzytelniania (sesja Clerk), zapewnienia bezpieczeństwa oraz podstawowego funkcjonowania strony. Tych plików cookie nie można wyłączyć",
+      "analyticsItem": "<strong>Opcjonalnych analitycznych plików cookie</strong> — w celu zrozumienia sposobu korzystania z Usługi i jej ulepszania. Podczas pierwszej wizyty użytkownik zostanie poproszony o zaakceptowanie lub odrzucenie tych plików cookie",
+      "noAds": "Nie używamy reklamowych plików cookie, marketingowych pikseli śledzących ani zewnętrznych trackerów."
     },
     "section10": {
-      "title": "10. Children's Data",
-      "body": "The Service is for adults aged 18 and over. We do not knowingly collect personal data from individuals under 18. If you believe a child under 18 has provided us with personal data, please contact us at <mail>support@mindreset.ai</mail> and we will delete it."
+      "title": "10. Dane dzieci",
+      "body": "Usługa jest przeznaczona dla osób dorosłych w wieku 18 lat i starszych. Świadomie nie gromadzimy danych osobowych osób poniżej 18 roku życia. Jeżeli uważają Państwo, że osoba poniżej 18 roku życia przekazała nam dane osobowe, prosimy o kontakt pod adresem <mail>support@mindreset.ai</mail>, a usuniemy takie dane."
     },
     "section11": {
-      "title": "11. Changes to This Policy",
-      "body": "We may update this Privacy Policy from time to time to reflect changes in our practices or in applicable law. Material changes will be announced by email and/or in-app at least 30 days before they take effect. Continued use of the Service after the effective date constitutes acceptance of the updated Policy."
+      "title": "11. Zmiany niniejszej Polityki",
+      "body": "Możemy okresowo aktualizować niniejszą Politykę Prywatności w celu odzwierciedlenia zmian w naszych praktykach lub obowiązującym prawie. Istotne zmiany będą ogłaszane drogą e-mailową i/lub w aplikacji co najmniej 30 dni przed ich wejściem w życie. Dalsze korzystanie z Usługi po dacie wejścia zmian w życie oznacza akceptację zaktualizowanej Polityki."
     },
     "section12": {
-      "title": "12. Contact",
-      "intro": "For privacy-related questions or to exercise your rights:",
-      "emailLabel": "Email:",
-      "postalLabel": "Postal address:",
-      "postalNote": "[NOTE: To be added when a registered business address is available.]"
+      "title": "12. Kontakt",
+      "intro": "W przypadku pytań dotyczących prywatności lub chęci skorzystania ze swoich praw:",
+      "emailLabel": "Adres e-mail:",
+      "postalLabel": "Adres pocztowy:",
+      "postalNote": "[UWAGA: Zostanie dodane po uzyskaniu zarejestrowanego adresu działalności.]"
     }
   },
   "TopBar": {
