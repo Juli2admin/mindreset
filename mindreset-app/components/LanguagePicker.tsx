@@ -169,7 +169,7 @@ export default function FooterLanguagePicker({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
-        className="inline-flex items-center gap-1.5 px-1.5 py-1 rounded transition-opacity"
+        className="inline-flex items-center gap-1.5 px-2 min-h-9 rounded transition-opacity"
         style={{
           color: isDefaultLocale ? PALETTE.textHint : PALETTE.textMuted,
           fontFamily: TOKENS.sans,
@@ -206,12 +206,24 @@ export default function FooterLanguagePicker({
             //          via `top: calc(100% + 6px)`.
             // max-height + scroll handles short-viewport mobile in either
             // direction.
+            // Horizontal anchoring:
+            //   'down' (TopBar mount, trigger near right edge): anchor
+            //          right: 0 so the panel opens leftward and stays
+            //          on-screen on narrow viewports.
+            //   'up'   (Footer mount, trigger centered): keep centred via
+            //          left: 50% + translateX(-50%).
             ...(direction === 'down'
-              ? { top: 'calc(100% + 6px)' }
-              : { bottom: 'calc(100% + 6px)' }),
-            left: '50%',
-            transform: 'translateX(-50%)',
+              ? { top: 'calc(100% + 6px)', right: 0 }
+              : {
+                  bottom: 'calc(100% + 6px)',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                }),
             minWidth: '180px',
+            // Hard-cap so the panel can never push past the viewport edge
+            // on small phones — `100vw − 32px` allows a 16px safety margin
+            // on each side.
+            maxWidth: 'calc(100vw - 32px)',
             maxHeight: '50vh',
             background: PALETTE.bgCard,
             border: `1px solid ${PALETTE.border}`,

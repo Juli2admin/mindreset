@@ -9,3 +9,40 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Scoped prose rules for the MiniMind assistant message bubble. The
+ * react-markdown output otherwise inherits browser defaults — large UL
+ * indents that overflow narrow bubbles, code blocks that don't scroll,
+ * and long URLs that blow past the bubble width on mobile. Kept minimal:
+ * tighter list indent, word-wrap for long tokens, horizontal scroll for
+ * pre blocks. */
+.minimind-prose {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.minimind-prose ul,
+.minimind-prose ol {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+.minimind-prose li {
+  margin: 0.25rem 0;
+}
+.minimind-prose p {
+  margin: 0.5rem 0;
+}
+.minimind-prose p:first-child {
+  margin-top: 0;
+}
+.minimind-prose p:last-child {
+  margin-bottom: 0;
+}
+.minimind-prose pre {
+  overflow-x: auto;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875em;
+}
+.minimind-prose code {
+  word-break: break-word;
+}

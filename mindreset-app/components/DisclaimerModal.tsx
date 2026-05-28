@@ -53,7 +53,10 @@ export default function DisclaimerModal({ onAcknowledge }: Props) {
     >
       <div
         ref={cardRef}
-        className="w-full max-w-[480px] rounded-2xl p-8 sm:p-10"
+        // max-h + overflow-y-auto so the Acknowledge button stays reachable
+        // on short viewports (iPhone SE landscape, in-app browsers with
+        // small inner height).
+        className="w-full max-w-[480px] max-h-[90dvh] overflow-y-auto rounded-2xl p-8 sm:p-10"
         style={{ background: PALETTE.bg, color: PALETTE.text }}
       >
         <h2 id="disclaimer-modal-title" className="sr-only">

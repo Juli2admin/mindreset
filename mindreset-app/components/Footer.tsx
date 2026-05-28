@@ -22,50 +22,45 @@ export default async function Footer({ omit, theme = 'day' }: Props) {
       className="mt-24 pt-10 pb-4 text-center"
       style={{ borderTop: `1px solid ${PALETTE.border}` }}
     >
-      <p
-        className="text-[12px] tracking-wide px-4"
+      {/* flex-wrap so long localised labels (e.g. DE "Datenschutzerklärung")
+          wrap to a second line cleanly instead of mid-link, and dot
+          separators don't end up on lines of their own. Each link gets
+          py-2 to enforce a ≥44px iOS tap target. */}
+      <nav
+        className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 text-[13px] tracking-wide"
         style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
       >
         {omit !== 'terms' && (
-          <>
-            <Link
-              href="/terms"
-              className="hover:underline underline-offset-2 transition-colors"
-            >
-              {t('terms')}
-            </Link>
-            {' · '}
-          </>
+          <Link
+            href="/terms"
+            className="py-2 hover:underline underline-offset-2 transition-colors"
+          >
+            {t('terms')}
+          </Link>
         )}
         {omit !== 'privacy' && (
-          <>
-            <Link
-              href="/privacy"
-              className="hover:underline underline-offset-2 transition-colors"
-            >
-              {t('privacy')}
-            </Link>
-            {' · '}
-          </>
+          <Link
+            href="/privacy"
+            className="py-2 hover:underline underline-offset-2 transition-colors"
+          >
+            {t('privacy')}
+          </Link>
         )}
         {omit !== 'faq' && (
-          <>
-            <Link
-              href="/faq"
-              className="hover:underline underline-offset-2 transition-colors"
-            >
-              {t('faq')}
-            </Link>
-            {' · '}
-          </>
+          <Link
+            href="/faq"
+            className="py-2 hover:underline underline-offset-2 transition-colors"
+          >
+            {t('faq')}
+          </Link>
         )}
         <a
           href="mailto:support@mindreset.ai"
-          className="hover:underline underline-offset-2 transition-colors"
+          className="py-2 hover:underline underline-offset-2 transition-colors"
         >
           {t('contact')}
         </a>
-      </p>
+      </nav>
       <div className="mt-4 flex items-center justify-center">
         <LanguagePicker label={t('languagePickerLabel')} theme={theme} />
       </div>
