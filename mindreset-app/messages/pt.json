@@ -728,19 +728,19 @@
       "article22": "Nos termos do Article 22 UK GDPR, tem o direito de não ficar sujeito a uma decisão baseada exclusivamente em automated processing que produza efeitos legais ou efeitos significativamente semelhantes. As wellbeing observations e practice suggestions geradas pela nossa AI não constituem tais decisões."
     },
     "section4": {
-      "title": "4. With Whom We Share Data",
-      "intro": "We <strong>never</strong> sell or rent your personal data. We share it only with categories of service providers necessary to deliver the Service:",
-      "cloudItem": "Cloud hosting and database services",
-      "aiItem": "AI infrastructure (for the conversational and analytical features)",
-      "speechItem": "Speech-to-text transcription (for voice input)",
-      "authItem": "Authentication and account management",
+      "title": "4. Com quem partilhamos os dados",
+      "intro": "<strong>Nunca</strong> vendemos nem alugamos os seus dados pessoais. Apenas os partilhamos com categorias de service providers necessárias para fornecer o Serviço:",
+      "cloudItem": "Cloud hosting e database services",
+      "aiItem": "AI infrastructure (para conversational e analytical features)",
+      "speechItem": "Speech-to-text transcription (para voice input)",
+      "authItem": "Authentication e account management",
       "paymentItem": "Payment processing",
       "emailItem": "Transactional email delivery",
       "hostingItem": "Website hosting",
-      "voiceInput": "<strong>Voice input.</strong> If you choose to use voice input on MiniMind, your recorded audio is securely transmitted to our speech-to-text provider for transcription. We have enabled zero data retention with this provider — audio is not stored after transcription on either MindReset infrastructure or the provider's. Only the resulting text is saved as part of your conversation history. You may use the Service entirely by typing if you prefer.",
-      "providersList": "Specific providers may change over time. A current list of the service providers we use is available on request — email <mail>support@mindreset.ai</mail>.",
-      "legalDisclosure": "We may also disclose your data when legally compelled by a court order or similar legal process.",
-      "sccs": "We use <strong>Standard Contractual Clauses</strong> (or equivalent UK IDTA mechanisms) for any international data transfers, supplemented where necessary by additional safeguards including encryption in transit and at rest."
+      "voiceInput": "<strong>Voice input.</strong> Se optar por utilizar voice input no MiniMind, o seu áudio gravado será transmitido de forma segura ao nosso speech-to-text provider para transcription. Ativámos zero data retention junto deste provider — o áudio não é armazenado após a transcription nem na infraestrutura da MindReset nem na do provider. Apenas o resulting text é guardado como parte da sua conversation history. Se preferir, pode utilizar o Serviço inteiramente através de typing.",
+      "providersList": "Os providers específicos podem mudar ao longo do tempo. Uma lista atualizada dos service providers que utilizamos está disponível mediante pedido — envie um email para <mail>support@mindreset.ai</mail>.",
+      "legalDisclosure": "Também poderemos divulgar os seus dados quando legalmente obrigados por uma court order ou processo legal semelhante.",
+      "sccs": "Utilizamos <strong>Standard Contractual Clauses</strong> (ou mecanismos equivalentes UK IDTA) para quaisquer international data transfers, complementados quando necessário por safeguards adicionais, incluindo encryption in transit e at rest."
     },
     "section5": {
       "title": "5. International Transfers",
