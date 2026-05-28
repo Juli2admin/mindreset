@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
 import { waitUntil } from '@vercel/functions';
@@ -11,6 +12,14 @@ import Footer from '@/components/Footer';
 import { redirect } from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
+
+// Auth-gated: noindex so search engines don't burn crawl budget on a
+// page they can never reach as anonymous visitors. Same for the other
+// auth-gated surfaces.
+export const metadata: Metadata = {
+  title: 'Your space',
+  robots: { index: false, follow: false },
+};
 
 // /home is the user's personal space — first landing post-sign-up, and
 // the central surface where MiniMind state lives. Block C will add

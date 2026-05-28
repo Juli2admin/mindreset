@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
 import { SignIn } from '@clerk/nextjs';
 import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
+
+// Auth page — also disallowed in robots.ts, but redundant noindex meta
+// keeps deep links from leaking into search if a crawler ignores robots.
+export const metadata: Metadata = {
+  title: 'Sign in',
+  robots: { index: false, follow: false },
+};
 
 export default function SignInPage() {
   const PALETTE = getServerPalette();

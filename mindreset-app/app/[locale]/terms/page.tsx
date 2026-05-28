@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
+import { pageAlternates } from '@/lib/seo/alternates';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
 
@@ -12,10 +14,11 @@ const SERIF = TOKENS.serif;
 
 const LAST_UPDATED = '26 May 2026';
 
-export const metadata = {
-  title: 'Terms of Service — MindReset',
+export const metadata: Metadata = {
+  title: 'Terms of Service',
   description:
     'Terms of Service, Refund & Cancellation Policy, and Medical & Crisis Disclaimer for the MindReset AI self-help platform.',
+  alternates: pageAlternates('/terms'),
 };
 
 export default async function TermsPage() {

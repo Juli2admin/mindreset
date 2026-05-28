@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
 import { Link } from '@/i18n/navigation';
@@ -7,8 +8,11 @@ import Footer from '@/components/Footer';
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-export const metadata = {
-  title: 'Payment successful — MindReset',
+// Post-purchase landing — no SEO value, may leak Stripe session_id in
+// URL if indexed. noindex.
+export const metadata: Metadata = {
+  title: 'Payment successful',
+  robots: { index: false, follow: false },
 };
 
 export default function CheckoutSuccessPage() {
