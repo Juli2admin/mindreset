@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
+import { sansStyle, serifStyle } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 import { useUser } from '@clerk/nextjs';
 // Phase i18n.1a/1b — locale-aware router for the "Begin" CTA.
 import { Link, useRouter } from '@/i18n/navigation';
@@ -24,9 +25,6 @@ import CrisisResources from '@/components/CrisisResources';
 const FONT_LINK_ID = 'mindreset-fonts';
 const FONT_HREF =
   'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Geist:wght@400;500&display=swap';
-
-const ThemeContext = createContext({ theme: 'day', c: PALETTE.day, toggle: () => {} });
-const useTheme = () => useContext(ThemeContext);
 
 // ============================================================================
 // Icons
@@ -51,23 +49,6 @@ function TreeMark({ size = 26 }) {
   );
 }
 
-function SunIcon({ size = 14 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-    </svg>
-  );
-}
-
-function MoonIcon({ size = 14 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
 function ArrowRight({ size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -76,49 +57,25 @@ function ArrowRight({ size = 14 }) {
   );
 }
 
-// ============================================================================
-// Controls
-// ============================================================================
-function ThemeToggle() {
-  const { theme, toggle, c } = useTheme();
-  const Icon = theme === 'day' ? MoonIcon : SunIcon;
-  return (
-    <button
-      onClick={toggle}
-      className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-      style={{ color: c.textMuted, border: `1px solid ${c.border}` }}
-      aria-label={theme === 'day' ? 'Switch to night mode' : 'Switch to day mode'}
-    >
-      <Icon size={14} />
-    </button>
-  );
-}
-
-// Phase 1d.2 — replaced inline Header (with legacy LangSwitch + inline
-// wordmark) with shared TopBar. The right slot composes the Account/
-// Sign-in Link (depends on Clerk's useUser hook — client-state-derived)
-// plus the ThemeToggle (depends on Landing's ThemeContext). TopBar is
-// a client component so this composition works inline.
+// Phase 1d.2 — shared TopBar with Account/Sign-in link in the right
+// slot. TopBar handles ThemeToggle + LanguagePicker internally now;
+// callers only need to supply page-specific right-slot content.
 function Header() {
-  const { c, theme } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const { isLoaded, isSignedIn } = useUser();
   const signedIn = isLoaded && isSignedIn;
   return (
     <TopBar
       showTreeMark
-      theme={theme}
       right={
-        <>
-          <Link
-            href={signedIn ? '/home' : '/sign-in'}
-            className="text-[13px] transition-colors hover:underline underline-offset-2"
-            style={{ ...sansStyle, color: c.textMuted }}
-          >
-            {signedIn ? t('account') : t('signIn')}
-          </Link>
-          <ThemeToggle />
-        </>
+        <Link
+          href={signedIn ? '/home' : '/sign-in'}
+          className="text-[13px] transition-colors hover:underline underline-offset-2"
+          style={{ ...sansStyle, color: c.textMuted }}
+        >
+          {signedIn ? t('account') : t('signIn')}
+        </Link>
       }
     />
   );
@@ -140,7 +97,7 @@ function SectionKicker({ text, color }) {
 }
 
 function SectionTitle({ text, large = false }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <h2
       className={`${large ? 'text-[44px] sm:text-[56px]' : 'text-[36px] sm:text-[44px]'} leading-[1.05] -tracking-[0.018em] whitespace-pre-line max-w-[28rem]`}
@@ -155,7 +112,7 @@ function SectionTitle({ text, large = false }) {
 // Sections
 // ============================================================================
 function Hero({ onBegin }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const heroBody = t.raw('heroBody');
   return (
@@ -204,7 +161,7 @@ function Hero({ onBegin }) {
 }
 
 function WhatIs() {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const whatNot = t.raw('whatNot');
   const whatHelpsItems = t.raw('whatHelpsItems');
@@ -254,7 +211,7 @@ function WhatIs() {
 }
 
 function WhoFor() {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const whoScenarios = t.raw('whoScenarios');
   return (
@@ -297,7 +254,7 @@ function WhoFor() {
 }
 
 function Safety() {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const safetyItems = t.raw('safetyItems');
   return (
@@ -329,7 +286,7 @@ function Safety() {
 }
 
 function PathsSection() {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const paths = t.raw('paths');
   return (
@@ -373,7 +330,7 @@ function PathsSection() {
 }
 
 function Different() {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const differentItems = t.raw('differentItems');
   return (
@@ -404,7 +361,7 @@ function Different() {
 }
 
 function ClosingCTA({ onBegin }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   return (
     <section className="py-24 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
@@ -441,7 +398,7 @@ function ClosingCTA({ onBegin }) {
 // below CrisisResources by LandingPage).
 
 function Toast({ message, onClose }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   useEffect(() => {
     const t = setTimeout(onClose, 4500);
     return () => clearTimeout(t);
@@ -471,9 +428,11 @@ export default function LandingPage({ footerSlot }) {
   // because every locale has a complete message bundle (placeholder
   // locales ship EN content as fallback; Phase 2b fills with real
   // translations).
-  const [theme, setTheme] = useState('day');
   const [toast, setToast] = useState(null);
   const router = useRouter();
+  // Global theme + matchMedia auto-detection are owned by ThemeProvider
+  // in [locale]/layout.tsx now. Landing just reads the current palette.
+  const { palette: c } = useTheme();
 
   useEffect(() => {
     if (!document.getElementById(FONT_LINK_ID)) {
@@ -488,38 +447,29 @@ export default function LandingPage({ footerSlot }) {
       link.href = FONT_HREF;
       document.head.appendChild(link);
     }
-    try {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      if (mq.matches) setTheme('night');
-    } catch (e) {}
   }, []);
-
-  const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
-  const c = PALETTE[theme];
 
   // Locale-aware navigation: from /ru/ this pushes to /ru/screening.
   const onBegin = () => { router.push('/screening'); };
 
   return (
-    <ThemeContext.Provider value={{ theme, c, toggle }}>
-      <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
-        <div className="max-w-2xl mx-auto px-6">
-          <Header />
-          <Hero onBegin={onBegin} />
-          <WhatIs />
-          <WhoFor />
-          <Safety />
-          <PathsSection />
-          <Different />
-          <ClosingCTA onBegin={onBegin} />
-          {/* Phase 1d.2 — Landing-only crisis-resource block + safety
-              disclaimer, rendered above the shared Footer. Footer arrives
-              as a server-rendered slot from [locale]/page.tsx. */}
-          <CrisisResources theme={theme} />
-          {footerSlot}
-        </div>
-        {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+    <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
+      <div className="max-w-2xl mx-auto px-6">
+        <Header />
+        <Hero onBegin={onBegin} />
+        <WhatIs />
+        <WhoFor />
+        <Safety />
+        <PathsSection />
+        <Different />
+        <ClosingCTA onBegin={onBegin} />
+        {/* Phase 1d.2 — Landing-only crisis-resource block + safety
+            disclaimer, rendered above the shared Footer. Footer arrives
+            as a server-rendered slot from [locale]/page.tsx. */}
+        <CrisisResources />
+        {footerSlot}
       </div>
-    </ThemeContext.Provider>
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+    </div>
   );
 }

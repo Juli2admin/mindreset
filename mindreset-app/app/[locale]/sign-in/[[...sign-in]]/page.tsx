@@ -1,11 +1,11 @@
 import { SignIn } from '@clerk/nextjs';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
 
-const PALETTE = FULL_PALETTE.day;
-
 export default function SignInPage() {
+  const PALETTE = getServerPalette();
   return (
     <main className="min-h-screen flex flex-col items-center" style={{ background: PALETTE.bg }}>
       <div className="w-full max-w-md px-6 py-12 sm:py-20">
@@ -22,7 +22,7 @@ export default function SignInPage() {
                 colorBackground: PALETTE.bgCard,
                 colorText: PALETTE.text,
                 colorTextSecondary: PALETTE.textMuted,
-                colorInputBackground: '#FFFFFF',
+                colorInputBackground: PALETTE.bgCard,
                 colorInputText: PALETTE.text,
                 fontFamily: TOKENS.sans,
                 borderRadius: '10px',

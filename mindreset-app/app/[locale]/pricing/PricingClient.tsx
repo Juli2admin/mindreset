@@ -4,11 +4,11 @@ import { useState, type ReactNode } from 'react';
 import { UserButton, useUser } from '@clerk/nextjs';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 import TopBar from '@/components/TopBar';
 import { formatCurrency } from '@/lib/format';
 
-const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
@@ -41,6 +41,7 @@ export default function PricingClient({ currentTier, footerSlot }: Props) {
   const t = useTranslations('Pricing');
   const locale = useLocale();
   const { isSignedIn } = useUser();
+  const { palette: PALETTE } = useTheme();
   const [loading, setLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 

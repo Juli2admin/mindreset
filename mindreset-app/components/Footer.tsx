@@ -3,20 +3,23 @@
 // renders as /ru/terms). External URLs (mailto:, https://) pass through.
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import LanguagePicker from './LanguagePicker';
 
 type Props = {
   omit?: 'terms' | 'privacy' | 'faq';
-  theme?: 'day' | 'night';
 };
 
 // Server component. Translations resolve at request time via the locale
-// returned by i18n/request.ts (cookie-driven in Phase 0). The language
-// picker beneath is a client island and handles cookie writes itself.
-export default async function Footer({ omit, theme = 'day' }: Props) {
+// returned by i18n/request.ts (cookie-driven in Phase 0). The palette
+// is read per-request from the mr_theme cookie via getServerPalette()
+// so the footer matches the page chrome whether the user is in day or
+// night mode. The language picker beneath is a client island and reads
+// its own palette via useTheme().
+export default async function Footer({ omit }: Props) {
   const t = await getTranslations('Footer');
-  const PALETTE = FULL_PALETTE[theme];
+  const PALETTE = getServerPalette();
   return (
     <footer
       className="mt-24 pt-10 pb-4 text-center"
@@ -62,7 +65,7 @@ export default async function Footer({ omit, theme = 'day' }: Props) {
         </a>
       </nav>
       <div className="mt-4 flex items-center justify-center">
-        <LanguagePicker label={t('languagePickerLabel')} theme={theme} />
+        <LanguagePicker label={t('languagePickerLabel')} />
       </div>
     </footer>
   );

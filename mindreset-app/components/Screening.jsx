@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { PALETTE, sansStyle, serifStyle } from '@/lib/brand/colors';
+import { sansStyle, serifStyle } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 // Footer comes in as a server-rendered slot via the `footerSlot` prop —
 // see app/screening/page.tsx. Phase i18n.0 server-component-with-client-
 // slot pattern.
@@ -22,11 +23,9 @@ const FONT_LINK_ID = 'mindreset-fonts';
 const FONT_HREF =
   'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..600&family=Geist:wght@400;500&display=swap';
 
-// ============================================================================
-// THEME — same family across day/night, like sunrise to sundown
-// ============================================================================
-const ThemeContext = createContext({ theme: 'day', c: PALETTE.day, toggle: () => {} });
-const useTheme = () => useContext(ThemeContext);
+// THEME — Screening reads from the global ThemeProvider mounted in
+// [locale]/layout.tsx (via useTheme from @/lib/theme/useTheme above).
+// The ThemeToggle button is rendered automatically by TopBar.
 
 // Both use currentColor so they pick up theme automatically.
 // ============================================================================
@@ -94,7 +93,7 @@ function ChevronDown({ size = 10 }) {
 // UI atoms — theme-aware via context
 // ============================================================================
 function Check({ checked, onChange, children }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <label className="flex items-start gap-3 cursor-pointer group py-2.5">
       <span
@@ -119,7 +118,7 @@ function Check({ checked, onChange, children }) {
 }
 
 function Pill({ active, children, onClick }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <button
       type="button"
@@ -149,47 +148,24 @@ function Scale({ value, onChange, max = 5 }) {
   );
 }
 
-function ThemeToggle() {
-  const { theme, toggle, c } = useTheme();
-  const Icon = theme === 'day' ? MoonIcon : SunIcon;
-  return (
-    <button
-      onClick={toggle}
-      className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
-      style={{ color: c.textMuted, border: `1px solid ${c.border}` }}
-      aria-label={theme === 'day' ? 'Switch to night mode' : 'Switch to day mode'}
-    >
-      <Icon size={14} />
-    </button>
-  );
-}
-
-
 function Header({ step, total, showProgress }) {
-  // Phase 1d.2 — replaced inline header with shared TopBar (client
-  // component). Progress indicator + ThemeToggle compose into the
-  // right slot. The wordmark Link inside TopBar goes to / (universal
-  // home convention). Theme is read from ThemeContext via useTheme().
-  // Phase 2a — translations from next-intl bundle, not COPY[lang].
+  // TopBar handles ThemeToggle + LanguagePicker internally. Header only
+  // supplies the screening-specific progress indicator.
   const t = useTranslations('Screening');
-  const { theme } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <div className="mb-10">
       <TopBar
         showTreeMark
-        theme={theme}
         right={
-          <>
-            {showProgress && (
-              <span
-                className="text-[11px] uppercase tracking-[0.16em]"
-                style={{ ...sansStyle, color: PALETTE[theme].textHint }}
-              >
-                {t('progress')} {step + 1} {t('of')} {total}
-              </span>
-            )}
-            <ThemeToggle />
-          </>
+          showProgress ? (
+            <span
+              className="text-[11px] uppercase tracking-[0.16em]"
+              style={{ ...sansStyle, color: c.textHint }}
+            >
+              {t('progress')} {step + 1} {t('of')} {total}
+            </span>
+          ) : undefined
         }
       />
     </div>
@@ -197,7 +173,7 @@ function Header({ step, total, showProgress }) {
 }
 
 function ProgressBar({ step, total }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const pct = total > 0 ? ((step + 1) / total) * 100 : 0;
   return (
     <div className="h-px mb-12 relative overflow-hidden" style={{ background: c.border }}>
@@ -210,7 +186,7 @@ function ProgressBar({ step, total }) {
 }
 
 function SectionTitle({ kicker, title, helper, kickerColor }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <div className="mb-8">
       {kicker && (
@@ -237,7 +213,7 @@ function SectionTitle({ kicker, title, helper, kickerColor }) {
 }
 
 function PrimaryButton({ onClick, disabled, children }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <button
       type="button"
@@ -259,7 +235,7 @@ function PrimaryButton({ onClick, disabled, children }) {
 
 function NavRow({ onBack, onNext, nextLabel, nextDisabled }) {
   const t = useTranslations('Screening');
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   return (
     <div className="mt-14 pt-8 flex items-center justify-between gap-4" style={{ borderTop: `1px solid ${c.border}` }}>
       {onBack ? (
@@ -285,7 +261,7 @@ function NavRow({ onBack, onNext, nextLabel, nextDisabled }) {
 // Screens
 // ============================================================================
 function IntroScreen({ onBegin }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Screening');
   const [age, setAge] = useState(false);
   const [notMed, setNotMed] = useState(false);
@@ -333,7 +309,7 @@ function ExclusionScreen({ step, total, onBack, onNext, value, setValue }) {
 }
 
 function ScaleScreen({ step, total, onBack, onNext, value, setValue, items, kicker, title, helper }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Screening');
   const answered = items.every((_, i) => typeof value[i] === 'number');
   return (
@@ -361,7 +337,7 @@ function ScaleScreen({ step, total, onBack, onNext, value, setValue, items, kick
 }
 
 function TraumaScreen({ step, total, onBack, onNext, value, setValue }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Screening');
   return (
     <>
@@ -395,7 +371,7 @@ function TraumaScreen({ step, total, onBack, onNext, value, setValue }) {
 }
 
 function CognitiveScreen({ step, total, onBack, onNext, value, setValue }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Screening');
   const answered = t.raw('cognitive').every((_, i) => value[i] === 'yes' || value[i] === 'no');
   return (
@@ -447,7 +423,7 @@ function ConsentScreen({ step, total, onBack, onNext, value, setValue }) {
 }
 
 function ResultScreen({ result, onStartOver, sessionId }) {
-  const { c } = useTheme();
+  const { palette: c } = useTheme();
   const t = useTranslations('Screening');
 
   if (result === 'red') {
@@ -591,7 +567,9 @@ const initialAnswers = () => ({
 
 export default function ScreeningFlow({ footerSlot }) {
   // Phase 2a — lang state removed; useTranslations reads from NextIntlClientProvider context.
-  const [theme, setTheme] = useState('day');
+  // Global theme: ThemeProvider in [locale]/layout.tsx owns state +
+  // matchMedia auto-detect. Screening just reads the current palette.
+  const { palette: c } = useTheme();
   const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState(initialAnswers());
   const [sessionId] = useState(() => 'MR-' + Math.random().toString(36).slice(2, 8).toUpperCase());
@@ -613,13 +591,6 @@ export default function ScreeningFlow({ footerSlot }) {
       link.rel = 'stylesheet';
       link.href = FONT_HREF;
       document.head.appendChild(link);
-    }
-    // Respect system preference on first load
-    try {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      if (mq.matches) setTheme('night');
-    } catch (e) {
-      // matchMedia not available, default to day
     }
   }, []);
 
@@ -665,9 +636,6 @@ export default function ScreeningFlow({ footerSlot }) {
       cancelled = true;
     };
   }, [step, refireKey]);
-
-  const toggle = () => setTheme((t) => (t === 'day' ? 'night' : 'day'));
-  const c = PALETTE[theme];
 
   const reset = () => {
     setAnswers(initialAnswers());
@@ -786,16 +754,14 @@ export default function ScreeningFlow({ footerSlot }) {
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, c, toggle }}>
-      <div
-        className="min-h-screen transition-colors duration-500"
-        style={{ background: c.bg, ...sansStyle }}
-      >
-        <div className="max-w-2xl mx-auto px-6 py-12 sm:py-20">
-          {screen}
-          {footerSlot}
-        </div>
+    <div
+      className="min-h-screen transition-colors duration-500"
+      style={{ background: c.bg, ...sansStyle }}
+    >
+      <div className="max-w-2xl mx-auto px-6 py-12 sm:py-20">
+        {screen}
+        {footerSlot}
       </div>
-    </ThemeContext.Provider>
+    </div>
   );
 }

@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, type Dispatch, type SetStateAction } from 
 import { useTranslations, useLocale } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 // Phase i18n.1d.2 — shared TopBar (client component) imported directly.
 // Chat-side code (TypingIndicator, MessageRow, ChoosingView, ChattingView,
 // streaming, conversation memory loading) is untouched by 1d.2 — only
@@ -17,7 +18,10 @@ import TopBar from '@/components/TopBar';
 import { formatRelativeTime } from '@/lib/format';
 import type { Locale } from '@/i18n/routing';
 
-const PALETTE = FULL_PALETTE.day;
+// Palette is read per-component via useTheme() from
+// @/lib/theme/useTheme — the global ThemeProvider lives in
+// [locale]/layout.tsx so toggling reflows the entire chat surface
+// (header, message bubbles, composer, banners) in one render.
 
 // Voice input — push-to-talk cap. Locked decision #22: 2 minutes per turn.
 // Protects against runaway sessions, bounds the upload payload, and keeps
@@ -88,6 +92,7 @@ function MiniMindHeader({
   // new" button in the right slot. Wordmark behavior changes from /account
   // to / (universal home convention per TopBar design).
   const t = useTranslations('MiniMind');
+  const { palette: PALETTE } = useTheme();
   return (
     <div
       className="px-6"
@@ -113,6 +118,7 @@ function MiniMindHeader({
 
 function TypingIndicator() {
   const t = useTranslations('MiniMind');
+  const { palette: PALETTE } = useTheme();
   return (
     <div
       className="flex items-center gap-1.5 py-1"
@@ -135,6 +141,7 @@ function TypingIndicator() {
 }
 
 function MessageRow({ message }: { message: Message }) {
+  const { palette: PALETTE } = useTheme();
   if (message.role === 'user') {
     return (
       <div className="flex justify-end">
@@ -178,6 +185,7 @@ function ChoosingView({
 }) {
   const t = useTranslations('MiniMind');
   const locale = useLocale() as Locale;
+  const { palette: PALETTE } = useTheme();
   const niceWhen = relativeWhen(lastConvo.daysAgo, locale);
   return (
     <main
@@ -292,6 +300,7 @@ function ChattingView({
 }) {
   const t = useTranslations('MiniMind');
   const locale = useLocale() as Locale;
+  const { palette: PALETTE } = useTheme();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -652,6 +661,7 @@ function AtCapBanner({
   locale: Locale;
 }) {
   const t = useTranslations('MiniMind.atCap');
+  const { palette: PALETTE } = useTheme();
   const isFree = currentTier !== 'essential' && currentTier !== 'extended';
   const resetDate = cycleResetAt
     ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(cycleResetAt))
