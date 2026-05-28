@@ -160,7 +160,8 @@
       "title": "Droga do siebie",
       "priceFormat": "Jednorazowo £599 · 12 × £55/tydzień",
       "buyButton": "Rozpocznij Drogę →"
-    }
+    },
+    "availableSoon": "Wkrótce"
   },
   "AccountDeletion": {
     "settingsKicker": "PANI DANE",

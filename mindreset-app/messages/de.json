@@ -160,7 +160,8 @@
       "title": "Der Weg zu dir",
       "priceFormat": "Einmalzahlung £599 · 12 × £55/Woche",
       "buyButton": "Den Weg beginnen →"
-    }
+    },
+    "availableSoon": "Bald verfügbar"
   },
   "AccountDeletion": {
     "settingsKicker": "IHRE DATEN",

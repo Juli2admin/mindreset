@@ -151,7 +151,8 @@
       "title": "The Journey",
       "priceFormat": "One-off £599 · 12 × £55/week",
       "buyButton": "Start the Journey →"
-    }
+    },
+    "availableSoon": "Available soon"
   },
   "AccountDeletion": {
     "settingsKicker": "YOUR DATA",

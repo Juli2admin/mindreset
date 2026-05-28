@@ -160,7 +160,8 @@
       "title": "Путь к себе",
       "priceFormat": "Единовременно £599 · 12 × £55/неделя",
       "buyButton": "Начать путь →"
-    }
+    },
+    "availableSoon": "Скоро доступно"
   },
   "AccountDeletion": {
     "settingsKicker": "ВАШИ ДАННЫЕ",

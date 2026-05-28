@@ -160,7 +160,8 @@
       "title": "Le Chemin vers soi",
       "priceFormat": "Paiement unique £599 · 12 × £55/semaine",
       "buyButton": "Commencer le Chemin →"
-    }
+    },
+    "availableSoon": "Bientôt disponible"
   },
   "AccountDeletion": {
     "settingsKicker": "VOS DONNÉES",

@@ -288,8 +288,9 @@ export default function HomeClient({
             scheduled (the banner above takes over). */}
         {!deletionScheduledAt && <SettingsSection t={tDel} locale={locale} />}
 
-        {/* Your States — 4 individually-purchasable modules.
-            Cards link to /pricing today; PR3 wires per-module checkout. */}
+        {/* Your States — 4 individually-priced modules. Cards are
+            informational until PR3 wires per-module Stripe checkout;
+            the "available soon" badge swaps for a real Buy button then. */}
         <div className="mb-12">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
@@ -305,39 +306,46 @@ export default function HomeClient({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {STATE_IDS.map((id) => (
-              <Link
+              <div
                 key={id}
-                href="/pricing"
-                className="rounded-lg p-5 block hover:opacity-80 transition-opacity"
+                className="rounded-lg p-5"
                 style={{
                   background: PALETTE.bgCard,
                   border: `1px solid ${PALETTE.border}`,
                 }}
               >
-                <h3
-                  className="text-[16px] leading-[1.3] mb-1"
-                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-                >
-                  {t(`states.modules.${id}` as 'states.modules.anxiety')}
-                </h3>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3
+                    className="text-[16px] leading-[1.3]"
+                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                  >
+                    {t(`states.modules.${id}` as 'states.modules.anxiety')}
+                  </h3>
+                  <span
+                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                    style={{
+                      background: PALETTE.bgSubtle,
+                      color: PALETTE.textHint,
+                      border: `1px solid ${PALETTE.border}`,
+                      fontFamily: SANS,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {t('availableSoon')}
+                  </span>
+                </div>
                 <p
-                  className="text-[12px] mb-3"
+                  className="text-[12px]"
                   style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
                   {t('modulePriceFormat')}
                 </p>
-                <span
-                  className="text-[13px]"
-                  style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
-                >
-                  {t('moduleBuyButton')}
-                </span>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Your Themes — 5 individually-purchasable modules. */}
+        {/* Your Themes — 5 individually-priced modules. */}
         <div className="mb-12">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
@@ -353,39 +361,46 @@ export default function HomeClient({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {THEME_IDS.map((id) => (
-              <Link
+              <div
                 key={id}
-                href="/pricing"
-                className="rounded-lg p-5 block hover:opacity-80 transition-opacity"
+                className="rounded-lg p-5"
                 style={{
                   background: PALETTE.bgCard,
                   border: `1px solid ${PALETTE.border}`,
                 }}
               >
-                <h3
-                  className="text-[16px] leading-[1.3] mb-1"
-                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-                >
-                  {t(`themes.modules.${id}` as 'themes.modules.money')}
-                </h3>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3
+                    className="text-[16px] leading-[1.3]"
+                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                  >
+                    {t(`themes.modules.${id}` as 'themes.modules.money')}
+                  </h3>
+                  <span
+                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                    style={{
+                      background: PALETTE.bgSubtle,
+                      color: PALETTE.textHint,
+                      border: `1px solid ${PALETTE.border}`,
+                      fontFamily: SANS,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {t('availableSoon')}
+                  </span>
+                </div>
                 <p
-                  className="text-[12px] mb-3"
+                  className="text-[12px]"
                   style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
                   {t('modulePriceFormat')}
                 </p>
-                <span
-                  className="text-[13px]"
-                  style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
-                >
-                  {t('moduleBuyButton')}
-                </span>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Your Journey — single card, two purchase options on one row. */}
+        {/* Your Journey — single card, two purchase options. */}
         <div className="mb-12">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
@@ -399,33 +414,40 @@ export default function HomeClient({
           >
             {t('journey.intro')}
           </p>
-          <Link
-            href="/pricing"
-            className="rounded-lg p-6 block hover:opacity-80 transition-opacity"
+          <div
+            className="rounded-lg p-6"
             style={{
               background: PALETTE.bgCard,
               border: `1px solid ${PALETTE.border}`,
             }}
           >
-            <h3
-              className="text-[20px] mb-2"
-              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-            >
-              {t('journey.title')}
-            </h3>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h3
+                className="text-[20px]"
+                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+              >
+                {t('journey.title')}
+              </h3>
+              <span
+                className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                style={{
+                  background: PALETTE.bgSubtle,
+                  color: PALETTE.textHint,
+                  border: `1px solid ${PALETTE.border}`,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                }}
+              >
+                {t('availableSoon')}
+              </span>
+            </div>
             <p
-              className="text-[13px] mb-4"
+              className="text-[13px]"
               style={{ color: PALETTE.textMuted, fontFamily: SANS }}
             >
               {t('journey.priceFormat')}
             </p>
-            <span
-              className="text-[13px]"
-              style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
-            >
-              {t('journey.buyButton')}
-            </span>
-          </Link>
+          </div>
         </div>
 
         {footerSlot}

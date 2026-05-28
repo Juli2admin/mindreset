@@ -160,7 +160,8 @@
       "title": "El Camino hacia ti",
       "priceFormat": "Pago único £599 · 12 × £55/semana",
       "buyButton": "Empezar el Camino →"
-    }
+    },
+    "availableSoon": "Próximamente"
   },
   "AccountDeletion": {
     "settingsKicker": "SUS DATOS",
