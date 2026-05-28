@@ -648,6 +648,199 @@
     "journeyOnetime": "The Journey is available as a one-off purchase at £599. At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. Once the first block has been started, no refund is available.",
     "journeyInstalment": "The Journey is also available as a 12-week instalment plan at £55 per week. Each weekly payment unlocks the next block of content. You may stop future payments at any time; however, payments already made are non-refundable, and previously unlocked content remains accessible. Once the first block has been accessed, the right to a cooling-off period no longer applies."
   },
+  "Privacy": {
+    "lastUpdated": "Dernière mise à jour · {date}",
+    "title": "Privacy Policy",
+    "preamble": {
+      "controllerLabel": "Data Controller:",
+      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, société enregistrée en England & Wales, basée à Londres, Royaume-Uni — <mail>support@mindreset.ai</mail>",
+      "note": "[NOTE: L’enregistrement auprès de l’ICO doit être obtenu via ico.org.uk avant le lancement public. Frais annuels ~£40-60. L’enregistrement doit être effectué avant toute activité marketing ou disponibilité publique.]"
+    },
+    "section1": {
+      "title": "1. Ce que couvre la présente Privacy Policy",
+      "body": "La présente Privacy Policy explique quelles données personnelles nous collectons à votre sujet lorsque vous utilisez le Service, pourquoi nous les collectons, comment nous les sécurisons, avec qui nous les partageons, combien de temps nous les conservons et quels droits vous détenez en vertu du UK GDPR et, le cas échéant, du EU GDPR."
+    },
+    "section2": {
+      "title": "2. Données que nous collectons",
+      "table": {
+        "headerCategory": "Catégorie",
+        "headerExamples": "Exemples",
+        "headerPurpose": "Finalité",
+        "headerLawfulBasis": "Base légale",
+        "account": {
+          "category": "Données de compte",
+          "examples": "email address, hashed password, country (déduit de l’IP), preferred language",
+          "purpose": "création et gestion de votre compte ; fourniture du Service",
+          "lawfulBasis": "Contract"
+        },
+        "screening": {
+          "category": "Screening data",
+          "examples": "vos réponses au Readiness Check, classification résultante (Green / Yellow / Red), résumé des raisons",
+          "purpose": "déterminer si le Service vous convient ; protéger les utilisateurs contre les risques potentiels",
+          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+        },
+        "conversation": {
+          "category": "Conversation data (special category)",
+          "examples": "messages envoyés à MiniMind ou aux modules ; reflections et réponses dans les exercices ; mood et energy check-ins",
+          "purpose": "analyse AI afin de suggérer des pratiques ; soutien wellbeing personnalisé ; suivi de votre progression",
+          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+        },
+        "wellbeing": {
+          "category": "Wellbeing profile",
+          "examples": "schémas dérivés (par ex. « elevated anxiety », « recent stable period »), observations d’états et de thèmes",
+          "purpose": "personnalisation ; smart routing vers les pratiques et modules appropriés",
+          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+        },
+        "safety": {
+          "category": "Safety events",
+          "examples": "moments de conversation signalés ayant déclenché notre safety protocol, notre automated response, optional manual review notes",
+          "purpose": "audit du safety protocol ; conformité aux obligations du Online Safety Act 2023 concernant les priority offences",
+          "lawfulBasis": "Legitimate interest (audit trail for safety) / Legal obligation"
+        },
+        "usage": {
+          "category": "Usage data",
+          "examples": "type d’appareil, browser, IP address, cookies, timestamps, pages vues",
+          "purpose": "sécurité, anti-abuse, amélioration du Service, analyses anonymes",
+          "lawfulBasis": "Legitimate interest"
+        },
+        "payment": {
+          "category": "Payment data",
+          "examples": "4 derniers chiffres de la carte, transaction ID, billing email (les données complètes de carte sont conservées par le payment processor, pas par nous)",
+          "purpose": "billing, prévention de la fraude, tenue des registres financiers",
+          "lawfulBasis": "Contract / Legal obligation (tax law)"
+        },
+        "support": {
+          "category": "Support messages",
+          "examples": "emails envoyés à <mail>support@mindreset.ai</mail> ou à nos autres adresses",
+          "purpose": "réponse aux demandes ; résolution des problèmes",
+          "lawfulBasis": "Legitimate interest"
+        }
+      },
+      "closing": "Nous ne demandons pas votre vrai nom, votre adresse physique, votre date de naissance ni des identifiants gouvernementaux. Veuillez éviter de partager des informations personnellement identifiables sur vous-même ou sur d’autres personnes dans les conversations avec l’AI."
+    },
+    "section3": {
+      "title": "3. Comment nous utilisons l’AI",
+      "intro": "Vos conversation data sont traitées par notre AI engine afin de générer des réponses et suggérer des pratiques.",
+      "observationsItem": "L’AI crée des wellbeing observations non médicales (par exemple, « the user describes physical tension when discussing work ») afin de mieux personnaliser les pratiques",
+      "noDiagnosisItem": "L’AI ne pose pas de diagnostics médicaux",
+      "noLegalItem": "L’AI ne prend pas de décisions produisant des effets juridiques vous concernant",
+      "contactItem": "Vous pouvez nous contacter à <mail>support@mindreset.ai</mail> si vous estimez qu’une automated response est incorrecte ou nuisible ; une human review sera effectuée",
+      "article22": "En vertu de l’Article 22 du UK GDPR, vous avez le droit de ne pas faire l’objet d’une décision fondée exclusivement sur un automated processing produisant des effets juridiques ou similaires significatifs. Les wellbeing observations et practice suggestions générées par notre AI ne constituent pas de telles décisions."
+    },
+    "section4": {
+      "title": "4. Avec qui nous partageons les données",
+      "intro": "Nous ne <strong>vendons jamais</strong> et ne louons jamais vos données personnelles. Nous les partageons uniquement avec des catégories de service providers nécessaires à la fourniture du Service :",
+      "cloudItem": "Cloud hosting et database services",
+      "aiItem": "AI infrastructure (pour les conversational et analytical features)",
+      "speechItem": "Speech-to-text transcription (pour le voice input)",
+      "authItem": "Authentication et account management",
+      "paymentItem": "Payment processing",
+      "emailItem": "Transactional email delivery",
+      "hostingItem": "Website hosting",
+      "voiceInput": "<strong>Voice input.</strong> Si vous choisissez d’utiliser le voice input sur MiniMind, votre audio enregistré est transmis de manière sécurisée à notre speech-to-text provider pour transcription. Nous avons activé le zero data retention auprès de ce provider — l’audio n’est pas stocké après transcription, ni sur l’infrastructure MindReset ni chez le provider. Seul le resulting text est conservé dans votre conversation history. Vous pouvez utiliser le Service entièrement via typing si vous le préférez.",
+      "providersList": "Les providers spécifiques peuvent évoluer au fil du temps. Une liste actuelle des service providers que nous utilisons est disponible sur demande — email <mail>support@mindreset.ai</mail>.",
+      "legalDisclosure": "Nous pouvons également divulguer vos données lorsque cela est légalement exigé par une court order ou un processus juridique similaire.",
+      "sccs": "Nous utilisons des <strong>Standard Contractual Clauses</strong> (ou des mécanismes UK IDTA équivalents) pour tout international data transfer, complétés si nécessaire par des safeguards supplémentaires, notamment encryption in transit et at rest."
+    },
+    "section5": {
+      "title": "5. Transferts internationaux",
+      "intro": "Vos données peuvent être traitées en dehors du Royaume-Uni et de l’UE, principalement aux États-Unis. Lorsque cela se produit, nous nous appuyons soit sur :",
+      "adequacyItem": "Une adequacy decision du Royaume-Uni ou de l’UE (lorsqu’elle existe)",
+      "sccsItem": "Les Standard Contractual Clauses approuvées par la Commission européenne ou le UK ICO",
+      "safeguardsItem": "D’autres safeguards appropriées autorisées par le UK GDPR ou le EU GDPR",
+      "requestDetails": "Vous pouvez demander des informations sur les safeguards spécifiques appliquées à tout transfert en envoyant un email à <mail>support@mindreset.ai</mail>."
+    },
+    "section6": {
+      "title": "6. Sécurité",
+      "intro": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées afin de protéger vos données :",
+      "tlsItem": "<strong>TLS 1.2 ou version supérieure</strong> pour toutes les données en transit",
+      "encryptionItem": "<strong>Chiffrement AES-256 des données au repos</strong> pour les données stockées (fourni par Supabase)",
+      "hashedItem": "<strong>Mots de passe hachés</strong> utilisant des algorithmes conformes aux standards de l’industrie (gérés par Clerk)",
+      "accessItem": "<strong>Contrôle d’accès basé sur les rôles</strong> à nos systèmes backend ; les accès sont journalisés et audités",
+      "confidentialityItem": "<strong>Obligations de confidentialité</strong> applicables à toute personne ayant accès aux données",
+      "reviewsItem": "<strong>Révisions de sécurité régulières</strong> et surveillance des vulnérabilités des dépendances",
+      "backupsItem": "<strong>Sauvegardes chiffrées</strong> avec une durée de conservation limitée",
+      "breach": "Aucun système de sécurité ne peut garantir une protection absolue. En cas de violation de données susceptible d’affecter vos droits et libertés, nous notifierons l’ICO dans un délai de 72 heures et, lorsque cela est requis, informerons les utilisateurs concernés dans les meilleurs délais."
+    },
+    "section7": {
+      "title": "7. Conservation des données",
+      "table": {
+        "headerCategory": "Catégorie de données",
+        "headerPeriod": "Durée de conservation",
+        "account": {
+          "category": "Données du compte",
+          "period": "Compte actif : jusqu’à sa suppression par vos soins. Compte inactif : supprimé 12 mois après la dernière connexion."
+        },
+        "screening": {
+          "category": "Données de dépistage",
+          "period": "12 mois après la dernière connexion ou immédiatement après la suppression du compte"
+        },
+        "conversation": {
+          "category": "Données de conversation",
+          "period": "12 mois après la dernière connexion ou immédiatement après la suppression du compte"
+        },
+        "wellbeing": {
+          "category": "Profil de bien-être",
+          "period": "Identique aux données de conversation"
+        },
+        "safety": {
+          "category": "Événements de sécurité",
+          "period": "7 ans (obligation légale de conservation des journaux d’audit) — dépersonnalisés après suppression du compte"
+        },
+        "payment": {
+          "category": "Données de paiement",
+          "period": "6 ans (obligation imposée par la législation fiscale britannique)"
+        },
+        "backups": {
+          "category": "Sauvegardes",
+          "period": "30 jours maximum"
+        },
+        "support": {
+          "category": "Messages d’assistance",
+          "period": "24 mois à compter du dernier contact"
+        }
+      },
+      "deletion": "Vous pouvez demander la suppression anticipée de toute donnée, sauf lorsque nous sommes légalement tenus de la conserver (par exemple, les documents financiers en vertu de la législation fiscale ou les événements de sécurité en vertu de l’Online Safety Act)."
+    },
+    "section8": {
+      "title": "8. Vos droits",
+      "intro": "Conformément au UK GDPR (et au RGPD de l’Union européenne lorsque celui-ci s’applique), vous disposez des droits suivants :",
+      "accessItem": "<strong>Accès</strong> — demander une copie des données personnelles que nous détenons à votre sujet",
+      "rectificationItem": "<strong>Rectification</strong> — corriger des données inexactes",
+      "erasureItem": "<strong>Effacement</strong> — demander la suppression de vos données (« droit à l’oubli »), sous réserve des obligations légales de conservation",
+      "restrictionItem": "<strong>Limitation</strong> — demander la limitation du traitement de vos données",
+      "objectionItem": "<strong>Opposition</strong> — vous opposer au traitement fondé sur nos intérêts légitimes",
+      "portabilityItem": "<strong>Portabilité</strong> — recevoir vos données dans un format structuré, couramment utilisé et lisible par machine",
+      "withdrawConsentItem": "<strong>Retrait du consentement</strong> — pour tout traitement fondé sur le consentement",
+      "exerciseLabel": "Pour exercer l’un de ces droits :",
+      "dataSectionItem": "Utilisez la section « Données » dans les paramètres de votre compte (lorsqu’elle est disponible), ou",
+      "emailItem": "Envoyez votre demande par courrier électronique à <mail>support@mindreset.ai</mail>",
+      "responseTime": "Nous répondrons dans un délai d’un mois ou vous informerons, dans ce même délai, si un délai supplémentaire est nécessaire (jusqu’à deux mois supplémentaires) en raison de la complexité de la demande.",
+      "icoComplaint": "Si vous n’êtes pas satisfait de la manière dont nous traitons vos données, vous avez le droit d’introduire une réclamation auprès de l’Information Commissioner’s Office (ICO) du Royaume-Uni via <ico>ico.org.uk</ico>, ou auprès de votre autorité locale de protection des données dans l’Union européenne."
+    },
+    "section9": {
+      "title": "9. Cookies",
+      "intro": "Nous utilisons :",
+      "necessaryItem": "<strong>Cookies strictement nécessaires</strong> — pour l’authentification (session Clerk), la sécurité et le fonctionnement essentiel du site. Ces cookies ne peuvent pas être désactivés",
+      "analyticsItem": "<strong>Cookies analytiques facultatifs</strong> — afin de comprendre les habitudes d’utilisation et d’améliorer le Service. Lors de votre première visite, il vous sera demandé d’accepter ou de refuser ces cookies",
+      "noAds": "Nous n’utilisons pas de cookies publicitaires, de pixels de suivi à des fins marketing ni de traceurs tiers."
+    },
+    "section10": {
+      "title": "10. Données des enfants",
+      "body": "Le Service est destiné aux adultes âgés de 18 ans et plus. Nous ne collectons pas sciemment de données personnelles concernant des personnes de moins de 18 ans. Si vous pensez qu’un mineur de moins de 18 ans nous a fourni des données personnelles, veuillez nous contacter à l’adresse <mail>support@mindreset.ai</mail> et nous supprimerons ces données."
+    },
+    "section11": {
+      "title": "11. Modifications de la présente Politique",
+      "body": "Nous pouvons mettre à jour la présente Politique de confidentialité de temps à autre afin de refléter les évolutions de nos pratiques ou du droit applicable. Les modifications substantielles seront annoncées par e-mail et/ou via l’application au moins 30 jours avant leur entrée en vigueur. La poursuite de l’utilisation du Service après la date d’entrée en vigueur vaut acceptation de la Politique mise à jour."
+    },
+    "section12": {
+      "title": "12. Contact",
+      "intro": "Pour toute question relative à la confidentialité ou pour exercer vos droits :",
+      "emailLabel": "E-mail :",
+      "postalLabel": "Adresse postale :",
+      "postalNote": "[NOTE : À ajouter lorsqu’une adresse professionnelle enregistrée sera disponible.]"
+    }
+  },
   "TopBar": {
     "wordmarkAria": "MindReset home"
   },
