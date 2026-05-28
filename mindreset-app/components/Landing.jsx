@@ -421,7 +421,7 @@ function Toast({ message, onClose }) {
 // ============================================================================
 // Main
 // ============================================================================
-export default function LandingPage({ footerSlot }) {
+export default function LandingPage({ footerSlot, testimonialsSlot }) {
   // Phase 2a — `lang` state + prop drilling removed. Every subcomponent
   // calls useTranslations('Landing') directly from NextIntlClientProvider
   // context. The Phase 1d.2 'en'|'ru' narrowing is no longer needed
@@ -462,6 +462,7 @@ export default function LandingPage({ footerSlot }) {
         <Safety />
         <PathsSection />
         <Different />
+        {testimonialsSlot}
         <ClosingCTA onBegin={onBegin} />
         {/* Phase 1d.2 — Landing-only crisis-resource block + safety
             disclaimer, rendered above the shared Footer. Footer arrives

@@ -63,6 +63,12 @@ export default async function Footer({ omit }: Props) {
         >
           {t('contact')}
         </a>
+        <Link
+          href="/share-your-story"
+          className="py-2 hover:underline underline-offset-2 transition-colors"
+        >
+          {t('shareYourStory')}
+        </Link>
       </nav>
       <div className="mt-4 flex items-center justify-center">
         <LanguagePicker label={t('languagePickerLabel')} />

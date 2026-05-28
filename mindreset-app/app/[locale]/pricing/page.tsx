@@ -3,7 +3,9 @@ import { currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import PricingClient from './PricingClient';
 import Footer from '@/components/Footer';
+import TestimonialsSection from '@/components/TestimonialsSection';
 import { pageAlternates } from '@/lib/seo/alternates';
+import { getApprovedTestimonials } from '@/lib/testimonials/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +21,7 @@ export const metadata: Metadata = {
 // Clerk's useUser hook and redirect to /sign-up instead of calling the
 // checkout API. Signed-in users see Active / Manage subscription state
 // driven by their current tier.
-export default async function PricingPage() {
+export default async function PricingPage({ params }: { params: { locale: string } }) {
   const user = await currentUser();
 
   let currentTier: string | null = null;
@@ -31,10 +33,13 @@ export default async function PricingPage() {
     currentTier = dbUser?.currentTier ?? null;
   }
 
+  const testimonials = await getApprovedTestimonials(params.locale);
+
   return (
     <PricingClient
       currentTier={currentTier}
       footerSlot={<Footer />}
+      testimonialsSlot={<TestimonialsSection testimonials={testimonials} />}
     />
   );
 }

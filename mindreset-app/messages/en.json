@@ -71,7 +71,36 @@
     "privacy": "Privacy",
     "faq": "FAQ",
     "contact": "Contact",
+    "shareYourStory": "Share your story",
     "languagePickerLabel": "Language"
+  },
+  "Testimonials": {
+    "kicker": "FROM OTHERS WALKING THIS PATH",
+    "title": "Stories from people using MindReset",
+    "shareInvite": "Has MindReset helped you?",
+    "shareCta": "Share your story"
+  },
+  "ShareYourStory": {
+    "metaTitle": "Share your story",
+    "metaDescription": "Tell us how MindReset has helped you. Your story may appear on the site to help others considering this work — only with your consent, only after review.",
+    "kicker": "WE'D LOVE TO HEAR FROM YOU",
+    "title": "Share your story.",
+    "intro1": "If MindReset has helped you in any way — a single moment of clarity, a slow shift over weeks, something you can name or something you can't — telling that story helps others find the courage to begin.",
+    "intro2": "Nothing here is published automatically. We read every submission and only publish ones you've consented to share publicly. You can use a first name only, a nickname, or post anonymously.",
+    "nameLabel": "How would you like to be credited?",
+    "namePlaceholder": "Jane, J., Anonymous…",
+    "nameHelp": "First name, initial, or anything you're comfortable with. We never publish surnames or full names.",
+    "ageLabel": "Age range (optional)",
+    "ageOptional": "Prefer not to say",
+    "storyLabel": "Your story",
+    "storyPlaceholder": "Take your time. There's no right way to do this — write what feels honest. A few sentences is enough.",
+    "storyHelp": "1500 characters max.",
+    "consentLabel": "I consent to MindReset publishing my story (edited for length and clarity if needed) on the website, with the name above. I understand I can email support@mindreset.ai any time to have it removed.",
+    "submitCta": "Send my story",
+    "submitting": "Sending…",
+    "submitError": "Something went wrong. Please try again.",
+    "thanksTitle": "Thank you for sharing.",
+    "thanksBody": "We've received your story and will read it carefully. If it's published, the name you provided will appear with it. You can email support@mindreset.ai at any time to make changes or withdraw consent."
   },
   "Home": {
     "welcomeKicker": "Welcome back",

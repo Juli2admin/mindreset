@@ -35,9 +35,10 @@ const TIERS: TierData[] = [
 type Props = {
   currentTier: string | null;
   footerSlot: ReactNode;
+  testimonialsSlot: ReactNode;
 };
 
-export default function PricingClient({ currentTier, footerSlot }: Props) {
+export default function PricingClient({ currentTier, footerSlot, testimonialsSlot }: Props) {
   const t = useTranslations('Pricing');
   const locale = useLocale();
   const { isSignedIn } = useUser();
@@ -328,6 +329,7 @@ export default function PricingClient({ currentTier, footerSlot }: Props) {
             {checkoutError}
           </p>
         )}
+        {testimonialsSlot}
         {footerSlot}
       </div>
     </main>
