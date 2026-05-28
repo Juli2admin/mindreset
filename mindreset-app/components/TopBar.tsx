@@ -36,40 +36,11 @@ type Props = {
   /** 'default' = wordmark left, right slot + picker on far right.
    *  'centered' = wordmark centered, no right slot, no picker. */
   align?: 'default' | 'centered';
-  /** Show TreeMark glyph before the wordmark text. Landing + Screening
-   *  pass true; other pages keep the wordmark text-only. */
+  /** Show the brand icon (tree logo) before the wordmark text. Landing +
+   *  Screening pass true; other pages keep the wordmark text-only. */
   showTreeMark?: boolean;
   theme?: 'day' | 'night';
 };
-
-function TreeMark({ size = 26, color }: { size?: number; color: string }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      width={size}
-      height={size}
-      fill="none"
-      stroke={color}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M16 11 V21" strokeWidth="1.4" />
-      <path d="M16 11 Q15 6 13 2" strokeWidth="1" />
-      <path d="M16 11 Q17 6 19 2" strokeWidth="1" />
-      <path d="M16 12 Q11 9 7 5" strokeWidth="1" />
-      <path d="M16 12 Q21 9 25 5" strokeWidth="1" />
-      <path d="M16 13 Q9 13 4 11" strokeWidth="1" />
-      <path d="M16 13 Q23 13 28 11" strokeWidth="1" />
-      <path d="M16 21 Q15 26 13 30" strokeWidth="1" />
-      <path d="M16 21 Q17 26 19 30" strokeWidth="1" />
-      <path d="M16 20 Q11 23 7 27" strokeWidth="1" />
-      <path d="M16 20 Q21 23 25 27" strokeWidth="1" />
-      <path d="M16 19 Q9 19 4 21" strokeWidth="1" />
-      <path d="M16 19 Q23 19 28 21" strokeWidth="1" />
-    </svg>
-  );
-}
 
 export default function TopBar({
   right,
@@ -88,7 +59,10 @@ export default function TopBar({
       className="inline-flex items-center gap-2"
       style={{ color: PALETTE.text }}
     >
-      {showTreeMark && <TreeMark size={26} color={PALETTE.text} />}
+      {showTreeMark && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src="/icon.png" alt="" width={26} height={26} style={{ display: 'block' }} />
+      )}
       <span
         className="text-[20px] tracking-tight"
         style={{
