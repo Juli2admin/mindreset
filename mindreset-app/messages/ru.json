@@ -694,13 +694,13 @@
       "closing": "Мы не запрашиваем ваше настоящее имя, физический адрес, дату рождения или государственные идентификаторы. Пожалуйста, избегайте передачи персонально идентифицирующей информации о себе или других лицах внутри conversations с AI."
     },
     "section3": {
-      "title": "3. How We Use AI",
-      "intro": "Your conversation data is processed by our AI engine to generate responses and suggest practices.",
-      "observationsItem": "The AI creates non-medical wellbeing observations (e.g., \"the user describes physical tension when discussing work\") to better personalise practices",
-      "noDiagnosisItem": "The AI does not make medical diagnoses",
-      "noLegalItem": "The AI does not make decisions that have legal effects on you",
-      "contactItem": "You may contact us at <mail>support@mindreset.ai</mail> if you believe an automated response is incorrect or harmful; a human will review",
-      "article22": "Under Article 22 of UK GDPR, you have the right not to be subject to a decision based solely on automated processing that produces legal or similarly significant effects. The wellbeing observations and practice suggestions made by our AI do not constitute such decisions."
+      "title": "3. Как мы используем AI",
+      "intro": "Ваши conversation data обрабатываются нашим AI engine для генерации ответов и предложения практик.",
+      "observationsItem": "AI создаёт немедицинские wellbeing observations (например, «the user describes physical tension when discussing work») для более персонализированного подбора практик",
+      "noDiagnosisItem": "AI не ставит медицинские диагнозы",
+      "noLegalItem": "AI не принимает решений, имеющих для вас юридические последствия",
+      "contactItem": "Вы можете связаться с нами по адресу <mail>support@mindreset.ai</mail>, если считаете automated response некорректным или вредоносным; human review будет проведён",
+      "article22": "В соответствии со Article 22 UK GDPR вы имеете право не подпадать под решение, основанное исключительно на automated processing, которое влечёт юридические или аналогично значимые последствия. Wellbeing observations и practice suggestions, создаваемые нашим AI, не являются такими решениями."
     },
     "section4": {
       "title": "4. With Whom We Share Data",

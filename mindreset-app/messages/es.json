@@ -719,13 +719,13 @@
       "closing": "No solicitamos su nombre real, dirección física, fecha de nacimiento ni identificadores gubernamentales. Por favor, evite compartir información personalmente identificable sobre usted o sobre otras personas dentro de las conversations con la AI."
     },
     "section3": {
-      "title": "3. How We Use AI",
-      "intro": "Your conversation data is processed by our AI engine to generate responses and suggest practices.",
-      "observationsItem": "The AI creates non-medical wellbeing observations (e.g., \"the user describes physical tension when discussing work\") to better personalise practices",
-      "noDiagnosisItem": "The AI does not make medical diagnoses",
-      "noLegalItem": "The AI does not make decisions that have legal effects on you",
-      "contactItem": "You may contact us at <mail>support@mindreset.ai</mail> if you believe an automated response is incorrect or harmful; a human will review",
-      "article22": "Under Article 22 of UK GDPR, you have the right not to be subject to a decision based solely on automated processing that produces legal or similarly significant effects. The wellbeing observations and practice suggestions made by our AI do not constitute such decisions."
+      "title": "3. Cómo utilizamos la AI",
+      "intro": "Sus conversation data son procesados por nuestro AI engine para generar respuestas y sugerir prácticas.",
+      "observationsItem": "La AI crea wellbeing observations no médicas (por ejemplo, «the user describes physical tension when discussing work») para personalizar mejor las prácticas",
+      "noDiagnosisItem": "La AI no realiza diagnósticos médicos",
+      "noLegalItem": "La AI no toma decisiones que produzcan efectos legales sobre usted",
+      "contactItem": "Puede contactarnos en <mail>support@mindreset.ai</mail> si considera que una automated response es incorrecta o perjudicial; se realizará una human review",
+      "article22": "En virtud del Article 22 UK GDPR, usted tiene derecho a no estar sujeto a una decisión basada únicamente en automated processing que produzca efectos legales o efectos significativamente similares. Las wellbeing observations y practice suggestions realizadas por nuestra AI no constituyen tales decisiones."
     },
     "section4": {
       "title": "4. With Whom We Share Data",

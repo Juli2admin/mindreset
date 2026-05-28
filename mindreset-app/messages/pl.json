@@ -719,13 +719,13 @@
       "closing": "Nie wymagamy podawania prawdziwego imienia i nazwiska, adresu fizycznego, daty urodzenia ani identyfikatorów państwowych. Prosimy unikać udostępniania danych umożliwiających identyfikację Ciebie lub innych osób w conversations z AI."
     },
     "section3": {
-      "title": "3. How We Use AI",
-      "intro": "Your conversation data is processed by our AI engine to generate responses and suggest practices.",
-      "observationsItem": "The AI creates non-medical wellbeing observations (e.g., \"the user describes physical tension when discussing work\") to better personalise practices",
-      "noDiagnosisItem": "The AI does not make medical diagnoses",
-      "noLegalItem": "The AI does not make decisions that have legal effects on you",
-      "contactItem": "You may contact us at <mail>support@mindreset.ai</mail> if you believe an automated response is incorrect or harmful; a human will review",
-      "article22": "Under Article 22 of UK GDPR, you have the right not to be subject to a decision based solely on automated processing that produces legal or similarly significant effects. The wellbeing observations and practice suggestions made by our AI do not constitute such decisions."
+      "title": "3. Jak wykorzystujemy AI",
+      "intro": "Twoje conversation data są przetwarzane przez nasz AI engine w celu generowania odpowiedzi i sugerowania praktyk.",
+      "observationsItem": "AI tworzy niemedyczne wellbeing observations (np. „the user describes physical tension when discussing work“), aby lepiej personalizować praktyki",
+      "noDiagnosisItem": "AI nie stawia diagnoz medycznych",
+      "noLegalItem": "AI nie podejmuje decyzji wywołujących skutki prawne wobec Ciebie",
+      "contactItem": "Możesz skontaktować się z nami pod adresem <mail>support@mindreset.ai</mail>, jeśli uważasz, że automated response jest nieprawidłowa lub szkodliwa; zostanie przeprowadzona human review",
+      "article22": "Zgodnie z Article 22 UK GDPR masz prawo nie podlegać decyzji opartej wyłącznie na automated processing, która wywołuje skutki prawne lub podobnie istotne skutki. Wellbeing observations i practice suggestions tworzone przez nasze AI nie stanowią takich decyzji."
     },
     "section4": {
       "title": "4. With Whom We Share Data",

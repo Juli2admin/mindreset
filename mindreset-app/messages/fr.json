@@ -719,13 +719,13 @@
       "closing": "Nous ne demandons pas votre vrai nom, votre adresse physique, votre date de naissance ni des identifiants gouvernementaux. Veuillez éviter de partager des informations personnellement identifiables sur vous-même ou sur d’autres personnes dans les conversations avec l’AI."
     },
     "section3": {
-      "title": "3. How We Use AI",
-      "intro": "Your conversation data is processed by our AI engine to generate responses and suggest practices.",
-      "observationsItem": "The AI creates non-medical wellbeing observations (e.g., \"the user describes physical tension when discussing work\") to better personalise practices",
-      "noDiagnosisItem": "The AI does not make medical diagnoses",
-      "noLegalItem": "The AI does not make decisions that have legal effects on you",
-      "contactItem": "You may contact us at <mail>support@mindreset.ai</mail> if you believe an automated response is incorrect or harmful; a human will review",
-      "article22": "Under Article 22 of UK GDPR, you have the right not to be subject to a decision based solely on automated processing that produces legal or similarly significant effects. The wellbeing observations and practice suggestions made by our AI do not constitute such decisions."
+      "title": "3. Comment nous utilisons l’AI",
+      "intro": "Vos conversation data sont traitées par notre AI engine afin de générer des réponses et suggérer des pratiques.",
+      "observationsItem": "L’AI crée des wellbeing observations non médicales (par exemple, « the user describes physical tension when discussing work ») afin de mieux personnaliser les pratiques",
+      "noDiagnosisItem": "L’AI ne pose pas de diagnostics médicaux",
+      "noLegalItem": "L’AI ne prend pas de décisions produisant des effets juridiques vous concernant",
+      "contactItem": "Vous pouvez nous contacter à <mail>support@mindreset.ai</mail> si vous estimez qu’une automated response est incorrecte ou nuisible ; une human review sera effectuée",
+      "article22": "En vertu de l’Article 22 du UK GDPR, vous avez le droit de ne pas faire l’objet d’une décision fondée exclusivement sur un automated processing produisant des effets juridiques ou similaires significatifs. Les wellbeing observations et practice suggestions générées par notre AI ne constituent pas de telles décisions."
     },
     "section4": {
       "title": "4. With Whom We Share Data",
