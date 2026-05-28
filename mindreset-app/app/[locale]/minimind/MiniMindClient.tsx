@@ -557,7 +557,7 @@ function ChattingView({
                 placeholder={t('placeholder')}
                 rows={1}
                 disabled={sending || recording || transcribing}
-                className="flex-1 resize-none rounded-lg px-4 py-3 text-[15px] leading-[1.5] transition-colors focus:outline-none"
+                className="flex-1 resize-none rounded-lg px-4 py-3 text-[16px] leading-[1.5] transition-colors focus:outline-none"
                 style={{
                   background: sending || recording || transcribing ? PALETTE.bgSubtle : PALETTE.bgCard,
                   color: PALETTE.text,

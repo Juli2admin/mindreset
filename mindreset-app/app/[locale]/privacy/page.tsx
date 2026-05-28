@@ -20,7 +20,7 @@ export const metadata = {
 function H2({ children }: { children: ReactNode }) {
   return (
     <h2
-      className="text-[36px] leading-[1.15] mb-6"
+      className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
       style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
     >
       {children}
@@ -108,7 +108,10 @@ function Table({ children }: { children: ReactNode }) {
   return (
     <div className="my-6 overflow-x-auto">
       <table
-        className="min-w-full text-[14px] leading-[1.55]"
+        // min-w-[640px] forces horizontal scroll on mobile when the table
+        // is wider than the viewport (§2 has 4 narrow columns of prose);
+        // md:min-w-full restores fill-to-parent on tablet/desktop.
+        className="min-w-[640px] md:min-w-full text-[14px] leading-[1.55]"
         style={{ borderCollapse: 'collapse', fontFamily: SANS, color: PALETTE.text }}
       >
         {children}

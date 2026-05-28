@@ -22,7 +22,7 @@ export const metadata = {
 function H2({ children }: { children: ReactNode }) {
   return (
     <h2
-      className="text-[36px] leading-[1.15] mb-6"
+      className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
       style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
     >
       {children}

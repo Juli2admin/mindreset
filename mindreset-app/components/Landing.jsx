@@ -168,7 +168,7 @@ function Hero({ onBegin }) {
       </div>
 
       <h1
-        className="text-[60px] sm:text-[76px] leading-[0.98] mb-12 -tracking-[0.025em] whitespace-pre-line"
+        className="text-[44px] sm:text-[60px] md:text-[76px] leading-[0.98] mb-12 -tracking-[0.025em] whitespace-pre-line"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
         {t('heroTitle')}
@@ -410,7 +410,7 @@ function ClosingCTA({ onBegin }) {
     <section className="py-24 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
       <SectionKicker text={t('closingKicker')} color={c.accent} />
       <h2
-        className="text-[56px] sm:text-[72px] leading-[1] mb-8 -tracking-[0.02em]"
+        className="text-[40px] sm:text-[56px] md:text-[72px] leading-[1] mb-8 -tracking-[0.02em]"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
         {t('closingTitle')}

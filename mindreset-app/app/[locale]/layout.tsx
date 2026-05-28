@@ -1,5 +1,5 @@
 import '../globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { ClerkProvider } from '@clerk/nextjs';
 import {
@@ -65,6 +65,14 @@ export const metadata: Metadata = {
     ],
     apple: '/logo-light.png',
   },
+};
+
+// Without this, mobile browsers render every page at a fixed ~980px CSS
+// width and shrink to fit, making text tiny and breaking all responsive
+// Tailwind breakpoints. Required for the rest of this PR's mobile fixes.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default async function LocaleLayout({
