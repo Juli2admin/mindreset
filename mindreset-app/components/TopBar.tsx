@@ -26,8 +26,10 @@
 
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 import LanguagePicker from './LanguagePicker';
+import ThemeToggle from './ThemeToggle';
 
 type Props = {
   /** Page-specific right-side content. Renders BEFORE the LanguagePicker.
@@ -39,18 +41,19 @@ type Props = {
   /** Show the brand icon (tree logo) before the wordmark text. Landing +
    *  Screening pass true; other pages keep the wordmark text-only. */
   showTreeMark?: boolean;
-  theme?: 'day' | 'night';
 };
 
 export default function TopBar({
   right,
   align = 'default',
   showTreeMark = false,
-  theme = 'day',
 }: Props) {
   const t = useTranslations('TopBar');
   const tFooter = useTranslations('Footer');
-  const PALETTE = FULL_PALETTE[theme];
+  // Theme comes from the global ThemeProvider (mounted in [locale]/
+  // layout.tsx). The wordmark colours, the brand-icon variant, and the
+  // LanguagePicker theming all update in lockstep when the toggle fires.
+  const { theme, palette: PALETTE } = useTheme();
 
   const wordmark = (
     <Link
@@ -99,6 +102,7 @@ export default function TopBar({
       <div className="flex items-center">{wordmark}</div>
       <div className="flex items-center gap-3">
         {right}
+        <ThemeToggle />
         <LanguagePicker
           label={tFooter('languagePickerLabel')}
           theme={theme}

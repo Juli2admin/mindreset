@@ -36,7 +36,11 @@ export const PALETTE = {
 } as const;
 
 export type Theme = keyof typeof PALETTE;
-export type PaletteColors = typeof PALETTE.day;
+// Widened: both day and night palettes have the same keys but different
+// literal hex values, so PaletteColors must accept either. Using
+// `typeof PALETTE.day` directly here would lock the type to the day
+// palette's specific hex literals and reject the night palette.
+export type PaletteColors = { readonly [K in keyof typeof PALETTE.day]: string };
 
 export const TOKENS = {
   serif: 'Fraunces, Georgia, serif',

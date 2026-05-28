@@ -1,4 +1,5 @@
 import '../globals.css';
+import { cookies } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { ClerkProvider } from '@clerk/nextjs';
@@ -16,6 +17,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { getPathname } from '@/i18n/navigation';
+import { ThemeProvider } from '@/lib/theme/ThemeProvider';
+import { THEME_COOKIE_NAME, isValidTheme } from '@/lib/theme/cookie';
 
 // Clerk widget translation — maps our app locale codes to the localisation
 // objects shipped by @clerk/localizations. Used on the SignIn / SignUp
@@ -108,6 +111,14 @@ export default async function LocaleLayout({
   const signUpUrl = getPathname({ href: '/sign-up', locale });
   const afterAuthUrl = getPathname({ href: '/home', locale });
 
+  // Read theme cookie at request time so the first server render matches
+  // the user's stored preference exactly (no day → night flash on
+  // navigation). If no cookie is present, default to 'day' and let the
+  // ThemeProvider check OS preference on first client mount.
+  const themeCookie = cookies().get(THEME_COOKIE_NAME)?.value;
+  const initialTheme = isValidTheme(themeCookie) ? themeCookie : 'day';
+  const cookieWasSet = themeCookie !== undefined;
+
   return (
     <ClerkProvider
       localization={CLERK_LOCALIZATIONS[locale as keyof typeof CLERK_LOCALIZATIONS] ?? enUS}
@@ -126,7 +137,9 @@ export default async function LocaleLayout({
         </head>
         <body>
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <ThemeProvider initialTheme={initialTheme} cookieWasSet={cookieWasSet}>
+              {children}
+            </ThemeProvider>
           </NextIntlClientProvider>
         </body>
       </html>
