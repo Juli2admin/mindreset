@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { auth } from '@clerk/nextjs/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
@@ -8,6 +9,13 @@ import DisclaimerGate from '@/components/DisclaimerGate';
 import MiniMindClient from './MiniMindClient';
 
 export const dynamic = 'force-dynamic';
+
+// Auth-gated chat surface. noindex so search engines don't try to crawl
+// it (they'd be redirected to /sign-in anyway).
+export const metadata: Metadata = {
+  title: 'MiniMind',
+  robots: { index: false, follow: false },
+};
 
 const SNIPPET_MAX_CHARS = 80;
 const SNIPPET_DAYS_THRESHOLD = 14;

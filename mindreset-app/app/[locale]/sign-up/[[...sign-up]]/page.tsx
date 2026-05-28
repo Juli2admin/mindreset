@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
@@ -10,6 +11,12 @@ import { redirect } from '@/i18n/navigation';
 export const dynamic = 'force-dynamic';
 
 const SCREENING_COOKIE = 'mr_screening';
+
+// Auth page — same noindex treatment as /sign-in.
+export const metadata: Metadata = {
+  title: 'Sign up',
+  robots: { index: false, follow: false },
+};
 
 export default async function SignUpPage({
   params,

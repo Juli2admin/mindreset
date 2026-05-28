@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
+import { pageAlternates } from '@/lib/seo/alternates';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
 
@@ -33,11 +35,12 @@ const FAQ_SLUGS = [
   'contact',
 ] as const;
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('Faq');
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
+    alternates: pageAlternates('/faq'),
   };
 }
 
@@ -83,8 +86,28 @@ export default async function FaqPage() {
     );
   }
 
+  // FAQPage structured data — Google can show our FAQ entries directly
+  // in search results as expandable accordions. One Question/Answer pair
+  // per FAQ slug, in the active locale.
+  const faqStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_SLUGS.map((slug) => ({
+      '@type': 'Question',
+      name: t(`items.${slug}.question`),
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: t(`items.${slug}.answer`),
+      },
+    })),
+  };
+
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
       <div className="max-w-3xl mx-auto px-6 py-4">
         <TopBar />
       </div>

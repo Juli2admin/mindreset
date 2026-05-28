@@ -1,9 +1,18 @@
+import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import PricingClient from './PricingClient';
 import Footer from '@/components/Footer';
+import { pageAlternates } from '@/lib/seo/alternates';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Pricing',
+  description:
+    'MiniMind Essential and Extended subscriptions. Message top-up. Free 50-message taster with every new account — no card required.',
+  alternates: pageAlternates('/pricing'),
+};
 
 // /pricing is public — signed-out prospects can view plans before
 // signing up. Buy buttons in PricingClient detect anonymous state via
