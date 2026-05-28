@@ -168,85 +168,85 @@
     "doneBodyNoDate": "Your account is scheduled for deletion. You can cancel any time during the grace period by signing back in. We've sent you a confirmation email."
   },
   "Landing": {
-    "signIn": "Sign in",
-    "account": "Account",
-    "heroKicker": "A turning point. A method.",
-    "heroTitle": "A way back\nto yourself.",
+    "signIn": "Iniciar sessão",
+    "account": "Conta",
+    "heroKicker": "Um ponto de viragem. Um método.",
+    "heroTitle": "Um caminho de regresso\na si mesmo.",
     "heroBody": [
-      "You feel it, don't you? That quiet sense that something inside is misaligned.",
-      "You are functioning. You are capable. But underneath — there is confusion, exhaustion, or emptiness you cannot quite explain.",
-      "This is where you stop. And begin again."
+      "Sente-o, não sente? Aquela sensação silenciosa de que algo, por dentro, está desalinhado.",
+      "Funciona. É capaz. Mas por baixo — há uma confusão, um cansaço, ou um vazio que não consegue explicar inteiramente.",
+      "É aqui que pára. E recomeça."
     ],
-    "heroCta": "Begin",
-    "heroNote": "Begins with a five-minute check-in.",
-    "whatKicker": "What this is",
-    "whatTitle": "Structure, not advice.",
-    "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
+    "heroCta": "Começar",
+    "heroNote": "Começa com uma conversa inicial de cinco minutos.",
+    "whatKicker": "O que é isto",
+    "whatTitle": "Estrutura, não conselhos.",
+    "whatLead": "MindReset é uma plataforma estruturada de reflexão digital, pensada para o ajudar a recuperar clareza emocional, estabilidade interior e um sentido de direcção própria.",
     "whatNot": [
-      "therapy",
+      "terapia",
       "coaching",
-      "a crisis service"
+      "um serviço de crise"
     ],
-    "notWord": "Not",
-    "whatHelpsLead": "It helps you:",
+    "notWord": "Nem",
+    "whatHelpsLead": "Ajuda-o a:",
     "whatHelpsItems": [
-      "Slow down internal noise",
-      "Recognise emotional patterns",
-      "Rebuild inner coherence",
-      "Reconnect with who you are beneath roles and expectations"
+      "abrandar o ruído interior",
+      "reconhecer padrões emocionais",
+      "reconstruir uma coerência interior",
+      "voltar a ligar-se a quem é por baixo dos papéis e das expectativas"
     ],
-    "whoKicker": "Who it is for",
-    "whoTitle": "Internally disoriented,\nexternally functioning.",
-    "whoLead": "MindReset is designed for adults navigating internal transitions:",
+    "whoKicker": "Para quem é",
+    "whoTitle": "Desorientação por dentro,\nfuncionamento por fora.",
+    "whoLead": "MindReset foi pensado para adultos que atravessam transições interiores:",
     "whoScenarios": [
-      "Feeling lost or disconnected despite doing everything right",
-      "Emotional burnout after years of responsibility or caregiving",
-      "Identity confusion after divorce, relocation, ageing, or major life shifts",
-      "Chronic self-neglect, people-pleasing, putting others first",
-      "Saying: I have tried therapy, books, and self-work — but something still feels missing"
+      "Sentir-se perdido ou desligado apesar de aparentemente correr tudo bem",
+      "Esgotamento emocional após anos de responsabilidade ou cuidado",
+      "Confusão identitária após um divórcio, uma mudança, o envelhecer ou uma grande viragem de vida",
+      "Negligência crónica de si próprio, hábito de agradar, pôr sempre os outros em primeiro lugar",
+      "Dizer a si mesmo: «Já tentei terapia, livros, trabalho pessoal — e ainda assim falta algo»"
     ],
-    "whoClose": "It is for those who are emotionally stable, but internally disoriented.",
-    "safetyKicker": "Safety",
-    "safetyTitle": "You stay in control.",
-    "safetyLead": "MindReset is built with emotional safety at its core.",
+    "whoClose": "É para quem está emocionalmente estável, mas interiormente desorientado.",
+    "safetyKicker": "Segurança",
+    "safetyTitle": "É você quem mantém o controlo.",
+    "safetyLead": "MindReset foi construído tendo a segurança emocional no centro.",
     "safetyItems": [
-      "No diagnoses. No labels. No pressure.",
-      "No deep trauma work unless you choose it.",
-      "You can pause, slow down, or stop at any moment.",
-      "If your responses suggest distress or instability, the system pauses gently and points you to professional support."
+      "Sem diagnósticos. Sem rótulos. Sem pressão.",
+      "Sem trabalho profundo sobre o trauma a menos que o escolha.",
+      "Pode pausar, abrandar ou parar a qualquer momento.",
+      "Se as suas respostas sugerirem sofrimento ou instabilidade, o sistema pára com delicadeza e encaminha-o para apoio profissional."
     ],
-    "pathsKicker": "What is inside",
-    "pathsTitle": "Three paths,\nthree depths.",
+    "pathsKicker": "O que há lá dentro",
+    "pathsTitle": "Três caminhos,\ntrês profundidades.",
     "paths": [
       {
         "name": "MiniMind",
-        "kind": "Daily companion",
-        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help."
+        "kind": "Companhia diária",
+        "body": "Um companheiro de conversa acolhedor, ao qual pode regressar a qualquer momento. Conversas diárias, breves práticas de enraizamento, um lugar onde aterrar quando algo pesa. Aprende os seus padrões com suavidade e propõe um trabalho mais profundo quando pode ajudar."
       },
       {
-        "name": "States & Themes",
-        "kind": "Focused modules",
-        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation."
+        "name": "Estados e Temas",
+        "kind": "Módulos focados",
+        "body": "Pequenos percursos estruturados para momentos específicos. Estados para o presente: ansiedade, desconexão, vazio interior, anestesia. Temas para os padrões por baixo: dinheiro e auto-estima, família, corpo, vergonha, realização pessoal."
       },
       {
-        "name": "The Journey",
-        "kind": "Eight-stage reset",
-        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself."
+        "name": "O Caminho",
+        "kind": "Um reinício em oito etapas",
+        "body": "Um percurso lento e sequencial, da estabilização até um novo sentido de quem é. Meses de trabalho, ao ritmo do que o seu sistema consegue sustentar. Pensado para deixar ir crenças que nunca foram suas, restaurar os seus limites e voltar a recordar-se de si."
       }
     ],
-    "differentKicker": "What sets it apart",
-    "differentTitle": "Most platforms give advice.\nMindReset gives structure.",
+    "differentKicker": "O que o distingue",
+    "differentTitle": "A maioria das plataformas dá conselhos.\nMindReset dá estrutura.",
     "differentItems": [
-      "No diagnoses",
-      "No digging unless you choose",
-      "No dependency on the system",
-      "No pressure to change",
-      "Just a clear, contained path — at your pace"
+      "Sem diagnósticos",
+      "Sem escavar se não for a sua escolha",
+      "Sem dependência do sistema",
+      "Sem pressão para mudar",
+      "Apenas um caminho claro e contido — ao seu ritmo"
     ],
-    "closingKicker": "Whenever you are ready",
-    "closingTitle": "Begin.",
-    "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
-    "closingCta": "Start the check-in"
+    "closingKicker": "Quando estiver pronto",
+    "closingTitle": "Começar.",
+    "closingBody": "Não precisa de estar em pedaços para começar. Não precisa de saber o que quer. A conversa inicial diz-lhe — com delicadeza — se isto lhe corresponde neste momento.",
+    "closingCta": "Iniciar a conversa"
   },
   "MiniMind": {
     "opener": "Hello. Good to have you here. How are you doing today?",
