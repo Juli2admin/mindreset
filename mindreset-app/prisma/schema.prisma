@@ -69,6 +69,36 @@ model User {
   recodeProgress     RecodeProgress?
   practices          Practice[]
   deletionTokens     AccountDeletionToken[]
+  testimonials       Testimonial[]
+}
+
+// =============================================================================
+// TESTIMONIALS — user stories for Landing + Pricing social proof
+// =============================================================================
+// Submitted via /share-your-story (signed-in or anonymous), moderated by
+// Julia (soft-launch: directly via Supabase SQL editor; later: admin UI).
+// Public surfaces only render approved testimonials, and only when there
+// are ≥ 3 to avoid the "lonely zero/one" effect.
+model Testimonial {
+  id              String    @id @default(cuid())
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId          String?   // null when submitted anonymously (no auth)
+
+  publicName      String    // what we display ("Jane", "Anonymous", etc.) — user's choice
+  ageRange        String?   // optional. "18-24" | "25-34" | "35-44" | "45-54" | "55-64" | "65+"
+  story           String    @db.Text  // max 1500 chars enforced at the API
+  locale          String    // en | ru | … — testimonial shows on matching-locale Landing/Pricing
+  consent         Boolean   // must be true at submit; UI prevents otherwise
+
+  status          String    @default("pending")  // pending | approved | rejected
+  moderationNotes String?   @db.Text             // Julia's notes (private)
+
+  createdAt       DateTime  @default(now())
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+
+  @@index([status, locale, approvedAt])
+  @@index([userId])
 }
 
 // =============================================================================
