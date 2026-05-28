@@ -763,10 +763,10 @@
       "breach": "Nenhum sistema de segurança é totalmente impenetrável. Em caso de violação de dados suscetível de afetar os seus direitos e liberdades, notificaremos o ICO no prazo de 72 horas e, quando exigido, notificaremos os utilizadores afetados sem demora injustificada."
     },
     "section7": {
-      "title": "7. Retention",
+      "title": "7. Conservação de dados",
       "table": {
-        "headerCategory": "Data category",
-        "headerPeriod": "Retention period",
+        "headerCategory": "Categoria de dados",
+        "headerPeriod": "Período de conservação",
         "account": {
           "category": "Account data",
           "period": "Active account: until you delete it. Inactive account: deleted 12 months after last sign-in."

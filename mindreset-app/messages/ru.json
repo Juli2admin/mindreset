@@ -738,10 +738,10 @@
       "breach": "Ни одна система безопасности не обеспечивает 100% защиты от несанкционированного доступа. В случае нарушения безопасности данных, затрагивающего ваши права и свободы, мы уведомим ICO в течение 72 часов и, при необходимости, без неоправданной задержки уведомим затронутых пользователей."
     },
     "section7": {
-      "title": "7. Retention",
+      "title": "7. Сроки хранения",
       "table": {
-        "headerCategory": "Data category",
-        "headerPeriod": "Retention period",
+        "headerCategory": "Категория данных",
+        "headerPeriod": "Срок хранения",
         "account": {
           "category": "Account data",
           "period": "Active account: until you delete it. Inactive account: deleted 12 months after last sign-in."

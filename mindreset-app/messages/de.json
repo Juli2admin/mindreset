@@ -763,10 +763,10 @@
       "breach": "Kein Sicherheitssystem bietet vollständigen Schutz vor Sicherheitsverletzungen. Im Falle einer Datenschutzverletzung, die Ihre Rechte und Freiheiten beeinträchtigen könnte, benachrichtigen wir das ICO innerhalb von 72 Stunden und informieren betroffene Nutzer, sofern erforderlich, unverzüglich."
     },
     "section7": {
-      "title": "7. Retention",
+      "title": "7. Aufbewahrung",
       "table": {
-        "headerCategory": "Data category",
-        "headerPeriod": "Retention period",
+        "headerCategory": "Datenkategorie",
+        "headerPeriod": "Aufbewahrungsdauer",
         "account": {
           "category": "Account data",
           "period": "Active account: until you delete it. Inactive account: deleted 12 months after last sign-in."
