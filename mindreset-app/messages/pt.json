@@ -751,16 +751,16 @@
       "requestDetails": "Pode solicitar detalhes sobre as safeguards específicas aplicadas a qualquer transferência enviando um email para <mail>support@mindreset.ai</mail>."
     },
     "section6": {
-      "title": "6. Security",
-      "intro": "We implement appropriate technical and organisational measures to protect your data:",
-      "tlsItem": "<strong>TLS 1.2 or higher</strong> for all data in transit",
-      "encryptionItem": "<strong>AES-256 encryption at rest</strong> for stored data (provided by Supabase)",
-      "hashedItem": "<strong>Hashed passwords</strong> using industry-standard algorithms (managed by Clerk)",
-      "accessItem": "<strong>Role-based access</strong> to our backend systems; access logged and audited",
-      "confidentialityItem": "<strong>Confidentiality obligations</strong> for anyone with access to data",
-      "reviewsItem": "<strong>Regular security reviews</strong> and dependency vulnerability monitoring",
-      "backupsItem": "<strong>Encrypted backups</strong> with limited retention",
-      "breach": "No security system is 100% impenetrable. In the event of a data breach affecting your rights and freedoms, we will notify the ICO within 72 hours and, where required, notify affected users without undue delay."
+      "title": "6. Segurança",
+      "intro": "Implementamos medidas técnicas e organizacionais adequadas para proteger os seus dados:",
+      "tlsItem": "<strong>TLS 1.2 ou superior</strong> para todos os dados em trânsito",
+      "encryptionItem": "<strong>Encriptação AES-256 de dados em repouso</strong> para os dados armazenados (fornecida pela Supabase)",
+      "hashedItem": "<strong>Palavras-passe com hash</strong> utilizando algoritmos em conformidade com os padrões da indústria (geridos pela Clerk)",
+      "accessItem": "<strong>Controlo de acesso baseado em funções</strong> aos nossos sistemas backend; os acessos são registados e auditados",
+      "confidentialityItem": "<strong>Obrigações de confidencialidade</strong> para qualquer pessoa com acesso aos dados",
+      "reviewsItem": "<strong>Revisões regulares de segurança</strong> e monitorização de vulnerabilidades de dependências",
+      "backupsItem": "<strong>Cópias de segurança encriptadas</strong> com período de retenção limitado",
+      "breach": "Nenhum sistema de segurança é totalmente impenetrável. Em caso de violação de dados suscetível de afetar os seus direitos e liberdades, notificaremos o ICO no prazo de 72 horas e, quando exigido, notificaremos os utilizadores afetados sem demora injustificada."
     },
     "section7": {
       "title": "7. Retention",

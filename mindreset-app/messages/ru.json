@@ -726,16 +726,16 @@
       "requestDetails": "Вы можете запросить информацию о конкретных safeguards, применяемых к любой передаче данных, отправив email на <mail>support@mindreset.ai</mail>."
     },
     "section6": {
-      "title": "6. Security",
-      "intro": "We implement appropriate technical and organisational measures to protect your data:",
-      "tlsItem": "<strong>TLS 1.2 or higher</strong> for all data in transit",
-      "encryptionItem": "<strong>AES-256 encryption at rest</strong> for stored data (provided by Supabase)",
-      "hashedItem": "<strong>Hashed passwords</strong> using industry-standard algorithms (managed by Clerk)",
-      "accessItem": "<strong>Role-based access</strong> to our backend systems; access logged and audited",
-      "confidentialityItem": "<strong>Confidentiality obligations</strong> for anyone with access to data",
-      "reviewsItem": "<strong>Regular security reviews</strong> and dependency vulnerability monitoring",
-      "backupsItem": "<strong>Encrypted backups</strong> with limited retention",
-      "breach": "No security system is 100% impenetrable. In the event of a data breach affecting your rights and freedoms, we will notify the ICO within 72 hours and, where required, notify affected users without undue delay."
+      "title": "6. Безопасность",
+      "intro": "Мы внедряем соответствующие технические и организационные меры для защиты ваших данных:",
+      "tlsItem": "<strong>TLS 1.2 или выше</strong> для всех данных при передаче",
+      "encryptionItem": "<strong>Шифрование AES-256 для данных в состоянии хранения</strong> для сохранённых данных (предоставляется Supabase)",
+      "hashedItem": "<strong>Хешированные пароли</strong> с использованием алгоритмов, соответствующих отраслевым стандартам (управляется Clerk)",
+      "accessItem": "<strong>Ролевой доступ</strong> к нашим внутренним системам; доступ регистрируется и подлежит аудиту",
+      "confidentialityItem": "<strong>Обязательства по соблюдению конфиденциальности</strong> для всех лиц, имеющих доступ к данным",
+      "reviewsItem": "<strong>Регулярные проверки безопасности</strong> и мониторинг уязвимостей зависимостей",
+      "backupsItem": "<strong>Зашифрованные резервные копии</strong> с ограниченным сроком хранения",
+      "breach": "Ни одна система безопасности не обеспечивает 100% защиты от несанкционированного доступа. В случае нарушения безопасности данных, затрагивающего ваши права и свободы, мы уведомим ICO в течение 72 часов и, при необходимости, без неоправданной задержки уведомим затронутых пользователей."
     },
     "section7": {
       "title": "7. Retention",

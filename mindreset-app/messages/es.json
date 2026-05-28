@@ -751,16 +751,16 @@
       "requestDetails": "Puede solicitar detalles sobre las safeguards específicas aplicadas a cualquier transferencia enviando un email a <mail>support@mindreset.ai</mail>."
     },
     "section6": {
-      "title": "6. Security",
-      "intro": "We implement appropriate technical and organisational measures to protect your data:",
-      "tlsItem": "<strong>TLS 1.2 or higher</strong> for all data in transit",
-      "encryptionItem": "<strong>AES-256 encryption at rest</strong> for stored data (provided by Supabase)",
-      "hashedItem": "<strong>Hashed passwords</strong> using industry-standard algorithms (managed by Clerk)",
-      "accessItem": "<strong>Role-based access</strong> to our backend systems; access logged and audited",
-      "confidentialityItem": "<strong>Confidentiality obligations</strong> for anyone with access to data",
-      "reviewsItem": "<strong>Regular security reviews</strong> and dependency vulnerability monitoring",
-      "backupsItem": "<strong>Encrypted backups</strong> with limited retention",
-      "breach": "No security system is 100% impenetrable. In the event of a data breach affecting your rights and freedoms, we will notify the ICO within 72 hours and, where required, notify affected users without undue delay."
+      "title": "6. Seguridad",
+      "intro": "Implementamos medidas técnicas y organizativas apropiadas para proteger sus datos:",
+      "tlsItem": "<strong>TLS 1.2 o superior</strong> para todos los datos en tránsito",
+      "encryptionItem": "<strong>Cifrado AES-256 de los datos en reposo</strong> para los datos almacenados (proporcionado por Supabase)",
+      "hashedItem": "<strong>Contraseñas cifradas mediante hash</strong> utilizando algoritmos conformes con los estándares del sector (gestionado por Clerk)",
+      "accessItem": "<strong>Acceso basado en funciones</strong> a nuestros sistemas backend; los accesos se registran y auditan",
+      "confidentialityItem": "<strong>Obligaciones de confidencialidad</strong> para cualquier persona con acceso a los datos",
+      "reviewsItem": "<strong>Revisiones periódicas de seguridad</strong> y supervisión de vulnerabilidades de dependencias",
+      "backupsItem": "<strong>Copias de seguridad cifradas</strong> con conservación limitada",
+      "breach": "Ningún sistema de seguridad es completamente invulnerable. En caso de una violación de seguridad de los datos que afecte a sus derechos y libertades, notificaremos al ICO en un plazo de 72 horas y, cuando sea necesario, informaremos a los usuarios afectados sin demora indebida."
     },
     "section7": {
       "title": "7. Retention",
