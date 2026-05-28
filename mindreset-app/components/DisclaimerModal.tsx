@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 
 // Phase i18n.2a — Phase 0 oversight (modal was hardcoded EN only)
 // resolved. Content moved into DisclaimerModal namespace in message
@@ -10,13 +11,13 @@ import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 // <b> markup around hotline numbers without splitting the prose into
 // many small translatable strings.
 
-const PALETTE = FULL_PALETTE.day;
 const OVERLAY = 'rgba(57, 57, 57, 0.55)';
 
 type Props = { onAcknowledge: () => void };
 
 export default function DisclaimerModal({ onAcknowledge }: Props) {
   const t = useTranslations('DisclaimerModal');
+  const { palette: PALETTE } = useTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 

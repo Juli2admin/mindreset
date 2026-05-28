@@ -4,7 +4,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 
 // Phase i18n.1c/1d.2 — URL-aware picker. Two render branches:
 //   1. EN active (default locale): silent globe icon only, low-contrast.
@@ -51,7 +52,6 @@ type Props = {
   // ("Language" / "Язык" / etc.); only used as `aria-label` text since
   // the trigger itself is icon-only or icon + native name.
   label: string;
-  theme?: 'day' | 'night';
   // Which way the dropdown panel opens from the trigger.
   //   'up'   = panel above the trigger — correct for Footer (page-bottom mount).
   //   'down' = panel below the trigger — correct for TopBar (page-top mount).
@@ -83,13 +83,12 @@ function GlobeIcon({ size = 14, color }: { size?: number; color: string }) {
 
 export default function FooterLanguagePicker({
   label,
-  theme = 'day',
   direction = 'up',
 }: Props) {
   const currentLocale = useLocale();
   const router = useRouter();
   const currentPath = usePathname();
-  const PALETTE = FULL_PALETTE[theme];
+  const { palette: PALETTE } = useTheme();
 
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);

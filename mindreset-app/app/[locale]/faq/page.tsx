@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
 
-const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
@@ -41,42 +41,47 @@ export async function generateMetadata() {
   };
 }
 
-function H2({ children }: { children: ReactNode }) {
-  return (
-    <h2
-      className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
-      style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-    >
-      {children}
-    </h2>
-  );
-}
-
-function H3({ id, children }: { id?: string; children: ReactNode }) {
-  return (
-    <h3
-      id={id}
-      className="text-[22px] leading-[1.3] mt-12 mb-4 scroll-mt-8"
-      style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-    >
-      {children}
-    </h3>
-  );
-}
-
-function P({ children }: { children: ReactNode }) {
-  return (
-    <p
-      className="text-[16px] leading-[1.7] mb-4"
-      style={{ fontFamily: SANS, color: PALETTE.text }}
-    >
-      {children}
-    </p>
-  );
-}
-
 export default async function FaqPage() {
   const t = await getTranslations('Faq');
+  // Per-request palette from the mr_theme cookie. Defined inside the
+  // page function so the helpers below close over the current value;
+  // server components can't useTheme(), so the closure pattern is the
+  // mechanism that makes server pages theme-reactive.
+  const PALETTE = getServerPalette();
+
+  function H2({ children }: { children: ReactNode }) {
+    return (
+      <h2
+        className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
+        style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+      >
+        {children}
+      </h2>
+    );
+  }
+
+  function H3({ id, children }: { id?: string; children: ReactNode }) {
+    return (
+      <h3
+        id={id}
+        className="text-[22px] leading-[1.3] mt-12 mb-4 scroll-mt-8"
+        style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+      >
+        {children}
+      </h3>
+    );
+  }
+
+  function P({ children }: { children: ReactNode }) {
+    return (
+      <p
+        className="text-[16px] leading-[1.7] mb-4"
+        style={{ fontFamily: SANS, color: PALETTE.text }}
+      >
+        {children}
+      </p>
+    );
+  }
 
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>

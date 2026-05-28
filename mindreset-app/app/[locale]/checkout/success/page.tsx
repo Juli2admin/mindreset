@@ -1,9 +1,9 @@
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import { Link } from '@/i18n/navigation';
 import TopBar from '@/components/TopBar';
 import Footer from '@/components/Footer';
 
-const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
@@ -12,6 +12,7 @@ export const metadata = {
 };
 
 export default function CheckoutSuccessPage() {
+  const PALETTE = getServerPalette();
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">

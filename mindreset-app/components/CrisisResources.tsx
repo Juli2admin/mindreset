@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 
 // Phase i18n.2a — content moved from in-file COPY object to next-intl
 // message bundles under the `CrisisResources` namespace. Component reads
@@ -12,13 +13,9 @@ import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
 
 type CrisisItem = { name: string; detail: string };
 
-type Props = {
-  theme?: 'day' | 'night';
-};
-
-export default function CrisisResources({ theme = 'day' }: Props) {
+export default function CrisisResources() {
   const t = useTranslations('CrisisResources');
-  const PALETTE = FULL_PALETTE[theme];
+  const { palette: PALETTE } = useTheme();
   const crisisLabel = t('crisisLabel');
   const crisisItems = t.raw('crisisItems') as CrisisItem[];
   const disclaimer = t('disclaimer');

@@ -103,11 +103,7 @@ export default function TopBar({
       <div className="flex items-center gap-3">
         {right}
         <ThemeToggle />
-        <LanguagePicker
-          label={tFooter('languagePickerLabel')}
-          theme={theme}
-          direction="down"
-        />
+        <LanguagePicker label={tFooter('languagePickerLabel')} direction="down" />
       </div>
     </header>
   );

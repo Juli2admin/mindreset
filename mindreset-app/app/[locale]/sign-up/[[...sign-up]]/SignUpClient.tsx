@@ -6,14 +6,13 @@ import { useTranslations } from 'next-intl';
 import { SignUp } from '@clerk/nextjs';
 // Phase i18n.1b — locale-aware Link.
 import { Link } from '@/i18n/navigation';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 // Phase i18n.1d.2 — shared TopBar (client component) imported directly.
 import TopBar from '@/components/TopBar';
 // Footer arrives as a server-rendered slot via `footerSlot` — see
 // app/sign-up/[[...sign-up]]/page.tsx. Phase i18n.0
 // server-component-with-client-slot pattern.
-
-const PALETTE = FULL_PALETTE.day;
 
 function Checkbox({
   checked,
@@ -24,6 +23,7 @@ function Checkbox({
   onChange: (next: boolean) => void;
   children: ReactNode;
 }) {
+  const { palette: PALETTE } = useTheme();
   return (
     <label className="flex items-start gap-3 py-2.5 cursor-pointer">
       <span
@@ -68,6 +68,7 @@ type SignUpClientProps = {
 
 export default function SignUpClient({ footerSlot }: SignUpClientProps) {
   const t = useTranslations('SignUp');
+  const { palette: PALETTE } = useTheme();
   const [tcAccepted, setTcAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const ready = tcAccepted && privacyAccepted;

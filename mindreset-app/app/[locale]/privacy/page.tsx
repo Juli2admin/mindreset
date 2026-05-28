@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
-import { PALETTE as FULL_PALETTE, TOKENS } from '@/lib/brand/colors';
+import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import Footer from '@/components/Footer';
 import TopBar from '@/components/TopBar';
 
-const PALETTE = FULL_PALETTE.day;
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
@@ -16,146 +16,151 @@ export const metadata = {
     'Privacy Policy for the MindReset AI self-help platform — what data we collect, how we use it, and your rights under UK GDPR.',
 };
 
-// Typography helpers — keep the legal text below uncluttered.
-function H2({ children }: { children: ReactNode }) {
-  return (
-    <h2
-      className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
-      style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-    >
-      {children}
-    </h2>
-  );
-}
-function H3({ id, children }: { id?: string; children: ReactNode }) {
-  return (
-    <h3
-      id={id}
-      className="text-[22px] leading-[1.3] mt-12 mb-4 scroll-mt-8"
-      style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-    >
-      {children}
-    </h3>
-  );
-}
-function P({ children }: { children: ReactNode }) {
-  return (
-    <p
-      className="text-[16px] leading-[1.7] mb-4"
-      style={{ fontFamily: SANS, color: PALETTE.text }}
-    >
-      {children}
-    </p>
-  );
-}
-function Note({ inline, children }: { inline?: boolean; children: ReactNode }) {
-  if (inline) {
-    return (
-      <span className="italic" style={{ color: PALETTE.textMuted }}>
-        {children}
-      </span>
-    );
-  }
-  return (
-    <p
-      className="my-4 italic text-[15px] leading-[1.65]"
-      style={{ fontFamily: SANS, color: PALETTE.textMuted }}
-    >
-      {children}
-    </p>
-  );
-}
-function UL({ children }: { children: ReactNode }) {
-  return (
-    <ul
-      className="space-y-2 my-4 pl-6 list-disc text-[16px] leading-[1.7]"
-      style={{ fontFamily: SANS, color: PALETTE.text }}
-    >
-      {children}
-    </ul>
-  );
-}
-function Strong({ children }: { children: ReactNode }) {
-  return <strong style={{ fontWeight: 500, color: PALETTE.text }}>{children}</strong>;
-}
-function MailLink({ to }: { to: string }) {
-  return (
-    <a
-      href={`mailto:${to}`}
-      className="underline underline-offset-2"
-      style={{ color: PALETTE.accent }}
-    >
-      {to}
-    </a>
-  );
-}
-function ExtLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="underline underline-offset-2"
-      style={{ color: PALETTE.accent }}
-    >
-      {children}
-    </a>
-  );
-}
-
-// Table family — used for Section 2 (Data We Collect) and Section 7 (Retention).
-function Table({ children }: { children: ReactNode }) {
-  return (
-    <div className="my-6 overflow-x-auto">
-      <table
-        // min-w-[640px] forces horizontal scroll on mobile when the table
-        // is wider than the viewport (§2 has 4 narrow columns of prose);
-        // md:min-w-full restores fill-to-parent on tablet/desktop.
-        className="min-w-[640px] md:min-w-full text-[14px] leading-[1.55]"
-        style={{ borderCollapse: 'collapse', fontFamily: SANS, color: PALETTE.text }}
-      >
-        {children}
-      </table>
-    </div>
-  );
-}
-function THead({ children }: { children: ReactNode }) {
-  return (
-    <thead
-      style={{
-        background: PALETTE.bgSubtle,
-        borderBottom: `1px solid ${PALETTE.border}`,
-      }}
-    >
-      {children}
-    </thead>
-  );
-}
-function TH({ children }: { children: ReactNode }) {
-  return (
-    <th
-      className="text-left py-3 px-4 align-bottom"
-      style={{ fontFamily: SANS, fontWeight: 500, color: PALETTE.text }}
-    >
-      {children}
-    </th>
-  );
-}
-function TR({ children }: { children: ReactNode }) {
-  return (
-    <tr style={{ borderBottom: `1px solid ${PALETTE.border}` }}>{children}</tr>
-  );
-}
-function TD({ children }: { children: ReactNode }) {
-  return (
-    <td className="py-3 px-4 align-top" style={{ color: PALETTE.text }}>
-      {children}
-    </td>
-  );
-}
-
 export default async function PrivacyPage() {
   const t = await getTranslations('Privacy');
+  // Per-request palette from the mr_theme cookie. The typography
+  // helpers below are defined inside the page function so they close
+  // over PALETTE; server components can't useTheme(), so the closure
+  // pattern is the mechanism that makes this page theme-reactive.
+  const PALETTE = getServerPalette();
+
+  // Typography helpers — keep the legal text below uncluttered.
+  function H2({ children }: { children: ReactNode }) {
+    return (
+      <h2
+        className="text-[28px] sm:text-[36px] leading-[1.15] mb-6"
+        style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+      >
+        {children}
+      </h2>
+    );
+  }
+  function H3({ id, children }: { id?: string; children: ReactNode }) {
+    return (
+      <h3
+        id={id}
+        className="text-[22px] leading-[1.3] mt-12 mb-4 scroll-mt-8"
+        style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+      >
+        {children}
+      </h3>
+    );
+  }
+  function P({ children }: { children: ReactNode }) {
+    return (
+      <p
+        className="text-[16px] leading-[1.7] mb-4"
+        style={{ fontFamily: SANS, color: PALETTE.text }}
+      >
+        {children}
+      </p>
+    );
+  }
+  function Note({ inline, children }: { inline?: boolean; children: ReactNode }) {
+    if (inline) {
+      return (
+        <span className="italic" style={{ color: PALETTE.textMuted }}>
+          {children}
+        </span>
+      );
+    }
+    return (
+      <p
+        className="my-4 italic text-[15px] leading-[1.65]"
+        style={{ fontFamily: SANS, color: PALETTE.textMuted }}
+      >
+        {children}
+      </p>
+    );
+  }
+  function UL({ children }: { children: ReactNode }) {
+    return (
+      <ul
+        className="space-y-2 my-4 pl-6 list-disc text-[16px] leading-[1.7]"
+        style={{ fontFamily: SANS, color: PALETTE.text }}
+      >
+        {children}
+      </ul>
+    );
+  }
+  function Strong({ children }: { children: ReactNode }) {
+    return <strong style={{ fontWeight: 500, color: PALETTE.text }}>{children}</strong>;
+  }
+  function MailLink({ to }: { to: string }) {
+    return (
+      <a
+        href={`mailto:${to}`}
+        className="underline underline-offset-2"
+        style={{ color: PALETTE.accent }}
+      >
+        {to}
+      </a>
+    );
+  }
+  function ExtLink({ href, children }: { href: string; children: ReactNode }) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2"
+        style={{ color: PALETTE.accent }}
+      >
+        {children}
+      </a>
+    );
+  }
+
+  // Table family — used for Section 2 (Data We Collect) and Section 7 (Retention).
+  function Table({ children }: { children: ReactNode }) {
+    return (
+      <div className="my-6 overflow-x-auto">
+        <table
+          // min-w-[640px] forces horizontal scroll on mobile when the table
+          // is wider than the viewport (§2 has 4 narrow columns of prose);
+          // md:min-w-full restores fill-to-parent on tablet/desktop.
+          className="min-w-[640px] md:min-w-full text-[14px] leading-[1.55]"
+          style={{ borderCollapse: 'collapse', fontFamily: SANS, color: PALETTE.text }}
+        >
+          {children}
+        </table>
+      </div>
+    );
+  }
+  function THead({ children }: { children: ReactNode }) {
+    return (
+      <thead
+        style={{
+          background: PALETTE.bgSubtle,
+          borderBottom: `1px solid ${PALETTE.border}`,
+        }}
+      >
+        {children}
+      </thead>
+    );
+  }
+  function TH({ children }: { children: ReactNode }) {
+    return (
+      <th
+        className="text-left py-3 px-4 align-bottom"
+        style={{ fontFamily: SANS, fontWeight: 500, color: PALETTE.text }}
+      >
+        {children}
+      </th>
+    );
+  }
+  function TR({ children }: { children: ReactNode }) {
+    return (
+      <tr style={{ borderBottom: `1px solid ${PALETTE.border}` }}>{children}</tr>
+    );
+  }
+  function TD({ children }: { children: ReactNode }) {
+    return (
+      <td className="py-3 px-4 align-top" style={{ color: PALETTE.text }}>
+        {children}
+      </td>
+    );
+  }
   const strongRich = { strong: (c: ReactNode) => <Strong>{c}</Strong> };
   const mailRich = { mail: () => <MailLink to="support@mindreset.ai" /> };
   const strongMailRich = { ...strongRich, ...mailRich };
