@@ -18,6 +18,7 @@ type Props = {
   cycleRemaining: number;
   topUpRemaining: number;
   cycleResetAt: string | null;
+  deletionScheduledAt: string | null;
   footerSlot: ReactNode;
 };
 
@@ -28,9 +29,11 @@ export default function HomeClient({
   cycleRemaining,
   topUpRemaining,
   cycleResetAt,
+  deletionScheduledAt,
   footerSlot,
 }: Props) {
   const t = useTranslations('Home');
+  const tDel = useTranslations('AccountDeletion');
   const locale = useLocale();
   const { palette: PALETTE } = useTheme();
   const [loading, setLoading] = useState<string | null>(null);
@@ -255,6 +258,17 @@ export default function HomeClient({
           </div>
         </div>
 
+        {/* Deletion-pending banner — shown when the user has confirmed
+            account deletion. Stays visible the entire grace window with a
+            single-click "Cancel deletion" button. */}
+        {deletionScheduledAt && (
+          <DeletionPendingBanner scheduledAt={deletionScheduledAt} t={tDel} />
+        )}
+
+        {/* Settings — export data, delete account. Hidden once deletion is
+            scheduled (the banner above takes over). */}
+        {!deletionScheduledAt && <SettingsSection t={tDel} locale={locale} />}
+
         {/* Coming soon — soft divider for Block C products. Replaced by
             real Journey + Modules cards once their content ships. */}
         <div className="mb-12">
@@ -279,5 +293,267 @@ export default function HomeClient({
         {footerSlot}
       </div>
     </main>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Settings — Export data + Delete account.
+// ---------------------------------------------------------------------------
+
+type TFn = (key: string, vars?: Record<string, string | number | Date>) => string;
+
+function SettingsSection({ t, locale }: { t: TFn; locale: string }) {
+  const { palette: PALETTE } = useTheme();
+  const [exportLoading, setExportLoading] = useState(false);
+  const [deleteState, setDeleteState] = useState<'idle' | 'confirming' | 'sending' | 'sent' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  async function handleExport() {
+    setExportLoading(true);
+    try {
+      const res = await fetch('/api/account/export', { method: 'POST' });
+      if (!res.ok) throw new Error('export failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mindreset-data-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setErrorMsg(t('exportError'));
+    } finally {
+      setExportLoading(false);
+    }
+  }
+
+  async function handleDeleteRequest() {
+    setDeleteState('sending');
+    setErrorMsg(null);
+    try {
+      const res = await fetch('/api/account/delete-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locale }),
+      });
+      if (!res.ok) {
+        setDeleteState('error');
+        setErrorMsg(t('deleteRequestError'));
+        return;
+      }
+      setDeleteState('sent');
+    } catch {
+      setDeleteState('error');
+      setErrorMsg(t('deleteRequestError'));
+    }
+  }
+
+  return (
+    <div className="mb-12">
+      <div
+        className="text-[11px] uppercase tracking-[0.22em] mb-3"
+        style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+      >
+        {t('settingsKicker')}
+      </div>
+      <div
+        className="rounded-lg p-6"
+        style={{
+          background: PALETTE.bgCard,
+          border: `1px solid ${PALETTE.border}`,
+        }}
+      >
+        {/* Export */}
+        <div className="mb-6">
+          <p
+            className="text-[16px] mb-1"
+            style={{ fontFamily: SERIF, color: PALETTE.text }}
+          >
+            {t('exportTitle')}
+          </p>
+          <p
+            className="text-[13px] mb-3"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
+          >
+            {t('exportBody')}
+          </p>
+          <button
+            onClick={handleExport}
+            disabled={exportLoading}
+            className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+            style={{
+              background: 'transparent',
+              color: PALETTE.text,
+              fontFamily: SANS,
+              fontWeight: 500,
+              border: `1px solid ${PALETTE.border}`,
+              opacity: exportLoading ? 0.5 : 1,
+            }}
+          >
+            {exportLoading ? t('exporting') : t('exportCta')}
+          </button>
+        </div>
+
+        <hr style={{ border: 'none', borderTop: `1px solid ${PALETTE.border}`, margin: '20px 0' }} />
+
+        {/* Delete */}
+        <div>
+          <p
+            className="text-[16px] mb-1"
+            style={{ fontFamily: SERIF, color: PALETTE.text }}
+          >
+            {t('deleteTitle')}
+          </p>
+          <p
+            className="text-[13px] mb-3"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
+          >
+            {t('deleteBody')}
+          </p>
+
+          {deleteState === 'sent' ? (
+            <p
+              className="text-[14px]"
+              style={{ color: PALETTE.text, fontFamily: SANS, lineHeight: 1.6 }}
+            >
+              {t('deleteEmailSent')}
+            </p>
+          ) : deleteState === 'confirming' ? (
+            <div className="flex flex-wrap gap-3 items-center">
+              <button
+                onClick={handleDeleteRequest}
+                disabled={(deleteState as string) === 'sending'}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: '#b91c1c',
+                  color: '#FFFFFF',
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  border: 'none',
+                  opacity: (deleteState as string) === 'sending' ? 0.5 : 1,
+                }}
+              >
+                {(deleteState as string) === 'sending' ? t('deleteSending') : t('deleteConfirmCta')}
+              </button>
+              <button
+                onClick={() => setDeleteState('idle')}
+                disabled={(deleteState as string) === 'sending'}
+                className="px-5 py-2 rounded-full text-[13px]"
+                style={{
+                  background: 'transparent',
+                  color: PALETTE.text,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                {t('deleteCancel')}
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setDeleteState('confirming')}
+              className="px-5 py-2 rounded-full text-[13px]"
+              style={{
+                background: 'transparent',
+                color: '#b91c1c',
+                fontFamily: SANS,
+                fontWeight: 500,
+                border: '1px solid #b91c1c',
+              }}
+            >
+              {t('deleteCta')}
+            </button>
+          )}
+          {errorMsg && (
+            <p className="mt-3 text-[13px]" style={{ color: '#b91c1c', fontFamily: SANS }}>
+              {errorMsg}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// DeletionPendingBanner — shown during grace window.
+// ---------------------------------------------------------------------------
+
+function DeletionPendingBanner({ scheduledAt, t }: { scheduledAt: string; t: TFn }) {
+  const { palette: PALETTE } = useTheme();
+  const locale = useLocale();
+  const [cancelling, setCancelling] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const dateFmtLocale = locale === 'en' ? 'en-GB' : locale;
+  const dateStr = new Intl.DateTimeFormat(dateFmtLocale, {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(scheduledAt));
+
+  async function handleCancel() {
+    setCancelling(true);
+    setErrorMsg(null);
+    try {
+      const res = await fetch('/api/account/cancel-deletion', { method: 'POST' });
+      if (!res.ok) {
+        setErrorMsg(t('cancelError'));
+        setCancelling(false);
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setErrorMsg(t('cancelError'));
+      setCancelling(false);
+    }
+  }
+
+  return (
+    <div className="mb-12">
+      <div
+        className="rounded-lg p-6"
+        style={{
+          background: PALETTE.bgCard,
+          border: '1px solid #b91c1c',
+        }}
+      >
+        <p
+          className="text-[16px] mb-2"
+          style={{ fontFamily: SERIF, color: PALETTE.text }}
+        >
+          {t('pendingTitle', { date: dateStr })}
+        </p>
+        <p
+          className="text-[13px] mb-4"
+          style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
+        >
+          {t('pendingBody')}
+        </p>
+        <button
+          onClick={handleCancel}
+          disabled={cancelling}
+          className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+          style={{
+            background: PALETTE.accent,
+            color: PALETTE.accentText,
+            fontFamily: SANS,
+            fontWeight: 500,
+            border: 'none',
+            opacity: cancelling ? 0.5 : 1,
+          }}
+        >
+          {cancelling ? t('cancelling') : t('cancelCta')}
+        </button>
+        {errorMsg && (
+          <p className="mt-3 text-[13px]" style={{ color: '#b91c1c', fontFamily: SANS }}>
+            {errorMsg}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

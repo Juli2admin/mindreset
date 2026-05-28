@@ -49,6 +49,16 @@ model User {
   miniMindActive    Boolean   @default(false)
   miniMindUntil     DateTime?
 
+  // GDPR account-deletion flow (Article 17 "right to erasure").
+  // - deletedAt: set when the user confirms deletion via email link. Soft-
+  //   delete marker — once set the user is signed out and treated as gone
+  //   on every surface, but the row stays for the grace window.
+  // - deletionScheduledAt: when the daily cron will hard-delete. Computed
+  //   as max(now + 30 days, current subscription period end) so paid users
+  //   aren't billed for time they can't access.
+  deletedAt              DateTime?
+  deletionScheduledAt    DateTime?
+
   // Relations
   screeningResponses ScreeningResponse[]
   wellbeingSnapshot  WellbeingSnapshot?
@@ -58,6 +68,23 @@ model User {
   moduleProgress     ModuleProgress[]
   recodeProgress     RecodeProgress?
   practices          Practice[]
+  deletionTokens     AccountDeletionToken[]
+}
+
+// =============================================================================
+// ACCOUNT DELETION TOKENS — single-use email-confirmation tokens
+// =============================================================================
+model AccountDeletionToken {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  tokenHash  String   @unique  // sha256 of the raw token; raw lives only in the email
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime          // 1 hour from creation
+  consumedAt DateTime?         // set when redeemed (token becomes invalid)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 // =============================================================================

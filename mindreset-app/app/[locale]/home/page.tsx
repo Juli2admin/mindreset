@@ -96,6 +96,7 @@ export default async function HomePage({
       lifetimeMessagesUsed: true,
       cycleResetAt: true,
       welcomeEmailSentAt: true,
+      deletionScheduledAt: true,
     },
   });
 
@@ -133,6 +134,7 @@ export default async function HomePage({
       cycleRemaining={cycleRemaining}
       topUpRemaining={topUpRemaining}
       cycleResetAt={dbUser?.cycleResetAt?.toISOString() ?? null}
+      deletionScheduledAt={dbUser?.deletionScheduledAt?.toISOString() ?? null}
       footerSlot={<Footer />}
     />
   );
