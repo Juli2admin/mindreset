@@ -421,7 +421,7 @@
   "Terms": {
     "lastUpdated": "Ultimo aggiornamento · {date}",
     "article1": {
-      "title": "Terms of Service",
+      "title": "Termini di servizio",
       "preamble": {
         "operatorLabel": "Operatore:",
         "operatorBody": "<strong>Piattaforma di auto-aiuto MindReset AI</strong>, gestita da <strong>MindReset AI Ltd</strong>, società registrata in Inghilterra e Galles, con sede a Londra, Regno Unito.",
@@ -681,40 +681,40 @@
         "body": "Nulla nella presente Politica di rimborso esclude i tuoi diritti previsti dal <strong>Consumer Rights Act 2015</strong>. Se il contenuto digitale è difettoso, non corrisponde alla descrizione o non funziona come previsto, provvederemo a riparare, sostituire o rimborsare il contenuto secondo quanto richiesto dalla legge, indipendentemente dalla rinuncia confermata al momento del pagamento. Contattaci all’indirizzo <mail>support@mindreset.ai</mail> fornendo i dettagli del problema."
       }
     },
-    "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
-    "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
-    "subsIntro": "Two tiers, each billed monthly or annually:",
-    "subsEssential": "MiniMind Essential — £14.99/month or £129/year. 200 messages per billing cycle.",
-    "subsExtended": "MiniMind Extended — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
-    "subsBilling": "Charged to your chosen payment method until you cancel.",
-    "subsAllowanceReset": "Message allowance resets at the start of each billing cycle and does not roll over.",
-    "subsRefundWindow": "7-day refund window: you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing support@mindreset.ai with REFUND in the subject.",
-    "subsAfterWindow": "After 7 days or 30 messages used, the standard cancellation policy applies.",
-    "subsCancelRight": "You may cancel at any time via your account billing settings.",
-    "subsNoFurtherCharges": "No further payments will be taken.",
-    "subsAccessToEnd": "Access continues until the end of your current billing cycle.",
-    "subsAccessEndsAuto": "Access ends automatically at the end of the current cycle.",
-    "subsNoPartialRefund": "No partial-cycle refunds are issued for cancellations after the 7-day window.",
-    "topupDescription": "£4.99 one-off charge — adds 200 messages to your current billing cycle.",
-    "topupExpiry": "Top-up messages expire when your billing cycle resets and do not roll over.",
-    "topupAvailability": "Available to both Essential and Extended subscribers; stackable.",
-    "topupWaiver": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access.",
-    "topupNonRefundable": "Non-refundable once purchased.",
-    "refundBothIntervals": "7-day refund window applies to both monthly and annual plans.",
-    "refundRequestInstructions": "To request a refund, email support@mindreset.ai with REFUND in the subject within 7 days of purchase and before using 30 messages.",
-    "refundAccessAfterCancel": "If you cancel after the 7-day period, access continues until the end of your current billing cycle.",
-    "refundNoPartial": "No partial or pro-rata refunds are issued after the 7-day window.",
-    "stModuleFull": "States & Themes modules are available as individual one-off purchases at £59 per module.",
-    "stModuleSubscriber": "For active MiniMind subscribers (Essential or Extended), the price is £29 per module. The discount is applied automatically at checkout when logged in with an active subscription.",
-    "stModuleRefund": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing support@mindreset.ai with REFUND in the subject. Once the module has been opened, the purchase is non-refundable.",
-    "journeyOnetime": "The Journey is available as a one-off purchase at £599. At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. Once the first block has been started, no refund is available.",
-    "journeyInstalment": "The Journey is also available as a 12-week instalment plan at £55 per week. Each weekly payment unlocks the next block of content. You may stop future payments at any time; however, payments already made are non-refundable, and previously unlocked content remains accessible. Once the first block has been accessed, the right to a cooling-off period no longer applies."
+    "freeTasterCount": "Ogni nuovo account riceve 50 messaggi gratuiti con MiniMind, senza costi.",
+    "freeTasterNoCard": "Nessuna carta richiesta. Nessun limite di tempo. Limitato a uno per indirizzo email.",
+    "subsIntro": "Due piani, ciascuno fatturato mensilmente o annualmente:",
+    "subsEssential": "MiniMind Essential — 14,99 £/mese o 129 £/anno. 200 messaggi per ciclo di fatturazione.",
+    "subsExtended": "MiniMind Extended — 24,99 £/mese o 209 £/anno. Da 800 a 1.200 messaggi per ciclo di fatturazione.",
+    "subsBilling": "Addebito sul metodo di pagamento scelto fino alla disdetta.",
+    "subsAllowanceReset": "L'assegnazione di messaggi si rinnova all'inizio di ogni ciclo di fatturazione e non si accumula.",
+    "subsRefundWindow": "Finestra di rimborso di 7 giorni: può richiedere un rimborso totale entro 7 giorni dal Suo primo acquisto in abbonamento, avendo usato meno di 30 messaggi, scrivendo a support@mindreset.ai con REFUND in oggetto.",
+    "subsAfterWindow": "Dopo 7 giorni o 30 messaggi utilizzati, si applica la politica di disdetta standard.",
+    "subsCancelRight": "Può disdire in qualsiasi momento dalle impostazioni di fatturazione del Suo account.",
+    "subsNoFurtherCharges": "Non verranno effettuati ulteriori addebiti.",
+    "subsAccessToEnd": "L'accesso prosegue fino alla fine del Suo ciclo di fatturazione in corso.",
+    "subsAccessEndsAuto": "L'accesso termina automaticamente alla fine del ciclo in corso.",
+    "subsNoPartialRefund": "Dopo la finestra di 7 giorni non vengono emessi rimborsi parziali per le disdette.",
+    "topupDescription": "4,99 £ — addebito unico, aggiunge 200 messaggi al Suo ciclo di fatturazione in corso.",
+    "topupExpiry": "I messaggi di ricarica scadono alla rinnovazione del Suo ciclo di fatturazione e non si accumulano.",
+    "topupAvailability": "Disponibile per gli abbonati Essential ed Extended; cumulabile.",
+    "topupWaiver": "Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato.",
+    "topupNonRefundable": "Non rimborsabile una volta acquistato.",
+    "refundBothIntervals": "La finestra di rimborso di 7 giorni si applica sia ai piani mensili sia annuali.",
+    "refundRequestInstructions": "Per richiedere un rimborso, scriva a support@mindreset.ai con REFUND in oggetto entro 7 giorni dall'acquisto e prima di aver usato 30 messaggi.",
+    "refundAccessAfterCancel": "Se disdice dopo il periodo di 7 giorni, l'accesso prosegue fino alla fine del Suo ciclo di fatturazione in corso.",
+    "refundNoPartial": "Dopo la finestra di 7 giorni non vengono emessi rimborsi parziali o pro rata.",
+    "stModuleFull": "I moduli Stati e Temi sono disponibili come acquisti singoli una tantum al prezzo di 59 £ per modulo.",
+    "stModuleSubscriber": "Per gli abbonati MiniMind attivi (Essential o Extended), il prezzo è di 29 £ per modulo. Lo sconto viene applicato automaticamente al pagamento quando si è connessi con un abbonamento attivo.",
+    "stModuleRefund": "Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato. Se non apre il modulo entro 14 giorni dall'acquisto, può richiedere un rimborso totale scrivendo a support@mindreset.ai con REFUND in oggetto. Una volta aperto il modulo, l'acquisto non è rimborsabile.",
+    "journeyOnetime": "Il Cammino è disponibile come acquisto una tantum al prezzo di 599 £. Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato. Una volta iniziato il primo blocco, non è previsto rimborso.",
+    "journeyInstalment": "Il Cammino è disponibile anche come piano rateale di 12 settimane a 55 £ a settimana. Ogni pagamento settimanale sblocca il blocco di contenuto successivo. Può interrompere i pagamenti futuri in qualsiasi momento; tuttavia, i pagamenti già effettuati non sono rimborsabili, e i contenuti già sbloccati restano accessibili. Una volta acceduto al primo blocco, il diritto a un periodo di ripensamento non si applica più."
   },
   "Privacy": {
     "lastUpdated": "Ultimo aggiornamento · {date}",
-    "title": "Privacy Policy",
+    "title": "Informativa sulla privacy",
     "preamble": {
-      "controllerLabel": "Data Controller:",
+      "controllerLabel": "Titolare del trattamento:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, società registrata in England & Wales, con sede a Londra, Regno Unito — <mail>support@mindreset.ai</mail>",
       "note": "[NOTE: La registrazione ICO deve essere ottenuta tramite ico.org.uk prima del lancio pubblico. Costo annuale ~£40-60. La registrazione deve essere completata prima di qualsiasi attività di marketing o disponibilità pubblica.]"
     },
@@ -733,49 +733,49 @@
           "category": "Dati dell’account",
           "examples": "email address, hashed password, country (dedotto dall’IP), preferred language",
           "purpose": "creare e gestire il tuo account; fornire il Servizio",
-          "lawfulBasis": "Contract"
+          "lawfulBasis": "Esecuzione del contratto"
         },
         "screening": {
-          "category": "Screening data",
+          "category": "Dati del questionario",
           "examples": "le tue risposte al Readiness Check, classificazione risultante (Green / Yellow / Red), riepilogo delle motivazioni",
           "purpose": "classificare se il Servizio è appropriato per te; proteggere gli utenti da potenziali danni",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "conversation": {
-          "category": "Conversation data (special category)",
+          "category": "Dati di conversazione (categoria particolare)",
           "examples": "i messaggi che invii a MiniMind o ai moduli; reflections e risposte negli esercizi; mood ed energy check-ins",
           "purpose": "analisi AI per suggerire pratiche; supporto wellbeing personalizzato; monitoraggio dei tuoi progressi",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "wellbeing": {
-          "category": "Wellbeing profile",
+          "category": "Profilo di benessere",
           "examples": "pattern derivati (ad esempio «elevated anxiety», «recent stable period»), osservazioni di stati e temi",
           "purpose": "personalizzazione; smart routing verso pratiche e moduli appropriati",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "safety": {
-          "category": "Safety events",
+          "category": "Eventi di sicurezza",
           "examples": "momenti di conversation segnalati che hanno attivato il nostro safety protocol, la nostra automated response, optional manual review notes",
           "purpose": "audit del safety protocol; conformità agli obblighi del Online Safety Act 2023 relativi alle priority offences",
-          "lawfulBasis": "Legitimate interest (audit trail for safety) / Legal obligation"
+          "lawfulBasis": "Interesse legittimo (registro di sicurezza) / Obbligo legale"
         },
         "usage": {
-          "category": "Usage data",
+          "category": "Dati d'uso",
           "examples": "tipo di dispositivo, browser, IP address, cookies, timestamps, visualizzazioni di pagina",
           "purpose": "sicurezza, anti-abuse, miglioramento del Servizio, analisi anonime",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Interesse legittimo"
         },
         "payment": {
-          "category": "Payment data",
+          "category": "Dati di pagamento",
           "examples": "ultime 4 cifre della carta, transaction ID, billing email (i dati completi della carta sono conservati dal payment processor, non da noi)",
           "purpose": "billing, prevenzione delle frodi, registrazioni finanziarie",
-          "lawfulBasis": "Contract / Legal obligation (tax law)"
+          "lawfulBasis": "Esecuzione del contratto / Obbligo legale (diritto tributario)"
         },
         "support": {
-          "category": "Support messages",
+          "category": "Messaggi al supporto",
           "examples": "emails inviati a <mail>support@mindreset.ai</mail> o ad altri nostri indirizzi",
           "purpose": "rispondere alle richieste; risolvere problemi",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Interesse legittimo"
         }
       },
       "closing": "Non richiediamo il tuo vero nome, indirizzo fisico, data di nascita o identificativi governativi. Ti preghiamo di evitare di condividere dettagli personalmente identificabili su di te o su altre persone all’interno delle conversations con l’AI."
@@ -796,9 +796,9 @@
       "aiItem": "AI infrastructure (per conversational e analytical features)",
       "speechItem": "Speech-to-text transcription (per voice input)",
       "authItem": "Authentication e account management",
-      "paymentItem": "Payment processing",
-      "emailItem": "Transactional email delivery",
-      "hostingItem": "Website hosting",
+      "paymentItem": "Elaborazione dei pagamenti",
+      "emailItem": "Recapito di email transazionali",
+      "hostingItem": "Hosting del sito",
       "voiceInput": "<strong>Voice input.</strong> Se scegli di utilizzare il voice input su MiniMind, il tuo audio registrato viene trasmesso in modo sicuro al nostro speech-to-text provider per la transcription. Abbiamo attivato zero data retention presso questo provider: l’audio non viene conservato dopo la transcription né sull’infrastruttura MindReset né presso il provider. Solo il resulting text viene salvato come parte della tua conversation history. Se preferisci, puoi utilizzare il Servizio interamente tramite typing.",
       "providersList": "I providers specifici possono cambiare nel tempo. Un elenco aggiornato dei service providers che utilizziamo è disponibile su richiesta inviando un email a <mail>support@mindreset.ai</mail>.",
       "legalDisclosure": "Potremmo inoltre divulgare i tuoi dati quando legalmente obbligati da una court order o da un analogo legal process.",
