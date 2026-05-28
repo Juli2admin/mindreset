@@ -743,39 +743,39 @@
         "headerCategory": "Категория данных",
         "headerPeriod": "Срок хранения",
         "account": {
-          "category": "Account data",
-          "period": "Active account: until you delete it. Inactive account: deleted 12 months after last sign-in."
+          "category": "Данные учётной записи",
+          "period": "Активная учётная запись: до момента её удаления вами. Неактивная учётная запись: удаляется через 12 месяцев после последнего входа в систему."
         },
         "screening": {
-          "category": "Screening data",
-          "period": "12 months after last sign-in, or immediately upon account deletion"
+          "category": "Данные скрининга",
+          "period": "12 месяцев после последнего входа в систему либо немедленно после удаления учётной записи"
         },
         "conversation": {
-          "category": "Conversation data",
-          "period": "12 months after last sign-in, or immediately upon account deletion"
+          "category": "Данные переписки",
+          "period": "12 месяцев после последнего входа в систему либо немедленно после удаления учётной записи"
         },
         "wellbeing": {
-          "category": "Wellbeing profile",
-          "period": "Same as Conversation data"
+          "category": "Профиль благополучия",
+          "period": "Аналогично данным переписки"
         },
         "safety": {
-          "category": "Safety events",
-          "period": "7 years (legal audit trail obligation) — depersonalised after account deletion"
+          "category": "События безопасности",
+          "period": "7 лет (обязательство по ведению юридически значимого аудиторского журнала) — обезличиваются после удаления учётной записи"
         },
         "payment": {
-          "category": "Payment records",
-          "period": "6 years (UK tax law requirement)"
+          "category": "Платёжные данные",
+          "period": "6 лет (требование налогового законодательства Великобритании)"
         },
         "backups": {
-          "category": "Backups",
-          "period": "Maximum 30 days"
+          "category": "Резервные копии",
+          "period": "Максимум 30 дней"
         },
         "support": {
-          "category": "Support messages",
-          "period": "24 months from last contact"
+          "category": "Сообщения в службу поддержки",
+          "period": "24 месяца с момента последнего обращения"
         }
       },
-      "deletion": "You may request earlier deletion of any data, except where we have a legal obligation to retain it (e.g., financial records under tax law, safety events under Online Safety Act)."
+      "deletion": "Вы можете запросить более раннее удаление любых данных, за исключением случаев, когда мы обязаны хранить их в силу требований законодательства (например, финансовые документы в соответствии с налоговым законодательством или события безопасности в соответствии с Online Safety Act)."
     },
     "section8": {
       "title": "8. Your Rights",

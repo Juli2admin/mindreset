@@ -768,39 +768,39 @@
         "headerCategory": "Categoria de dados",
         "headerPeriod": "Período de conservação",
         "account": {
-          "category": "Account data",
-          "period": "Active account: until you delete it. Inactive account: deleted 12 months after last sign-in."
+          "category": "Dados da conta",
+          "period": "Conta ativa: até à sua eliminação pelo utilizador. Conta inativa: eliminada 12 meses após o último início de sessão."
         },
         "screening": {
-          "category": "Screening data",
-          "period": "12 months after last sign-in, or immediately upon account deletion"
+          "category": "Dados de rastreio",
+          "period": "12 meses após o último início de sessão ou imediatamente após a eliminação da conta"
         },
         "conversation": {
-          "category": "Conversation data",
-          "period": "12 months after last sign-in, or immediately upon account deletion"
+          "category": "Dados de conversação",
+          "period": "12 meses após o último início de sessão ou imediatamente após a eliminação da conta"
         },
         "wellbeing": {
-          "category": "Wellbeing profile",
-          "period": "Same as Conversation data"
+          "category": "Perfil de bem-estar",
+          "period": "Igual aos dados de conversação"
         },
         "safety": {
-          "category": "Safety events",
-          "period": "7 years (legal audit trail obligation) — depersonalised after account deletion"
+          "category": "Eventos de segurança",
+          "period": "7 anos (obrigação legal de manutenção de registos de auditoria) — despersonalizados após a eliminação da conta"
         },
         "payment": {
-          "category": "Payment records",
-          "period": "6 years (UK tax law requirement)"
+          "category": "Registos de pagamento",
+          "period": "6 anos (exigência da legislação fiscal do Reino Unido)"
         },
         "backups": {
-          "category": "Backups",
-          "period": "Maximum 30 days"
+          "category": "Cópias de segurança",
+          "period": "Máximo de 30 dias"
         },
         "support": {
-          "category": "Support messages",
-          "period": "24 months from last contact"
+          "category": "Mensagens de suporte",
+          "period": "24 meses desde o último contacto"
         }
       },
-      "deletion": "You may request earlier deletion of any data, except where we have a legal obligation to retain it (e.g., financial records under tax law, safety events under Online Safety Act)."
+      "deletion": "Pode solicitar a eliminação antecipada de quaisquer dados, exceto quando sejamos legalmente obrigados a conservá-los (por exemplo, registos financeiros ao abrigo da legislação fiscal ou eventos de segurança ao abrigo do Online Safety Act)."
     },
     "section8": {
       "title": "8. Your Rights",
