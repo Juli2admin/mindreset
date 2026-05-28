@@ -58,6 +58,13 @@ export const metadata: Metadata = {
   title: 'MindReset.ai — A way back to yourself',
   description:
     'A trauma-informed self-help platform. Not therapy, not a crisis service — a structured digital reflection tool for emotional clarity.',
+  icons: {
+    icon: [
+      { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },
+      { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' },
+    ],
+    apple: '/logo-light.png',
+  },
 };
 
 export default async function LocaleLayout({
