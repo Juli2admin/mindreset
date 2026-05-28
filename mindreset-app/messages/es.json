@@ -1,171 +1,171 @@
 {
   "Pricing": {
-    "comingSoon": "Coming soon",
-    "tierOpen": "Open",
-    "tierActive": "Active",
+    "comingSoon": "Próximamente",
+    "tierOpen": "Abierto",
+    "tierActive": "Activo",
     "tiers": {
       "freeTaster": {
-        "title": "Free taster",
-        "subtitle": "50 messages to try",
-        "description": "Send up to 50 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
+        "title": "Prueba gratuita",
+        "subtitle": "50 mensajes para probar",
+        "description": "Envíe hasta 50 mensajes con MiniMind. Sin tarjeta y sin límite de tiempo. Utilícelos a su ritmo."
       },
       "miniMindEssential": {
         "title": "MiniMind Essential",
-        "subtitle": "Daily companion",
-        "description": "A daily companion for self-guided reflection. 200 messages each billing cycle.",
-        "annualNote": "Annual billing saves around 28%."
+        "subtitle": "Compañero diario",
+        "description": "Un compañero diario para la reflexión auto-guiada. 200 mensajes por cada ciclo de facturación.",
+        "annualNote": "La facturación anual ahorra alrededor del 28 %."
       },
       "miniMindExtended": {
         "title": "MiniMind Extended",
-        "subtitle": "More room to lean in",
-        "description": "Higher monthly access for the times you need to lean in deeper. 800 to 1,200 messages each billing cycle.",
-        "annualNote": "Annual billing saves around 30%."
+        "subtitle": "Más espacio para profundizar",
+        "description": "Mayor acceso mensual para los momentos en que necesita profundizar. De 800 a 1.200 mensajes por cada ciclo de facturación.",
+        "annualNote": "La facturación anual ahorra alrededor del 30 %."
       },
       "topUp": {
-        "title": "Message top-up",
-        "subtitle": "When you need a few more",
-        "description": "Add 200 messages to your current billing cycle. One-off — expires at cycle reset."
+        "title": "Recarga de mensajes",
+        "subtitle": "Cuando necesita unos cuantos más",
+        "description": "Añada 200 mensajes a su ciclo de facturación actual. Una sola vez — expira al reiniciar el ciclo."
       },
       "statesThemes": {
-        "title": "States & Themes",
-        "subtitle": "Focused modules",
-        "description": "Targeted work on four states and five themes."
+        "title": "Estados y Temas",
+        "subtitle": "Módulos enfocados",
+        "description": "Trabajo específico sobre cuatro Estados y cinco Temas."
       },
       "journey": {
-        "title": "The Journey",
-        "subtitle": "Eight-stage reset",
-        "description": "The deep eight-block work, paced for safety and depth."
+        "title": "El Camino",
+        "subtitle": "Un reinicio de ocho etapas",
+        "description": "El trabajo profundo de ocho bloques, al ritmo de la seguridad y la profundidad."
       }
     },
     "price": {
-      "perMonth": "{price} / month",
-      "perYearOrMonth": "{annual} / year — or {monthly} / month",
+      "perMonth": "{price} / mes",
+      "perYearOrMonth": "{annual} / año — o {monthly} / mes",
       "oneOff": "{price}"
     },
     "cta": {
-      "subscribeMonthly": "Subscribe monthly",
-      "subscribeAnnual": "Subscribe annually",
-      "buyTopUp": "Buy top-up",
-      "managePlan": "Manage subscription",
-      "processing": "Processing…"
+      "subscribeMonthly": "Suscribirse mensualmente",
+      "subscribeAnnual": "Suscribirse anualmente",
+      "buyTopUp": "Comprar recarga",
+      "managePlan": "Gestionar suscripción",
+      "processing": "Procesando…"
     }
   },
   "CrisisResources": {
-    "crisisLabel": "Need help right now?",
+    "crisisLabel": "¿Necesita ayuda ahora mismo?",
     "crisisItems": [
       {
         "name": "Samaritans",
-        "detail": "Call 116 123 — 24/7, free"
+        "detail": "Llame al 116 123 — 24/7, gratis"
       },
       {
         "name": "Shout",
-        "detail": "Text SHOUT to 85258 — 24/7"
+        "detail": "Envíe SHOUT por SMS al 85258 — 24/7"
       },
       {
         "name": "NHS 111",
-        "detail": "Mental health crisis line — option 2"
+        "detail": "Línea de crisis de salud mental — opción 2"
       }
     ],
-    "disclaimer": "MindReset is a wellbeing tool — not therapy, not a medical device, and not a substitute for professional care. If you are in immediate danger, please use one of the lines above or call 999."
+    "disclaimer": "MindReset es una herramienta de bienestar — ni terapia, ni dispositivo médico, ni sustituto de atención profesional. Si está en peligro inmediato, utilice una de las líneas anteriores o llame al 999."
   },
   "DisclaimerModal": {
-    "title": "Important — before you continue",
-    "primary": "MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.",
-    "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
-    "crisisLine": "<b>UK:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> option 2. Your GP. In an emergency: <b>999</b> or A&E.",
-    "acknowledge": "I understand — continue"
+    "title": "Importante — antes de continuar",
+    "primary": "MindReset es una herramienta de bienestar — ni terapia, ni dispositivo médico, ni servicio de crisis.",
+    "secondary": "La IA aquí no puede diagnosticar, tratar ni sustituir a un profesional clínico. Si está en crisis, en peligro o experimentando síntomas psicológicos graves — busque apoyo profesional.",
+    "crisisLine": "<b>Reino Unido:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> opción 2. Su GP. En caso de emergencia: <b>999</b> o A&E.",
+    "acknowledge": "Lo entiendo — continuar"
   },
   "Footer": {
-    "terms": "Terms",
-    "privacy": "Privacy",
+    "terms": "Condiciones",
+    "privacy": "Privacidad",
     "faq": "FAQ",
-    "contact": "Contact",
-    "shareYourStory": "Share your story",
-    "languagePickerLabel": "Language"
+    "contact": "Contacto",
+    "shareYourStory": "Comparta su historia",
+    "languagePickerLabel": "Idioma"
   },
   "Testimonials": {
-    "kicker": "FROM OTHERS WALKING THIS PATH",
-    "title": "Stories from people using MindReset",
-    "shareInvite": "Has MindReset helped you?",
-    "shareCta": "Share your story"
+    "kicker": "DE OTRAS PERSONAS QUE RECORREN ESTE CAMINO",
+    "title": "Historias de personas que utilizan MindReset",
+    "shareInvite": "¿MindReset le ha ayudado?",
+    "shareCta": "Comparta su historia"
   },
   "ShareYourStory": {
-    "metaTitle": "Share your story",
-    "metaDescription": "Tell us how MindReset has helped you. Your story may appear on the site to help others considering this work — only with your consent, only after review.",
-    "kicker": "WE'D LOVE TO HEAR FROM YOU",
-    "title": "Share your story.",
-    "intro1": "If MindReset has helped you in any way — a single moment of clarity, a slow shift over weeks, something you can name or something you can't — telling that story helps others find the courage to begin.",
-    "intro2": "Nothing here is published automatically. We read every submission and only publish ones you've consented to share publicly. You can use a first name only, a nickname, or post anonymously.",
-    "nameLabel": "How would you like to be credited?",
-    "namePlaceholder": "Jane, J., Anonymous…",
-    "nameHelp": "First name, initial, or anything you're comfortable with. We never publish surnames or full names.",
-    "ageLabel": "Age range (optional)",
-    "ageOptional": "Prefer not to say",
-    "storyLabel": "Your story",
-    "storyPlaceholder": "Take your time. There's no right way to do this — write what feels honest. A few sentences is enough.",
-    "storyHelp": "1500 characters max.",
-    "consentLabel": "I consent to MindReset publishing my story (edited for length and clarity if needed) on the website, with the name above. I understand I can email support@mindreset.ai any time to have it removed.",
-    "submitCta": "Send my story",
-    "submitting": "Sending…",
-    "submitError": "Something went wrong. Please try again.",
-    "thanksTitle": "Thank you for sharing.",
-    "thanksBody": "We've received your story and will read it carefully. If it's published, the name you provided will appear with it. You can email support@mindreset.ai at any time to make changes or withdraw consent."
+    "metaTitle": "Comparta su historia",
+    "metaDescription": "Cuéntenos cómo le ha ayudado MindReset. Su historia puede aparecer en el sitio para ayudar a otras personas que están considerando este trabajo — solo con su consentimiento y solo tras revisión.",
+    "kicker": "NOS GUSTARÍA SABER DE USTED",
+    "title": "Comparta su historia.",
+    "intro1": "Si MindReset le ha ayudado de alguna forma — un único momento de claridad, un desplazamiento lento a lo largo de semanas, algo que puede nombrar o algo que no — contar esa historia ayuda a otras personas a encontrar el valor para empezar.",
+    "intro2": "Aquí nada se publica automáticamente. Leemos cada envío y solo publicamos los que ha consentido en compartir públicamente. Puede usar solo un nombre de pila, un apodo o publicar de forma anónima.",
+    "nameLabel": "¿Cómo le gustaría que la acreditemos?",
+    "namePlaceholder": "Jane, J., Anónima…",
+    "nameHelp": "Nombre de pila, inicial o lo que le resulte cómodo. Nunca publicamos apellidos ni nombres completos.",
+    "ageLabel": "Rango de edad (opcional)",
+    "ageOptional": "Prefiero no decirlo",
+    "storyLabel": "Su historia",
+    "storyPlaceholder": "Tómese su tiempo. No hay una forma correcta de hacerlo — escriba lo que sienta honesto. Unas pocas frases bastan.",
+    "storyHelp": "1500 caracteres como máximo.",
+    "consentLabel": "Consiento que MindReset publique mi historia (editada por longitud y claridad si es necesario) en el sitio, con el nombre indicado arriba. Entiendo que puedo escribir a support@mindreset.ai en cualquier momento para que la retiren.",
+    "submitCta": "Enviar mi historia",
+    "submitting": "Enviando…",
+    "submitError": "Algo ha salido mal. Inténtelo de nuevo.",
+    "thanksTitle": "Gracias por compartir.",
+    "thanksBody": "Hemos recibido su historia y la leeremos con atención. Si se publica, aparecerá con el nombre que ha indicado. Puede escribir a support@mindreset.ai en cualquier momento para hacer cambios o retirar su consentimiento."
   },
   "Home": {
-    "welcomeKicker": "Welcome back",
-    "welcomeTitleWithName": "Welcome back, {name}.",
-    "welcomeTitleNoName": "Welcome back.",
-    "welcomeBody": "A way back to yourself, one conversation at a time.",
+    "welcomeKicker": "Bienvenido de vuelta",
+    "welcomeTitleWithName": "Bienvenido de vuelta, {name}.",
+    "welcomeTitleNoName": "Bienvenido de vuelta.",
+    "welcomeBody": "Un camino de vuelta a uno mismo, una conversación cada vez.",
     "yourMiniMind": {
-      "kickerFree": "YOUR FREE TASTER",
-      "kickerPaid": "YOUR MINIMIND",
-      "remainingFree": "{count, plural, one {# message remaining} other {# messages remaining}}",
-      "remainingPaid": "{count, plural, one {# message remaining this cycle} other {# messages remaining this cycle}}",
-      "remainingWithTopUp": "{cycle} this cycle + {topUp} top-up",
-      "resetsOn": "Resets {date}",
-      "freeNote": "Free taster — 50 messages lifetime",
-      "openMinimind": "Open MiniMind",
-      "buyTopUp": "Buy a top-up",
-      "managePlan": "Manage subscription",
-      "seePlans": "See plans"
+      "kickerFree": "SU PRUEBA GRATUITA",
+      "kickerPaid": "SU MINIMIND",
+      "remainingFree": "{count, plural, one {# mensaje restante} other {# mensajes restantes}}",
+      "remainingPaid": "{count, plural, one {# mensaje restante este ciclo} other {# mensajes restantes este ciclo}}",
+      "remainingWithTopUp": "{cycle} este ciclo + {topUp} de recarga",
+      "resetsOn": "Se reinicia el {date}",
+      "freeNote": "Prueba gratuita — 50 mensajes de por vida",
+      "openMinimind": "Abrir MiniMind",
+      "buyTopUp": "Comprar una recarga",
+      "managePlan": "Gestionar suscripción",
+      "seePlans": "Ver planes"
     },
     "comingSoon": {
-      "label": "More coming soon",
-      "note": "Themed modules and an 8-block journey are on their way."
+      "label": "Pronto más",
+      "note": "Módulos temáticos y un camino de 8 bloques están en camino."
     }
   },
   "AccountDeletion": {
-    "settingsKicker": "YOUR DATA",
-    "exportTitle": "Export your data",
-    "exportBody": "Download a JSON file with everything you've contributed: profile, conversations, screening answers, wellbeing profile, and payment records.",
-    "exportCta": "Download my data",
-    "exporting": "Preparing…",
-    "exportError": "Couldn't generate the export. Please try again.",
-    "deleteTitle": "Delete your account",
-    "deleteBody": "Permanently delete your account and all associated data. We'll email you a confirmation link first. If you have an active subscription, your account stays accessible until your current period ends — and at least 30 days from now, whichever is longer. You can cancel any time before then.",
-    "deleteCta": "Delete my account",
-    "deleteConfirmCta": "Yes, send me the confirmation email",
-    "deleteSending": "Sending…",
-    "deleteCancel": "Keep my account",
-    "deleteEmailSent": "Confirmation email sent. Click the link in your inbox to schedule deletion. The link expires in 1 hour.",
-    "deleteRequestError": "Couldn't send the confirmation email. Please try again.",
-    "pendingTitle": "Your account is scheduled for deletion on {date}",
-    "pendingBody": "Until that date, your account remains active. After it, your data will be permanently deleted. You can cancel the deletion at any point before then.",
-    "cancelCta": "Cancel deletion",
-    "cancelling": "Cancelling…",
-    "cancelError": "Couldn't cancel deletion. Please try again.",
-    "missingToken": "This confirmation link is missing its token. Please open the most recent email we sent you and click the link there.",
-    "signInToConfirm": "Sign in to confirm deletion of your account.",
-    "signInCta": "Sign in",
-    "confirmBody1": "Click the button below to confirm deletion of your MindReset.ai account.",
-    "confirmBody2": "If you have an active subscription, your account will remain accessible until your current period ends — and at least 30 days from now, whichever is longer. You can cancel any time before then.",
-    "confirmCta": "Confirm deletion",
-    "confirming": "Confirming…",
-    "tokenExpired": "This confirmation link has expired or already been used. Please request a new one from your home page.",
-    "genericError": "Something went wrong. Please try again.",
-    "doneTitle": "Deletion scheduled.",
-    "doneBody": "Your account is scheduled for deletion on {date}. You can cancel any time before then by signing back in. We've sent you a confirmation email.",
-    "doneBodyNoDate": "Your account is scheduled for deletion. You can cancel any time during the grace period by signing back in. We've sent you a confirmation email."
+    "settingsKicker": "SUS DATOS",
+    "exportTitle": "Exportar sus datos",
+    "exportBody": "Descargue un archivo JSON con todo lo que ha aportado: perfil, conversaciones, respuestas del cuestionario, perfil de bienestar y historial de pagos.",
+    "exportCta": "Descargar mis datos",
+    "exporting": "Preparando…",
+    "exportError": "No se ha podido generar la exportación. Inténtelo de nuevo.",
+    "deleteTitle": "Eliminar su cuenta",
+    "deleteBody": "Eliminar permanentemente su cuenta y todos los datos asociados. Primero le enviaremos un enlace de confirmación por correo electrónico. Si tiene una suscripción activa, su cuenta seguirá accesible hasta el final del período actual — y al menos 30 días a partir de hoy, según lo que sea más largo. Puede cancelar en cualquier momento antes de esa fecha.",
+    "deleteCta": "Eliminar mi cuenta",
+    "deleteConfirmCta": "Sí, envíeme el correo de confirmación",
+    "deleteSending": "Enviando…",
+    "deleteCancel": "Mantener mi cuenta",
+    "deleteEmailSent": "Correo de confirmación enviado. Haga clic en el enlace del correo para programar la eliminación. El enlace caduca en 1 hora.",
+    "deleteRequestError": "No se ha podido enviar el correo de confirmación. Inténtelo de nuevo.",
+    "pendingTitle": "Su cuenta está programada para eliminación el {date}",
+    "pendingBody": "Hasta esa fecha, su cuenta sigue activa. Después, sus datos serán eliminados permanentemente. Puede cancelar la eliminación en cualquier momento antes.",
+    "cancelCta": "Cancelar eliminación",
+    "cancelling": "Cancelando…",
+    "cancelError": "No se ha podido cancelar la eliminación. Inténtelo de nuevo.",
+    "missingToken": "A este enlace de confirmación le falta el token. Abra el último correo que le enviamos y haga clic en el enlace que contiene.",
+    "signInToConfirm": "Inicie sesión para confirmar la eliminación de su cuenta.",
+    "signInCta": "Iniciar sesión",
+    "confirmBody1": "Haga clic en el botón de abajo para confirmar la eliminación de su cuenta de MindReset.ai.",
+    "confirmBody2": "Si tiene una suscripción activa, su cuenta seguirá accesible hasta el final del período actual — y al menos 30 días a partir de hoy, según lo que sea más largo. Puede cancelar en cualquier momento antes de esa fecha.",
+    "confirmCta": "Confirmar eliminación",
+    "confirming": "Confirmando…",
+    "tokenExpired": "Este enlace de confirmación ha caducado o ya se ha usado. Solicite uno nuevo desde su página de inicio.",
+    "genericError": "Algo ha salido mal. Inténtelo de nuevo.",
+    "doneTitle": "Eliminación programada.",
+    "doneBody": "Su cuenta está programada para eliminación el {date}. Puede cancelar en cualquier momento antes volviendo a iniciar sesión. Le hemos enviado un correo de confirmación.",
+    "doneBodyNoDate": "Su cuenta está programada para eliminación. Puede cancelar en cualquier momento durante el período de gracia volviendo a iniciar sesión. Le hemos enviado un correo de confirmación."
   },
   "Landing": {
     "signIn": "Iniciar sesión",
@@ -249,36 +249,36 @@
     "closingCta": "Comenzar la revisión"
   },
   "MiniMind": {
-    "opener": "Hello. Good to have you here. How are you doing today?",
-    "placeholder": "Say what's on your mind.",
-    "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
-    "preparingResponse": "MiniMind is preparing a response",
-    "startNew": "Start new",
-    "welcomeBack": "Welcome back.",
-    "conversationInProgress": "You have a conversation in progress.",
-    "lastConversation": "Last conversation · {when}",
+    "opener": "Hola. Me alegra que esté aquí. ¿Cómo se encuentra hoy?",
+    "placeholder": "Diga lo que le pasa por la cabeza.",
+    "streamErrorSuffix": "— *(Perdí el hilo un momento. Vuelva a enviar cuando esté listo.)*",
+    "preparingResponse": "MiniMind está preparando una respuesta",
+    "startNew": "Empezar nueva",
+    "welcomeBack": "Bienvenido de vuelta.",
+    "conversationInProgress": "Tiene una conversación en curso.",
+    "lastConversation": "Última conversación · {when}",
     "voice": {
-      "startAria": "Start voice input",
-      "stopAria": "Stop recording",
+      "startAria": "Iniciar entrada por voz",
+      "stopAria": "Detener grabación",
       "errors": {
-        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
-        "noMic": "No microphone found.",
-        "transcriptionFailed": "Couldn't transcribe — please try again.",
-        "rateLimited": "Please pause a moment, then try again.",
-        "unavailable": "Voice input is unavailable right now.",
-        "networkError": "Network error — please try again.",
-        "startFailed": "Couldn't start recording.",
-        "emptyAudio": "Didn't hear anything. Try again."
+        "permissionDenied": "Acceso al micrófono denegado. Puede habilitarlo en los ajustes de su navegador.",
+        "noMic": "No se ha encontrado micrófono.",
+        "transcriptionFailed": "No se pudo transcribir — inténtelo de nuevo.",
+        "rateLimited": "Haga una pequeña pausa y vuelva a intentarlo.",
+        "unavailable": "La entrada por voz no está disponible ahora mismo.",
+        "networkError": "Error de red — inténtelo de nuevo.",
+        "startFailed": "No se pudo iniciar la grabación.",
+        "emptyAudio": "No se ha oído nada. Inténtelo de nuevo."
       }
     },
     "atCap": {
-      "subscriberTitle": "You've used all your messages for this billing period.",
-      "subscriberBody": "Your allowance resets on {date}. You can add 200 more messages now.",
-      "freeTitle": "You've used your 50 free messages.",
-      "freeBody": "Choose a plan to keep going.",
-      "buyTopUp": "Buy a message top-up →",
-      "managePlan": "Manage subscription →",
-      "seePlans": "See plans →"
+      "subscriberTitle": "Ha usado todos sus mensajes de este período de facturación.",
+      "subscriberBody": "Su asignación se reinicia el {date}. Puede añadir 200 mensajes más ahora.",
+      "freeTitle": "Ha usado sus 50 mensajes gratuitos.",
+      "freeBody": "Elija un plan para continuar.",
+      "buyTopUp": "Comprar recarga de mensajes →",
+      "managePlan": "Gestionar suscripción →",
+      "seePlans": "Ver planes →"
     }
   },
   "Screening": {
@@ -414,9 +414,9 @@
     "sessionRef": "Referencia"
   },
   "SignUp": {
-    "agreeToTerms": "I agree to the <link>Terms of Service</link>",
-    "agreeToPrivacy": "I agree to the <link>Privacy Policy</link>",
-    "acceptBothHint": "Please accept both to continue."
+    "agreeToTerms": "Acepto las <link>Condiciones del servicio</link>",
+    "agreeToPrivacy": "Acepto la <link>Política de privacidad</link>",
+    "acceptBothHint": "Por favor, acepte ambas para continuar."
   },
   "Terms": {
     "lastUpdated": "Última actualización · {date}",
@@ -904,7 +904,7 @@
     }
   },
   "TopBar": {
-    "wordmarkAria": "MindReset home"
+    "wordmarkAria": "Inicio de MindReset"
   },
   "Faq": {
     "pageTitle": "Preguntas frecuentes",
