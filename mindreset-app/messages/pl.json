@@ -907,93 +907,93 @@
     "wordmarkAria": "MindReset home"
   },
   "Faq": {
-    "pageTitle": "Frequently asked questions",
+    "pageTitle": "Najczęściej zadawane pytania",
     "metaTitle": "FAQ — MindReset",
-    "metaDescription": "Common questions about MindReset, MiniMind, pricing, privacy, and contact.",
+    "metaDescription": "Najczęstsze pytania o MindReset, MiniMind, ceny, prywatność i kontakt.",
     "items": {
       "whatIsMindReset": {
-        "question": "What is MindReset?",
-        "answer": "MindReset is a self-help space. It's a quiet place to reflect, notice where you are, and choose what comes next, at your own pace. It isn't therapy, counselling, or medical care."
+        "question": "Czym jest MindReset?",
+        "answer": "MindReset to przestrzeń samopomocy. Spokojne miejsce, aby się zatrzymać, zauważyć, gdzie Pani jest, i wybrać, co dalej, we własnym tempie. To nie terapia, nie counselling i nie opieka medyczna."
       },
       "isTherapy": {
-        "question": "Is MindReset therapy?",
-        "answer": "No. MindReset is not therapy, counselling, diagnosis, or treatment, and it isn't a substitute for professional help. If you need clinical support, please speak to a doctor or a qualified professional."
+        "question": "Czy MindReset to terapia?",
+        "answer": "Nie. MindReset nie jest terapią, counsellingiem, diagnozą ani leczeniem i nie zastępuje pomocy specjalistycznej. Jeśli potrzebuje Pani wsparcia klinicznego, proszę porozmawiać z lekarzem lub wykwalifikowanym specjalistą."
       },
       "whatIsMiniMind": {
-        "question": "What is MiniMind?",
-        "answer": "MiniMind is your daily companion inside MindReset. You can use it to reflect, talk things through, and find a bit of steadiness. You say as much or as little as you like, and it responds to what you share."
+        "question": "Czym jest MiniMind?",
+        "answer": "MiniMind to Pani codzienny towarzysz w MindReset. Można z niego korzystać, by się zatrzymać, wypowiedzieć rzeczy i odzyskać odrobinę stabilności. Mówi Pani tyle, ile chce, a on odpowiada na to, czym Pani się dzieli."
       },
       "howToStart": {
-        "question": "How do I get started?",
-        "answer": "Open MiniMind and begin typing whenever you're ready. There's nothing to set up and no right way to start — even a few minutes is enough."
+        "question": "Jak zacząć?",
+        "answer": "Proszę otworzyć MiniMind i zacząć pisać, kiedy będzie Pani gotowa. Nie ma nic do skonfigurowania ani jedynej słusznej drogi — kilka minut już wystarczy."
       },
       "voiceInput": {
-        "question": "Can I speak instead of typing?",
-        "answer": "Yes. You can type or speak to MiniMind — whichever feels easier. If you speak, your words are turned into text so you can read them back and edit before sending. You can switch between typing and speaking any time."
+        "question": "Czy mogę mówić zamiast pisać?",
+        "answer": "Tak. Można pisać do MiniMind lub mówić — co jest wygodniejsze. Jeśli Pani mówi, słowa są zamieniane na tekst, by można je było przeczytać i poprawić przed wysłaniem. Można w każdej chwili przełączać się między pisaniem a mówieniem."
       },
       "isItFree": {
-        "question": "Is it free?",
-        "answer": "You begin with 50 free messages, and you don't need to enter a card to use them. There's no time limit on them, so you can use them whenever the moment matters."
+        "question": "Czy jest bezpłatnie?",
+        "answer": "Zaczyna Pani od 50 bezpłatnych wiadomości i nie trzeba podawać karty, by z nich skorzystać. Nie ma limitu czasu, można ich użyć, kiedy moment ma znaczenie."
       },
       "afterFreeMessages": {
-        "question": "What happens after my 50 free messages?",
-        "answer": "If you'd like to keep going, you can choose a subscription — Essential or Extended — or add a one-off top-up. There's no pressure to choose, and nothing happens automatically."
+        "question": "Co się dzieje po wyczerpaniu 50 bezpłatnych wiadomości?",
+        "answer": "Jeśli chce Pani kontynuować, można wybrać subskrypcję — Essential lub Extended — albo dodać jednorazowe doładowanie. Nie ma presji, by wybierać, i nic nie dzieje się automatycznie."
       },
       "essentialVsExtended": {
-        "question": "What's the difference between Essential and Extended?",
-        "answer": "The two plans offer different monthly message allowances. You can see current details, prices, and change your plan any time on your Account page."
+        "question": "Jaka jest różnica między Essential a Extended?",
+        "answer": "Oba plany oferują różne miesięczne limity wiadomości. Aktualne szczegóły, ceny i zmianę planu można zobaczyć w dowolnej chwili na stronie Konto."
       },
       "whatIsTopUp": {
-        "question": "What is a top-up?",
-        "answer": "A top-up adds 200 extra messages as a one-off, on top of whatever plan you're on. It's entirely optional, and you'll never be billed for it automatically."
+        "question": "Czym jest doładowanie?",
+        "answer": "Doładowanie dodaje jednorazowo 200 dodatkowych wiadomości, niezależnie od posiadanego planu. Jest całkowicie opcjonalne i nigdy nie zostanie naliczone automatycznie."
       },
       "willIBeCharged": {
-        "question": "Will I be charged automatically?",
-        "answer": "Subscriptions renew on a regular cycle until you cancel, and you'll always know before a renewal. Top-ups are one-off and are never charged automatically. You can cancel a subscription at any time."
+        "question": "Czy będę obciążana automatycznie?",
+        "answer": "Subskrypcje odnawiają się w regularnych cyklach, aż do rezygnacji, a przed każdym odnowieniem otrzyma Pani powiadomienie. Doładowania są jednorazowe i nigdy nie są pobierane automatycznie. Subskrypcję można anulować w każdej chwili."
       },
       "howToCancel": {
-        "question": "How do I cancel my subscription?",
-        "answer": "You can cancel any time from your Account page. You'll keep access until the end of the period you've already paid for, and you won't be charged again after that."
+        "question": "Jak anulować subskrypcję?",
+        "answer": "Można anulować w dowolnym momencie ze strony Konto. Dostęp pozostaje do końca już opłaconego okresu, a po tym nie zostanie pobrana żadna opłata."
       },
       "isPrivate": {
-        "question": "Is my information private?",
-        "answer": "Yes. We collect as little as possible — no name or address is required to use MiniMind. Your conversations are stored privately and are protected in line with UK data protection law."
+        "question": "Czy moje informacje są prywatne?",
+        "answer": "Tak. Zbieramy jak najmniej — do korzystania z MiniMind nie jest potrzebne ani imię, ani adres. Rozmowy są przechowywane prywatnie i chronione zgodnie z brytyjskim prawem o ochronie danych."
       },
       "whoCanSee": {
-        "question": "Who can see my conversations?",
-        "answer": "Your conversations are yours. They're stored privately so that only you can access them through your account, and they are never shared or sold."
+        "question": "Kto może zobaczyć moje rozmowy?",
+        "answer": "Rozmowy należą do Pani. Są przechowywane prywatnie tak, by tylko Pani miała do nich dostęp przez swoje konto, i nigdy nie są udostępniane ani sprzedawane."
       },
       "retention": {
-        "question": "How long do you keep my conversations?",
-        "answer": "Your conversation messages are kept for up to 12 months from your last activity, after which they're automatically deleted. You can delete them sooner yourself at any time. We also keep a short summary of the patterns you share, used to personalise your experience across sessions, for as long as your account stays open."
+        "question": "Jak długo przechowujecie moje rozmowy?",
+        "answer": "Wiadomości są przechowywane do 12 miesięcy od ostatniej aktywności, po czym są automatycznie usuwane. Można je też usunąć samodzielnie wcześniej, w dowolnej chwili. Przechowujemy także krótkie podsumowanie wzorców, którymi się Pani dzieli, używane do personalizacji doświadczenia między sesjami, dopóki konto jest aktywne."
       },
       "canDelete": {
-        "question": "Can I delete my data?",
-        "answer": "Yes. You can delete your conversations at any time from your account settings, and you can delete your account and all associated data — including your saved summary — whenever you like. After a deletion request, your data is permanently erased within 30 days. You can also email us at support@mindreset.ai for help with this."
+        "question": "Czy mogę usunąć swoje dane?",
+        "answer": "Tak. Można usunąć rozmowy w dowolnej chwili z ustawień konta, a także usunąć konto i wszystkie powiązane dane — włącznie z zapisanym podsumowaniem — kiedy Pani zechce. Po żądaniu usunięcia dane są trwale usuwane w ciągu 30 dni. Można też napisać do nas na support@mindreset.ai po pomoc."
       },
       "medicalAdvice": {
-        "question": "Can MiniMind give medical or mental-health advice?",
-        "answer": "No. MiniMind doesn't diagnose, treat, or give medical or clinical advice. It's a space for self-reflection. For anything clinical, please speak to a qualified professional."
+        "question": "Czy MiniMind może udzielać porad medycznych lub psychologicznych?",
+        "answer": "Nie. MiniMind nie diagnozuje, nie leczy i nie udziela porad medycznych ani klinicznych. To przestrzeń do osobistej refleksji. W sprawach klinicznych proszę porozmawiać z wykwalifikowanym specjalistą."
       },
       "crisisHelp": {
-        "question": "What should I do if I'm in crisis or feel unsafe?",
-        "answer": "MindReset is not a crisis service. If you're in immediate danger, call your local emergency services (999 in the UK). If you're struggling and need someone to talk to right now, you can call Samaritans free on 116 123 (UK), any time, day or night."
+        "question": "Co robić w sytuacji kryzysu lub poczucia zagrożenia?",
+        "answer": "MindReset nie jest usługą kryzysową. W razie bezpośredniego zagrożenia proszę zadzwonić do lokalnych służb ratunkowych (999 w Wielkiej Brytanii). Jeśli przechodzi Pani przez trudny moment i potrzebuje porozmawiać z kimś teraz, można zadzwonić bezpłatnie do Samaritans pod 116 123 (UK), o każdej porze, dniem i nocą."
       },
       "ageRequirement": {
-        "question": "Do I need to be a certain age to use MindReset?",
-        "answer": "Yes. MindReset is for adults aged 18 and over."
+        "question": "Czy jest dolna granica wieku, by korzystać z MindReset?",
+        "answer": "Tak. MindReset jest dla osób dorosłych, od 18 lat wzwyż."
       },
       "languages": {
-        "question": "What languages does MindReset support?",
-        "answer": "MindReset is available in English and Russian. You can switch language from your account settings."
+        "question": "Jakie języki obsługuje MindReset?",
+        "answer": "MindReset jest dostępny w kilku językach, a naszymi głównymi językami są angielski i rosyjski. Język można zmienić w ustawieniach konta."
       },
       "mobileUse": {
-        "question": "Can I use MindReset on my phone?",
-        "answer": "Yes. MindReset works in your phone's web browser as well as on a computer — there's nothing to install."
+        "question": "Czy mogę korzystać z MindReset na telefonie?",
+        "answer": "Tak. MindReset działa w przeglądarce telefonu tak samo jak na komputerze — niczego nie trzeba instalować."
       },
       "contact": {
-        "question": "How do I contact you?",
-        "answer": "You can reach us at support@mindreset.ai. We'll do our best to reply, though please remember we're not a crisis service — for urgent help, use the contacts in the crisis question above."
+        "question": "Jak się z Wami skontaktować?",
+        "answer": "Można napisać do nas na support@mindreset.ai. Postaramy się odpowiedzieć — proszę jednak pamiętać, że nie jesteśmy usługą kryzysową. W pilnej potrzebie należy korzystać z kontaktów z poprzedniego pytania o kryzys."
       }
     }
   }
