@@ -61,7 +61,13 @@ export default function TopBar({
     >
       {showTreeMark && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src="/icon.png" alt="" width={26} height={26} style={{ display: 'block' }} />
+        <img
+          src={theme === 'night' ? '/logo-dark.png' : '/logo-light.png'}
+          alt=""
+          width={26}
+          height={26}
+          style={{ display: 'block', objectFit: 'contain' }}
+        />
       )}
       <span
         className="text-[20px] tracking-tight"
