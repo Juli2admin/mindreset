@@ -45,10 +45,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Use the request's actual origin so the email link returns the user to
+  // the same deployment that initiated the request. Hardcoding mindreset.ai
+  // sent users to whatever stale build that domain happens to be aliased to.
+  const origin =
+    request.headers.get('origin') ??
+    request.nextUrl.origin;
+
   try {
     const rawToken = await createDeletionToken(userId);
     const confirmPath = `/account/confirm-delete?token=${rawToken}`;
-    await sendDeletionConfirmEmail({ email, locale, confirmPath });
+    await sendDeletionConfirmEmail({ email, locale, confirmPath, origin });
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error('[account/delete-request] failed', err);

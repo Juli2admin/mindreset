@@ -95,8 +95,9 @@ export async function POST(request: NextRequest) {
   }
 
   if (email) {
+    const origin = request.headers.get('origin') ?? request.nextUrl.origin;
     try {
-      await sendDeletionScheduledEmail({ email, locale, scheduledAt });
+      await sendDeletionScheduledEmail({ email, locale, scheduledAt, origin });
     } catch (err) {
       console.error('[confirm-delete] scheduled email failed', err);
     }
