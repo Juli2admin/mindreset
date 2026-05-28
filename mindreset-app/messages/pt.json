@@ -128,11 +128,38 @@
       "openMinimind": "Abrir MiniMind",
       "buyTopUp": "Comprar um reforço",
       "managePlan": "Gerir subscrição",
-      "seePlans": "Ver planos"
+      "seePlans": "Ver planos",
+      "browsePlans": "Ver todos os planos →"
     },
-    "comingSoon": {
-      "label": "Em breve mais",
-      "note": "Módulos temáticos e um caminho de 8 blocos estão a caminho."
+    "modulePriceFormat": "£59 (£29 para assinantes)",
+    "moduleBuyButton": "Abrir módulo →",
+    "states": {
+      "kicker": "OS TEUS ESTADOS",
+      "intro": "Práticas rápidas de apoio para os momentos em que tudo se torna intenso demais. Módulos curtos e estruturados aos quais podes recorrer em tempo real — baseados em abordagens polivagais, somáticas e trauma-informed de autoajuda.",
+      "modules": {
+        "anxiety": "Acalmar a ansiedade",
+        "lowEnergy": "Recuperar energia",
+        "comeBack": "Voltar a ti",
+        "empty": "Reconectar-te contigo mesmo"
+      }
+    },
+    "themes": {
+      "kicker": "TEMAS PROFUNDOS",
+      "intro": "Um trabalho interior mais profundo, ao teu ritmo. Módulos imersivos para desemaranhar os padrões subjacentes — dinheiro, corpo, família, vergonha e a vida que realmente queres viver.",
+      "modules": {
+        "money": "Relação com o dinheiro",
+        "body": "Corpo e sexualidade",
+        "family": "Padrões familiares",
+        "shame": "Vergonha e culpa",
+        "selfRealisation": "Realização pessoal"
+      }
+    },
+    "journey": {
+      "kicker": "O TEU REGRESSO A TI",
+      "intro": "O programa completo. Oito etapas, da estabilização do teu sistema nervoso ao regresso a ti mesmo — construído cuidadosamente para apoiar segurança interior e profundidade ao longo do processo.",
+      "title": "O Regresso a Ti",
+      "priceFormat": "Pagamento único £599 · 12 × £55/semana",
+      "buyButton": "Começar o Caminho →"
     }
   },
   "AccountDeletion": {

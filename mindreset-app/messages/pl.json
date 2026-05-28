@@ -128,11 +128,38 @@
       "openMinimind": "Otwórz MiniMind",
       "buyTopUp": "Kup doładowanie",
       "managePlan": "Zarządzaj subskrypcją",
-      "seePlans": "Zobacz plany"
+      "seePlans": "Zobacz plany",
+      "browsePlans": "Zobacz wszystkie plany →"
     },
-    "comingSoon": {
-      "label": "Wkrótce więcej",
-      "note": "Tematyczne moduły i ścieżka w 8 blokach są już w drodze."
+    "modulePriceFormat": "£59 (£29 dla subskrybentów)",
+    "moduleBuyButton": "Otwórz moduł →",
+    "states": {
+      "kicker": "TWOJE STANY",
+      "intro": "Szybkie praktyki wsparcia na momenty, gdy wszystko staje się zbyt przytłaczające. Krótkie, uporządkowane moduły, po które możesz sięgnąć w czasie rzeczywistym — oparte na podejściach poliwagalnych, somatycznych i trauma-informed do samopomocy.",
+      "modules": {
+        "anxiety": "Wyciszyć moment lęku",
+        "lowEnergy": "Odzyskać siły",
+        "comeBack": "Wrócić do siebie",
+        "empty": "Wrócić do kontaktu, gdy czujesz pustkę"
+      }
+    },
+    "themes": {
+      "kicker": "GŁĘBOKIE TEMATY",
+      "intro": "Głębsza wewnętrzna praca — we własnym tempie. Rozbudowane moduły pomagające rozplątać ukryte wzorce: pieniądze, ciało, rodzina, wstyd i życie, które naprawdę chcesz tworzyć.",
+      "modules": {
+        "money": "Pieniądze i obfitość",
+        "body": "Ciało i seksualność",
+        "family": "Scenariusze rodzinne",
+        "shame": "Wstyd i wina",
+        "selfRealisation": "Samorealizacja"
+      }
+    },
+    "journey": {
+      "kicker": "TWOJA DROGA DO SIEBIE",
+      "intro": "Pełny program. Osiem etapów — od stabilizacji układu nerwowego po powrót do siebie. Proces ułożony z troską o bezpieczeństwo i głębię doświadczenia.",
+      "title": "Droga do siebie",
+      "priceFormat": "Jednorazowo £599 · 12 × £55/tydzień",
+      "buyButton": "Rozpocznij Drogę →"
     }
   },
   "AccountDeletion": {

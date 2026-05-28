@@ -11,6 +11,12 @@ import TopBar from '@/components/TopBar';
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
+// Module catalogue rendered in the States and Themes sections of /home.
+// Each ID resolves a title via `Home.states.modules.<id>` / `Home.themes.modules.<id>`.
+// Buy buttons route to /pricing today; PR3 wires real checkout per module.
+const STATE_IDS = ['anxiety', 'lowEnergy', 'comeBack', 'empty'] as const;
+const THEME_IDS = ['money', 'body', 'family', 'shame', 'selfRealisation'] as const;
+
 type Props = {
   firstName: string | null;
   cookieToClear: boolean;
@@ -244,6 +250,19 @@ export default function HomeClient({
                   >
                     {t('yourMiniMind.managePlan')}
                   </button>
+                  <Link
+                    href="/pricing"
+                    className="px-5 py-2 rounded-full text-[13px] inline-flex items-center"
+                    style={{
+                      background: 'transparent',
+                      color: PALETTE.text,
+                      fontFamily: SANS,
+                      fontWeight: 500,
+                      border: `1px solid ${PALETTE.border}`,
+                    }}
+                  >
+                    {t('yourMiniMind.browsePlans')}
+                  </Link>
                 </>
               )}
             </div>
@@ -269,25 +288,144 @@ export default function HomeClient({
             scheduled (the banner above takes over). */}
         {!deletionScheduledAt && <SettingsSection t={tDel} locale={locale} />}
 
-        {/* Coming soon — soft divider for Block C products. Replaced by
-            real Journey + Modules cards once their content ships. */}
+        {/* Your States — 4 individually-purchasable modules.
+            Cards link to /pricing today; PR3 wires per-module checkout. */}
         <div className="mb-12">
-          <hr style={{ border: 'none', borderTop: `1px dashed ${PALETTE.border}` }} />
-          <div className="py-6 text-center">
-            <div
-              className="text-[11px] uppercase tracking-[0.22em] mb-2"
-              style={{ color: PALETTE.textHint, fontWeight: 500, fontFamily: SANS }}
-            >
-              {t('comingSoon.label')}
-            </div>
-            <p
-              className="text-[14px] italic"
-              style={{ color: PALETTE.textMuted, fontFamily: SERIF }}
-            >
-              {t('comingSoon.note')}
-            </p>
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {t('states.kicker')}
           </div>
-          <hr style={{ border: 'none', borderTop: `1px dashed ${PALETTE.border}` }} />
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {t('states.intro')}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {STATE_IDS.map((id) => (
+              <Link
+                key={id}
+                href="/pricing"
+                className="rounded-lg p-5 block hover:opacity-80 transition-opacity"
+                style={{
+                  background: PALETTE.bgCard,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                <h3
+                  className="text-[16px] leading-[1.3] mb-1"
+                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                >
+                  {t(`states.modules.${id}` as 'states.modules.anxiety')}
+                </h3>
+                <p
+                  className="text-[12px] mb-3"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {t('modulePriceFormat')}
+                </p>
+                <span
+                  className="text-[13px]"
+                  style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
+                >
+                  {t('moduleBuyButton')}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Your Themes — 5 individually-purchasable modules. */}
+        <div className="mb-12">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {t('themes.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {t('themes.intro')}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {THEME_IDS.map((id) => (
+              <Link
+                key={id}
+                href="/pricing"
+                className="rounded-lg p-5 block hover:opacity-80 transition-opacity"
+                style={{
+                  background: PALETTE.bgCard,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                <h3
+                  className="text-[16px] leading-[1.3] mb-1"
+                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                >
+                  {t(`themes.modules.${id}` as 'themes.modules.money')}
+                </h3>
+                <p
+                  className="text-[12px] mb-3"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {t('modulePriceFormat')}
+                </p>
+                <span
+                  className="text-[13px]"
+                  style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
+                >
+                  {t('moduleBuyButton')}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Your Journey — single card, two purchase options on one row. */}
+        <div className="mb-12">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {t('journey.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {t('journey.intro')}
+          </p>
+          <Link
+            href="/pricing"
+            className="rounded-lg p-6 block hover:opacity-80 transition-opacity"
+            style={{
+              background: PALETTE.bgCard,
+              border: `1px solid ${PALETTE.border}`,
+            }}
+          >
+            <h3
+              className="text-[20px] mb-2"
+              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+            >
+              {t('journey.title')}
+            </h3>
+            <p
+              className="text-[13px] mb-4"
+              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+            >
+              {t('journey.priceFormat')}
+            </p>
+            <span
+              className="text-[13px]"
+              style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
+            >
+              {t('journey.buyButton')}
+            </span>
+          </Link>
         </div>
 
         {footerSlot}
