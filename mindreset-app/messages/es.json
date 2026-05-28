@@ -661,12 +661,12 @@
       "body": "Esta Privacy Policy explica qué datos personales recopilamos sobre usted cuando utiliza el Servicio, por qué los recopilamos, cómo los protegemos, con quién los compartimos, cuánto tiempo los conservamos y qué derechos tiene conforme al UK GDPR y, cuando corresponda, al EU GDPR."
     },
     "section2": {
-      "title": "2. Data We Collect",
+      "title": "2. Datos que recopilamos",
       "table": {
-        "headerCategory": "Category",
-        "headerExamples": "Examples",
-        "headerPurpose": "Purpose",
-        "headerLawfulBasis": "Lawful basis",
+        "headerCategory": "Categoría",
+        "headerExamples": "Ejemplos",
+        "headerPurpose": "Finalidad",
+        "headerLawfulBasis": "Base legal",
         "account": {
           "category": "Account data",
           "examples": "email address, hashed password, country (inferred from IP), preferred language",

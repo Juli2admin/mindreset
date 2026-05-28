@@ -636,12 +636,12 @@
       "body": "Настоящая Privacy Policy объясняет, какие персональные данные мы собираем о вас при использовании Сервиса, зачем мы их собираем, как мы их защищаем, с кем делимся, как долго храним, а также какими правами вы обладаете в соответствии с UK GDPR и (где применимо) EU GDPR."
     },
     "section2": {
-      "title": "2. Data We Collect",
+      "title": "2. Данные, которые мы собираем",
       "table": {
-        "headerCategory": "Category",
-        "headerExamples": "Examples",
-        "headerPurpose": "Purpose",
-        "headerLawfulBasis": "Lawful basis",
+        "headerCategory": "Категория",
+        "headerExamples": "Примеры",
+        "headerPurpose": "Цель",
+        "headerLawfulBasis": "Правовое основание",
         "account": {
           "category": "Account data",
           "examples": "email address, hashed password, country (inferred from IP), preferred language",
