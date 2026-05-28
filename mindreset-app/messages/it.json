@@ -1,427 +1,427 @@
 {
   "Pricing": {
-    "comingSoon": "Coming soon",
-    "tierOpen": "Open",
-    "tierActive": "Active",
+    "comingSoon": "Prossimamente",
+    "tierOpen": "Aperto",
+    "tierActive": "Attivo",
     "tiers": {
       "freeTaster": {
-        "title": "Free taster",
-        "subtitle": "50 messages to try",
-        "description": "Send up to 50 messages with MiniMind. No card needed, no time limit. Spend them at your pace."
+        "title": "Assaggio gratuito",
+        "subtitle": "50 messaggi per provare",
+        "description": "Invii fino a 50 messaggi a MiniMind. Nessuna carta richiesta, nessun limite di tempo. Li usi al Suo ritmo."
       },
       "miniMindEssential": {
         "title": "MiniMind Essential",
-        "subtitle": "Daily companion",
-        "description": "A daily companion for self-guided reflection. 200 messages each billing cycle.",
-        "annualNote": "Annual billing saves around 28%."
+        "subtitle": "Compagno quotidiano",
+        "description": "Un compagno quotidiano per la riflessione auto-guidata. 200 messaggi per ciclo di fatturazione.",
+        "annualNote": "La fatturazione annuale fa risparmiare circa il 28 %."
       },
       "miniMindExtended": {
         "title": "MiniMind Extended",
-        "subtitle": "More room to lean in",
-        "description": "Higher monthly access for the times you need to lean in deeper. 800 to 1,200 messages each billing cycle.",
-        "annualNote": "Annual billing saves around 30%."
+        "subtitle": "Più spazio per andare in profondità",
+        "description": "Accesso mensile più ampio per i momenti in cui desidera approfondire. Da 800 a 1.200 messaggi per ciclo di fatturazione.",
+        "annualNote": "La fatturazione annuale fa risparmiare circa il 30 %."
       },
       "topUp": {
-        "title": "Message top-up",
-        "subtitle": "When you need a few more",
-        "description": "Add 200 messages to your current billing cycle. One-off — expires at cycle reset."
+        "title": "Ricarica messaggi",
+        "subtitle": "Quando ne servono qualcuno in più",
+        "description": "Aggiunga 200 messaggi al Suo ciclo di fatturazione attuale. Una tantum — scade al reset del ciclo."
       },
       "statesThemes": {
-        "title": "States & Themes",
-        "subtitle": "Focused modules",
-        "description": "Targeted work on four states and five themes."
+        "title": "Stati e Temi",
+        "subtitle": "Moduli mirati",
+        "description": "Lavoro mirato su quattro Stati e cinque Temi."
       },
       "journey": {
-        "title": "The Journey",
-        "subtitle": "Eight-stage reset",
-        "description": "The deep eight-block work, paced for safety and depth."
+        "title": "Il Cammino",
+        "subtitle": "Un rinnovamento in otto tappe",
+        "description": "Il lavoro profondo in otto blocchi, al ritmo di sicurezza e profondità."
       }
     },
     "price": {
-      "perMonth": "{price} / month",
-      "perYearOrMonth": "{annual} / year — or {monthly} / month",
+      "perMonth": "{price} / mese",
+      "perYearOrMonth": "{annual} / anno — o {monthly} / mese",
       "oneOff": "{price}"
     },
     "cta": {
-      "subscribeMonthly": "Subscribe monthly",
-      "subscribeAnnual": "Subscribe annually",
-      "buyTopUp": "Buy top-up",
-      "managePlan": "Manage subscription",
-      "processing": "Processing…"
+      "subscribeMonthly": "Abbonarsi al mese",
+      "subscribeAnnual": "Abbonarsi all’anno",
+      "buyTopUp": "Acquistare ricarica",
+      "managePlan": "Gestire l’abbonamento",
+      "processing": "Elaborazione…"
     }
   },
   "CrisisResources": {
-    "crisisLabel": "Need help right now?",
+    "crisisLabel": "Ha bisogno di aiuto adesso?",
     "crisisItems": [
       {
         "name": "Samaritans",
-        "detail": "Call 116 123 — 24/7, free"
+        "detail": "Chiamare il 116 123 — 24/7, gratuito"
       },
       {
         "name": "Shout",
-        "detail": "Text SHOUT to 85258 — 24/7"
+        "detail": "Inviare SHOUT via SMS al 85258 — 24/7"
       },
       {
         "name": "NHS 111",
-        "detail": "Mental health crisis line — option 2"
+        "detail": "Linea di crisi per la salute mentale — opzione 2"
       }
     ],
-    "disclaimer": "MindReset is a wellbeing tool — not therapy, not a medical device, and not a substitute for professional care. If you are in immediate danger, please use one of the lines above or call 999."
+    "disclaimer": "MindReset è uno strumento di benessere — non terapia, non dispositivo medico, non sostituto di una cura professionale. Se è in pericolo immediato, utilizzi una delle linee qui sopra o chiami il 999."
   },
   "DisclaimerModal": {
-    "title": "Important — before you continue",
-    "primary": "MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.",
-    "secondary": "The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.",
-    "crisisLine": "<b>UK:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> option 2. Your GP. In an emergency: <b>999</b> or A&E.",
-    "acknowledge": "I understand — continue"
+    "title": "Importante — prima di continuare",
+    "primary": "MindReset è uno strumento di benessere — non terapia, non dispositivo medico, non servizio di crisi.",
+    "secondary": "L’IA qui non può diagnosticare, curare o sostituire un clinico. Se è in crisi, in pericolo o sta vivendo sintomi psicologici gravi — si rivolga a un supporto professionale.",
+    "crisisLine": "<b>UK:</b> Samaritans <b>116 123</b> (24/7). NHS <b>111</b> opzione 2. Il Suo GP. In caso di emergenza: <b>999</b> o A&E.",
+    "acknowledge": "Ho capito — continuare"
   },
   "Footer": {
-    "terms": "Terms",
+    "terms": "Condizioni",
     "privacy": "Privacy",
     "faq": "FAQ",
-    "contact": "Contact",
-    "shareYourStory": "Share your story",
-    "languagePickerLabel": "Language"
+    "contact": "Contatti",
+    "shareYourStory": "Condividi la tua storia",
+    "languagePickerLabel": "Lingua"
   },
   "Testimonials": {
-    "kicker": "FROM OTHERS WALKING THIS PATH",
-    "title": "Stories from people using MindReset",
-    "shareInvite": "Has MindReset helped you?",
-    "shareCta": "Share your story"
+    "kicker": "DA ALTRE PERSONE CHE PERCORRONO QUESTA STRADA",
+    "title": "Storie di persone che usano MindReset",
+    "shareInvite": "MindReset Le ha aiutato?",
+    "shareCta": "Condivida la Sua storia"
   },
   "ShareYourStory": {
-    "metaTitle": "Share your story",
-    "metaDescription": "Tell us how MindReset has helped you. Your story may appear on the site to help others considering this work — only with your consent, only after review.",
-    "kicker": "WE'D LOVE TO HEAR FROM YOU",
-    "title": "Share your story.",
-    "intro1": "If MindReset has helped you in any way — a single moment of clarity, a slow shift over weeks, something you can name or something you can't — telling that story helps others find the courage to begin.",
-    "intro2": "Nothing here is published automatically. We read every submission and only publish ones you've consented to share publicly. You can use a first name only, a nickname, or post anonymously.",
-    "nameLabel": "How would you like to be credited?",
-    "namePlaceholder": "Jane, J., Anonymous…",
-    "nameHelp": "First name, initial, or anything you're comfortable with. We never publish surnames or full names.",
-    "ageLabel": "Age range (optional)",
-    "ageOptional": "Prefer not to say",
-    "storyLabel": "Your story",
-    "storyPlaceholder": "Take your time. There's no right way to do this — write what feels honest. A few sentences is enough.",
-    "storyHelp": "1500 characters max.",
-    "consentLabel": "I consent to MindReset publishing my story (edited for length and clarity if needed) on the website, with the name above. I understand I can email support@mindreset.ai any time to have it removed.",
-    "submitCta": "Send my story",
-    "submitting": "Sending…",
-    "submitError": "Something went wrong. Please try again.",
-    "thanksTitle": "Thank you for sharing.",
-    "thanksBody": "We've received your story and will read it carefully. If it's published, the name you provided will appear with it. You can email support@mindreset.ai at any time to make changes or withdraw consent."
+    "metaTitle": "Condividi la tua storia",
+    "metaDescription": "Ci racconti come MindReset Le ha aiutato. La Sua storia può apparire sul sito per aiutare altre persone che stanno considerando questo percorso — solo con il Suo consenso, solo dopo revisione.",
+    "kicker": "CI PIACEREBBE LEGGERLA",
+    "title": "Condivida la Sua storia.",
+    "intro1": "Se MindReset L’ha aiutata in qualche modo — un singolo momento di chiarezza, uno spostamento lento in alcune settimane, qualcosa che riesce a nominare o qualcosa che non riesce — raccontare quella storia aiuta altri a trovare il coraggio di iniziare.",
+    "intro2": "Qui nulla viene pubblicato automaticamente. Leggiamo ogni invio e pubblichiamo solo ciò per cui ha dato il consenso a condividere pubblicamente. Può usare solo un nome di battesimo, uno pseudonimo, o pubblicare in modo anonimo.",
+    "nameLabel": "Come desidera essere indicato?",
+    "namePlaceholder": "Anna, A., Anonimo…",
+    "nameHelp": "Nome di battesimo, iniziale, o ciò con cui si sente a Suo agio. Non pubblichiamo mai cognomi o nomi completi.",
+    "ageLabel": "Fascia d’età (facoltativo)",
+    "ageOptional": "Preferisco non dirlo",
+    "storyLabel": "La Sua storia",
+    "storyPlaceholder": "Si prenda il tempo. Non c’è un modo giusto di farlo — scriva ciò che sente onesto. Bastano poche frasi.",
+    "storyHelp": "1500 caratteri al massimo.",
+    "consentLabel": "Acconsento a che MindReset pubblichi la mia storia (modificata per lunghezza e chiarezza se necessario) sul sito, con il nome sopra indicato. Comprendo di poter scrivere a support@mindreset.ai in qualsiasi momento per farla rimuovere.",
+    "submitCta": "Inviare la mia storia",
+    "submitting": "Invio…",
+    "submitError": "Qualcosa è andato storto. Riprovi.",
+    "thanksTitle": "Grazie per la Sua condivisione.",
+    "thanksBody": "Abbiamo ricevuto la Sua storia e la leggeremo con cura. Se verrà pubblicata, il nome che ha indicato apparirà accanto. Può scriverci a support@mindreset.ai in qualsiasi momento per apportare modifiche o ritirare il consenso."
   },
   "Home": {
-    "welcomeKicker": "Welcome back",
-    "welcomeTitleWithName": "Welcome back, {name}.",
-    "welcomeTitleNoName": "Welcome back.",
-    "welcomeBody": "A way back to yourself, one conversation at a time.",
+    "welcomeKicker": "Bentornato",
+    "welcomeTitleWithName": "Bentornato, {name}.",
+    "welcomeTitleNoName": "Bentornato.",
+    "welcomeBody": "Una via di ritorno a sé, una conversazione alla volta.",
     "yourMiniMind": {
-      "kickerFree": "YOUR FREE TASTER",
-      "kickerPaid": "YOUR MINIMIND",
-      "remainingFree": "{count, plural, one {# message remaining} other {# messages remaining}}",
-      "remainingPaid": "{count, plural, one {# message remaining this cycle} other {# messages remaining this cycle}}",
-      "remainingWithTopUp": "{cycle} this cycle + {topUp} top-up",
-      "resetsOn": "Resets {date}",
-      "freeNote": "Free taster — 50 messages lifetime",
-      "openMinimind": "Open MiniMind",
-      "buyTopUp": "Buy a top-up",
-      "managePlan": "Manage subscription",
-      "seePlans": "See plans"
+      "kickerFree": "IL SUO ASSAGGIO GRATUITO",
+      "kickerPaid": "IL SUO MINIMIND",
+      "remainingFree": "{count, plural, one {# messaggio rimasto} other {# messaggi rimasti}}",
+      "remainingPaid": "{count, plural, one {# messaggio rimasto in questo ciclo} other {# messaggi rimasti in questo ciclo}}",
+      "remainingWithTopUp": "{cycle} in questo ciclo + {topUp} di ricarica",
+      "resetsOn": "Si rinnova il {date}",
+      "freeNote": "Assaggio gratuito — 50 messaggi a vita",
+      "openMinimind": "Aprire MiniMind",
+      "buyTopUp": "Acquistare una ricarica",
+      "managePlan": "Gestire l’abbonamento",
+      "seePlans": "Vedere i piani"
     },
     "comingSoon": {
-      "label": "More coming soon",
-      "note": "Themed modules and an 8-block journey are on their way."
+      "label": "Presto altro",
+      "note": "Moduli tematici e un percorso in 8 blocchi sono in arrivo."
     }
   },
   "AccountDeletion": {
-    "settingsKicker": "YOUR DATA",
-    "exportTitle": "Export your data",
-    "exportBody": "Download a JSON file with everything you've contributed: profile, conversations, screening answers, wellbeing profile, and payment records.",
-    "exportCta": "Download my data",
-    "exporting": "Preparing…",
-    "exportError": "Couldn't generate the export. Please try again.",
-    "deleteTitle": "Delete your account",
-    "deleteBody": "Permanently delete your account and all associated data. We'll email you a confirmation link first. If you have an active subscription, your account stays accessible until your current period ends — and at least 30 days from now, whichever is longer. You can cancel any time before then.",
-    "deleteCta": "Delete my account",
-    "deleteConfirmCta": "Yes, send me the confirmation email",
-    "deleteSending": "Sending…",
-    "deleteCancel": "Keep my account",
-    "deleteEmailSent": "Confirmation email sent. Click the link in your inbox to schedule deletion. The link expires in 1 hour.",
-    "deleteRequestError": "Couldn't send the confirmation email. Please try again.",
-    "pendingTitle": "Your account is scheduled for deletion on {date}",
-    "pendingBody": "Until that date, your account remains active. After it, your data will be permanently deleted. You can cancel the deletion at any point before then.",
-    "cancelCta": "Cancel deletion",
-    "cancelling": "Cancelling…",
-    "cancelError": "Couldn't cancel deletion. Please try again.",
-    "missingToken": "This confirmation link is missing its token. Please open the most recent email we sent you and click the link there.",
-    "signInToConfirm": "Sign in to confirm deletion of your account.",
-    "signInCta": "Sign in",
-    "confirmBody1": "Click the button below to confirm deletion of your MindReset.ai account.",
-    "confirmBody2": "If you have an active subscription, your account will remain accessible until your current period ends — and at least 30 days from now, whichever is longer. You can cancel any time before then.",
-    "confirmCta": "Confirm deletion",
-    "confirming": "Confirming…",
-    "tokenExpired": "This confirmation link has expired or already been used. Please request a new one from your home page.",
-    "genericError": "Something went wrong. Please try again.",
-    "doneTitle": "Deletion scheduled.",
-    "doneBody": "Your account is scheduled for deletion on {date}. You can cancel any time before then by signing back in. We've sent you a confirmation email.",
-    "doneBodyNoDate": "Your account is scheduled for deletion. You can cancel any time during the grace period by signing back in. We've sent you a confirmation email."
+    "settingsKicker": "I SUOI DATI",
+    "exportTitle": "Esportare i Suoi dati",
+    "exportBody": "Scarichi un file JSON con tutto ciò che ha condiviso: profilo, conversazioni, risposte al questionario, profilo di benessere e cronologia dei pagamenti.",
+    "exportCta": "Scaricare i miei dati",
+    "exporting": "Preparazione…",
+    "exportError": "Impossibile generare l’esportazione. Riprovi.",
+    "deleteTitle": "Eliminare il Suo account",
+    "deleteBody": "Eliminare definitivamente il Suo account e tutti i dati associati. Le invieremo prima un link di conferma via email. Se ha un abbonamento attivo, il Suo account rimane accessibile fino alla fine del periodo in corso — e almeno 30 giorni da oggi, in base a quale sia il più lungo. Può annullare in qualsiasi momento prima di quella data.",
+    "deleteCta": "Eliminare il mio account",
+    "deleteConfirmCta": "Sì, inviatemi l’email di conferma",
+    "deleteSending": "Invio…",
+    "deleteCancel": "Mantenere il mio account",
+    "deleteEmailSent": "Email di conferma inviata. Clicchi sul link nella Sua casella per programmare l’eliminazione. Il link scade in 1 ora.",
+    "deleteRequestError": "Impossibile inviare l’email di conferma. Riprovi.",
+    "pendingTitle": "Il Suo account è programmato per l’eliminazione il {date}",
+    "pendingBody": "Fino a quella data il Suo account resta attivo. Dopo, i Suoi dati saranno eliminati definitivamente. Può annullare l’eliminazione in qualsiasi momento prima.",
+    "cancelCta": "Annullare l’eliminazione",
+    "cancelling": "Annullamento…",
+    "cancelError": "Impossibile annullare l’eliminazione. Riprovi.",
+    "missingToken": "A questo link di conferma manca il token. La preghiamo di aprire l’ultima email che Le abbiamo inviato e cliccare sul link presente.",
+    "signInToConfirm": "Acceda per confermare l’eliminazione del Suo account.",
+    "signInCta": "Accedere",
+    "confirmBody1": "Clicchi sul pulsante qui sotto per confermare l’eliminazione del Suo account MindReset.ai.",
+    "confirmBody2": "Se ha un abbonamento attivo, il Suo account rimarrà accessibile fino alla fine del periodo in corso — e almeno 30 giorni da oggi, in base a quale sia il più lungo. Può annullare in qualsiasi momento prima di quella data.",
+    "confirmCta": "Confermare l’eliminazione",
+    "confirming": "Conferma…",
+    "tokenExpired": "Questo link di conferma è scaduto o è già stato usato. Ne richieda uno nuovo dalla Sua pagina iniziale.",
+    "genericError": "Qualcosa è andato storto. Riprovi.",
+    "doneTitle": "Eliminazione programmata.",
+    "doneBody": "Il Suo account è programmato per l’eliminazione il {date}. Può annullare in qualsiasi momento prima accedendo di nuovo. Le abbiamo inviato un’email di conferma.",
+    "doneBodyNoDate": "Il Suo account è programmato per l’eliminazione. Può annullare in qualsiasi momento durante il periodo di tolleranza accedendo di nuovo. Le abbiamo inviato un’email di conferma."
   },
   "Landing": {
-    "signIn": "Sign in",
+    "signIn": "Accedi",
     "account": "Account",
-    "heroKicker": "A turning point. A method.",
-    "heroTitle": "A way back\nto yourself.",
+    "heroKicker": "Un punto di svolta. Un metodo.",
+    "heroTitle": "Una via di ritorno\na sé.",
     "heroBody": [
-      "You feel it, don't you? That quiet sense that something inside is misaligned.",
-      "You are functioning. You are capable. But underneath — there is confusion, exhaustion, or emptiness you cannot quite explain.",
-      "This is where you stop. And begin again."
+      "Lo sente, vero? Quella sensazione sommessa che qualcosa, dentro, non sia allineato.",
+      "Lei funziona. È capace. Ma sotto — c’è una confusione, una stanchezza, o un vuoto che non riesce a spiegare del tutto.",
+      "È qui che si ferma. E ricomincia."
     ],
-    "heroCta": "Begin",
-    "heroNote": "Begins with a five-minute check-in.",
-    "whatKicker": "What this is",
-    "whatTitle": "Structure, not advice.",
-    "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
+    "heroCta": "Iniziare",
+    "heroNote": "Inizia con un check-in di cinque minuti.",
+    "whatKicker": "Che cos’è",
+    "whatTitle": "Struttura, non consigli.",
+    "whatLead": "MindReset è una piattaforma di riflessione digitale strutturata, pensata per aiutarLa a ritrovare chiarezza emotiva, stabilità interiore e un senso della propria direzione.",
     "whatNot": [
-      "therapy",
+      "terapia",
       "coaching",
-      "a crisis service"
+      "un servizio di crisi"
     ],
-    "notWord": "Not",
-    "whatHelpsLead": "It helps you:",
+    "notWord": "Né",
+    "whatHelpsLead": "Le serve a:",
     "whatHelpsItems": [
-      "Slow down internal noise",
-      "Recognise emotional patterns",
-      "Rebuild inner coherence",
-      "Reconnect with who you are beneath roles and expectations"
+      "rallentare il rumore interiore",
+      "riconoscere i propri schemi emotivi",
+      "ricostruire una coerenza interiore",
+      "tornare in contatto con chi è sotto i ruoli e le aspettative"
     ],
-    "whoKicker": "Who it is for",
-    "whoTitle": "Internally disoriented,\nexternally functioning.",
-    "whoLead": "MindReset is designed for adults navigating internal transitions:",
+    "whoKicker": "Per chi è",
+    "whoTitle": "Disorientati dentro,\nfunzionanti fuori.",
+    "whoLead": "MindReset è pensato per adulti che attraversano transizioni interiori:",
     "whoScenarios": [
-      "Feeling lost or disconnected despite doing everything right",
-      "Emotional burnout after years of responsibility or caregiving",
-      "Identity confusion after divorce, relocation, ageing, or major life shifts",
-      "Chronic self-neglect, people-pleasing, putting others first",
-      "Saying: I have tried therapy, books, and self-work — but something still feels missing"
+      "Sentirsi persi o disconnessi pur sembrando andare tutto bene",
+      "Esaurimento emotivo dopo anni di responsabilità o di cura",
+      "Confusione identitaria dopo un divorzio, un trasferimento, il passare degli anni o un grande cambiamento di vita",
+      "Trascuratezza cronica di sé, abitudine a compiacere, mettere gli altri sempre prima",
+      "Dirsi: «Ho provato la terapia, i libri, il lavoro su di me — eppure manca ancora qualcosa»"
     ],
-    "whoClose": "It is for those who are emotionally stable, but internally disoriented.",
-    "safetyKicker": "Safety",
-    "safetyTitle": "You stay in control.",
-    "safetyLead": "MindReset is built with emotional safety at its core.",
+    "whoClose": "È per chi è emotivamente stabile, ma interiormente disorientato.",
+    "safetyKicker": "Sicurezza",
+    "safetyTitle": "Lei mantiene il controllo.",
+    "safetyLead": "MindReset è costruito attorno alla sicurezza emotiva.",
     "safetyItems": [
-      "No diagnoses. No labels. No pressure.",
-      "No deep trauma work unless you choose it.",
-      "You can pause, slow down, or stop at any moment.",
-      "If your responses suggest distress or instability, the system pauses gently and points you to professional support."
+      "Nessuna diagnosi. Nessuna etichetta. Nessuna pressione.",
+      "Nessun lavoro profondo sul trauma se non lo sceglie Lei.",
+      "Può fermarsi, rallentare o interrompere in qualsiasi momento.",
+      "Se le Sue risposte fanno pensare a un disagio o a un’instabilità, il sistema si ferma con delicatezza e La indirizza a un sostegno professionale."
     ],
-    "pathsKicker": "What is inside",
-    "pathsTitle": "Three paths,\nthree depths.",
+    "pathsKicker": "Cosa c’è dentro",
+    "pathsTitle": "Tre vie,\ntre profondità.",
     "paths": [
       {
         "name": "MiniMind",
-        "kind": "Daily companion",
-        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help."
+        "kind": "Compagno quotidiano",
+        "body": "Un compagno di conversazione caldo, a cui tornare in qualsiasi momento. Check-in quotidiani, brevi pratiche di radicamento, un posto dove approdare quando qualcosa pesa. Apprende i Suoi schemi con dolcezza e propone un lavoro più profondo quando può aiutare."
       },
       {
-        "name": "States & Themes",
-        "kind": "Focused modules",
-        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation."
+        "name": "Stati e Temi",
+        "kind": "Moduli mirati",
+        "body": "Percorsi brevi e strutturati per momenti precisi. Gli Stati per il presente: ansia, disconnessione, vuoto interiore, intorpidimento. I Temi per gli schemi sottostanti: denaro e autostima, famiglia, corpo, vergogna, realizzazione di sé."
       },
       {
-        "name": "The Journey",
-        "kind": "Eight-stage reset",
-        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself."
+        "name": "Il Cammino",
+        "kind": "Un rinnovamento in otto tappe",
+        "body": "Un percorso lento e sequenziale, dalla stabilizzazione fino a un nuovo senso di chi è Lei. Mesi di lavoro, al ritmo di ciò che il Suo sistema può sostenere. Pensato per lasciare andare credenze che non sono mai state Sue, ristabilire i confini, e ricordarsi di sé."
       }
     ],
-    "differentKicker": "What sets it apart",
-    "differentTitle": "Most platforms give advice.\nMindReset gives structure.",
+    "differentKicker": "Cosa lo distingue",
+    "differentTitle": "La maggior parte delle piattaforme dà consigli.\nMindReset dà struttura.",
     "differentItems": [
-      "No diagnoses",
-      "No digging unless you choose",
-      "No dependency on the system",
-      "No pressure to change",
-      "Just a clear, contained path — at your pace"
+      "Nessuna diagnosi",
+      "Nessuno scavo se non lo sceglie Lei",
+      "Nessuna dipendenza dal sistema",
+      "Nessuna pressione a cambiare",
+      "Solo un percorso chiaro e contenuto — al Suo ritmo"
     ],
-    "closingKicker": "Whenever you are ready",
-    "closingTitle": "Begin.",
-    "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
-    "closingCta": "Start the check-in"
+    "closingKicker": "Quando si sente pronto",
+    "closingTitle": "Iniziare.",
+    "closingBody": "Non deve essere in pezzi per iniziare. Non deve sapere ciò che vuole. Il check-in Le dice — con delicatezza — se questo Le corrisponde in questo momento.",
+    "closingCta": "Iniziare il check-in"
   },
   "MiniMind": {
-    "opener": "Hello. Good to have you here. How are you doing today?",
-    "placeholder": "Say what's on your mind.",
-    "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
-    "preparingResponse": "MiniMind is preparing a response",
-    "startNew": "Start new",
-    "welcomeBack": "Welcome back.",
-    "conversationInProgress": "You have a conversation in progress.",
-    "lastConversation": "Last conversation · {when}",
+    "opener": "Salve. È bello che Lei sia qui. Come si sente oggi?",
+    "placeholder": "Dica ciò che Le passa per la mente.",
+    "streamErrorSuffix": "— *(Ho perso il filo per un momento. La prego di inviare di nuovo quando è pronto.)*",
+    "preparingResponse": "MiniMind sta preparando una risposta",
+    "startNew": "Iniziarne una nuova",
+    "welcomeBack": "Bentornato.",
+    "conversationInProgress": "Ha una conversazione in corso.",
+    "lastConversation": "Ultima conversazione · {when}",
     "voice": {
-      "startAria": "Start voice input",
-      "stopAria": "Stop recording",
+      "startAria": "Avviare l’input vocale",
+      "stopAria": "Interrompere la registrazione",
       "errors": {
-        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
-        "noMic": "No microphone found.",
-        "transcriptionFailed": "Couldn't transcribe — please try again.",
-        "rateLimited": "Please pause a moment, then try again.",
-        "unavailable": "Voice input is unavailable right now.",
-        "networkError": "Network error — please try again.",
-        "startFailed": "Couldn't start recording.",
-        "emptyAudio": "Didn't hear anything. Try again."
+        "permissionDenied": "Accesso al microfono negato. Può attivarlo nelle impostazioni del browser.",
+        "noMic": "Nessun microfono trovato.",
+        "transcriptionFailed": "Impossibile trascrivere — riprovi.",
+        "rateLimited": "Faccia una breve pausa e riprovi.",
+        "unavailable": "L’input vocale non è disponibile al momento.",
+        "networkError": "Errore di rete — riprovi.",
+        "startFailed": "Impossibile avviare la registrazione.",
+        "emptyAudio": "Non ho sentito nulla. Riprovi."
       }
     },
     "atCap": {
-      "subscriberTitle": "You've used all your messages for this billing period.",
-      "subscriberBody": "Your allowance resets on {date}. You can add 200 more messages now.",
-      "freeTitle": "You've used your 50 free messages.",
-      "freeBody": "Choose a plan to keep going.",
-      "buyTopUp": "Buy a message top-up →",
-      "managePlan": "Manage subscription →",
-      "seePlans": "See plans →"
+      "subscriberTitle": "Ha usato tutti i Suoi messaggi per questo periodo di fatturazione.",
+      "subscriberBody": "Il Suo plafond si rinnova il {date}. Può aggiungere 200 messaggi ora.",
+      "freeTitle": "Ha usato i Suoi 50 messaggi gratuiti.",
+      "freeBody": "Scelga un piano per continuare.",
+      "buyTopUp": "Acquistare una ricarica →",
+      "managePlan": "Gestire l’abbonamento →",
+      "seePlans": "Vedere i piani →"
     }
   },
   "Screening": {
     "brand": "MindReset",
-    "tagline": "A trauma-informed self-help companion — not therapy, not a crisis service.",
-    "introTitle": "Before we begin",
-    "introBody": "This short questionnaire helps us understand whether MindReset is the right fit for you right now. It takes about five minutes. Some questions are direct — answer honestly. If anything feels too much, you can close this tab at any moment.",
-    "ageGate": "I confirm I am 18 or older.",
-    "notMedical": "I understand this is not medical or psychiatric treatment.",
-    "begin": "Begin",
-    "next": "Continue",
-    "back": "Back",
-    "finish": "See result",
-    "startOver": "Start over",
-    "submitLoadingKicker": "One moment",
-    "submitLoading": "Saving your answers…",
-    "submitErrorTitle": "Couldn't save",
-    "submitErrorBody": "Your answers came through but we had trouble saving them — please refresh and try again.",
-    "retryButton": "Try again",
-    "selectAll": "Tick anything that applies to you right now.",
-    "rateScaleHigh": "0 = not at all, 5 = extremely",
-    "rateScaleLow": "0 = not present, 5 = very present",
-    "pickOne": "Choose the one that best describes you.",
-    "yes": "Yes",
+    "tagline": "Un compagno di auto-aiuto di ispirazione trauma-informata — né terapia, né servizio di crisi.",
+    "introTitle": "Prima di iniziare",
+    "introBody": "Questo breve questionario ci aiuta a capire se MindReset è adatto a Lei in questo momento. Richiede circa cinque minuti. Alcune domande sono dirette — risponda con sincerità. Se qualcosa diventa troppo, può chiudere questa scheda in qualsiasi momento.",
+    "ageGate": "Confermo di avere 18 anni o più.",
+    "notMedical": "Capisco che questo non è un trattamento medico né psichiatrico.",
+    "begin": "Iniziare",
+    "next": "Continuare",
+    "back": "Indietro",
+    "finish": "Vedere il risultato",
+    "startOver": "Ricominciare",
+    "submitLoadingKicker": "Un momento",
+    "submitLoading": "Salvataggio delle Sue risposte…",
+    "submitErrorTitle": "Salvataggio non riuscito",
+    "submitErrorBody": "Le Sue risposte sono arrivate ma non siamo riusciti a salvarle — aggiorni la pagina e riprovi.",
+    "retryButton": "Riprovare",
+    "selectAll": "Spunti tutto ciò che La descrive in questo momento.",
+    "rateScaleHigh": "0 = per niente, 5 = estremamente",
+    "rateScaleLow": "0 = assente, 5 = molto presente",
+    "pickOne": "Scelga quella che La descrive meglio.",
+    "yes": "Sì",
     "no": "No",
-    "progress": "Step",
-    "of": "of",
-    "secExclusion": "Important first",
-    "secFunctionality": "How you function day to day",
-    "secEmotional": "Emotional state right now",
-    "secTrauma": "Past wounds",
-    "secCognitive": "Practicalities",
-    "secConsent": "Agreement",
-    "exclusionTitle": "Is any of this true for you in this period of your life?",
-    "functionalityTitle": "How much does each of these match your current life?",
-    "emotionalTitle": "How present is each of these for you right now?",
-    "traumaTitle": "Which of these is closest to how things feel about your past?",
-    "cognitiveTitle": "A few quick checks.",
-    "consentTitle": "Before you proceed, please confirm you understand:",
+    "progress": "Passo",
+    "of": "di",
+    "secExclusion": "Prima qualcosa di importante",
+    "secFunctionality": "Come funziona giorno per giorno",
+    "secEmotional": "Stato emotivo attuale",
+    "secTrauma": "Ferite del passato",
+    "secCognitive": "Aspetti pratici",
+    "secConsent": "Accordo",
+    "exclusionTitle": "Una di queste situazioni è vera per Lei in questo periodo della Sua vita?",
+    "functionalityTitle": "Quanto ciascuna di queste affermazioni corrisponde alla Sua vita attuale?",
+    "emotionalTitle": "Quanto è presente ciascuna di queste realtà per Lei in questo momento?",
+    "traumaTitle": "Quale di queste è più vicina a come si sente rispetto al Suo passato?",
+    "cognitiveTitle": "Qualche rapida verifica.",
+    "consentTitle": "Prima di procedere, confermi di aver compreso:",
     "exclusion": [
-      "Current thoughts of suicide, with intent or a plan",
-      "A suicide attempt in the past 12 months",
-      "Self-harm in the past 3 months",
-      "A diagnosis of schizophrenia, schizoaffective disorder, or psychosis",
-      "A diagnosis of bipolar disorder with manic episodes",
-      "Severe depression that stops you doing daily tasks",
-      "Untreated severe PTSD or complex PTSD",
-      "Active drug or alcohol dependence",
-      "Current hallucinations or delusions",
-      "Living in a home that is currently unsafe (domestic violence)",
-      "A current eating disorder with medical instability"
+      "Pensieri suicidari attuali, con intenzione o piano",
+      "Un tentativo di suicidio negli ultimi 12 mesi",
+      "Autolesionismo negli ultimi 3 mesi",
+      "Una diagnosi di schizofrenia, disturbo schizoaffettivo o psicosi",
+      "Una diagnosi di disturbo bipolare con episodi maniacali",
+      "Una depressione grave che impedisce di svolgere le attività quotidiane",
+      "PTSD grave o PTSD complesso non trattati",
+      "Una dipendenza attiva da droghe o alcool",
+      "Allucinazioni o deliri attuali",
+      "Vivere in una casa che al momento non è sicura (violenza domestica)",
+      "Un disturbo alimentare attuale con instabilità medica"
     ],
     "functionality": [
-      "I can do daily things — wash, eat, work, basic tasks",
-      "I can focus on a conversation for at least 10 minutes",
-      "I feel safe in my home environment",
-      "I can regulate myself, at least partially, when upset",
-      "I can feel basic emotions, rather than complete numbness",
-      "I can describe my feelings in simple words"
+      "Riesco a fare le cose quotidiane — lavarmi, mangiare, lavorare, le mansioni di base",
+      "Riesco a concentrarmi in una conversazione per almeno 10 minuti",
+      "Mi sento al sicuro nel mio ambiente domestico",
+      "Riesco a regolarmi, almeno in parte, quando sono turbato",
+      "Riesco a sentire emozioni di base, anziché essere completamente intorpidito",
+      "Riesco a descrivere i miei sentimenti con parole semplici"
     ],
     "emotional": [
-      "I feel overwhelmed constantly",
-      "I have frequent panic attacks",
-      "I shut down emotionally (freeze) often",
-      "I dissociate — feel unreal, disconnected",
-      "I get triggered suddenly and lose control"
+      "Mi sento costantemente sopraffatto",
+      "Ho frequenti attacchi di panico",
+      "Mi blocco emotivamente (freeze) spesso",
+      "Dissocio — mi sento irreale, disconnesso",
+      "Mi attivo improvvisamente e perdo il controllo"
     ],
     "trauma": [
-      "I have mild emotional wounds but function normally",
-      "I have unresolved past issues but can stay stable",
-      "My past trauma overwhelms me regularly",
-      "I cannot stay emotionally safe when remembering the past"
+      "Ho ferite emotive lievi ma funziono normalmente",
+      "Ho questioni irrisolte del passato ma riesco a restare stabile",
+      "Il mio trauma passato mi sopraffà regolarmente",
+      "Non riesco a restare emotivamente al sicuro quando ricordo il passato"
     ],
     "cognitive": [
-      "I can follow instructions step by step",
-      "I can imagine simple things, or sense them through the body",
-      "I understand that MindReset requires active participation from me"
+      "Riesco a seguire istruzioni passo dopo passo",
+      "Riesco a immaginare cose semplici, o a sentirle attraverso il corpo",
+      "Capisco che MindReset richiede una partecipazione attiva da parte mia"
     ],
     "consent": [
-      "MindReset is not medical or psychiatric treatment",
-      "MindReset cannot support a crisis, suicidal state, or psychosis",
-      "I will be honest about my symptoms in each session",
-      "I will stop the process if I feel unsafe",
-      "The AI may stop the process for safety reasons, and I accept that",
-      "I take responsibility for my decisions and life changes",
-      "I understand MindReset only works if I actively participate",
-      "I consent to proceed voluntarily"
+      "MindReset non è un trattamento medico né psichiatrico",
+      "MindReset non può accompagnare una crisi, uno stato suicidario o una psicosi",
+      "Sarò sincero sui miei sintomi in ogni sessione",
+      "Interromperò il processo se non mi sento al sicuro",
+      "L’IA può interrompere il processo per motivi di sicurezza, e lo accetto",
+      "Mi assumo la responsabilità delle mie decisioni e dei cambiamenti di vita",
+      "Capisco che MindReset funziona solo se partecipo attivamente",
+      "Acconsento a procedere volontariamente"
     ],
-    "redKicker": "Please pause here",
-    "redTitle": "MindReset is not the right fit for you right now",
-    "redBody": "What you described needs more than an AI companion can safely offer. That is not a failure on your part — it just means a real human, with proper training, is the right next step. Please reach out today, not tomorrow.",
-    "redResourcesTitle": "Where to turn now",
+    "redKicker": "Si fermi qui, per favore",
+    "redTitle": "MindReset non è adatto a Lei in questo momento",
+    "redBody": "Quello che descrive richiede più di ciò che un compagno IA può offrire in sicurezza. Non è un fallimento da parte Sua — significa solo che un essere umano vero, con una formazione adeguata, è il giusto passo successivo. La preghiamo di contattarli oggi, non domani.",
+    "redResourcesTitle": "A chi rivolgersi adesso",
     "redResources": [
       {
         "name": "Samaritans",
-        "detail": "Call 116 123 — free, 24/7, any reason"
+        "detail": "Chiamare 116 123 — gratuito, 24/7, qualsiasi motivo"
       },
       {
         "name": "NHS 111",
-        "detail": "Press option 2 for the mental health line"
+        "detail": "Premere l’opzione 2 per la linea sulla salute mentale"
       },
       {
-        "name": "Your GP",
-        "detail": "Ask for an urgent same-day appointment"
+        "name": "Il Suo GP",
+        "detail": "Chiedere un appuntamento urgente in giornata"
       },
       {
-        "name": "A&E or 999",
-        "detail": "If you feel unsafe right now"
+        "name": "A&E o 999",
+        "detail": "Se non si sente al sicuro in questo momento"
       }
     ],
-    "redFooter": "We are not the right service for this moment, but the people above are. You deserve to be heard by someone who can really help.",
-    "yellowKicker": "Caution path",
-    "yellowTitle": "MindReset can help, but gently",
-    "yellowBody": "Your answers tell us your nervous system is carrying a lot right now. The deeper modules of MindReset will not serve you well yet — they could make things harder, not easier. The right starting point is stabilisation work, focused only on bringing your system back into balance before going further.",
-    "yellowNextTitle": "What we suggest",
+    "redFooter": "Non siamo il servizio giusto per questo momento, ma le persone qui sopra lo sono. Merita di essere ascoltato da qualcuno che possa davvero aiutare.",
+    "yellowKicker": "Via cauta",
+    "yellowTitle": "MindReset può aiutare, ma con dolcezza",
+    "yellowBody": "Le Sue risposte ci dicono che il Suo sistema nervoso sta portando molto in questo momento. I moduli più profondi di MindReset non Le sarebbero utili adesso — potrebbero rendere le cose più difficili, non più facili. Il giusto punto di partenza è un lavoro di stabilizzazione, focalizzato solo sul riportare il Suo sistema in equilibrio prima di andare oltre.",
+    "yellowNextTitle": "Cosa suggeriamo",
     "yellowNext": [
-      "Begin with MiniMind — the AI companion with daily check-ins and short grounding practices",
-      "No deep modules, no parts work, no past-focused exercises until your daily functioning is steadier",
-      "If you feel you need additional support, we encourage you to seek out a specialist working in the trauma-informed approach."
+      "Inizi con MiniMind — il compagno IA con check-in quotidiani e brevi pratiche di radicamento",
+      "Nessun modulo profondo, nessun lavoro sulle parti, nessun esercizio focalizzato sul passato finché il Suo funzionamento quotidiano non sarà più stabile",
+      "Se sente di aver bisogno di un sostegno aggiuntivo, La incoraggiamo a rivolgersi a uno specialista che lavori con un approccio trauma-informato."
     ],
-    "yellowCta": "When you're ready",
-    "greenKicker": "Welcome",
-    "greenTitle": "You are ready to begin",
-    "greenBody": "Your answers suggest MindReset is a good fit for you right now. Below is what to expect, and the next step.",
-    "greenNextTitle": "What happens next",
+    "yellowCta": "Quando si sente pronto",
+    "greenKicker": "Benvenuto",
+    "greenTitle": "È pronto per iniziare",
+    "greenBody": "Le Sue risposte suggeriscono che MindReset è adatto a Lei in questo momento. Di seguito cosa aspettarsi, e il prossimo passo.",
+    "greenNextTitle": "Cosa succede dopo",
     "greenNext": [
-      "You will create an account with your email",
-      "Before any module, you will see a short introduction explaining what to expect",
-      "Each session, the AI starts by checking in with how you are — there is never pressure to go further than feels right",
-      "You can pause, slow down, or stop at any moment"
+      "Creerà un account con la Sua email",
+      "Prima di ogni modulo, vedrà una breve introduzione che spiega cosa aspettarsi",
+      "A ogni sessione, l’IA inizia chiedendoLe come sta — non c’è mai pressione ad andare oltre ciò che sente giusto",
+      "Può fare una pausa, rallentare o fermarsi in qualsiasi momento"
     ],
-    "greenCta": "Continue → Create your account",
-    "sessionRef": "Reference"
+    "greenCta": "Continuare → Creare il Suo account",
+    "sessionRef": "Riferimento"
   },
   "SignUp": {
-    "agreeToTerms": "I agree to the <link>Terms of Service</link>",
-    "agreeToPrivacy": "I agree to the <link>Privacy Policy</link>",
-    "acceptBothHint": "Please accept both to continue."
+    "agreeToTerms": "Accetto i <link>Termini di servizio</link>",
+    "agreeToPrivacy": "Accetto la <link>Informativa sulla privacy</link>",
+    "acceptBothHint": "Per favore, accetti entrambi per continuare."
   },
   "Terms": {
     "lastUpdated": "Ultimo aggiornamento · {date}",
     "article1": {
-      "title": "Terms of Service",
+      "title": "Termini di servizio",
       "preamble": {
         "operatorLabel": "Operatore:",
         "operatorBody": "<strong>Piattaforma di auto-aiuto MindReset AI</strong>, gestita da <strong>MindReset AI Ltd</strong>, società registrata in Inghilterra e Galles, con sede a Londra, Regno Unito.",
@@ -681,40 +681,40 @@
         "body": "Nulla nella presente Politica di rimborso esclude i tuoi diritti previsti dal <strong>Consumer Rights Act 2015</strong>. Se il contenuto digitale è difettoso, non corrisponde alla descrizione o non funziona come previsto, provvederemo a riparare, sostituire o rimborsare il contenuto secondo quanto richiesto dalla legge, indipendentemente dalla rinuncia confermata al momento del pagamento. Contattaci all’indirizzo <mail>support@mindreset.ai</mail> fornendo i dettagli del problema."
       }
     },
-    "freeTasterCount": "Every new account receives 50 free messages with MiniMind at no cost.",
-    "freeTasterNoCard": "No card required. No time limit. Limited to one per email address.",
-    "subsIntro": "Two tiers, each billed monthly or annually:",
-    "subsEssential": "MiniMind Essential — £14.99/month or £129/year. 200 messages per billing cycle.",
-    "subsExtended": "MiniMind Extended — £24.99/month or £209/year. 800 to 1,200 messages per billing cycle.",
-    "subsBilling": "Charged to your chosen payment method until you cancel.",
-    "subsAllowanceReset": "Message allowance resets at the start of each billing cycle and does not roll over.",
-    "subsRefundWindow": "7-day refund window: you may request a full refund within 7 days of your initial subscription purchase, having used fewer than 30 messages, by emailing support@mindreset.ai with REFUND in the subject.",
-    "subsAfterWindow": "After 7 days or 30 messages used, the standard cancellation policy applies.",
-    "subsCancelRight": "You may cancel at any time via your account billing settings.",
-    "subsNoFurtherCharges": "No further payments will be taken.",
-    "subsAccessToEnd": "Access continues until the end of your current billing cycle.",
-    "subsAccessEndsAuto": "Access ends automatically at the end of the current cycle.",
-    "subsNoPartialRefund": "No partial-cycle refunds are issued for cancellations after the 7-day window.",
-    "topupDescription": "£4.99 one-off charge — adds 200 messages to your current billing cycle.",
-    "topupExpiry": "Top-up messages expire when your billing cycle resets and do not roll over.",
-    "topupAvailability": "Available to both Essential and Extended subscribers; stackable.",
-    "topupWaiver": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access.",
-    "topupNonRefundable": "Non-refundable once purchased.",
-    "refundBothIntervals": "7-day refund window applies to both monthly and annual plans.",
-    "refundRequestInstructions": "To request a refund, email support@mindreset.ai with REFUND in the subject within 7 days of purchase and before using 30 messages.",
-    "refundAccessAfterCancel": "If you cancel after the 7-day period, access continues until the end of your current billing cycle.",
-    "refundNoPartial": "No partial or pro-rata refunds are issued after the 7-day window.",
-    "stModuleFull": "States & Themes modules are available as individual one-off purchases at £59 per module.",
-    "stModuleSubscriber": "For active MiniMind subscribers (Essential or Extended), the price is £29 per module. The discount is applied automatically at checkout when logged in with an active subscription.",
-    "stModuleRefund": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing support@mindreset.ai with REFUND in the subject. Once the module has been opened, the purchase is non-refundable.",
-    "journeyOnetime": "The Journey is available as a one-off purchase at £599. At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. Once the first block has been started, no refund is available.",
-    "journeyInstalment": "The Journey is also available as a 12-week instalment plan at £55 per week. Each weekly payment unlocks the next block of content. You may stop future payments at any time; however, payments already made are non-refundable, and previously unlocked content remains accessible. Once the first block has been accessed, the right to a cooling-off period no longer applies."
+    "freeTasterCount": "Ogni nuovo account riceve 50 messaggi gratuiti con MiniMind, senza costi.",
+    "freeTasterNoCard": "Nessuna carta richiesta. Nessun limite di tempo. Limitato a uno per indirizzo email.",
+    "subsIntro": "Due piani, ciascuno fatturato mensilmente o annualmente:",
+    "subsEssential": "MiniMind Essential — 14,99 £/mese o 129 £/anno. 200 messaggi per ciclo di fatturazione.",
+    "subsExtended": "MiniMind Extended — 24,99 £/mese o 209 £/anno. Da 800 a 1.200 messaggi per ciclo di fatturazione.",
+    "subsBilling": "Addebito sul metodo di pagamento scelto fino alla disdetta.",
+    "subsAllowanceReset": "L'assegnazione di messaggi si rinnova all'inizio di ogni ciclo di fatturazione e non si accumula.",
+    "subsRefundWindow": "Finestra di rimborso di 7 giorni: può richiedere un rimborso totale entro 7 giorni dal Suo primo acquisto in abbonamento, avendo usato meno di 30 messaggi, scrivendo a support@mindreset.ai con REFUND in oggetto.",
+    "subsAfterWindow": "Dopo 7 giorni o 30 messaggi utilizzati, si applica la politica di disdetta standard.",
+    "subsCancelRight": "Può disdire in qualsiasi momento dalle impostazioni di fatturazione del Suo account.",
+    "subsNoFurtherCharges": "Non verranno effettuati ulteriori addebiti.",
+    "subsAccessToEnd": "L'accesso prosegue fino alla fine del Suo ciclo di fatturazione in corso.",
+    "subsAccessEndsAuto": "L'accesso termina automaticamente alla fine del ciclo in corso.",
+    "subsNoPartialRefund": "Dopo la finestra di 7 giorni non vengono emessi rimborsi parziali per le disdette.",
+    "topupDescription": "4,99 £ — addebito unico, aggiunge 200 messaggi al Suo ciclo di fatturazione in corso.",
+    "topupExpiry": "I messaggi di ricarica scadono alla rinnovazione del Suo ciclo di fatturazione e non si accumulano.",
+    "topupAvailability": "Disponibile per gli abbonati Essential ed Extended; cumulabile.",
+    "topupWaiver": "Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato.",
+    "topupNonRefundable": "Non rimborsabile una volta acquistato.",
+    "refundBothIntervals": "La finestra di rimborso di 7 giorni si applica sia ai piani mensili sia annuali.",
+    "refundRequestInstructions": "Per richiedere un rimborso, scriva a support@mindreset.ai con REFUND in oggetto entro 7 giorni dall'acquisto e prima di aver usato 30 messaggi.",
+    "refundAccessAfterCancel": "Se disdice dopo il periodo di 7 giorni, l'accesso prosegue fino alla fine del Suo ciclo di fatturazione in corso.",
+    "refundNoPartial": "Dopo la finestra di 7 giorni non vengono emessi rimborsi parziali o pro rata.",
+    "stModuleFull": "I moduli Stati e Temi sono disponibili come acquisti singoli una tantum al prezzo di 59 £ per modulo.",
+    "stModuleSubscriber": "Per gli abbonati MiniMind attivi (Essential o Extended), il prezzo è di 29 £ per modulo. Lo sconto viene applicato automaticamente al pagamento quando si è connessi con un abbonamento attivo.",
+    "stModuleRefund": "Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato. Se non apre il modulo entro 14 giorni dall'acquisto, può richiedere un rimborso totale scrivendo a support@mindreset.ai con REFUND in oggetto. Una volta aperto il modulo, l'acquisto non è rimborsabile.",
+    "journeyOnetime": "Il Cammino è disponibile come acquisto una tantum al prezzo di 599 £. Al pagamento conferma la rinuncia al diritto di recesso di 14 giorni ai sensi dei Consumer Contracts Regulations 2013, in cambio dell'accesso immediato. Una volta iniziato il primo blocco, non è previsto rimborso.",
+    "journeyInstalment": "Il Cammino è disponibile anche come piano rateale di 12 settimane a 55 £ a settimana. Ogni pagamento settimanale sblocca il blocco di contenuto successivo. Può interrompere i pagamenti futuri in qualsiasi momento; tuttavia, i pagamenti già effettuati non sono rimborsabili, e i contenuti già sbloccati restano accessibili. Una volta acceduto al primo blocco, il diritto a un periodo di ripensamento non si applica più."
   },
   "Privacy": {
     "lastUpdated": "Ultimo aggiornamento · {date}",
-    "title": "Privacy Policy",
+    "title": "Informativa sulla privacy",
     "preamble": {
-      "controllerLabel": "Data Controller:",
+      "controllerLabel": "Titolare del trattamento:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, società registrata in England & Wales, con sede a Londra, Regno Unito — <mail>support@mindreset.ai</mail>",
       "note": "[NOTE: La registrazione ICO deve essere ottenuta tramite ico.org.uk prima del lancio pubblico. Costo annuale ~£40-60. La registrazione deve essere completata prima di qualsiasi attività di marketing o disponibilità pubblica.]"
     },
@@ -733,49 +733,49 @@
           "category": "Dati dell’account",
           "examples": "email address, hashed password, country (dedotto dall’IP), preferred language",
           "purpose": "creare e gestire il tuo account; fornire il Servizio",
-          "lawfulBasis": "Contract"
+          "lawfulBasis": "Esecuzione del contratto"
         },
         "screening": {
-          "category": "Screening data",
+          "category": "Dati del questionario",
           "examples": "le tue risposte al Readiness Check, classificazione risultante (Green / Yellow / Red), riepilogo delle motivazioni",
           "purpose": "classificare se il Servizio è appropriato per te; proteggere gli utenti da potenziali danni",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "conversation": {
-          "category": "Conversation data (special category)",
+          "category": "Dati di conversazione (categoria particolare)",
           "examples": "i messaggi che invii a MiniMind o ai moduli; reflections e risposte negli esercizi; mood ed energy check-ins",
           "purpose": "analisi AI per suggerire pratiche; supporto wellbeing personalizzato; monitoraggio dei tuoi progressi",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "wellbeing": {
-          "category": "Wellbeing profile",
+          "category": "Profilo di benessere",
           "examples": "pattern derivati (ad esempio «elevated anxiety», «recent stable period»), osservazioni di stati e temi",
           "purpose": "personalizzazione; smart routing verso pratiche e moduli appropriati",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Consenso esplicito (art. 9 §2 a UK GDPR)"
         },
         "safety": {
-          "category": "Safety events",
+          "category": "Eventi di sicurezza",
           "examples": "momenti di conversation segnalati che hanno attivato il nostro safety protocol, la nostra automated response, optional manual review notes",
           "purpose": "audit del safety protocol; conformità agli obblighi del Online Safety Act 2023 relativi alle priority offences",
-          "lawfulBasis": "Legitimate interest (audit trail for safety) / Legal obligation"
+          "lawfulBasis": "Interesse legittimo (registro di sicurezza) / Obbligo legale"
         },
         "usage": {
-          "category": "Usage data",
+          "category": "Dati d'uso",
           "examples": "tipo di dispositivo, browser, IP address, cookies, timestamps, visualizzazioni di pagina",
           "purpose": "sicurezza, anti-abuse, miglioramento del Servizio, analisi anonime",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Interesse legittimo"
         },
         "payment": {
-          "category": "Payment data",
+          "category": "Dati di pagamento",
           "examples": "ultime 4 cifre della carta, transaction ID, billing email (i dati completi della carta sono conservati dal payment processor, non da noi)",
           "purpose": "billing, prevenzione delle frodi, registrazioni finanziarie",
-          "lawfulBasis": "Contract / Legal obligation (tax law)"
+          "lawfulBasis": "Esecuzione del contratto / Obbligo legale (diritto tributario)"
         },
         "support": {
-          "category": "Support messages",
+          "category": "Messaggi al supporto",
           "examples": "emails inviati a <mail>support@mindreset.ai</mail> o ad altri nostri indirizzi",
           "purpose": "rispondere alle richieste; risolvere problemi",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Interesse legittimo"
         }
       },
       "closing": "Non richiediamo il tuo vero nome, indirizzo fisico, data di nascita o identificativi governativi. Ti preghiamo di evitare di condividere dettagli personalmente identificabili su di te o su altre persone all’interno delle conversations con l’AI."
@@ -796,9 +796,9 @@
       "aiItem": "AI infrastructure (per conversational e analytical features)",
       "speechItem": "Speech-to-text transcription (per voice input)",
       "authItem": "Authentication e account management",
-      "paymentItem": "Payment processing",
-      "emailItem": "Transactional email delivery",
-      "hostingItem": "Website hosting",
+      "paymentItem": "Elaborazione dei pagamenti",
+      "emailItem": "Recapito di email transazionali",
+      "hostingItem": "Hosting del sito",
       "voiceInput": "<strong>Voice input.</strong> Se scegli di utilizzare il voice input su MiniMind, il tuo audio registrato viene trasmesso in modo sicuro al nostro speech-to-text provider per la transcription. Abbiamo attivato zero data retention presso questo provider: l’audio non viene conservato dopo la transcription né sull’infrastruttura MindReset né presso il provider. Solo il resulting text viene salvato come parte della tua conversation history. Se preferisci, puoi utilizzare il Servizio interamente tramite typing.",
       "providersList": "I providers specifici possono cambiare nel tempo. Un elenco aggiornato dei service providers che utilizziamo è disponibile su richiesta inviando un email a <mail>support@mindreset.ai</mail>.",
       "legalDisclosure": "Potremmo inoltre divulgare i tuoi dati quando legalmente obbligati da una court order o da un analogo legal process.",
@@ -904,96 +904,96 @@
     }
   },
   "TopBar": {
-    "wordmarkAria": "MindReset home"
+    "wordmarkAria": "Home di MindReset"
   },
   "Faq": {
-    "pageTitle": "Frequently asked questions",
+    "pageTitle": "Domande frequenti",
     "metaTitle": "FAQ — MindReset",
-    "metaDescription": "Common questions about MindReset, MiniMind, pricing, privacy, and contact.",
+    "metaDescription": "Domande comuni su MindReset, MiniMind, prezzi, privacy e contatto.",
     "items": {
       "whatIsMindReset": {
-        "question": "What is MindReset?",
-        "answer": "MindReset is a self-help space. It's a quiet place to reflect, notice where you are, and choose what comes next, at your own pace. It isn't therapy, counselling, or medical care."
+        "question": "Che cos'è MindReset?",
+        "answer": "MindReset è uno spazio di auto-aiuto. Un luogo tranquillo per riflettere, notare dove ci si trova e scegliere cosa viene dopo, al proprio ritmo. Non è terapia, né counselling, né cura medica."
       },
       "isTherapy": {
-        "question": "Is MindReset therapy?",
-        "answer": "No. MindReset is not therapy, counselling, diagnosis, or treatment, and it isn't a substitute for professional help. If you need clinical support, please speak to a doctor or a qualified professional."
+        "question": "MindReset è una terapia?",
+        "answer": "No. MindReset non è terapia, non è counselling, non è diagnosi né trattamento, e non sostituisce un aiuto professionale. Se Le serve un sostegno clinico, parli con un medico o con un professionista qualificato."
       },
       "whatIsMiniMind": {
-        "question": "What is MiniMind?",
-        "answer": "MiniMind is your daily companion inside MindReset. You can use it to reflect, talk things through, and find a bit of steadiness. You say as much or as little as you like, and it responds to what you share."
+        "question": "Che cos'è MiniMind?",
+        "answer": "MiniMind è il Suo compagno quotidiano all'interno di MindReset. Può usarlo per riflettere, mettere in parole le cose, e ritrovare un po' di stabilità. Dice quanto o quanto poco vuole, e lui risponde a ciò che condivide."
       },
       "howToStart": {
-        "question": "How do I get started?",
-        "answer": "Open MiniMind and begin typing whenever you're ready. There's nothing to set up and no right way to start — even a few minutes is enough."
+        "question": "Come comincio?",
+        "answer": "Apra MiniMind e cominci a scrivere quando si sente pronto. Non c'è nulla da configurare e non esiste un modo giusto di iniziare — anche pochi minuti bastano."
       },
       "voiceInput": {
-        "question": "Can I speak instead of typing?",
-        "answer": "Yes. You can type or speak to MiniMind — whichever feels easier. If you speak, your words are turned into text so you can read them back and edit before sending. You can switch between typing and speaking any time."
+        "question": "Posso parlare invece di scrivere?",
+        "answer": "Sì. Può scrivere o parlare a MiniMind — quel che Le risulta più facile. Se parla, le Sue parole vengono trasformate in testo, così può rileggerle e modificarle prima di inviarle. Può alternare scrittura e voce in qualsiasi momento."
       },
       "isItFree": {
-        "question": "Is it free?",
-        "answer": "You begin with 50 free messages, and you don't need to enter a card to use them. There's no time limit on them, so you can use them whenever the moment matters."
+        "question": "È gratuito?",
+        "answer": "Inizia con 50 messaggi gratuiti, senza dover inserire una carta. Non c'è un limite di tempo, può usarli quando il momento conta."
       },
       "afterFreeMessages": {
-        "question": "What happens after my 50 free messages?",
-        "answer": "If you'd like to keep going, you can choose a subscription — Essential or Extended — or add a one-off top-up. There's no pressure to choose, and nothing happens automatically."
+        "question": "Cosa succede dopo i miei 50 messaggi gratuiti?",
+        "answer": "Se desidera continuare, può scegliere un abbonamento — Essential o Extended — oppure aggiungere una ricarica una tantum. Non c'è pressione a scegliere, e nulla avviene automaticamente."
       },
       "essentialVsExtended": {
-        "question": "What's the difference between Essential and Extended?",
-        "answer": "The two plans offer different monthly message allowances. You can see current details, prices, and change your plan any time on your Account page."
+        "question": "Qual è la differenza tra Essential ed Extended?",
+        "answer": "I due piani offrono diversi quantitativi mensili di messaggi. Può vedere i dettagli aggiornati, i prezzi e cambiare piano in qualsiasi momento dalla pagina Account."
       },
       "whatIsTopUp": {
-        "question": "What is a top-up?",
-        "answer": "A top-up adds 200 extra messages as a one-off, on top of whatever plan you're on. It's entirely optional, and you'll never be billed for it automatically."
+        "question": "Che cos'è una ricarica?",
+        "answer": "Una ricarica aggiunge 200 messaggi in più una tantum, oltre al piano in corso. È del tutto facoltativa e non Le verrà mai addebitata automaticamente."
       },
       "willIBeCharged": {
-        "question": "Will I be charged automatically?",
-        "answer": "Subscriptions renew on a regular cycle until you cancel, and you'll always know before a renewal. Top-ups are one-off and are never charged automatically. You can cancel a subscription at any time."
+        "question": "Mi verrà addebitato automaticamente?",
+        "answer": "Gli abbonamenti si rinnovano con cadenza regolare fino alla disdetta, e viene sempre avvisato prima di ogni rinnovo. Le ricariche sono una tantum e non vengono mai addebitate automaticamente. Può disdire un abbonamento in qualsiasi momento."
       },
       "howToCancel": {
-        "question": "How do I cancel my subscription?",
-        "answer": "You can cancel any time from your Account page. You'll keep access until the end of the period you've already paid for, and you won't be charged again after that."
+        "question": "Come disdico il mio abbonamento?",
+        "answer": "Può disdire in qualsiasi momento dalla pagina Account. Manterrà l'accesso fino alla fine del periodo già pagato, e dopo non Le verrà più addebitato nulla."
       },
       "isPrivate": {
-        "question": "Is my information private?",
-        "answer": "Yes. We collect as little as possible — no name or address is required to use MiniMind. Your conversations are stored privately and are protected in line with UK data protection law."
+        "question": "Le mie informazioni sono private?",
+        "answer": "Sì. Raccogliamo il minimo possibile — non occorrono né nome né indirizzo per usare MiniMind. Le Sue conversazioni vengono archiviate in privato e sono protette in conformità con la legge britannica sulla protezione dei dati."
       },
       "whoCanSee": {
-        "question": "Who can see my conversations?",
-        "answer": "Your conversations are yours. They're stored privately so that only you can access them through your account, and they are never shared or sold."
+        "question": "Chi può vedere le mie conversazioni?",
+        "answer": "Le Sue conversazioni sono Sue. Sono archiviate in privato in modo che solo Lei possa accedervi dal Suo account, e non vengono mai condivise né vendute."
       },
       "retention": {
-        "question": "How long do you keep my conversations?",
-        "answer": "Your conversation messages are kept for up to 12 months from your last activity, after which they're automatically deleted. You can delete them sooner yourself at any time. We also keep a short summary of the patterns you share, used to personalise your experience across sessions, for as long as your account stays open."
+        "question": "Per quanto tempo conservate le mie conversazioni?",
+        "answer": "I Suoi messaggi vengono conservati fino a 12 mesi dall'ultima attività, dopodiché vengono cancellati automaticamente. Può cancellarli Lei stesso prima, in qualsiasi momento. Conserviamo inoltre un breve riepilogo degli schemi che condivide, usato per personalizzare l'esperienza tra le sessioni, finché il Suo account rimane aperto."
       },
       "canDelete": {
-        "question": "Can I delete my data?",
-        "answer": "Yes. You can delete your conversations at any time from your account settings, and you can delete your account and all associated data — including your saved summary — whenever you like. After a deletion request, your data is permanently erased within 30 days. You can also email us at support@mindreset.ai for help with this."
+        "question": "Posso cancellare i miei dati?",
+        "answer": "Sì. Può cancellare le conversazioni in qualsiasi momento dalle impostazioni dell'account, e può cancellare l'account e tutti i dati associati — compreso il riepilogo salvato — quando vuole. Dopo una richiesta di cancellazione, i Suoi dati vengono cancellati definitivamente entro 30 giorni. Può anche scriverci a support@mindreset.ai per essere assistito."
       },
       "medicalAdvice": {
-        "question": "Can MiniMind give medical or mental-health advice?",
-        "answer": "No. MiniMind doesn't diagnose, treat, or give medical or clinical advice. It's a space for self-reflection. For anything clinical, please speak to a qualified professional."
+        "question": "MiniMind può dare consigli medici o di salute mentale?",
+        "answer": "No. MiniMind non diagnostica, non cura e non offre consigli medici o clinici. È uno spazio di riflessione personale. Per qualsiasi tema clinico, si rivolga a un professionista qualificato."
       },
       "crisisHelp": {
-        "question": "What should I do if I'm in crisis or feel unsafe?",
-        "answer": "MindReset is not a crisis service. If you're in immediate danger, call your local emergency services (999 in the UK). If you're struggling and need someone to talk to right now, you can call Samaritans free on 116 123 (UK), any time, day or night."
+        "question": "Cosa faccio se sono in crisi o non mi sento al sicuro?",
+        "answer": "MindReset non è un servizio di crisi. Se è in pericolo immediato, chiami i servizi di emergenza locali (999 nel Regno Unito). Se sta attraversando un momento difficile e ha bisogno di parlare con qualcuno adesso, può chiamare gratuitamente Samaritans al 116 123 (Regno Unito), a qualsiasi ora, giorno e notte."
       },
       "ageRequirement": {
-        "question": "Do I need to be a certain age to use MindReset?",
-        "answer": "Yes. MindReset is for adults aged 18 and over."
+        "question": "C'è un'età minima per usare MindReset?",
+        "answer": "Sì. MindReset è per adulti dai 18 anni in su."
       },
       "languages": {
-        "question": "What languages does MindReset support?",
-        "answer": "MindReset is available in English and Russian. You can switch language from your account settings."
+        "question": "Quali lingue supporta MindReset?",
+        "answer": "MindReset è disponibile in più lingue, con l'inglese e il russo come lingue principali. Può cambiare lingua dalle impostazioni del Suo account."
       },
       "mobileUse": {
-        "question": "Can I use MindReset on my phone?",
-        "answer": "Yes. MindReset works in your phone's web browser as well as on a computer — there's nothing to install."
+        "question": "Posso usare MindReset dal telefono?",
+        "answer": "Sì. MindReset funziona nel browser web del telefono come da computer — non c'è nulla da installare."
       },
       "contact": {
-        "question": "How do I contact you?",
-        "answer": "You can reach us at support@mindreset.ai. We'll do our best to reply, though please remember we're not a crisis service — for urgent help, use the contacts in the crisis question above."
+        "question": "Come posso contattarvi?",
+        "answer": "Può scriverci a support@mindreset.ai. Faremo del nostro meglio per risponderLe — ma ricordi che non siamo un servizio di crisi. Per un aiuto urgente, usi i contatti della domanda precedente sulla crisi."
       }
     }
   }

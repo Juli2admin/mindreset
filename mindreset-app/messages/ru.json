@@ -53,9 +53,18 @@
   "CrisisResources": {
     "crisisLabel": "Сейчас нужна помощь?",
     "crisisItems": [
-      { "name": "Samaritans", "detail": "Позвоните 116 123 — 24/7, бесплатно" },
-      { "name": "Shout", "detail": "Отправьте SHOUT на 85258 — 24/7" },
-      { "name": "NHS 111", "detail": "Линия психологической помощи — вариант 2" }
+      {
+        "name": "Samaritans",
+        "detail": "Позвоните 116 123 — 24/7, бесплатно"
+      },
+      {
+        "name": "Shout",
+        "detail": "Отправьте SHOUT на 85258 — 24/7"
+      },
+      {
+        "name": "NHS 111",
+        "detail": "Линия психологической помощи — вариант 2"
+      }
     ],
     "disclaimer": "MindReset — это инструмент поддержки благополучия, а не терапия, не медицинское устройство и не замена профессиональной помощи. Если вам угрожает непосредственная опасность, воспользуйтесь одной из линий выше или позвоните 999."
   },
@@ -162,7 +171,7 @@
     "signIn": "Войти",
     "account": "Аккаунт",
     "heroKicker": "Точка опоры. Метод.",
-    "heroTitle": "Путь обратно\nк себе.",
+    "heroTitle": "Путь к себе",
     "heroBody": [
       "Вы это чувствуете, правда? Тихое ощущение, что что-то внутри сместилось.",
       "Вы функционируете. Вы способны. Но под этим — растерянность, истощение или пустота, которую трудно объяснить.",
@@ -173,7 +182,11 @@
     "whatKicker": "Что это",
     "whatTitle": "Структура, а не советы.",
     "whatLead": "MindReset — структурированная платформа для рефлексии, помогающая вернуть эмоциональную ясность, внутреннюю устойчивость и ощущение собственного направления.",
-    "whatNot": ["терапия", "коучинг", "служба экстренной помощи"],
+    "whatNot": [
+      "терапия",
+      "коучинг",
+      "служба экстренной помощи"
+    ],
     "notWord": "Не",
     "whatHelpsLead": "Она помогает:",
     "whatHelpsItems": [
@@ -359,10 +372,22 @@
     "redBody": "То, что вы описали, требует большего, чем AI-спутник может безопасно предложить. Это не ваша неудача — это просто значит, что подходящий следующий шаг — живой человек с настоящей подготовкой. Пожалуйста, обратитесь сегодня, а не завтра.",
     "redResourcesTitle": "Куда обратиться сейчас",
     "redResources": [
-      { "name": "Samaritans (UK)", "detail": "116 123 — бесплатно, круглосуточно, по любому поводу" },
-      { "name": "NHS 111", "detail": "Нажмите вариант 2 — линия психического здоровья" },
-      { "name": "Ваш GP", "detail": "Попросите срочный приём в тот же день" },
-      { "name": "A&E или 999", "detail": "Если небезопасно прямо сейчас" }
+      {
+        "name": "Samaritans (UK)",
+        "detail": "116 123 — бесплатно, круглосуточно, по любому поводу"
+      },
+      {
+        "name": "NHS 111",
+        "detail": "Нажмите вариант 2 — линия психического здоровья"
+      },
+      {
+        "name": "Ваш GP",
+        "detail": "Попросите срочный приём в тот же день"
+      },
+      {
+        "name": "A&E или 999",
+        "detail": "Если небезопасно прямо сейчас"
+      }
     ],
     "redFooter": "Мы — не та служба для этого момента, но люди выше — те. Вы заслуживаете быть услышанной тем, кто действительно может помочь.",
     "yellowKicker": "Путь с осторожностью",
@@ -396,7 +421,7 @@
   "Terms": {
     "lastUpdated": "Последнее обновление · {date}",
     "article1": {
-      "title": "Terms of Service",
+      "title": "Условия использования",
       "preamble": {
         "operatorLabel": "Оператор:",
         "operatorBody": "<strong>Платформа самопомощи MindReset AI</strong>, управляемая компанией <strong>MindReset AI Ltd</strong>, зарегистрированной в Англии и Уэльсе, с офисом в Лондоне, Соединённое Королевство.",
@@ -687,9 +712,9 @@
   },
   "Privacy": {
     "lastUpdated": "Последнее обновление · {date}",
-    "title": "Privacy Policy",
+    "title": "Политика конфиденциальности",
     "preamble": {
-      "controllerLabel": "Data Controller:",
+      "controllerLabel": "Оператор данных:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, компания, зарегистрированная в England & Wales, расположенная в Лондоне, Соединённое Королевство — <mail>support@mindreset.ai</mail>",
       "note": "[NOTE: Регистрация в ICO должна быть получена через ico.org.uk до публичного запуска. Ежегодный сбор ~£40-60. Регистрация должна быть завершена до начала любого маркетинга или публичной доступности.]"
     },
@@ -708,49 +733,49 @@
           "category": "Данные аккаунта",
           "examples": "email address, hashed password, country (определяется по IP), preferred language",
           "purpose": "создание и управление аккаунтом; предоставление Сервиса",
-          "lawfulBasis": "Contract"
+          "lawfulBasis": "Исполнение договора"
         },
         "screening": {
-          "category": "Screening data",
+          "category": "Данные скрининга",
           "examples": "ваши ответы в Readiness Check, итоговая классификация (Green / Yellow / Red), краткое summary причин",
           "purpose": "определение того, подходит ли вам Сервис; защита пользователей от потенциального вреда",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Явное согласие (ст. 9 §2 a UK GDPR)"
         },
         "conversation": {
-          "category": "Conversation data (special category)",
+          "category": "Данные разговоров (особая категория)",
           "examples": "сообщения, которые вы отправляете в MiniMind или модули; reflections и ответы в упражнениях; mood и energy check-ins",
           "purpose": "AI-анализ для подбора практик; персонализированная wellbeing-поддержка; отслеживание вашего прогресса",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Явное согласие (ст. 9 §2 a UK GDPR)"
         },
         "wellbeing": {
-          "category": "Wellbeing profile",
+          "category": "Профиль самочувствия",
           "examples": "выявленные паттерны (например, «elevated anxiety», «recent stable period»), observations состояний и тем",
           "purpose": "персонализация; smart routing к подходящим практикам и модулям",
-          "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
+          "lawfulBasis": "Явное согласие (ст. 9 §2 a UK GDPR)"
         },
         "safety": {
-          "category": "Safety events",
+          "category": "События безопасности",
           "examples": "отмеченные conversation-моменты, активировавшие safety protocol, наш automated response, optional manual review notes",
           "purpose": "аудит safety protocol; соблюдение обязательств Online Safety Act 2023 в отношении priority offences",
-          "lawfulBasis": "Legitimate interest (audit trail for safety) / Legal obligation"
+          "lawfulBasis": "Законный интерес (журнал безопасности) / Юридическое обязательство"
         },
         "usage": {
-          "category": "Usage data",
+          "category": "Данные использования",
           "examples": "тип устройства, browser, IP address, cookies, timestamps, просмотры страниц",
           "purpose": "безопасность, anti-abuse, улучшение Сервиса, анонимная аналитика",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Законный интерес"
         },
         "payment": {
-          "category": "Payment data",
+          "category": "Платёжные данные",
           "examples": "последние 4 цифры карты, transaction ID, billing email (полные данные карты хранятся у payment processor, а не у нас)",
           "purpose": "billing, предотвращение мошенничества, финансовый учёт",
-          "lawfulBasis": "Contract / Legal obligation (tax law)"
+          "lawfulBasis": "Исполнение договора / Юридическое обязательство (налоговое право)"
         },
         "support": {
-          "category": "Support messages",
+          "category": "Сообщения в поддержку",
           "examples": "emails, отправленные вами на <mail>support@mindreset.ai</mail> или другие наши адреса",
           "purpose": "ответы на запросы; решение проблем",
-          "lawfulBasis": "Legitimate interest"
+          "lawfulBasis": "Законный интерес"
         }
       },
       "closing": "Мы не запрашиваем ваше настоящее имя, физический адрес, дату рождения или государственные идентификаторы. Пожалуйста, избегайте передачи персонально идентифицирующей информации о себе или других лицах внутри conversations с AI."
@@ -771,9 +796,9 @@
       "aiItem": "AI infrastructure (для conversational и analytical features)",
       "speechItem": "Speech-to-text transcription (для voice input)",
       "authItem": "Authentication и account management",
-      "paymentItem": "Payment processing",
-      "emailItem": "Transactional email delivery",
-      "hostingItem": "Website hosting",
+      "paymentItem": "Обработка платежей",
+      "emailItem": "Доставка транзакционных писем",
+      "hostingItem": "Хостинг сайта",
       "voiceInput": "<strong>Voice input.</strong> Если вы решите использовать voice input в MiniMind, ваша записанная аудиозапись безопасно передаётся нашему speech-to-text provider для transcription. Мы включили zero data retention у данного provider — аудио не хранится после transcription ни в инфраструктуре MindReset, ни у provider. Сохраняется только resulting text как часть вашей conversation history. При желании вы можете использовать Сервис полностью через typing.",
       "providersList": "Конкретные providers могут со временем меняться. Актуальный список используемых нами service providers доступен по запросу — email <mail>support@mindreset.ai</mail>.",
       "legalDisclosure": "Мы также можем раскрывать ваши данные, если это требуется по court order или аналогичному legal process.",
