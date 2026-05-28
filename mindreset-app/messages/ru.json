@@ -643,55 +643,55 @@
         "headerPurpose": "Цель",
         "headerLawfulBasis": "Правовое основание",
         "account": {
-          "category": "Account data",
-          "examples": "email address, hashed password, country (inferred from IP), preferred language",
-          "purpose": "create and manage your account; deliver the Service",
+          "category": "Данные аккаунта",
+          "examples": "email address, hashed password, country (определяется по IP), preferred language",
+          "purpose": "создание и управление аккаунтом; предоставление Сервиса",
           "lawfulBasis": "Contract"
         },
         "screening": {
           "category": "Screening data",
-          "examples": "your responses to the Readiness Check, resulting classification (Green / Yellow / Red), reason summary",
-          "purpose": "classify whether the Service is appropriate for you; protect users from potential harm",
+          "examples": "ваши ответы в Readiness Check, итоговая классификация (Green / Yellow / Red), краткое summary причин",
+          "purpose": "определение того, подходит ли вам Сервис; защита пользователей от потенциального вреда",
           "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
         },
         "conversation": {
           "category": "Conversation data (special category)",
-          "examples": "the messages you send to MiniMind or modules; reflections and answers in exercises; mood and energy check-ins",
-          "purpose": "AI analysis to suggest practices; personalised wellbeing support; tracking your progress",
+          "examples": "сообщения, которые вы отправляете в MiniMind или модули; reflections и ответы в упражнениях; mood и energy check-ins",
+          "purpose": "AI-анализ для подбора практик; персонализированная wellbeing-поддержка; отслеживание вашего прогресса",
           "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
         },
         "wellbeing": {
           "category": "Wellbeing profile",
-          "examples": "derived patterns (e.g., \"elevated anxiety\", \"recent stable period\"), state and theme observations",
-          "purpose": "personalisation; smart routing to appropriate practices and modules",
+          "examples": "выявленные паттерны (например, «elevated anxiety», «recent stable period»), observations состояний и тем",
+          "purpose": "персонализация; smart routing к подходящим практикам и модулям",
           "lawfulBasis": "Explicit consent (Art 9 §2 a UK GDPR)"
         },
         "safety": {
           "category": "Safety events",
-          "examples": "flagged conversation moments that triggered our safety protocol, our automated response, optional manual review notes",
-          "purpose": "safety protocol audit; compliance with Online Safety Act 2023 priority offences obligations",
+          "examples": "отмеченные conversation-моменты, активировавшие safety protocol, наш automated response, optional manual review notes",
+          "purpose": "аудит safety protocol; соблюдение обязательств Online Safety Act 2023 в отношении priority offences",
           "lawfulBasis": "Legitimate interest (audit trail for safety) / Legal obligation"
         },
         "usage": {
           "category": "Usage data",
-          "examples": "device type, browser, IP address, cookies, timestamps, page views",
-          "purpose": "security, anti-abuse, service improvement, anonymous analytics",
+          "examples": "тип устройства, browser, IP address, cookies, timestamps, просмотры страниц",
+          "purpose": "безопасность, anti-abuse, улучшение Сервиса, анонимная аналитика",
           "lawfulBasis": "Legitimate interest"
         },
         "payment": {
           "category": "Payment data",
-          "examples": "last 4 digits of card, transaction ID, billing email (full card data is held by the payment processor, not us)",
-          "purpose": "billing, fraud prevention, financial record-keeping",
+          "examples": "последние 4 цифры карты, transaction ID, billing email (полные данные карты хранятся у payment processor, а не у нас)",
+          "purpose": "billing, предотвращение мошенничества, финансовый учёт",
           "lawfulBasis": "Contract / Legal obligation (tax law)"
         },
         "support": {
           "category": "Support messages",
-          "examples": "emails you send to <mail>support@mindreset.ai</mail> or our other addresses",
-          "purpose": "responding to inquiries; resolving issues",
+          "examples": "emails, отправленные вами на <mail>support@mindreset.ai</mail> или другие наши адреса",
+          "purpose": "ответы на запросы; решение проблем",
           "lawfulBasis": "Legitimate interest"
         }
       },
-      "closing": "We do not request your real name, physical address, date of birth, or government identifiers. Please avoid sharing personally identifying details about yourself or others inside conversations with the AI."
+      "closing": "Мы не запрашиваем ваше настоящее имя, физический адрес, дату рождения или государственные идентификаторы. Пожалуйста, избегайте передачи персонально идентифицирующей информации о себе или других лицах внутри conversations с AI."
     },
     "section3": {
       "title": "3. How We Use AI",
