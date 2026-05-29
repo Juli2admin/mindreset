@@ -311,6 +311,26 @@ model Purchase {
 }
 
 // =============================================================================
+// Stripe webhook idempotency log.
+//
+// Stripe re-delivers webhook events when our endpoint times out or returns a
+// non-2xx response — and can do so days later. The first thing the webhook
+// handler does is try to insert the event ID here; the @id (primary key) is
+// the Stripe event ID, so a duplicate insert throws P2002 and we short-circuit
+// the handler. Without this, retries of `invoice.payment_succeeded` would
+// re-zero `messagesUsedThisCycle` mid-cycle, and retries of subscription
+// upserts could re-run the first-cycle counter reset.
+//
+// Per CLAUDE.md, this migration is applied manually in Supabase by the owner.
+// =============================================================================
+model StripeEvent {
+  id          String   @id  // Stripe event ID, e.g. "evt_1ABC..."
+  type        String   // "invoice.payment_succeeded", etc.
+  processedAt DateTime @default(now())
+}
+
+
+// =============================================================================
 // PROGRESS TRACKING
 // =============================================================================
 model ModuleProgress {
