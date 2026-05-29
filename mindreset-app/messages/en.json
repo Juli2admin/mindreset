@@ -237,17 +237,20 @@
       {
         "name": "MiniMind",
         "kind": "Daily companion",
-        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help."
+        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help.",
+        "price": "From £14.99 / month"
       },
       {
         "name": "States & Themes",
         "kind": "Focused modules",
-        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation."
+        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation.",
+        "price": "£29–£59 per module"
       },
       {
         "name": "The Journey",
         "kind": "Eight-stage reset",
-        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself."
+        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself.",
+        "price": "From £55/week · or £599 once"
       }
     ],
     "differentKicker": "What sets it apart",
@@ -262,7 +265,8 @@
     "closingKicker": "Whenever you are ready",
     "closingTitle": "Begin.",
     "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
-    "closingCta": "Start the check-in"
+    "closingCta": "Start the check-in",
+    "heroChip": "Free taster · 50 messages · no card needed"
   },
   "MiniMind": {
     "opener": "Hello. Good to have you here. How are you doing today?",

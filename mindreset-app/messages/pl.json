@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Codzienny towarzysz",
-        "body": "Ciepły towarzysz rozmowy, do którego można wrócić w każdej chwili. Codzienne rozmowy, krótkie praktyki uziemiające, miejsce, w którym można wylądować, gdy coś ciąży. Łagodnie poznaje Pani wzorce i proponuje głębszą pracę, gdy może pomóc."
+        "body": "Ciepły towarzysz rozmowy, do którego można wrócić w każdej chwili. Codzienne rozmowy, krótkie praktyki uziemiające, miejsce, w którym można wylądować, gdy coś ciąży. Łagodnie poznaje Pani wzorce i proponuje głębszą pracę, gdy może pomóc.",
+        "price": "Od £14.99 / miesiąc"
       },
       {
         "name": "Stany i Tematy",
         "kind": "Skupione moduły",
-        "body": "Krótkie ustrukturyzowane ścieżki na konkretne chwile. Stany na teraz: lęk, odłączenie, wewnętrzna pustka, odrętwienie. Tematy dla wzorców głębszych: pieniądze i poczucie własnej wartości, rodzina, ciało, wstyd, samorealizacja."
+        "body": "Krótkie ustrukturyzowane ścieżki na konkretne chwile. Stany na teraz: lęk, odłączenie, wewnętrzna pustka, odrętwienie. Tematy dla wzorców głębszych: pieniądze i poczucie własnej wartości, rodzina, ciało, wstyd, samorealizacja.",
+        "price": "£29–£59 za moduł"
       },
       {
         "name": "Droga",
         "kind": "Ośmioetapowy reset",
-        "body": "Powolna, sekwencyjna ścieżka od stabilizacji do nowego poczucia tego, kim Pani jest. Miesiące pracy, w tempie, jakie Pani system jest w stanie utrzymać. Stworzone, by puścić przekonania, które nigdy nie były Pani, przywrócić granice i znów pamiętać o sobie."
+        "body": "Powolna, sekwencyjna ścieżka od stabilizacji do nowego poczucia tego, kim Pani jest. Miesiące pracy, w tempie, jakie Pani system jest w stanie utrzymać. Stworzone, by puścić przekonania, które nigdy nie były Pani, przywrócić granice i znów pamiętać o sobie.",
+        "price": "Od £55/tydzień · lub £599 jednorazowo"
       }
     ],
     "differentKicker": "Czym się wyróżnia",
@@ -275,7 +278,8 @@
     "closingKicker": "Kiedy będzie Pani gotowa",
     "closingTitle": "Zacząć.",
     "closingBody": "Nie trzeba być w kawałkach, by zacząć. Nie trzeba wiedzieć, czego się chce. Rozmowa wstępna mówi — delikatnie — czy to jest dla Pani w tej chwili.",
-    "closingCta": "Rozpocząć rozmowę wstępną"
+    "closingCta": "Rozpocząć rozmowę wstępną",
+    "heroChip": "Darmowa próbka · 50 wiadomości · bez karty"
   },
   "MiniMind": {
     "opener": "Witam. Cieszę się, że Pani tu jest. Jak się Pani dzisiaj czuje?",

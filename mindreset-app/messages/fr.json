@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Compagnon du quotidien",
-        "body": "Un compagnon de conversation chaleureux, à retrouver à tout moment. Des bilans quotidiens, de courtes pratiques d’ancrage, un endroit où atterrir quand quelque chose pèse. Il apprend vos schémas en douceur, et propose un travail plus profond quand cela peut aider."
+        "body": "Un compagnon de conversation chaleureux, à retrouver à tout moment. Des bilans quotidiens, de courtes pratiques d’ancrage, un endroit où atterrir quand quelque chose pèse. Il apprend vos schémas en douceur, et propose un travail plus profond quand cela peut aider.",
+        "price": "À partir de £14.99 / mois"
       },
       {
         "name": "États et Thèmes",
         "kind": "Modules ciblés",
-        "body": "De courts parcours structurés pour des moments précis. Les États pour le présent : anxiété, déconnexion, vide intérieur, engourdissement. Les Thèmes pour les schémas sous-jacents : argent et estime de soi, famille, corps, honte, réalisation de soi."
+        "body": "De courts parcours structurés pour des moments précis. Les États pour le présent : anxiété, déconnexion, vide intérieur, engourdissement. Les Thèmes pour les schémas sous-jacents : argent et estime de soi, famille, corps, honte, réalisation de soi.",
+        "price": "£29–£59 par module"
       },
       {
         "name": "Le Parcours",
         "kind": "Une remise à zéro en huit étapes",
-        "body": "Un parcours lent et séquencé, de la stabilisation jusqu’à un nouveau sens de qui vous êtes. Des mois de travail, au rythme de ce que votre système peut tenir. Conçu pour relâcher des croyances qui n’étaient pas les vôtres, restaurer vos limites, et vous souvenir de vous-même."
+        "body": "Un parcours lent et séquencé, de la stabilisation jusqu’à un nouveau sens de qui vous êtes. Des mois de travail, au rythme de ce que votre système peut tenir. Conçu pour relâcher des croyances qui n’étaient pas les vôtres, restaurer vos limites, et vous souvenir de vous-même.",
+        "price": "À partir de £55/semaine · ou £599 en une fois"
       }
     ],
     "differentKicker": "Ce qui le distingue",
@@ -275,7 +278,8 @@
     "closingKicker": "Quand le moment est juste",
     "closingTitle": "Commencer.",
     "closingBody": "Vous n’avez pas besoin d’être en morceaux pour commencer. Vous n’avez pas besoin de savoir ce que vous voulez. Le bilan vous dit — doucement — si cela vous correspond en ce moment.",
-    "closingCta": "Commencer le bilan"
+    "closingCta": "Commencer le bilan",
+    "heroChip": "Aperçu gratuit · 50 messages · sans carte"
   },
   "MiniMind": {
     "opener": "Bonjour. Heureux que vous soyez là. Comment vous sentez-vous aujourd’hui ?",

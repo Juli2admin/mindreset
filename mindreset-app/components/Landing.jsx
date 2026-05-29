@@ -153,7 +153,14 @@ function Hero({ onBegin }) {
         <ArrowRight size={14} />
       </button>
 
-      <div className="text-[12px] mt-5" style={{ ...sansStyle, color: c.textHint }}>
+      <div
+        className="text-[13px] mt-5"
+        style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
+      >
+        {t('heroChip')}
+      </div>
+
+      <div className="text-[11px] mt-2" style={{ ...sansStyle, color: c.textHint }}>
         {t('heroNote')}
       </div>
     </section>
@@ -226,13 +233,12 @@ function WhoFor() {
         {t('whoLead')}
       </p>
 
-      <ul className="space-y-5 mb-12">
+      {/* Lighter visual treatment than the prose sections — dropped
+          per-item border dividers and tightened spacing so this section
+          reads as a quick scannable list rather than a heavy block. */}
+      <ul className="space-y-2 mb-12">
         {whoScenarios.map((item, i) => (
-          <li
-            key={i}
-            className="flex gap-4 pb-5"
-            style={{ borderBottom: i === whoScenarios.length - 1 ? 'none' : `1px solid ${c.border}` }}
-          >
+          <li key={i} className="flex gap-4 py-1.5">
             <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
               0{i + 1}
             </span>
@@ -266,21 +272,19 @@ function Safety() {
         {t('safetyLead')}
       </p>
 
-      <div className="space-y-5">
+      {/* Tightened from per-item border-divided paragraphs to a clean
+          single-statement list. Lighter visual weight for "you stay in
+          control" — the message is reassurance, not exposition. */}
+      <ul className="space-y-3">
         {safetyItems.map((item, i) => (
-          <p
-            key={i}
-            className="text-[16px] leading-[1.6] pb-5"
-            style={{
-              ...sansStyle,
-              color: c.text,
-              borderBottom: i === safetyItems.length - 1 ? 'none' : `1px solid ${c.border}`,
-            }}
-          >
-            {item}
-          </p>
+          <li key={i} className="flex gap-3 items-baseline">
+            <span className="text-[10px]" style={{ color: c.accentSage }}>●</span>
+            <span className="text-[15px] leading-[1.55] flex-1" style={{ ...sansStyle, color: c.text }}>
+              {item}
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -296,6 +300,10 @@ function PathsSection() {
         <SectionTitle text={t('pathsTitle')} />
       </div>
 
+      {/* Per-path block reverts to the border-divider prose pattern (no
+          card background). Only the price line is clickable, not the
+          whole block — keeps the block calm and signals "click the price
+          to see plans". */}
       <div className="space-y-12">
         {paths.map((p, i) => (
           <div
@@ -321,6 +329,14 @@ function PathsSection() {
               <p className="text-[16px] leading-[1.65]" style={{ ...sansStyle, color: c.textMuted }}>
                 {p.body}
               </p>
+              <Link
+                href="/pricing"
+                className="mt-4 inline-flex items-center gap-2 text-[14px] hover:underline underline-offset-4"
+                style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
+              >
+                {p.price}
+                <ArrowRight size={14} />
+              </Link>
             </div>
           </div>
         ))}

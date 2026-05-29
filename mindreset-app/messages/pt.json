@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Companhia diária",
-        "body": "Um companheiro de conversa acolhedor, ao qual pode regressar a qualquer momento. Conversas diárias, breves práticas de enraizamento, um lugar onde aterrar quando algo pesa. Aprende os seus padrões com suavidade e propõe um trabalho mais profundo quando pode ajudar."
+        "body": "Um companheiro de conversa acolhedor, ao qual pode regressar a qualquer momento. Conversas diárias, breves práticas de enraizamento, um lugar onde aterrar quando algo pesa. Aprende os seus padrões com suavidade e propõe um trabalho mais profundo quando pode ajudar.",
+        "price": "A partir de £14.99 / mês"
       },
       {
         "name": "Estados e Temas",
         "kind": "Módulos focados",
-        "body": "Pequenos percursos estruturados para momentos específicos. Estados para o presente: ansiedade, desconexão, vazio interior, anestesia. Temas para os padrões por baixo: dinheiro e auto-estima, família, corpo, vergonha, realização pessoal."
+        "body": "Pequenos percursos estruturados para momentos específicos. Estados para o presente: ansiedade, desconexão, vazio interior, anestesia. Temas para os padrões por baixo: dinheiro e auto-estima, família, corpo, vergonha, realização pessoal.",
+        "price": "£29–£59 por módulo"
       },
       {
         "name": "O Caminho",
         "kind": "Um reinício em oito etapas",
-        "body": "Um percurso lento e sequencial, da estabilização até um novo sentido de quem é. Meses de trabalho, ao ritmo do que o seu sistema consegue sustentar. Pensado para deixar ir crenças que nunca foram suas, restaurar os seus limites e voltar a recordar-se de si."
+        "body": "Um percurso lento e sequencial, da estabilização até um novo sentido de quem é. Meses de trabalho, ao ritmo do que o seu sistema consegue sustentar. Pensado para deixar ir crenças que nunca foram suas, restaurar os seus limites e voltar a recordar-se de si.",
+        "price": "A partir de £55/semana · ou £599 de uma vez"
       }
     ],
     "differentKicker": "O que o distingue",
@@ -275,7 +278,8 @@
     "closingKicker": "Quando estiver pronto",
     "closingTitle": "Começar.",
     "closingBody": "Não precisa de estar em pedaços para começar. Não precisa de saber o que quer. A conversa inicial diz-lhe — com delicadeza — se isto lhe corresponde neste momento.",
-    "closingCta": "Iniciar a conversa"
+    "closingCta": "Iniciar a conversa",
+    "heroChip": "Amostra gratuita · 50 mensagens · sem cartão"
   },
   "MiniMind": {
     "opener": "Olá. É bom tê-lo aqui. Como está hoje?",
