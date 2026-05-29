@@ -50,6 +50,18 @@ export default clerkMiddleware((auth, req) => {
     return NextResponse.next();
   }
 
+  // /admin: English-only internal tooling. Clerk-protected at the
+  // middleware layer (signed-out → /sign-in); the email-allowlist gate
+  // (ADMIN_EMAILS env var) runs inside app/admin/layout.tsx where
+  // currentUser() gives us the email addresses without an extra Clerk
+  // round-trip. Skips next-intl entirely (admin lives outside [locale]).
+  if (req.nextUrl.pathname.startsWith('/admin')) {
+    auth().protect({
+      unauthenticatedUrl: new URL('/sign-in', req.url).toString(),
+    });
+    return NextResponse.next();
+  }
+
   // Clerk auth gate first.
   if (isProtectedRoute(req)) {
     const locale = localeFromPath(req.nextUrl.pathname);
