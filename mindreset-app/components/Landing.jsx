@@ -154,19 +154,13 @@ function Hero({ onBegin }) {
       </button>
 
       <div
-        className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full text-[12px]"
-        style={{
-          ...sansStyle,
-          fontWeight: 500,
-          color: c.text,
-          background: c.bgSubtle,
-          border: `1px solid ${c.border}`,
-        }}
+        className="text-[13px] mt-5"
+        style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
       >
         {t('heroChip')}
       </div>
 
-      <div className="text-[11px] mt-3" style={{ ...sansStyle, color: c.textHint }}>
+      <div className="text-[11px] mt-2" style={{ ...sansStyle, color: c.textHint }}>
         {t('heroNote')}
       </div>
     </section>
@@ -306,20 +300,16 @@ function PathsSection() {
         <SectionTitle text={t('pathsTitle')} />
       </div>
 
-      {/* Each path is a clickable card linking to /pricing. Card-style
-          background (vs the prose-section border-top pattern used elsewhere)
-          gives this section a different visual rhythm and signals that the
-          three blocks ARE the products. */}
-      <div className="space-y-4">
+      {/* Per-path block reverts to the border-divider prose pattern (no
+          card background). Only the price line is clickable, not the
+          whole block — keeps the block calm and signals "click the price
+          to see plans". */}
+      <div className="space-y-12">
         {paths.map((p, i) => (
-          <Link
+          <div
             key={p.name}
-            href="/pricing"
-            className="grid grid-cols-1 sm:grid-cols-12 gap-6 p-6 rounded-lg block transition-opacity hover:opacity-80"
-            style={{
-              background: c.bgCard,
-              border: `1px solid ${c.border}`,
-            }}
+            className="grid grid-cols-1 sm:grid-cols-12 gap-6 pb-12 last:pb-0"
+            style={{ borderBottom: i === paths.length - 1 ? 'none' : `1px solid ${c.border}` }}
           >
             <div className="sm:col-span-4">
               <div
@@ -339,17 +329,16 @@ function PathsSection() {
               <p className="text-[16px] leading-[1.65]" style={{ ...sansStyle, color: c.textMuted }}>
                 {p.body}
               </p>
-              <div className="mt-4 flex items-center justify-between gap-3">
-                <span
-                  className="text-[14px]"
-                  style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
-                >
-                  {p.price}
-                </span>
+              <Link
+                href="/pricing"
+                className="mt-4 inline-flex items-center gap-2 text-[14px] hover:underline underline-offset-4"
+                style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
+              >
+                {p.price}
                 <ArrowRight size={14} />
-              </div>
+              </Link>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </section>
