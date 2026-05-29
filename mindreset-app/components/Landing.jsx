@@ -153,7 +153,20 @@ function Hero({ onBegin }) {
         <ArrowRight size={14} />
       </button>
 
-      <div className="text-[12px] mt-5" style={{ ...sansStyle, color: c.textHint }}>
+      <div
+        className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full text-[12px]"
+        style={{
+          ...sansStyle,
+          fontWeight: 500,
+          color: c.text,
+          background: c.bgSubtle,
+          border: `1px solid ${c.border}`,
+        }}
+      >
+        {t('heroChip')}
+      </div>
+
+      <div className="text-[11px] mt-3" style={{ ...sansStyle, color: c.textHint }}>
         {t('heroNote')}
       </div>
     </section>
@@ -226,13 +239,12 @@ function WhoFor() {
         {t('whoLead')}
       </p>
 
-      <ul className="space-y-5 mb-12">
+      {/* Lighter visual treatment than the prose sections — dropped
+          per-item border dividers and tightened spacing so this section
+          reads as a quick scannable list rather than a heavy block. */}
+      <ul className="space-y-2 mb-12">
         {whoScenarios.map((item, i) => (
-          <li
-            key={i}
-            className="flex gap-4 pb-5"
-            style={{ borderBottom: i === whoScenarios.length - 1 ? 'none' : `1px solid ${c.border}` }}
-          >
+          <li key={i} className="flex gap-4 py-1.5">
             <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
               0{i + 1}
             </span>
@@ -266,21 +278,19 @@ function Safety() {
         {t('safetyLead')}
       </p>
 
-      <div className="space-y-5">
+      {/* Tightened from per-item border-divided paragraphs to a clean
+          single-statement list. Lighter visual weight for "you stay in
+          control" — the message is reassurance, not exposition. */}
+      <ul className="space-y-3">
         {safetyItems.map((item, i) => (
-          <p
-            key={i}
-            className="text-[16px] leading-[1.6] pb-5"
-            style={{
-              ...sansStyle,
-              color: c.text,
-              borderBottom: i === safetyItems.length - 1 ? 'none' : `1px solid ${c.border}`,
-            }}
-          >
-            {item}
-          </p>
+          <li key={i} className="flex gap-3 items-baseline">
+            <span className="text-[10px]" style={{ color: c.accentSage }}>●</span>
+            <span className="text-[15px] leading-[1.55] flex-1" style={{ ...sansStyle, color: c.text }}>
+              {item}
+            </span>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
@@ -296,12 +306,20 @@ function PathsSection() {
         <SectionTitle text={t('pathsTitle')} />
       </div>
 
-      <div className="space-y-12">
+      {/* Each path is a clickable card linking to /pricing. Card-style
+          background (vs the prose-section border-top pattern used elsewhere)
+          gives this section a different visual rhythm and signals that the
+          three blocks ARE the products. */}
+      <div className="space-y-4">
         {paths.map((p, i) => (
-          <div
+          <Link
             key={p.name}
-            className="grid grid-cols-1 sm:grid-cols-12 gap-6 pb-12 last:pb-0"
-            style={{ borderBottom: i === paths.length - 1 ? 'none' : `1px solid ${c.border}` }}
+            href="/pricing"
+            className="grid grid-cols-1 sm:grid-cols-12 gap-6 p-6 rounded-lg block transition-opacity hover:opacity-80"
+            style={{
+              background: c.bgCard,
+              border: `1px solid ${c.border}`,
+            }}
           >
             <div className="sm:col-span-4">
               <div
@@ -321,8 +339,17 @@ function PathsSection() {
               <p className="text-[16px] leading-[1.65]" style={{ ...sansStyle, color: c.textMuted }}>
                 {p.body}
               </p>
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <span
+                  className="text-[14px]"
+                  style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
+                >
+                  {p.price}
+                </span>
+                <ArrowRight size={14} />
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

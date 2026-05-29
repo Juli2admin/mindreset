@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Compañero diario",
-        "body": "Un compañero de conversación cálido, al que puede volver cuando lo necesite. Revisiones diarias, prácticas breves de enraizamiento, un lugar donde aterrizar cuando algo pesa. Aprende sus patrones con suavidad y propone un trabajo más profundo cuando puede ayudar."
+        "body": "Un compañero de conversación cálido, al que puede volver cuando lo necesite. Revisiones diarias, prácticas breves de enraizamiento, un lugar donde aterrizar cuando algo pesa. Aprende sus patrones con suavidad y propone un trabajo más profundo cuando puede ayudar.",
+        "price": "Desde £14.99 / mes"
       },
       {
         "name": "Estados y Temas",
         "kind": "Módulos enfocados",
-        "body": "Recorridos breves y estructurados para momentos concretos. Estados para el presente: ansiedad, desconexión, vacío interior, embotamiento. Temas para los patrones de fondo: dinero y autoestima, familia, cuerpo, vergüenza, realización personal."
+        "body": "Recorridos breves y estructurados para momentos concretos. Estados para el presente: ansiedad, desconexión, vacío interior, embotamiento. Temas para los patrones de fondo: dinero y autoestima, familia, cuerpo, vergüenza, realización personal.",
+        "price": "£29–£59 por módulo"
       },
       {
         "name": "El Camino",
         "kind": "Un reinicio de ocho etapas",
-        "body": "Un recorrido lento y secuencial, desde la estabilización hasta un nuevo sentido de quién es usted. Meses de trabajo, al ritmo de lo que su sistema pueda sostener. Pensado para soltar creencias que nunca fueron suyas, restaurar sus límites y volver a recordarse."
+        "body": "Un recorrido lento y secuencial, desde la estabilización hasta un nuevo sentido de quién es usted. Meses de trabajo, al ritmo de lo que su sistema pueda sostener. Pensado para soltar creencias que nunca fueron suyas, restaurar sus límites y volver a recordarse.",
+        "price": "Desde £55/semana · o £599 de una vez"
       }
     ],
     "differentKicker": "Qué lo distingue",
@@ -275,7 +278,8 @@
     "closingKicker": "Cuando esté listo",
     "closingTitle": "Comenzar.",
     "closingBody": "No necesita estar hecho pedazos para empezar. No necesita saber lo que quiere. La revisión le dice — con suavidad — si esto le corresponde en este momento.",
-    "closingCta": "Comenzar la revisión"
+    "closingCta": "Comenzar la revisión",
+    "heroChip": "Prueba gratuita · 50 mensajes · sin tarjeta"
   },
   "MiniMind": {
     "opener": "Hola. Me alegra que esté aquí. ¿Cómo se encuentra hoy?",

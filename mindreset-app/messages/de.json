@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Tägliche Begleitung",
-        "body": "Eine warme Begleitung im Gespräch, jederzeit erreichbar. Tägliche Check-ins, kurze Erdungsübungen, ein Ort zum Ankommen, wenn etwas schwer wiegt. Sie nimmt Ihre Muster behutsam wahr und schlägt tiefere Arbeit vor, wenn es hilfreich wäre."
+        "body": "Eine warme Begleitung im Gespräch, jederzeit erreichbar. Tägliche Check-ins, kurze Erdungsübungen, ein Ort zum Ankommen, wenn etwas schwer wiegt. Sie nimmt Ihre Muster behutsam wahr und schlägt tiefere Arbeit vor, wenn es hilfreich wäre.",
+        "price": "Ab £14.99 / Monat"
       },
       {
         "name": "Zustände & Themen",
         "kind": "Fokussierte Module",
-        "body": "Kurze strukturierte Wege für bestimmte Momente. Zustände für die Gegenwart: Angst, Abgetrenntheit, innere Leere, Taubheit. Themen für die Muster darunter: Geld und Selbstwert, Familie, Körper, Scham, Selbstverwirklichung."
+        "body": "Kurze strukturierte Wege für bestimmte Momente. Zustände für die Gegenwart: Angst, Abgetrenntheit, innere Leere, Taubheit. Themen für die Muster darunter: Geld und Selbstwert, Familie, Körper, Scham, Selbstverwirklichung.",
+        "price": "£29–£59 pro Modul"
       },
       {
         "name": "Der Weg",
         "kind": "Ein achtstufiger Neuanfang",
-        "body": "Ein langsamer, schrittweiser Weg von der Stabilisierung bis zu einem neuen Gefühl dafür, wer Sie sind. Monate an Arbeit, im Tempo dessen, was Ihr System tragen kann. Gebaut, um Überzeugungen loszulassen, die nie Ihre waren, Ihre Grenzen wiederherzustellen und sich an sich selbst zu erinnern."
+        "body": "Ein langsamer, schrittweiser Weg von der Stabilisierung bis zu einem neuen Gefühl dafür, wer Sie sind. Monate an Arbeit, im Tempo dessen, was Ihr System tragen kann. Gebaut, um Überzeugungen loszulassen, die nie Ihre waren, Ihre Grenzen wiederherzustellen und sich an sich selbst zu erinnern.",
+        "price": "Ab £55/Woche · oder £599 einmalig"
       }
     ],
     "differentKicker": "Was es auszeichnet",
@@ -275,7 +278,8 @@
     "closingKicker": "Wann immer es soweit ist",
     "closingTitle": "Beginnen.",
     "closingBody": "Sie müssen nicht in Stücken sein, um zu beginnen. Sie müssen nicht wissen, was Sie wollen. Der Check-in zeigt Ihnen — sanft — ob das im Moment für Sie stimmig ist.",
-    "closingCta": "Den Check-in beginnen"
+    "closingCta": "Den Check-in beginnen",
+    "heroChip": "Kostenlose Probe · 50 Nachrichten · keine Karte nötig"
   },
   "MiniMind": {
     "opener": "Hallo. Schön, dass Sie hier sind. Wie geht es Ihnen heute?",

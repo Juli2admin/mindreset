@@ -250,17 +250,20 @@
       {
         "name": "MiniMind",
         "kind": "Compagno quotidiano",
-        "body": "Un compagno di conversazione caldo, a cui tornare in qualsiasi momento. Check-in quotidiani, brevi pratiche di radicamento, un posto dove approdare quando qualcosa pesa. Apprende i Suoi schemi con dolcezza e propone un lavoro più profondo quando può aiutare."
+        "body": "Un compagno di conversazione caldo, a cui tornare in qualsiasi momento. Check-in quotidiani, brevi pratiche di radicamento, un posto dove approdare quando qualcosa pesa. Apprende i Suoi schemi con dolcezza e propone un lavoro più profondo quando può aiutare.",
+        "price": "Da £14.99 / mese"
       },
       {
         "name": "Stati e Temi",
         "kind": "Moduli mirati",
-        "body": "Percorsi brevi e strutturati per momenti precisi. Gli Stati per il presente: ansia, disconnessione, vuoto interiore, intorpidimento. I Temi per gli schemi sottostanti: denaro e autostima, famiglia, corpo, vergogna, realizzazione di sé."
+        "body": "Percorsi brevi e strutturati per momenti precisi. Gli Stati per il presente: ansia, disconnessione, vuoto interiore, intorpidimento. I Temi per gli schemi sottostanti: denaro e autostima, famiglia, corpo, vergogna, realizzazione di sé.",
+        "price": "£29–£59 a modulo"
       },
       {
         "name": "Il Cammino",
         "kind": "Un rinnovamento in otto tappe",
-        "body": "Un percorso lento e sequenziale, dalla stabilizzazione fino a un nuovo senso di chi è Lei. Mesi di lavoro, al ritmo di ciò che il Suo sistema può sostenere. Pensato per lasciare andare credenze che non sono mai state Sue, ristabilire i confini, e ricordarsi di sé."
+        "body": "Un percorso lento e sequenziale, dalla stabilizzazione fino a un nuovo senso di chi è Lei. Mesi di lavoro, al ritmo di ciò che il Suo sistema può sostenere. Pensato per lasciare andare credenze che non sono mai state Sue, ristabilire i confini, e ricordarsi di sé.",
+        "price": "Da £55/settimana · o £599 una sola volta"
       }
     ],
     "differentKicker": "Cosa lo distingue",
@@ -275,7 +278,8 @@
     "closingKicker": "Quando si sente pronto",
     "closingTitle": "Iniziare.",
     "closingBody": "Non deve essere in pezzi per iniziare. Non deve sapere ciò che vuole. Il check-in Le dice — con delicatezza — se questo Le corrisponde in questo momento.",
-    "closingCta": "Iniziare il check-in"
+    "closingCta": "Iniziare il check-in",
+    "heroChip": "Prova gratuita · 50 messaggi · senza carta"
   },
   "MiniMind": {
     "opener": "Salve. È bello che Lei sia qui. Come si sente oggi?",
