@@ -12,25 +12,31 @@ import { formatCurrency } from '@/lib/format';
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-// Block B — Product tier data. Code, not content. Numeric values feed
+// Block B — MiniMind tier data. Code, not content. Numeric values feed
 // formatCurrency() (en-GB locked); period words are composed at render via
 // ICU templates in the Pricing.price.* namespace. The 'kind' discriminator
 // drives render: 'open' = Open badge + link, 'sub' = annual/monthly price
-// line, 'oneOff' = single price line, 'comingSoon' = badge only, no price.
+// line, 'oneOff' = single price line.
+//
+// States, Themes and The Journey are rendered as separate sections beneath
+// the MiniMind tier grid (mirrors /home dashboard structure). Each module
+// shows title + price + "available soon" badge until PR3 wires per-module
+// Stripe checkout; price IDs for those 11 products do not exist yet.
 type TierData =
   | { id: 'freeTaster'; kind: 'open'; href: '/minimind' }
   | { id: 'miniMindEssential' | 'miniMindExtended'; kind: 'sub'; monthly: number; annual: number }
-  | { id: 'topUp'; kind: 'oneOff'; price: number }
-  | { id: 'statesThemes' | 'journey'; kind: 'comingSoon' };
+  | { id: 'topUp'; kind: 'oneOff'; price: number };
 
 const TIERS: TierData[] = [
   { id: 'freeTaster', kind: 'open', href: '/minimind' },
   { id: 'miniMindEssential', kind: 'sub', monthly: 14.99, annual: 129 },
   { id: 'miniMindExtended', kind: 'sub', monthly: 24.99, annual: 209 },
   { id: 'topUp', kind: 'oneOff', price: 4.99 },
-  { id: 'statesThemes', kind: 'comingSoon' },
-  { id: 'journey', kind: 'comingSoon' },
 ];
+
+// Mirrors HomeClient — same module IDs resolve same titles via Home namespace.
+const STATE_IDS = ['anxiety', 'lowEnergy', 'comeBack', 'empty'] as const;
+const THEME_IDS = ['money', 'body', 'family', 'shame', 'selfRealisation'] as const;
 
 type Props = {
   currentTier: string | null;
@@ -40,6 +46,10 @@ type Props = {
 
 export default function PricingClient({ currentTier, footerSlot, testimonialsSlot }: Props) {
   const t = useTranslations('Pricing');
+  // Home namespace owns module titles + section copy. Pricing reuses the
+  // same strings to keep the catalogue single-sourced; /home and /pricing
+  // show the same product names without duplicate translations.
+  const tHome = useTranslations('Home');
   const locale = useLocale();
   const { isSignedIn } = useUser();
   const { palette: PALETTE } = useTheme();
@@ -152,19 +162,6 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
                       }}
                     >
                       {t('tierOpen')}
-                    </span>
-                  ) : tier.kind === 'comingSoon' ? (
-                    <span
-                      className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                      style={{
-                        background: PALETTE.bgSubtle,
-                        color: PALETTE.textHint,
-                        border: `1px solid ${PALETTE.border}`,
-                        fontFamily: SANS,
-                        fontWeight: 500,
-                      }}
-                    >
-                      {t('comingSoon')}
                     </span>
                   ) : (currentTier === 'essential' && tier.id === 'miniMindEssential') ||
                       (currentTier === 'extended'  && tier.id === 'miniMindExtended') ? (
@@ -321,6 +318,168 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
             );
           })}
         </div>
+
+        {/* Your States — 4 individually-priced modules. Cards are
+            informational until PR3 wires per-module Stripe checkout. */}
+        <div className="mt-12 mb-12">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {tHome('states.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {tHome('states.intro')}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {STATE_IDS.map((id) => (
+              <div
+                key={id}
+                className="rounded-lg p-5"
+                style={{
+                  background: PALETTE.bgCard,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3
+                    className="text-[16px] leading-[1.3]"
+                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                  >
+                    {tHome(`states.modules.${id}` as 'states.modules.anxiety')}
+                  </h3>
+                  <span
+                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                    style={{
+                      background: PALETTE.bgSubtle,
+                      color: PALETTE.textHint,
+                      border: `1px solid ${PALETTE.border}`,
+                      fontFamily: SANS,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {tHome('availableSoon')}
+                  </span>
+                </div>
+                <p
+                  className="text-[12px]"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {tHome('modulePriceFormat')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Your Themes — 5 individually-priced modules. */}
+        <div className="mb-12">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {tHome('themes.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {tHome('themes.intro')}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {THEME_IDS.map((id) => (
+              <div
+                key={id}
+                className="rounded-lg p-5"
+                style={{
+                  background: PALETTE.bgCard,
+                  border: `1px solid ${PALETTE.border}`,
+                }}
+              >
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <h3
+                    className="text-[16px] leading-[1.3]"
+                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                  >
+                    {tHome(`themes.modules.${id}` as 'themes.modules.money')}
+                  </h3>
+                  <span
+                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                    style={{
+                      background: PALETTE.bgSubtle,
+                      color: PALETTE.textHint,
+                      border: `1px solid ${PALETTE.border}`,
+                      fontFamily: SANS,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {tHome('availableSoon')}
+                  </span>
+                </div>
+                <p
+                  className="text-[12px]"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {tHome('modulePriceFormat')}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Your Journey — single card, two purchase options. */}
+        <div className="mb-12">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {tHome('journey.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {tHome('journey.intro')}
+          </p>
+          <div
+            className="rounded-lg p-6"
+            style={{
+              background: PALETTE.bgCard,
+              border: `1px solid ${PALETTE.border}`,
+            }}
+          >
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <h3
+                className="text-[20px]"
+                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+              >
+                {tHome('journey.title')}
+              </h3>
+              <span
+                className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                style={{
+                  background: PALETTE.bgSubtle,
+                  color: PALETTE.textHint,
+                  border: `1px solid ${PALETTE.border}`,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                }}
+              >
+                {tHome('availableSoon')}
+              </span>
+            </div>
+            <p
+              className="text-[13px]"
+              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+            >
+              {tHome('journey.priceFormat')}
+            </p>
+          </div>
+        </div>
+
         {checkoutError && (
           <p
             className="mt-4 text-[13px]"

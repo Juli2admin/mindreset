@@ -128,12 +128,40 @@
       "openMinimind": "Aprire MiniMind",
       "buyTopUp": "Acquistare una ricarica",
       "managePlan": "Gestire l’abbonamento",
-      "seePlans": "Vedere i piani"
+      "seePlans": "Vedere i piani",
+      "browsePlans": "Vedi tutti i piani →"
     },
-    "comingSoon": {
-      "label": "Presto altro",
-      "note": "Moduli tematici e un percorso in 8 blocchi sono in arrivo."
-    }
+    "modulePriceFormat": "£59 (£29 abbonati)",
+    "moduleBuyButton": "Apri il modulo →",
+    "states": {
+      "kicker": "I TUOI STATI",
+      "intro": "Pratiche di supporto rapide per i momenti in cui tutto diventa troppo intenso. Moduli brevi e strutturati a cui puoi accedere in tempo reale — basati su approcci polivagali, somatici e trauma-informed di auto-aiuto.",
+      "modules": {
+        "anxiety": "Calmare l’ansia",
+        "lowEnergy": "Ritrovare energia",
+        "comeBack": "Tornare a te",
+        "empty": "Riconnetterti con te stesso"
+      }
+    },
+    "themes": {
+      "kicker": "TEMI PROFONDI",
+      "intro": "Un lavoro interiore più profondo, al tuo ritmo. Moduli immersivi per sciogliere i pattern profondi — denaro, corpo, famiglia, vergogna e la vita che desideri davvero vivere.",
+      "modules": {
+        "money": "Denaro e abbondanza",
+        "body": "Corpo e sessualità",
+        "family": "Schemi familiari",
+        "shame": "Vergogna e colpa",
+        "selfRealisation": "Realizzazione di sé"
+      }
+    },
+    "journey": {
+      "kicker": "IL TUO RITORNO A SÉ",
+      "intro": "Il programma completo. Otto tappe, dalla stabilizzazione del sistema nervoso fino al ritorno a te stesso — costruito con attenzione per sostenere sicurezza e profondità lungo il percorso.",
+      "title": "Il ritorno a sé",
+      "priceFormat": "Pagamento unico £599 · 12 × £55/settimana",
+      "buyButton": "Inizia il Cammino →"
+    },
+    "availableSoon": "Prossimamente"
   },
   "AccountDeletion": {
     "settingsKicker": "I SUOI DATI",

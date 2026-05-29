@@ -128,12 +128,40 @@
       "openMinimind": "MiniMind öffnen",
       "buyTopUp": "Top-up kaufen",
       "managePlan": "Abonnement verwalten",
-      "seePlans": "Tarife ansehen"
+      "seePlans": "Tarife ansehen",
+      "browsePlans": "Alle Pläne ansehen →"
     },
-    "comingSoon": {
-      "label": "Bald mehr",
-      "note": "Thematische Module und ein 8-Block-Weg sind unterwegs."
-    }
+    "modulePriceFormat": "£59 (£29 für Abonnenten)",
+    "moduleBuyButton": "Modul öffnen →",
+    "states": {
+      "kicker": "DEINE ZUSTÄNDE",
+      "intro": "Schnelle Unterstützung für die Momente, in denen alles zu viel wird. Kurze, strukturierte Module, die du in Echtzeit nutzen kannst — basierend auf polyvagalen, somatischen und trauma-informierten Selbsthilfeansätzen.",
+      "modules": {
+        "anxiety": "Angst beruhigen",
+        "lowEnergy": "Energie wiederfinden",
+        "comeBack": "Zu dir zurückkehren",
+        "empty": "Wieder Verbindung zu dir spüren"
+      }
+    },
+    "themes": {
+      "kicker": "TIEFERE THEMEN",
+      "intro": "Tiefere innere Arbeit — in deinem eigenen Tempo. Länger angelegte Module, um die zugrunde liegenden Muster zu entwirren: Geld, Körper, Familie, Scham und das Leben, das du wirklich leben möchtest.",
+      "modules": {
+        "money": "Beziehung zu Geld",
+        "body": "Körper und Sexualität",
+        "family": "Familienskripte",
+        "shame": "Scham und Schuld",
+        "selfRealisation": "Selbstverwirklichung"
+      }
+    },
+    "journey": {
+      "kicker": "DEIN WEG ZU DIR",
+      "intro": "Das vollständige Programm. Acht aufeinander aufbauende Schritte — von der Stabilisierung deines Nervensystems bis hin zur Rückkehr zu dir selbst. Behutsam aufgebaut, mit Fokus auf Sicherheit und Tiefe.",
+      "title": "Der Weg zu dir",
+      "priceFormat": "Einmalzahlung £599 · 12 × £55/Woche",
+      "buyButton": "Den Weg beginnen →"
+    },
+    "availableSoon": "Bald verfügbar"
   },
   "AccountDeletion": {
     "settingsKicker": "IHRE DATEN",

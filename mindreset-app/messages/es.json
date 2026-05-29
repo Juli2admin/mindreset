@@ -128,12 +128,40 @@
       "openMinimind": "Abrir MiniMind",
       "buyTopUp": "Comprar una recarga",
       "managePlan": "Gestionar suscripción",
-      "seePlans": "Ver planes"
+      "seePlans": "Ver planes",
+      "browsePlans": "Ver todos los planes →"
     },
-    "comingSoon": {
-      "label": "Pronto más",
-      "note": "Módulos temáticos y un camino de 8 bloques están en camino."
-    }
+    "modulePriceFormat": "£59 (£29 para suscriptores)",
+    "moduleBuyButton": "Abrir módulo →",
+    "states": {
+      "kicker": "TUS ESTADOS",
+      "intro": "Prácticas de apoyo rápidas para los momentos en que todo se vuelve demasiado intenso. Módulos cortos y estructurados a los que puedes recurrir en tiempo real — basados en enfoques polivagales, somáticos y trauma-informed de autoayuda.",
+      "modules": {
+        "anxiety": "Calmar un momento de ansiedad",
+        "lowEnergy": "Recuperar energía",
+        "comeBack": "Volver a ti",
+        "empty": "Volver a conectar contigo"
+      }
+    },
+    "themes": {
+      "kicker": "TEMAS PROFUNDOS",
+      "intro": "Un trabajo más profundo, a tu propio ritmo. Módulos inmersivos para desenredar los patrones subyacentes — dinero, cuerpo, familia, vergüenza y la vida que realmente quieres vivir.",
+      "modules": {
+        "money": "Dinero y abundancia",
+        "body": "Cuerpo y sexualidad",
+        "family": "Guiones familiares",
+        "shame": "Vergüenza y culpa",
+        "selfRealisation": "Realización personal"
+      }
+    },
+    "journey": {
+      "kicker": "TU CAMINO HACIA TI",
+      "intro": "El programa completo. Ocho etapas, desde la estabilización de tu sistema nervioso hasta el regreso a ti mismo — diseñado cuidadosamente para sostener seguridad y profundidad en el proceso.",
+      "title": "El Camino hacia ti",
+      "priceFormat": "Pago único £599 · 12 × £55/semana",
+      "buyButton": "Empezar el Camino →"
+    },
+    "availableSoon": "Próximamente"
   },
   "AccountDeletion": {
     "settingsKicker": "SUS DATOS",

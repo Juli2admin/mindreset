@@ -119,12 +119,40 @@
       "openMinimind": "Open MiniMind",
       "buyTopUp": "Buy a top-up",
       "managePlan": "Manage subscription",
-      "seePlans": "See plans"
+      "seePlans": "See plans",
+      "browsePlans": "Browse all plans →"
     },
-    "comingSoon": {
-      "label": "More coming soon",
-      "note": "Themed modules and an 8-block journey are on their way."
-    }
+    "modulePriceFormat": "£59 (£29 subscribers)",
+    "moduleBuyButton": "Get this module →",
+    "states": {
+      "kicker": "YOUR STATES",
+      "intro": "Quick resets for the moments a wave hits. Short structured modules you can reach for in real time — built on polyvagal, somatic and trauma-informed self-help approaches.",
+      "modules": {
+        "anxiety": "Calm an anxious moment",
+        "lowEnergy": "Find energy when you have none",
+        "comeBack": "Come back to yourself",
+        "empty": "Reconnect when you feel empty"
+      }
+    },
+    "themes": {
+      "kicker": "YOUR THEMES",
+      "intro": "Deeper work, at your own pace. Sustained modules to unwind the patterns underneath — money, body, family, shame, the life you want to live.",
+      "modules": {
+        "money": "Money & Abundance",
+        "body": "Body & Sexuality",
+        "family": "Family scripts",
+        "shame": "Shame & Guilt",
+        "selfRealisation": "Self-realisation"
+      }
+    },
+    "journey": {
+      "kicker": "YOUR JOURNEY",
+      "intro": "The complete programme. Eight stages, from stabilising your nervous system to a renewed sense of who you are — paced for safety and depth.",
+      "title": "The Journey",
+      "priceFormat": "One-off £599 · 12 × £55/week",
+      "buyButton": "Start the Journey →"
+    },
+    "availableSoon": "Available soon"
   },
   "AccountDeletion": {
     "settingsKicker": "YOUR DATA",

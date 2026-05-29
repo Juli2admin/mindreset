@@ -128,12 +128,40 @@
       "openMinimind": "Ouvrir MiniMind",
       "buyTopUp": "Acheter un complément",
       "managePlan": "Gérer mon abonnement",
-      "seePlans": "Voir les formules"
+      "seePlans": "Voir les formules",
+      "browsePlans": "Voir tous les plans →"
     },
-    "comingSoon": {
-      "label": "Bientôt plus",
-      "note": "Des modules thématiques et un parcours en 8 blocs arrivent."
-    }
+    "modulePriceFormat": "£59 (£29 pour les abonnés)",
+    "moduleBuyButton": "Ouvrir ce module →",
+    "states": {
+      "kicker": "TES ÉTATS",
+      "intro": "Des pratiques de soutien rapides pour les moments où tout devient trop intense. Des modules courts et structurés à utiliser en temps réel — fondés sur des approches polyvagales, somatiques et trauma-informed d’auto-accompagnement.",
+      "modules": {
+        "anxiety": "Apaiser l’anxiété",
+        "lowEnergy": "Retrouver de l’énergie",
+        "comeBack": "Revenir à toi",
+        "empty": "Te reconnecter à toi-même"
+      }
+    },
+    "themes": {
+      "kicker": "THÈMES PROFONDS",
+      "intro": "Un travail plus profond, à ton rythme. Des modules immersifs pour dénouer les schémas sous-jacents — l’argent, le corps, la famille, la honte et la vie que tu veux réellement vivre.",
+      "modules": {
+        "money": "Relation à l’argent",
+        "body": "Corps et sexualité",
+        "family": "Scénarios familiaux",
+        "shame": "Honte et culpabilité",
+        "selfRealisation": "Réalisation de soi"
+      }
+    },
+    "journey": {
+      "kicker": "TON CHEMIN VERS TOI",
+      "intro": "Le programme complet. Huit étapes, de la stabilisation de ton système nerveux jusqu’au retour à toi-même — conçues avec attention pour soutenir sécurité intérieure et profondeur du processus.",
+      "title": "Le Chemin vers soi",
+      "priceFormat": "Paiement unique £599 · 12 × £55/semaine",
+      "buyButton": "Commencer le Chemin →"
+    },
+    "availableSoon": "Bientôt disponible"
   },
   "AccountDeletion": {
     "settingsKicker": "VOS DONNÉES",
