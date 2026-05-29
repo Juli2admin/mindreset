@@ -102,8 +102,11 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   });
 }
 
+function isP2002(err: unknown): boolean {
+  return !!(err && typeof err === 'object' && 'code' in err && err.code === 'P2002');
+}
+
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  if (session.mode !== 'payment') return;
   const cid = extractCustomerId(session.customer);
   if (!cid) return;
 
@@ -116,33 +119,65 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Idempotency gate: Purchase.stripeSessionId is unique. If Stripe
-  // retries the event, the second create throws P2002 and we skip
-  // the credit so the user does not get double-credited.
-  try {
-    await prisma.purchase.create({
-      data: {
-        userId: user.id,
-        productType: 'topup',
-        amount: session.amount_total ?? 499,
-        currency: (session.currency ?? 'gbp').toUpperCase(),
-        stripeSessionId: session.id,
-        status: 'completed',
-        completedAt: new Date(),
-      },
-    });
-  } catch (err: unknown) {
-    if (err && typeof err === 'object' && 'code' in err && err.code === 'P2002') {
-      console.log('[webhook] already processed:', session.id);
-      return;
+  // Subscription mode: write a Purchase row for the initial subscription
+  // payment so refund audits and the data-export bundle see it. Tier
+  // changes themselves are owned by handleSubscriptionUpsert; this row
+  // is purely an audit-trail record. Idempotent on stripeSessionId.
+  if (session.mode === 'subscription') {
+    try {
+      await prisma.purchase.create({
+        data: {
+          userId: user.id,
+          productType: 'minimind_sub',
+          amount: session.amount_total ?? 0,
+          currency: (session.currency ?? 'gbp').toUpperCase(),
+          stripeSessionId: session.id,
+          status: 'completed',
+          completedAt: new Date(),
+        },
+      });
+    } catch (err) {
+      if (isP2002(err)) {
+        console.log('[webhook] subscription purchase already recorded:', session.id);
+        return;
+      }
+      throw err;
     }
-    throw err;
+    return;
   }
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { topUpMessagesRemaining: { increment: 200 } },
-  });
+  // Payment mode = topup. Atomic Purchase row + credit grant. The two
+  // writes used to run sequentially — a crash between them left a
+  // Purchase row with no granted credit, and Stripe retry would dedupe
+  // the Purchase write and never reach the credit grant. $transaction
+  // ensures both succeed or both roll back.
+  if (session.mode === 'payment') {
+    try {
+      await prisma.$transaction([
+        prisma.purchase.create({
+          data: {
+            userId: user.id,
+            productType: 'topup',
+            amount: session.amount_total ?? 499,
+            currency: (session.currency ?? 'gbp').toUpperCase(),
+            stripeSessionId: session.id,
+            status: 'completed',
+            completedAt: new Date(),
+          },
+        }),
+        prisma.user.update({
+          where: { id: user.id },
+          data: { topUpMessagesRemaining: { increment: 200 } },
+        }),
+      ]);
+    } catch (err) {
+      if (isP2002(err)) {
+        console.log('[webhook] topup already processed:', session.id);
+        return;
+      }
+      throw err;
+    }
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -160,6 +195,24 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('[webhook] signature verification failed:', err);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
+  // Event-level idempotency. StripeEvent.id is the Stripe event ID; the
+  // insert fails with P2002 on retry deliveries of the same event. This
+  // protects every handler from re-processing — without it, subscription
+  // upsert retries could re-zero the cycle counter mid-cycle, and
+  // invoice.payment_succeeded retries could wipe top-up balances.
+  try {
+    await prisma.stripeEvent.create({
+      data: { id: event.id, type: event.type },
+    });
+  } catch (err) {
+    if (isP2002(err)) {
+      console.log('[webhook] event already processed:', event.id);
+      return NextResponse.json({ received: true, deduped: true });
+    }
+    console.error('[webhook] event dedup write failed:', err);
+    return NextResponse.json({ error: 'Dedup write failed' }, { status: 500 });
   }
 
   try {
