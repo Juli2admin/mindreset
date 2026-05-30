@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import { categoriseSupport } from '@/lib/support/categorise';
 import AddTestEmailForm from './AddTestEmailForm';
 
 // /admin/support — inbound queue. Lists every SupportEmail row, newest
@@ -29,6 +30,30 @@ async function addTestEmail(formData: FormData) {
       receivedAt: new Date(),
     },
   });
+
+  // Trigger AI categoriser inline. If it fails the email is still in the
+  // queue (status='pending'); admin can use "Run AI" on the detail page
+  // to retry. We swallow the error here because the redirect must still
+  // fire — leaving the admin on the form with no feedback would be worse.
+  try {
+    const result = await categoriseSupport({
+      subject: created.subject,
+      bodyText: created.bodyText,
+    });
+    await prisma.supportEmail.update({
+      where: { id: created.id },
+      data: {
+        locale: result.locale,
+        category: result.category,
+        urgency: result.urgency,
+        draftReply: result.draftReply,
+        draftLocale: result.draftLocale,
+        status: 'drafted',
+      },
+    });
+  } catch (err) {
+    console.error('[admin/support] inline categorise failed:', err);
+  }
 
   revalidatePath('/admin/support');
   redirect(`/admin/support/${created.id}`);
