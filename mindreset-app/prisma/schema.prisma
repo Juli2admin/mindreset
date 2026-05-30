@@ -329,6 +329,71 @@ model StripeEvent {
   processedAt DateTime @default(now())
 }
 
+// =============================================================================
+// Inbound support emails + outbound replies.
+//
+// Pattern A (locked 2026-05-28): every inbound message lands here. AI reads
+// it and writes a draft reply into `draftReply`; admin reviews and approves
+// or edits via the /admin/support queue. Phase 2 will auto-send for a tight
+// whitelist of routine categories. Phase 3 tightens + expands. Schema covers
+// the full pipeline; PR 2a writes only the structural fields, PR 2b populates
+// the AI fields, PR 2c wires Resend Inbound to the create path.
+//
+// Migration applied manually in Supabase per CLAUDE.md.
+// =============================================================================
+model SupportEmail {
+  id              String    @id @default(cuid())
+  fromEmail       String
+  fromName        String?
+  subject         String
+  bodyText        String
+  bodyHtml        String?
+  // Resend Inbound message ID — unique gate so a retried webhook delivery
+  // does not create a duplicate ticket. Null when an email was created via
+  // the /admin "add test email" path (PR 2a).
+  resendInboundId String?   @unique
+  receivedAt      DateTime
+
+  // AI categoriser output — populated in PR 2b by lib/support/categorise.ts.
+  locale          String?   // detected language: en|ru|fr|de|es|it|pl|pt
+  category        String?   // billing | emotional | methodology | crisis | other
+  urgency         String    @default("normal")  // normal | elevated | crisis
+  draftReply      String?   // AI-generated draft, editable by admin
+  draftLocale     String?
+
+  // Workflow state. pending = needs admin attention; drafted = AI has drafted
+  // a reply, awaiting review; replied = admin sent a reply; escalated = needs
+  // manual handling outside this flow (e.g. crisis routed to phone resource).
+  status          String    @default("pending")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  replies         SupportEmailReply[]
+
+  @@index([status, receivedAt])
+}
+
+model SupportEmailReply {
+  id              String   @id @default(cuid())
+  supportEmail    SupportEmail @relation(fields: [supportEmailId], references: [id], onDelete: Cascade)
+  supportEmailId  String
+
+  toEmail         String
+  subject         String
+  body            String
+
+  // Clerk user ID of the admin who sent. Null when autoSent=true (Phase 2
+  // whitelist auto-send shipping in a later PR).
+  sentByAdminId   String?
+  resendId        String?  // Resend send ID for delivery tracing
+  autoSent        Boolean  @default(false)
+
+  sentAt          DateTime @default(now())
+
+  @@index([supportEmailId])
+}
+
 
 // =============================================================================
 // PROGRESS TRACKING
