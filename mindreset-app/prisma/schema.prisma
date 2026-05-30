@@ -388,6 +388,34 @@ model SupportEmail {
   @@index([status, receivedAt])
 }
 
+// =============================================================================
+// Marketing campaign audit log.
+//
+// One row per send fired from /admin/marketing. Records what went out, who
+// it went to, and how many recipients succeeded vs failed at the Resend
+// API layer. Body is stored in plaintext for compliance review — the same
+// way the live unsubscribe link in each email is the per-recipient one
+// (computed at send time, not stored here).
+//
+// Per-recipient delivery state lives in Resend's own dashboard (their
+// EmailEvents / Logs) — we don't mirror it. recipientCount + successCount
+// + failureCount is enough for a launch glance; if a customer says "I
+// didn't get your email", we look it up by their email in Resend Logs.
+// =============================================================================
+model MarketingSend {
+  id             String   @id @default(cuid())
+  subject        String
+  body           String   @db.Text
+  audience       String   // 'all_consented' for now; PR 3c may add segments
+  sentByAdminId  String?
+  recipientCount Int
+  successCount   Int
+  failureCount   Int
+  sentAt         DateTime @default(now())
+
+  @@index([sentAt])
+}
+
 model SupportEmailReply {
   id              String   @id @default(cuid())
   supportEmail    SupportEmail @relation(fields: [supportEmailId], references: [id], onDelete: Cascade)
