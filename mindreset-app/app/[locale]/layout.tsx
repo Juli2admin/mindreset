@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import { ClerkProvider } from '@clerk/nextjs';
+import { Analytics } from '@vercel/analytics/react';
 import {
   enUS,
   ruRU,
@@ -211,6 +212,7 @@ export default async function LocaleLayout({
               {children}
             </ThemeProvider>
           </NextIntlClientProvider>
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
