@@ -65,6 +65,7 @@ ALTER TABLE public."Testimonial"          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."StripeEvent"          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."SupportEmail"         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."SupportEmailReply"    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."MarketingSend"        ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- Block 2: Strip the table-level grants from anon and authenticated.
@@ -90,5 +91,6 @@ REVOKE ALL ON public."Testimonial"          FROM anon, authenticated;
 REVOKE ALL ON public."StripeEvent"          FROM anon, authenticated;
 REVOKE ALL ON public."SupportEmail"         FROM anon, authenticated;
 REVOKE ALL ON public."SupportEmailReply"    FROM anon, authenticated;
+REVOKE ALL ON public."MarketingSend"        FROM anon, authenticated;
 
 COMMIT;
