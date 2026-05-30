@@ -62,6 +62,13 @@ export default clerkMiddleware((auth, req) => {
     return NextResponse.next();
   }
 
+  // /unsubscribe: public, no auth, no locale routing. Authenticated by the
+  // HMAC token in the URL path, not by Clerk session. Skips next-intl so
+  // /unsubscribe/<token> doesn't get rewritten to /en/unsubscribe/<token>.
+  if (req.nextUrl.pathname.startsWith('/unsubscribe')) {
+    return NextResponse.next();
+  }
+
   // Clerk auth gate first.
   if (isProtectedRoute(req)) {
     const locale = localeFromPath(req.nextUrl.pathname);

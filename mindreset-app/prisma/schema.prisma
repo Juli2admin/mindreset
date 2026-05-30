@@ -49,6 +49,20 @@ model User {
   miniMindActive    Boolean   @default(false)
   miniMindUntil     DateTime?
 
+  // Marketing-email consent (UK PECR + GDPR).
+  // - marketingConsent: explicit opt-in. Default FALSE — explicit consent
+  //   is the only valid basis under PECR for unsolicited marketing email.
+  //   Set TRUE when the user ticks the consent box at sign-up (PR 3b) or
+  //   any other future opt-in surface.
+  // - marketingUnsubAt: timestamp of the last unsubscribe. Set when the
+  //   user clicks the one-click unsubscribe link in any marketing email.
+  //   marketingConsent is also flipped FALSE in the same write. We keep
+  //   the timestamp separately so we can audit "this user unsubscribed
+  //   from marketing on date X" without losing the signal if they later
+  //   re-opt-in.
+  marketingConsent       Boolean   @default(false)
+  marketingUnsubAt       DateTime?
+
   // GDPR account-deletion flow (Article 17 "right to erasure").
   // - deletedAt: set when the user confirms deletion via email link. Soft-
   //   delete marker — once set the user is signed out and treated as gone
