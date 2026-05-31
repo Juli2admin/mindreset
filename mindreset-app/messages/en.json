@@ -152,7 +152,16 @@
       "priceFormat": "One-off £599 · 12 × £55/week",
       "buyButton": "Start the Journey →"
     },
-    "availableSoon": "Available soon"
+    "availableSoon": "Available soon",
+    "marketingConsent": {
+      "title": "Want occasional updates from us?",
+      "body": "We send infrequent emails — new modules, gentle prompts, the occasional reflection. You can unsubscribe anytime.",
+      "yes": "Yes, send me updates",
+      "notNow": "Not now",
+      "toggleLabel": "Email updates",
+      "toggleOn": "Subscribed · click to unsubscribe",
+      "toggleOff": "Not subscribed · click to subscribe"
+    }
   },
   "AccountDeletion": {
     "settingsKicker": "YOUR DATA",

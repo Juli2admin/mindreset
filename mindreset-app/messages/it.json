@@ -161,7 +161,16 @@
       "priceFormat": "Pagamento unico £599 · 12 × £55/settimana",
       "buyButton": "Inizia il Cammino →"
     },
-    "availableSoon": "Prossimamente"
+    "availableSoon": "Prossimamente",
+    "marketingConsent": {
+      "title": "Vuoi ricevere aggiornamenti occasionali da noi?",
+      "body": "Inviamo poche email — nuovi moduli, spunti gentili, qualche riflessione. Puoi disiscriverti in qualsiasi momento.",
+      "yes": "Sì, mandami gli aggiornamenti",
+      "notNow": "Non ora",
+      "toggleLabel": "Aggiornamenti via email",
+      "toggleOn": "Iscritta · clicca per disiscriverti",
+      "toggleOff": "Non iscritta · clicca per iscriverti"
+    }
   },
   "AccountDeletion": {
     "settingsKicker": "I SUOI DATI",

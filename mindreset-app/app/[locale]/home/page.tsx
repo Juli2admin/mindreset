@@ -97,6 +97,8 @@ export default async function HomePage({
       cycleResetAt: true,
       welcomeEmailSentAt: true,
       deletionScheduledAt: true,
+      marketingConsent: true,
+      marketingConsentPromptedAt: true,
     },
   });
 
@@ -135,6 +137,8 @@ export default async function HomePage({
       topUpRemaining={topUpRemaining}
       cycleResetAt={dbUser?.cycleResetAt?.toISOString() ?? null}
       deletionScheduledAt={dbUser?.deletionScheduledAt?.toISOString() ?? null}
+      marketingConsent={dbUser?.marketingConsent ?? false}
+      marketingPrompted={dbUser?.marketingConsentPromptedAt != null}
       footerSlot={<Footer />}
     />
   );

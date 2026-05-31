@@ -161,7 +161,16 @@
       "priceFormat": "Jednorazowo £599 · 12 × £55/tydzień",
       "buyButton": "Rozpocznij Drogę →"
     },
-    "availableSoon": "Wkrótce"
+    "availableSoon": "Wkrótce",
+    "marketingConsent": {
+      "title": "Chcesz otrzymywać okazjonalne aktualizacje?",
+      "body": "Piszemy rzadko — nowe moduły, łagodne podpowiedzi, okazjonalne refleksje. Możesz zrezygnować w dowolnym momencie.",
+      "yes": "Tak, przysyłajcie aktualizacje",
+      "notNow": "Nie teraz",
+      "toggleLabel": "Aktualizacje e-mailem",
+      "toggleOn": "Zapisana · kliknij, aby się wypisać",
+      "toggleOff": "Niezapisana · kliknij, aby się zapisać"
+    }
   },
   "AccountDeletion": {
     "settingsKicker": "PANI DANE",

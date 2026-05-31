@@ -161,7 +161,16 @@
       "priceFormat": "Einmalzahlung £599 · 12 × £55/Woche",
       "buyButton": "Den Weg beginnen →"
     },
-    "availableSoon": "Bald verfügbar"
+    "availableSoon": "Bald verfügbar",
+    "marketingConsent": {
+      "title": "Möchtest du gelegentliche Updates von uns erhalten?",
+      "body": "Wir verschicken selten E-Mails — neue Module, sanfte Impulse, gelegentlich eine kleine Reflexion. Du kannst dich jederzeit abmelden.",
+      "yes": "Ja, schick mir Updates",
+      "notNow": "Nicht jetzt",
+      "toggleLabel": "E-Mail-Updates",
+      "toggleOn": "Angemeldet · zum Abmelden klicken",
+      "toggleOff": "Nicht angemeldet · zum Anmelden klicken"
+    }
   },
   "AccountDeletion": {
     "settingsKicker": "IHRE DATEN",

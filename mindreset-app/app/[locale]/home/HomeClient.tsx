@@ -7,6 +7,8 @@ import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
 import { useTheme } from '@/lib/theme/useTheme';
 import TopBar from '@/components/TopBar';
+import MarketingConsentBanner from './MarketingConsentBanner';
+import MarketingConsentToggle from './MarketingConsentToggle';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -25,6 +27,8 @@ type Props = {
   topUpRemaining: number;
   cycleResetAt: string | null;
   deletionScheduledAt: string | null;
+  marketingConsent: boolean;
+  marketingPrompted: boolean;
   footerSlot: ReactNode;
 };
 
@@ -36,6 +40,8 @@ export default function HomeClient({
   topUpRemaining,
   cycleResetAt,
   deletionScheduledAt,
+  marketingConsent,
+  marketingPrompted,
   footerSlot,
 }: Props) {
   const t = useTranslations('Home');
@@ -151,6 +157,13 @@ export default function HomeClient({
             {t('welcomeBody')}
           </p>
         </div>
+
+        {/* Marketing-consent opt-in banner. Server-side gate: only renders
+            when the user hasn't been prompted yet AND isn't already opted
+            in. The component itself hides after either button is clicked. */}
+        {!marketingPrompted && !marketingConsent && (
+          <MarketingConsentBanner initialVisible={true} />
+        )}
 
         {/* YourMiniMind card */}
         <div className="mb-12">
@@ -284,9 +297,15 @@ export default function HomeClient({
           <DeletionPendingBanner scheduledAt={deletionScheduledAt} t={tDel} />
         )}
 
-        {/* Settings — export data, delete account. Hidden once deletion is
-            scheduled (the banner above takes over). */}
-        {!deletionScheduledAt && <SettingsSection t={tDel} locale={locale} />}
+        {/* Settings — marketing toggle, export data, delete account.
+            Hidden once deletion is scheduled (the banner above takes over). */}
+        {!deletionScheduledAt && (
+          <SettingsSection
+            t={tDel}
+            locale={locale}
+            marketingConsent={marketingConsent}
+          />
+        )}
 
         {/* Your States — 4 individually-priced modules. Cards are
             informational until PR3 wires per-module Stripe checkout;
@@ -462,7 +481,15 @@ export default function HomeClient({
 
 type TFn = (key: string, vars?: Record<string, string | number | Date>) => string;
 
-function SettingsSection({ t, locale }: { t: TFn; locale: string }) {
+function SettingsSection({
+  t,
+  locale,
+  marketingConsent,
+}: {
+  t: TFn;
+  locale: string;
+  marketingConsent: boolean;
+}) {
   const { palette: PALETTE } = useTheme();
   const [exportLoading, setExportLoading] = useState(false);
   const [deleteState, setDeleteState] = useState<'idle' | 'confirming' | 'sending' | 'sent' | 'error'>('idle');
@@ -525,6 +552,13 @@ function SettingsSection({ t, locale }: { t: TFn; locale: string }) {
           border: `1px solid ${PALETTE.border}`,
         }}
       >
+        {/* Marketing-consent passive toggle. Always visible (whether or
+            not the prompt banner was shown above) — lets the user change
+            their mind any time. */}
+        <MarketingConsentToggle initialConsent={marketingConsent} />
+
+        <hr style={{ border: 'none', borderTop: `1px solid ${PALETTE.border}`, margin: '20px 0' }} />
+
         {/* Export */}
         <div className="mb-6">
           <p
