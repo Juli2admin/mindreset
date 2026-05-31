@@ -60,8 +60,14 @@ model User {
   //   the timestamp separately so we can audit "this user unsubscribed
   //   from marketing on date X" without losing the signal if they later
   //   re-opt-in.
-  marketingConsent       Boolean   @default(false)
-  marketingUnsubAt       DateTime?
+  marketingConsent          Boolean   @default(false)
+  marketingUnsubAt          DateTime?
+  // Stamp set the first time the user is shown the marketing-consent
+  // banner on /home (PR #89). Banner only appears when this is null —
+  // dismissing or accepting both set it, so the prompt is shown at most
+  // once. After that the user can still opt in / out via the toggle in
+  // the /home Settings section.
+  marketingConsentPromptedAt DateTime?
 
   // GDPR account-deletion flow (Article 17 "right to erasure").
   // - deletedAt: set when the user confirms deletion via email link. Soft-
