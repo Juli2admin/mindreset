@@ -197,11 +197,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  // Event-level idempotency. StripeEvent.id is the Stripe event ID; the
-  // insert fails with P2002 on retry deliveries of the same event. This
-  // protects every handler from re-processing — without it, subscription
-  // upsert retries could re-zero the cycle counter mid-cycle, and
-  // invoice.payment_succeeded retries could wipe top-up balances.
+  // Event-level idempotency claim. StripeEvent.id is the Stripe event ID;
+  // the insert fails with P2002 on retry deliveries of the same event so
+  // we short-circuit with `deduped: true`. CRITICAL — if any handler
+  // below throws, the claim is rolled back so Stripe's retry can succeed.
+  // Without that rollback (the bug fixed here), a handler failure left
+  // the claim committed, the work undone, and Stripe's retry got
+  // silently deduped — the event was lost.
   try {
     await prisma.stripeEvent.create({
       data: { id: event.id, type: event.type },
@@ -236,6 +238,16 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     console.error('[webhook] handler error:', err);
+    // Roll back the dedup claim so Stripe's retry isn't silently deduped.
+    // If THIS delete also fails (very rare — DB blip), we still return 500
+    // so Stripe retries; on retry the next StripeEvent.create may succeed
+    // because the row exists (from this side) and we'll skip — accepting
+    // that edge case rather than risking double-processing.
+    await prisma.stripeEvent
+      .delete({ where: { id: event.id } })
+      .catch((delErr) => {
+        console.error('[webhook] dedup rollback failed:', delErr);
+      });
     return NextResponse.json({ error: 'Handler error' }, { status: 500 });
   }
 

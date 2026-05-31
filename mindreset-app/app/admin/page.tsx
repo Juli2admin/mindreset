@@ -103,17 +103,29 @@ export default async function AdminOverview() {
             <span>Telemetry (Vercel Analytics + Admin overview tile)</span>
             <span>PR 4 ✓</span>
           </li>
-          <li className="flex justify-between">
-            <span>Marketing email infrastructure (Resend Audiences)</span>
-            <span className="text-neutral-400">PR 3</span>
+          <li className="flex justify-between text-neutral-500 line-through">
+            <span>Marketing email infrastructure (consent + send + audit)</span>
+            <span>PRs 3a, 3b ✓</span>
           </li>
           <li className="flex justify-between">
-            <span>Subscription controls (pause, refund, search)</span>
-            <span className="text-neutral-400">PR 5</span>
+            <span>Sign-up marketing-consent UI (so the send list has recipients)</span>
+            <span className="text-neutral-400">next</span>
           </li>
-          <li className="flex justify-between">
+          <li className="flex justify-between text-neutral-500 line-through">
             <span>Promo code management</span>
-            <span className="text-neutral-400">PR 6</span>
+            <span>PR 6 ✓</span>
+          </li>
+          <li className="flex justify-between text-neutral-400">
+            <span>Subscription pause / refund admin UI</span>
+            <span>dropped — handled in Stripe Dashboard</span>
+          </li>
+          <li className="flex justify-between">
+            <span>Sev-5 safety alert email to owner</span>
+            <span className="text-neutral-400">next</span>
+          </li>
+          <li className="flex justify-between">
+            <span>Subscription lifecycle emails (confirmed / cancelled / payment-failed)</span>
+            <span className="text-neutral-400">next</span>
           </li>
         </ul>
       </div>
