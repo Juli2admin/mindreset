@@ -142,12 +142,20 @@ suggests retention drop. Avoid email-nag patterns from the start.
 
 **Logged**: pre-existing.
 
-### 12. AI support email Pattern A — `[blocker:launch]`
+### 12. AI support email Pattern A — ✅ RESOLVED (2026-05-31)
 
-Spec mentions "AI support email Pattern A" as launch-critical but
-the pattern isn't fully defined. What is it?
+Spec mentioned "AI support email Pattern A" as launch-critical but
+the pattern wasn't fully defined.
 
-**Logged**: 2026-05-21 — needs spec.
+**Resolution**: Pattern A shipped as PRs 2a + 2b. Inbound `SupportEmail`
+table + AI categoriser (`lib/support/categorise.ts`) + Resend outbound
+(`lib/email/sendSupportReply.ts`) + admin queue at `/admin/support`.
+Rollout phases per `MindReset_PreLaunch_Plan.md` §4.1: Phase 1 (manual
+review of every AI draft) is what shipped; Phases 2 (whitelist
+auto-send) and 3 (threshold tuning) deferred until volume justifies.
+
+Inbound webhook is held pending Resend Inbound beta access — see
+new question below.
 
 ### 13. Russian audience for safety scanner — `[blocker:launch]`
 
@@ -300,3 +308,50 @@ Whisper, sub-second response, multilingual — covers all 8 locales).
   omitting it would misrepresent the product's intended UX
 
 **Logged**: 2026-05-22.
+
+### 23. Resend Inbound replacement when access lands — `[blocker:PR-2c]`
+
+The Resend Inbound feature is not available on the current Resend
+account; an access request was sent to Resend support on 2026-05-31.
+The MX record for `@mindreset.ai` is already configured to point at
+Resend's inbound endpoint (`inbound-smtp.eu-west-1.amazonaws.com`),
+so the moment access lands the only steps are: create the Inbound
+endpoint in Resend Dashboard pointing at
+`/api/webhooks/email-inbound`, add `RESEND_INBOUND_WEBHOOK_SECRET` to
+Vercel env vars, ship the webhook handler.
+
+Until then, `/admin/support` is fed manually via the `Add test email`
+form (a server action that writes a `SupportEmail` row and triggers AI
+categorisation). Volume at soft launch is expected to be 5–20
+emails/day; manual paste is acceptable.
+
+**Action when access lands**: PR `claude/support-inbound-webhook` —
+write the webhook (svix-verified, same pattern as `webhooks/clerk`),
+remove the `Add test email` form from the queue page, document the
+Resend Inbound configuration steps.
+
+**Logged**: 2026-05-31. Blocker on PR 2c only; not a launch blocker.
+
+### 24. Marketing-consent signup-time UI — `[blocker:launch]`
+
+PR 3a added the `User.marketingConsent` schema field; PR 3b added the
+admin compose + send page that filters recipients by that field. But
+there is no UI for users to actually opt in — the field defaults to
+`false` and nothing flips it, so the compose page audience count is 0
+for every real signup.
+
+**Options**:
+- **A**: Checkbox on the Clerk sign-up page (requires customising the
+  Clerk `<SignUp />` component with `unsafeMetadata` or a follow-up
+  POST after sign-up).
+- **B**: Post-signup banner on `/home` first visit asking for opt-in.
+  Less form-y, more trauma-informed; can be dismissed without
+  consenting.
+- **C**: Profile-settings toggle (passive — relies on user discovering
+  it).
+
+**Recommendation**: **B** — banner on first `/home` visit. Matches
+brand voice (no pressure), no Clerk customisation needed, easy to A/B
+or remove later. Combine with C so the toggle exists post-dismissal.
+
+**Logged**: 2026-05-31. Resolution before any marketing send.

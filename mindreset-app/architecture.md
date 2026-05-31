@@ -16,7 +16,13 @@ paid product to offer next. The data model has three layers that mirror this:
 
 ### `User`
 A row per person. Email, locale (en/ru/...), theme preference, consent stamps, and
-the screening result (red/yellow/green) attached after Section 0.
+the screening result (red/yellow/green) attached after Section 0. Also carries:
+- **Stripe billing identifiers** — `stripeCustomerId`, `stripeSubscriptionId`
+- **Tier + message allowance** — `currentTier` (`free|essential|extended`),
+  `messagesUsedThisCycle`, `cycleResetAt`, `topUpMessagesRemaining`, `lifetimeMessagesUsed`
+- **Marketing consent (PECR/GDPR)** — `marketingConsent` boolean (default false, explicit
+  opt-in required), `marketingUnsubAt` timestamp of last unsubscribe
+- **Account deletion** — `deletedAt`, `deletionScheduledAt` for the grace-window flow
 
 ### `ScreeningResponse`
 The structured answer set from the /screening flow. Stored raw so if classification
@@ -45,9 +51,10 @@ Recode block). Each one tracks:
 - **Red-flag indicator**: did anything safety-relevant come up in this session?
 - **SSC pass**: did the user meet the Stabilisation+Satisfaction Criteria by the end?
 
-Inside, individual `Message` rows hold the turn-by-turn chat. Each message can carry
-**detected signals** — what the assessment engine pulled from it (emotions, somatic cues,
-red-flag keywords). This is the raw material the diagnostic profile is built from.
+Inside, individual `Message` rows hold the turn-by-turn chat (AES-256-GCM encrypted via
+`lib/encrypt.ts`). Each message can carry **detected signals** — what the assessment
+engine pulled from it (emotions, somatic cues, red-flag keywords). This is the raw
+material the diagnostic profile is built from.
 
 ### `SafetyEvent` — **immutable**
 When the red-flag protocol triggers, a `SafetyEvent` is created. It records:
@@ -61,8 +68,15 @@ something goes wrong and needs investigation, this log is the answer. It is sepa
 from the Conversation log so it cannot be lost or overwritten.
 
 ### `Purchase`
-Stripe-backed. Three product types: MiniMind subscription, individual module, full Recode.
-Statuses: pending / completed / refunded / failed.
+Stripe-backed. Three product types: MiniMind subscription, individual module, full Journey.
+Statuses: pending / completed / refunded / failed. Idempotent on `stripeSessionId`.
+Subscription checkouts and topup purchases both write rows here as of PR #78.
+
+### `StripeEvent` — **webhook idempotency log**
+One row per processed Stripe event. Primary key is the Stripe event ID. Inserted as
+the first step of every webhook handler; deleted on handler failure so Stripe's
+retry can re-process. Without this, Stripe retries could re-zero the cycle counter
+mid-cycle or wipe top-up balances. Added in PR #78; failure-rollback added in PR #87.
 
 ### `ModuleProgress`
 One row per user per module. Tracks current step, depth (surface / middle / deep),
@@ -76,9 +90,29 @@ Sequential gating is enforced — no jumping ahead.
 Individual exercises completed within sessions, with optional user ratings. This is how
 the assessment engine learns over time what works for whom.
 
+### `Testimonial`
+User-submitted stories displayed on Landing + Pricing when ≥3 are approved.
+Moderation handled in the admin queue. Locale-scoped.
+
+### `AccountDeletionToken`
+Single-use HMAC tokens emailed to the user when they request deletion. Verified
+server-side before deletion is scheduled. Expires after 1 hour.
+
+### `SupportEmail` + `SupportEmailReply`
+Inbound support emails (after Resend Inbound lands) live in `SupportEmail`; AI
+populates `category`, `urgency`, `locale`, `draftReply` fields. Admin reviews + sends
+from `/admin/support`, with each outbound recorded as a `SupportEmailReply` row
+including the admin's Clerk ID, Resend message ID, and whether it was auto-sent.
+
+### `MarketingSend`
+One row per marketing campaign fired from `/admin/marketing`. Records subject, body,
+audience name (`all_consented` for now), admin Clerk ID, and recipient / success /
+failure counts. Per-recipient delivery state stays in Resend Dashboard.
+
 ## What's deliberately NOT in this schema yet
 
-- **Notification preferences** — add when we have email/SMS reminders
+- **Notification preferences** — `marketingConsent` is one bool; finer-grained
+  preferences (re-engagement vs newsletter vs onboarding) can come later
 - **Practitioner directory** — add when we have referral partnerships for yellow/red outcomes
 - **Multi-user accounts** — add only if you offer partner/family work
 - **Clinical supervisor accounts** — add when you have a clinical reviewer
@@ -92,14 +126,19 @@ With these tables in place, we can:
 - Run MiniMind chat with proper conversation/message logging
 - Have the assessment engine update the diagnostic profile after each session
 - Detect and immutably log safety events with full audit trail
-- Sell and unlock modules / Recode through Stripe
-- Track sequential progress through the 8 Recode blocks with proper gating
+- Sell and unlock subscriptions / top-ups through Stripe with retry-safe webhooks
+- Track sequential progress through the 8 Journey blocks with proper gating
 - Build the smart routing: "this user has shown apathy 3x this week → suggest the Apathy module"
+- Run a support email workflow with AI-drafted replies + audit trail
+- Send marketing campaigns with PECR-compliant explicit opt-in + one-click unsubscribe
 
-## What's next
+## Migration policy
 
-1. **Provision Postgres** — Vercel Postgres or Supabase (recommended for solo dev)
-2. **Run migrations** — `prisma migrate dev` generates the tables
-3. **Wire `/screening` to write `ScreeningResponse`** — first real data flow
-4. **Build the assessment engine** — the LLM-powered piece that reads conversations and writes to `WellbeingSnapshot`
-5. **MiniMind chat MVP** — streaming Claude API integration with safety scanning
+**All schema changes are applied manually by Julia in the Supabase SQL editor.**
+The agent never runs `prisma migrate dev`, `prisma migrate deploy`, or `prisma db push`.
+When `schema.prisma` changes, the migration SQL is included in the PR body for paste
+into Supabase. `db/rls.sql` carries the canonical RLS lockdown for every public table
+and must be updated whenever a new model is added.
+
+Prisma's `postgres.*` role has `BYPASSRLS`, so RLS state doesn't affect the app — it
+only blocks `anon`/`authenticated` PostgREST callers, which the app does not use.
