@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type Stripe from 'stripe';
+import { waitUntil } from '@vercel/functions';
 import { stripe } from '@/lib/stripe/client';
 import prisma from '@/lib/prisma';
+import {
+  sendSubscriptionConfirmed,
+  sendSubscriptionCancelled,
+  sendPaymentFailed,
+} from '@/lib/email/sendSubscriptionLifecycle';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,13 +63,13 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
   // already set to the paid tier, so resetCycleCounter is false and
   // any messages the user sent between the two deliveries are not
   // wiped.
-  let resetCycleCounter = false;
+  let isFirstActivation = false;
   if (willBePaid) {
     const existing = await prisma.user.findFirst({
       where: { stripeCustomerId: cid },
       select: { currentTier: true },
     });
-    resetCycleCounter = existing?.currentTier === 'free';
+    isFirstActivation = existing?.currentTier === 'free';
   }
 
   await prisma.user.updateMany({
@@ -72,9 +78,28 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
       stripeSubscriptionId: sub.id,
       currentTier: willBePaid ? tier : 'free',
       cycleResetAt: willBePaid && periodEnd ? new Date(periodEnd * 1000) : null,
-      ...(resetCycleCounter ? { messagesUsedThisCycle: 0 } : {}),
+      ...(isFirstActivation ? { messagesUsedThisCycle: 0 } : {}),
     },
   });
+
+  // Confirmation email — only on first activation from free → paid,
+  // NOT on every subscription.updated event. Fire via waitUntil so the
+  // webhook response isn't blocked on Resend latency.
+  if (isFirstActivation && tier) {
+    const u = await prisma.user.findFirst({
+      where: { stripeCustomerId: cid },
+      select: { email: true, locale: true },
+    });
+    if (u?.email) {
+      waitUntil(
+        sendSubscriptionConfirmed({
+          to: u.email,
+          userLocale: u.locale,
+          tier,
+        }),
+      );
+    }
+  }
 }
 
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
@@ -89,6 +114,57 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
     where: { stripeCustomerId: cid },
     data: { currentTier: 'free', cycleResetAt: null },
   });
+
+  // Cancellation email — fire via waitUntil. Period-end timestamp comes
+  // from the subscription object so we can tell the user the exact date
+  // their access ends.
+  const u = await prisma.user.findFirst({
+    where: { stripeCustomerId: cid },
+    select: { email: true, locale: true },
+  });
+  if (u?.email) {
+    const periodEnd = getPeriodEnd(sub);
+    waitUntil(
+      sendSubscriptionCancelled({
+        to: u.email,
+        userLocale: u.locale,
+        periodEndSeconds: periodEnd,
+      }),
+    );
+  }
+}
+
+// Payment failure: immediately revoke paid access (locked decision —
+// no free-grace-period). The user's currentTier is flipped to 'free'
+// and cycleResetAt cleared; the existing billing-cap check in the
+// chat route then blocks any further messages (former subscribers
+// have lifetimeMessagesUsed > 50). If Stripe later retries the
+// payment successfully, customer.subscription.updated fires and
+// handleSubscriptionUpsert restores paid tier automatically.
+//
+// Top-up balance is preserved — those messages were paid for
+// separately and stay available even during the pause.
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+  const cid = extractCustomerId(invoice.customer);
+  if (!cid) return;
+
+  await prisma.user.updateMany({
+    where: { stripeCustomerId: cid, currentTier: { not: 'free' } },
+    data: { currentTier: 'free', cycleResetAt: null },
+  });
+
+  const u = await prisma.user.findFirst({
+    where: { stripeCustomerId: cid },
+    select: { email: true, locale: true },
+  });
+  if (u?.email) {
+    waitUntil(
+      sendPaymentFailed({
+        to: u.email,
+        userLocale: u.locale,
+      }),
+    );
+  }
 }
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
@@ -233,7 +309,7 @@ export async function POST(request: NextRequest) {
         await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
       case 'invoice.payment_failed':
-        console.warn('[webhook] payment failed:', (event.data.object as Stripe.Invoice).id);
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
     }
   } catch (err) {
