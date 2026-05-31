@@ -292,3 +292,72 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
     
     **Originally locked 2026-05-22 (decision #22 in open-questions.md);
     transcribed to this log 2026-05-26.**
+
+## Admin panel + soft-launch infrastructure
+
+- **2026-05-31** **Admin email allowlist via env var.** `/admin` access is
+  gated by Clerk sign-in (middleware) PLUS an `ADMIN_EMAILS`
+  comma-separated allowlist checked in `app/admin/layout.tsx` via
+  `currentUser()`. Non-admin signed-in users get a 404, not a 401, so
+  the existence of /admin is not advertised. Production cutover requires
+  re-adding admin emails on the production Clerk instance.
+
+- **2026-05-31** **`/admin` is English-only and sits outside `[locale]`.**
+  The admin layout renders its own `<html>`/`<body>`/`ClerkProvider`
+  because the locale layout (which owns those on customer surfaces) does
+  not run for /admin paths. Middleware skips next-intl for /admin.
+
+- **2026-05-31** **Subscription pause/refund admin UI dropped.**
+  Originally on the pre-launch plan (§4.4) as a trauma-informed UX
+  feature. Dropped for two reasons: (1) Stripe's `pause_collection`
+  doesn't gate access — paused customers still use MiniMind, so an
+  honest pause would need access-gating logic and a "your subscription
+  is paused" UI; (2) refunds happen ~1 in 100 transactions at launch
+  volumes and take 30 seconds in Stripe Dashboard. Will revisit after
+  the first month of real customer operations.
+
+- **2026-05-31** **Webhook idempotency model: claim-then-rollback.**
+  `StripeEvent` table (PR #78) is the dedup log; the Stripe event ID is
+  the primary key. First step of every webhook handler: insert the
+  StripeEvent row (catches concurrent retries atomically via P2002).
+  If the handler then throws, the StripeEvent row is **deleted** (best-
+  effort) so Stripe's next retry can re-claim and re-run. PR #87 fixed
+  the original bug where the claim committed but the work didn't,
+  causing retries to be silently deduped.
+
+- **2026-05-31** **Marketing email consent: HMAC unsubscribe token, no
+  expiry.** Tokens are `userId.base64url(HMAC-SHA256(userId, SECRET))`.
+  PECR/GDPR require unsubscribe links to remain valid for the lifetime
+  of the email, so tokens never expire. Rotating
+  `UNSUBSCRIBE_TOKEN_SECRET` invalidates every previously-sent link —
+  only rotate on compromise. The endpoint accepts GET and POST so email
+  clients pre-fetching links don't break the flow (the HMAC IS the
+  auth). Deleted accounts: `updateMany` is a no-op, never leaks
+  whether an account exists.
+
+- **2026-05-31** **Resend Inbound unavailable on current Resend
+  account.** Access request sent to Resend support. Until granted, the
+  `/admin/support` queue is fed manually via the `Add test email` form
+  (server action that creates a `SupportEmail` row + triggers AI
+  categorisation). PR 2c (the inbound webhook endpoint) is held until
+  access lands; when it lands, the test form is removed.
+
+- **2026-05-31** **mindreset.ai connected to Vercel.** DNS for the apex
+  switched from Namecheap parking page to Vercel's IP (216.198.79.1).
+  Email MX records (Resend inbound + send subdomain) untouched —
+  separate DNS record type, no interaction with web routing.
+
+- **2026-05-31** **Resend From-address policy for support replies.**
+  `lib/email/sendSupportReply.ts` reads `RESEND_FROM_SUPPORT_EMAIL`
+  first, falls back to `RESEND_FROM_EMAIL` (`hello@mindreset.ai`).
+  Replies currently go from `hello@`; flip the env var to
+  `MindReset Support <support@mindreset.ai>` once that mailbox is
+  verified in Resend. No code change needed at that point.
+
+- **2026-05-31** **Per-marketing-send unsubscribe via RFC 8058
+  headers.** Each `lib/email/sendMarketing.ts` call sets
+  `List-Unsubscribe: <…token URL…>` and
+  `List-Unsubscribe-Post: List-Unsubscribe=One-Click`. Gmail / Apple
+  Mail / Outlook surface a native "Unsubscribe" button at the top of
+  the message in addition to the footer link. Required for inbox
+  placement at higher send volumes anyway.

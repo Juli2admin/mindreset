@@ -1,7 +1,41 @@
 # Communication System — Architecture
 
-**Status**: Audit completed 2026-05-24. Foundation not yet built.
+**Status updated 2026-05-31**: Pattern A (AI-drafted support replies) shipped
+end-to-end as PRs 2a + 2b. Inbound webhook (PR 2c) held pending Resend
+Inbound beta access; manual `Add test email` form on `/admin/support` is
+the interim. Marketing email infrastructure (consent + send + audit)
+shipped as PRs 3a + 3b. Sign-up consent UI, Resend Audiences sync,
+newsletter signup form, and onboarding drip still pending.
+
+**Original status**: Audit completed 2026-05-24. Foundation not yet built.
 **Supersedes**: roadmap Block D (email sequences, Pattern A)
+
+## Current state — what's actually shipped (2026-05-31)
+
+| Component | Status | Where |
+|---|---|---|
+| Resend SDK + outbound | ✅ live | `lib/email/resend.ts`, welcome emails sending |
+| `SupportEmail` + `SupportEmailReply` tables | ✅ shipped (PR 2a) | `prisma/schema.prisma` |
+| AI categoriser | ✅ shipped (PR 2b) | `lib/support/categorise.ts` |
+| Resend outbound for support replies | ✅ shipped (PR 2b) | `lib/email/sendSupportReply.ts` |
+| `/admin/support` queue + detail | ✅ shipped (PRs 2a+2b) | `app/admin/support/` |
+| Resend Inbound webhook | ⏳ held — no Resend access | future `/api/webhooks/email-inbound` |
+| Manual paste workflow | ✅ shipped (PR 2a) | `AddTestEmailForm` |
+| `User.marketingConsent` + unsubscribe HMAC | ✅ shipped (PR 3a) | `lib/email/unsubscribe.ts` |
+| `/api/email/unsubscribe` + `/unsubscribe/[token]` | ✅ shipped (PR 3a) | — |
+| `MarketingSend` audit table | ✅ shipped (PR 3b) | `prisma/schema.prisma` |
+| `/admin/marketing` compose + send | ✅ shipped (PR 3b) | `app/admin/marketing/` |
+| Sign-up consent UI | ❌ open question #24 | — |
+| Resend Audiences sync | ❌ deferred | future PR 3c |
+| Newsletter signup form on Landing | ❌ deferred | future PR 3d |
+| Onboarding drip (Day 1/3/7) | ❌ deferred | future PR 3e |
+| Subscription lifecycle emails | ❌ next priority | future PR |
+| Sev-5 safety alert email | ❌ pre-existing TODO | `lib/minimind/safety/log.ts` |
+
+**Naming note**: sections below this one originally referred to inbound
+message rows as `SupportTicket`. The shipped model is `SupportEmail`
+(outbound replies are `SupportEmailReply`). Anywhere below that mentions
+`SupportTicket` refers to the same concept.
 
 ---
 

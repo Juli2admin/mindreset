@@ -855,3 +855,185 @@ connection.
 - Production state: applied to project `mfcdfgratnsjjvprmucc` on
   20 May 2026
 
+---
+
+## Admin panel architecture (PRs #79, #80) — 2026-05-31
+
+The `/admin` panel is the operational control surface for the soft-launch
+checklist items: support email queue, marketing send, telemetry, promo
+codes. Lives at `app/admin/` **outside `[locale]`** because it is internal
+tooling, English-only, with no need for i18n or theme.
+
+### Why a separate layout
+
+The customer-facing app mounts `ClerkProvider`, `NextIntlClientProvider`,
+`ThemeProvider`, fonts, JSON-LD, and the html shell inside
+`app/[locale]/layout.tsx`. The root `app/layout.tsx` is a passthrough.
+Routes outside `[locale]` (like `/admin`) therefore have no providers
+and no HTML shell.
+
+PR #79 originally placed the admin layout outside `[locale]` but did not
+re-mount `ClerkProvider` — the result was a runtime error on every admin
+page (the `SignOutButton` Clerk client component panicked looking for
+context). PR #80 fixed it by making `app/admin/layout.tsx` self-contained:
+it imports `globals.css`, renders its own html/body, and wraps the
+children in a fresh `ClerkProvider`.
+
+### Why the email allowlist, not RBAC
+
+`/admin` access is double-gated:
+1. **Middleware** (`middleware.ts`) requires a Clerk session — signed-out
+   users get redirected to `/sign-in`.
+2. **`app/admin/layout.tsx`** then checks the signed-in user's email
+   against the comma-separated `ADMIN_EMAILS` env var. Non-admin users
+   get a `notFound()` (404), not a 401, so the existence of `/admin` is
+   not advertised.
+
+No role column on `User`, no Clerk roles or organisations — just a flat
+env-var allowlist. At launch volume (1–3 admins) this is the simplest
+secure thing that works. Adding role-based access would mean schema
+changes, migrations, a role-management UI, and seed-data — overkill
+until there are more than 3 people who legitimately need admin access.
+
+To add another admin: edit the Vercel env var, redeploy. To remove: same.
+
+---
+
+## Stripe webhook idempotency model (PRs #78, #87) — 2026-05-31
+
+Stripe re-delivers webhook events when the endpoint times out or returns
+non-2xx. Retries can arrive minutes or days later. Two pre-existing bugs
+made retries dangerous:
+
+1. **`handleInvoicePaymentSucceeded` was not idempotent.** It zeroed
+   `messagesUsedThisCycle` and `topUpMessagesRemaining` on every call.
+   A retry mid-cycle would wipe messages the customer had already used
+   and top-up balance they had already paid for.
+2. **`handleCheckoutCompleted` did the Purchase write and the credit
+   grant in sequence, not in a transaction.** A crash between them left
+   a Purchase row with no credit grant; Stripe's retry then deduped
+   the Purchase write via the unique `stripeSessionId` constraint and
+   skipped the credit grant — customer paid £4.99, got zero messages.
+
+### The model
+
+PR #78 introduced a `StripeEvent` table whose primary key is the Stripe
+event ID. The webhook's first DB action is to insert this row. The
+unique-key collision (P2002) is the dedup signal: a colliding insert
+means another delivery of the same event has already been claimed.
+
+PR #87 fixed the original gap in this model: if a handler **threw**
+after the StripeEvent row was claimed but before the work completed,
+the row stayed committed and Stripe's retry was silently deduped.
+PR #87 added the rollback — on handler error, `StripeEvent` is deleted
+(best-effort) so the retry can re-claim.
+
+Topup handler in `handleCheckoutCompleted` was also wrapped in
+`prisma.$transaction([...])` in PR #78 so Purchase + credit grant are
+atomic.
+
+### Concurrency note
+
+Concurrent deliveries of the same event ID resolve at the StripeEvent
+insert: one wins, the other gets P2002 and returns `deduped: true`. If
+the winner's handler then throws, its rollback restores the row to the
+pre-claim state and Stripe's retry will eventually succeed. If the
+rollback also fails (rare DB outage), we return 500 and accept that
+Stripe's next retry may collide on the still-present row and skip — the
+edge case is preferred over double-processing.
+
+### Where it lives
+
+- Table: `prisma/schema.prisma` model `StripeEvent`
+- Handler: `app/api/stripe/webhook/route.ts` POST handler
+- Migration: applied manually to Supabase 2026-05-29
+
+---
+
+## Resend Inbound deferral — 2026-05-31
+
+The plan-locked AI support email workflow (`PreLaunch_Plan.md` §4.1)
+assumed Resend Inbound was available on the account. It is not — the
+Inbound feature is in private beta and access requires explicit
+allowlisting by Resend support. Access was requested via support email
+on 2026-05-31; expected response 1–2 business days.
+
+Until access lands, `/admin/support` is fed manually via the
+`AddTestEmailForm` component (a collapsible form at the top of the
+queue page). A server action creates a `SupportEmail` row, fires the AI
+categoriser inline, and redirects to the detail page. The admin can
+then edit the draft and click Send — full end-to-end loop works without
+any Resend Inbound integration.
+
+When access lands, the work to swap manual paste for the real webhook
+is small: create the inbound endpoint in Resend Dashboard pointing at
+`/api/webhooks/email-inbound`, add `RESEND_INBOUND_WEBHOOK_SECRET` to
+Vercel env vars, ship the webhook handler (svix-verified, same pattern
+as the existing `webhooks/clerk` route), and delete the
+`AddTestEmailForm` import. The `SupportEmail` schema is unchanged —
+the test form writes the same rows the webhook would write.
+
+The MX record for `@mindreset.ai` is already pointed at Resend
+(`inbound-smtp.eu-west-1.amazonaws.com`), so when access lands no DNS
+work is needed. Cloudflare/Namecheap forwarder workaround was
+considered and rejected — every alternative either added daily manual
+paste friction, bypassed the audit trail, or locked the system into a
+parser we would later migrate off.
+
+### Where it lives
+
+- Test-form component: `app/admin/support/AddTestEmailForm.tsx`
+- Audit trail of the decision: this entry
+- Pending PR: `claude/support-inbound-webhook` (not yet branched)
+- Open question: `docs/decisions/open-questions.md` #23
+
+---
+
+## Marketing email consent + unsubscribe model (PRs #85, #86) — 2026-05-31
+
+PECR/GDPR require explicit opt-in for marketing emails and a one-click
+unsubscribe link that remains valid for the lifetime of the email.
+
+### Consent
+
+`User.marketingConsent` is a boolean defaulting to `false`. Recipients
+for any marketing send are computed live at send time (not pre-
+snapshotted) so a user who unsubscribes mid-campaign is honoured for
+the rest of the batch — and a user who opts in mid-campaign is NOT
+accidentally included (they pick up on the next send).
+
+There is currently no UI surface for users to set `marketingConsent` to
+true. This is tracked as launch blocker open-question #24 and resolves
+in the upcoming `claude/marketing-consent-signup` PR.
+
+### Unsubscribe
+
+`lib/email/unsubscribe.ts` defines HMAC-SHA256 tokens of the form
+`userId.base64url(HMAC(userId, SECRET))`. The endpoint at
+`/api/email/unsubscribe` accepts both GET and POST so email clients
+pre-fetching links don't break the flow — the HMAC itself is the
+authentication, no CSRF protection needed. Deleted accounts: the
+`updateMany` call is a no-op rather than an error, never leaking
+account existence.
+
+Every marketing email gets two unsubscribe surfaces:
+1. **Footer text link** — appended automatically by `sendMarketing.ts`
+2. **RFC 8058 List-Unsubscribe header** + `List-Unsubscribe-Post:
+   List-Unsubscribe=One-Click` so Gmail / Apple Mail / Outlook surface
+   a native Unsubscribe button at the top of the message
+
+### Secret rotation
+
+Rotating `UNSUBSCRIBE_TOKEN_SECRET` invalidates every previously-sent
+unsubscribe link. Only rotate on compromise. Document the rotation in
+this file if it ever happens, so future "this link doesn't work"
+support reads have an explanation.
+
+### Where it lives
+
+- HMAC: `lib/email/unsubscribe.ts`
+- Endpoint: `app/api/email/unsubscribe/route.ts`
+- Public confirmation page: `app/unsubscribe/[token]/page.tsx`
+- Send wrapper: `lib/email/sendMarketing.ts`
+- Schema fields: `User.marketingConsent`, `User.marketingUnsubAt`
+
