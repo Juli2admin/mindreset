@@ -4,11 +4,15 @@
 // must NEVER throw to the caller — safety logging failing must not break
 // user-facing chat. All errors are swallowed and console.error'd.
 //
-// Sev 5 events also emit a [SEV5 CRISIS] console.error with conversationId
-// and userId (no excerpt — keeps log surfaces PII-light). When Resend ships,
-// this signal is what trips the real-time email.
+// Sev 5 events also (a) emit a [SEV5 CRISIS] console.error with
+// conversationId and userId (no excerpt — keeps log surfaces PII-light),
+// and (b) trigger a Resend email to the operator via sendSev5Alert.
+// The email send is fire-and-forget via waitUntil so Resend latency
+// doesn't block the chat response; failures are caught and logged.
 
+import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { sendSev5Alert } from '@/lib/email/sendSev5Alert';
 
 const TRIGGER_EXCERPT_MAX_CHARS = 500;
 
@@ -61,15 +65,51 @@ export async function logSafetyEvent(params: SafetyEventLogParams): Promise<void
     });
 
     if (params.severity === 5) {
-      // Real-time stopgap per Phase 3c Path A. When Resend ships, this is
-      // the trigger point for the operational alert email. PII-light by
-      // intent — no excerpt in this log surface.
+      // Real-time signal — kept as belt-and-braces alongside the email.
+      // PII-light by intent — no excerpt in this log surface.
       console.error('[SEV5 CRISIS]', {
         conversationId: params.conversationId,
         userId: params.userId,
         source: params.source,
         type: params.type,
       });
+
+      // Look up the user's email for the alert and fire the send
+      // asynchronously via waitUntil. The caller (chat route) has
+      // already returned its response by the time this completes —
+      // waitUntil keeps the function alive long enough for Resend to
+      // accept the request. Failures are caught and logged; we never
+      // throw back to the caller.
+      const userEmailPromise = prisma.user
+        .findUnique({
+          where: { id: params.userId },
+          select: { email: true },
+        })
+        .then((u) => u?.email ?? null)
+        .catch(() => null);
+
+      waitUntil(
+        (async () => {
+          const userEmail = await userEmailPromise;
+          const result = await sendSev5Alert({
+            conversationId: params.conversationId,
+            userId: params.userId,
+            userEmail,
+            type: params.type,
+            source: params.source,
+            triggerExcerpt: params.triggerExcerpt,
+            aiResponse: params.aiResponse,
+            reasoning: params.reasoning,
+          });
+          if (result.ok === false) {
+            console.error('[SEV5 ALERT EMAIL FAILED]', {
+              error: result.error,
+              conversationId: params.conversationId,
+              userId: params.userId,
+            });
+          }
+        })(),
+      );
     }
   } catch (err) {
     // Safety logging failure must never break user-facing chat. Loud +
