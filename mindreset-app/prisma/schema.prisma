@@ -408,6 +408,34 @@ model SupportEmail {
 // + failureCount is enough for a launch glance; if a customer says "I
 // didn't get your email", we look it up by their email in Resend Logs.
 // =============================================================================
+// =============================================================================
+// Newsletter subscribers — Landing page email capture.
+//
+// Distinct from User: these are people who entered an email on the Landing
+// page to opt in to occasional updates BEFORE signing up for an account.
+// Some will later become Users; the relationship isn't tracked here
+// because dedup is by email at send time (the marketing send loop
+// already filters Users with marketingConsent=true, so a Newsletter
+// row whose email later signs up just gets two copies of the marketing
+// list — the send-side dedup is the right place to handle that, not
+// here).
+//
+// Unsubscribe uses the same HMAC token pattern as User unsubscribe but
+// signs the NewsletterSubscriber.id (not a userId). The /unsubscribe
+// page will branch on token type once newsletter sends ship in PR 3c.
+//
+// Migration applied manually in Supabase per CLAUDE.md.
+// =============================================================================
+model NewsletterSubscriber {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  locale          String    @default("en")
+  subscribedAt    DateTime  @default(now())
+  unsubscribedAt  DateTime?
+
+  @@index([subscribedAt])
+}
+
 model MarketingSend {
   id             String   @id @default(cuid())
   subject        String

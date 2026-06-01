@@ -288,7 +288,17 @@
     "closingTitle": "Iniziare.",
     "closingBody": "Non deve essere in pezzi per iniziare. Non deve sapere ciò che vuole. Il check-in Le dice — con delicatezza — se questo Le corrisponde in questo momento.",
     "closingCta": "Iniziare il check-in",
-    "heroChip": "Prova gratuita · 50 messaggi · senza carta"
+    "heroChip": "Prova gratuita · 50 messaggi · senza carta",
+    "newsletter": {
+      "kicker": "RESTIAMO IN CONTATTO",
+      "title": "Non sei ancora pronta?",
+      "body": "Inviamo poche email — nuovi moduli, spunti gentili, qualche riflessione. Senza pressione.",
+      "emailPlaceholder": "tua@email.com",
+      "consent": "Accetto di ricevere email occasionali. Posso disiscrivermi in qualsiasi momento.",
+      "submit": "Ricevi gli aggiornamenti",
+      "success": "Grazie. Ti scriveremo quando avremo qualcosa da condividere.",
+      "error": "Qualcosa è andato storto. Riprova."
+    }
   },
   "MiniMind": {
     "opener": "Salve. È bello che Lei sia qui. Come si sente oggi?",

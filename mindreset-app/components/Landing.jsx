@@ -15,6 +15,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 // Footer.
 import TopBar from '@/components/TopBar';
 import CrisisResources from '@/components/CrisisResources';
+import NewsletterSignup from '@/components/Landing/NewsletterSignup';
 
 // ============================================================================
 // MindReset.ai — Landing Page
@@ -478,6 +479,7 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
         <Safety />
         <PathsSection />
         <Different />
+        <NewsletterSignup />
         {testimonialsSlot}
         <ClosingCTA onBegin={onBegin} />
         {/* Phase 1d.2 — Landing-only crisis-resource block + safety

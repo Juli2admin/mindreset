@@ -288,7 +288,17 @@
     "closingTitle": "Beginnen.",
     "closingBody": "Sie müssen nicht in Stücken sein, um zu beginnen. Sie müssen nicht wissen, was Sie wollen. Der Check-in zeigt Ihnen — sanft — ob das im Moment für Sie stimmig ist.",
     "closingCta": "Den Check-in beginnen",
-    "heroChip": "Kostenlose Probe · 50 Nachrichten · keine Karte nötig"
+    "heroChip": "Kostenlose Probe · 50 Nachrichten · keine Karte nötig",
+    "newsletter": {
+      "kicker": "BLEIB IN KONTAKT",
+      "title": "Noch nicht bereit?",
+      "body": "Wir verschicken selten E-Mails — neue Module, sanfte Impulse, gelegentlich eine kleine Reflexion. Kein Druck.",
+      "emailPlaceholder": "deine@email.com",
+      "consent": "Ich willige ein, gelegentliche E-Mails zu erhalten. Ich kann mich jederzeit abmelden.",
+      "submit": "Updates erhalten",
+      "success": "Danke. Wir melden uns, wenn es etwas zu teilen gibt.",
+      "error": "Etwas ist schiefgegangen. Versuch es bitte nochmal."
+    }
   },
   "MiniMind": {
     "opener": "Hallo. Schön, dass Sie hier sind. Wie geht es Ihnen heute?",

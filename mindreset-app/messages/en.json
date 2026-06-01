@@ -275,7 +275,17 @@
     "closingTitle": "Begin.",
     "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
     "closingCta": "Start the check-in",
-    "heroChip": "Free taster · 50 messages · no card needed"
+    "heroChip": "Free taster · 50 messages · no card needed",
+    "newsletter": {
+      "kicker": "STAY IN TOUCH",
+      "title": "Not ready yet?",
+      "body": "We send occasional updates — new modules, gentle prompts, the occasional reflection. No pressure.",
+      "emailPlaceholder": "your@email.com",
+      "consent": "I agree to receive occasional emails. Unsubscribe anytime.",
+      "submit": "Get updates",
+      "success": "Thanks. We'll be in touch when there's something to share.",
+      "error": "Something went wrong. Please try again."
+    }
   },
   "MiniMind": {
     "opener": "Hello. Good to have you here. How are you doing today?",

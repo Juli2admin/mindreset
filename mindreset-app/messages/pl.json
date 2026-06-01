@@ -288,7 +288,17 @@
     "closingTitle": "Zacząć.",
     "closingBody": "Nie trzeba być w kawałkach, by zacząć. Nie trzeba wiedzieć, czego się chce. Rozmowa wstępna mówi — delikatnie — czy to jest dla Pani w tej chwili.",
     "closingCta": "Rozpocząć rozmowę wstępną",
-    "heroChip": "Darmowa próbka · 50 wiadomości · bez karty"
+    "heroChip": "Darmowa próbka · 50 wiadomości · bez karty",
+    "newsletter": {
+      "kicker": "BĄDŹMY W KONTAKCIE",
+      "title": "Jeszcze nie jesteś gotowa?",
+      "body": "Piszemy rzadko — nowe moduły, łagodne podpowiedzi, okazjonalne refleksje. Bez nacisku.",
+      "emailPlaceholder": "twoj@email.com",
+      "consent": "Zgadzam się otrzymywać okazjonalne wiadomości e-mail. Mogę zrezygnować w dowolnym momencie.",
+      "submit": "Otrzymuj aktualizacje",
+      "success": "Dziękujemy. Odezwiemy się, gdy będzie czym się podzielić.",
+      "error": "Coś poszło nie tak. Spróbuj ponownie."
+    }
   },
   "MiniMind": {
     "opener": "Witam. Cieszę się, że Pani tu jest. Jak się Pani dzisiaj czuje?",

@@ -288,7 +288,17 @@
     "closingTitle": "Começar.",
     "closingBody": "Não precisa de estar em pedaços para começar. Não precisa de saber o que quer. A conversa inicial diz-lhe — com delicadeza — se isto lhe corresponde neste momento.",
     "closingCta": "Iniciar a conversa",
-    "heroChip": "Amostra gratuita · 50 mensagens · sem cartão"
+    "heroChip": "Amostra gratuita · 50 mensagens · sem cartão",
+    "newsletter": {
+      "kicker": "MANTENHA-TE EM CONTACTO",
+      "title": "Ainda não estás pronta?",
+      "body": "Enviamos poucos emails — novos módulos, sugestões suaves, alguma reflexão. Sem pressão.",
+      "emailPlaceholder": "teu@email.com",
+      "consent": "Aceito receber emails ocasionais. Posso cancelar a subscrição a qualquer momento.",
+      "submit": "Receber atualizações",
+      "success": "Obrigada. Entraremos em contacto quando houver algo para partilhar.",
+      "error": "Algo correu mal. Por favor, tenta novamente."
+    }
   },
   "MiniMind": {
     "opener": "Olá. É bom tê-lo aqui. Como está hoje?",
