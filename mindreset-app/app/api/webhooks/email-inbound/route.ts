@@ -12,23 +12,35 @@ export const dynamic = 'force-dynamic';
 // any address @mindreset.ai (per the MX record we set up) here, signed
 // via svix-style headers.
 //
-// We only care about `email.received` events. Resend sends every event
-// the endpoint subscribed to — outbound delivery events (email.sent,
-// email.delivered, etc.) hit this URL too because the owner ticked them
-// all in the Resend webhook config. Those events are gracefully ignored
-// with a `{ received: true, ignored: true }` response.
+// We only act on `email.received` events. Other event types (outbound
+// delivery: email.sent, email.delivered, …) hit this URL too because the
+// owner ticked them all in the Resend webhook config; those return
+// `{ received: true, ignored: true }`.
 //
-// Idempotency: Resend retries on non-2xx. The SupportEmail.resendInboundId
-// column has a unique constraint; a retried delivery hits the P2002 path
-// and we short-circuit with `{ received: true, deduped: true }`.
+// Body fetch: Resend's email.received webhook payload contains METADATA
+// ONLY — from / to / subject / email_id / message_id / attachments
+// metadata. The plaintext body and HTML body are NOT in the webhook
+// payload (Resend's documented design — supports large attachments in
+// serverless). We fetch them by calling
+// `GET https://api.resend.com/emails/receiving/{email_id}` with a
+// Bearer RESEND_API_KEY header, inside waitUntil so the webhook returns
+// fast.
 //
-// Async pipeline: createSupportEmail runs synchronously (cheap DB write),
-// but the AI categoriser is fired via waitUntil so the webhook response
-// returns within milliseconds — keeps Resend retry pressure low.
+// Idempotency: Resend retries on non-2xx. SupportEmail.resendInboundId
+// has a unique constraint; a retried delivery hits the P2002 path and
+// short-circuits with `{ received: true, deduped: true }`.
 
 type ResendInboundEvent = {
   type: string;
   data?: Record<string, unknown>;
+};
+
+type ResendReceivingEmailResponse = {
+  data?: {
+    text?: string | null;
+    html?: string | null;
+    headers?: Array<{ name: string; value: string }>;
+  };
 };
 
 function isP2002(err: unknown): boolean {
@@ -40,58 +52,60 @@ function isP2002(err: unknown): boolean {
   );
 }
 
-// Defensive field extraction. The Resend Inbound payload shape varies
-// (and we're not 100% sure which fields exist on this account). Walk a
-// list of known field paths and return the first non-empty string.
-function pickString(data: Record<string, unknown>, paths: string[]): string {
-  for (const path of paths) {
-    const parts = path.split('.');
-    let cur: unknown = data;
-    for (const p of parts) {
-      if (cur && typeof cur === 'object' && p in cur) {
-        cur = (cur as Record<string, unknown>)[p];
-      } else {
-        cur = undefined;
-        break;
-      }
-    }
-    if (typeof cur === 'string' && cur.length > 0) return cur;
+// Resend webhook `from` is a plain string like "yulia@gmail.com" or
+// "Name <yulia@gmail.com>". Parse both forms.
+function parseFrom(raw: unknown): { email: string; name: string | null } | null {
+  if (typeof raw !== 'string' || raw.length === 0) return null;
+  const angleMatch = raw.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  if (angleMatch) {
+    const name = angleMatch[1].trim().replace(/^["']|["']$/g, '');
+    return { email: angleMatch[2].trim().toLowerCase(), name: name || null };
   }
-  return '';
+  return { email: raw.trim().toLowerCase(), name: null };
 }
 
-function extractFromEmail(data: Record<string, unknown>): { email: string; name: string | null } | null {
-  // Try common shapes: from string, from object, nested email object
-  const fromRaw =
-    (data.from as unknown) ??
-    (data.sender as unknown) ??
-    (typeof data.email === 'object' && data.email !== null
-      ? (data.email as Record<string, unknown>).from
-      : undefined);
-
-  if (!fromRaw) return null;
-
-  if (typeof fromRaw === 'string') {
-    const angleMatch = fromRaw.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
-    if (angleMatch) {
-      const name = angleMatch[1].trim().replace(/^["']|["']$/g, '');
-      return { email: angleMatch[2].trim().toLowerCase(), name: name || null };
+// Fetch the email body from Resend's Receiving API. Returns null on any
+// error; caller logs and falls back to a placeholder so the row still
+// gets created and the admin can manually retrieve from Resend dashboard
+// via the email_id we store.
+async function fetchInboundBody(
+  emailId: string,
+  apiKey: string,
+): Promise<{ text: string; html: string | null } | null> {
+  try {
+    const res = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (!res.ok) {
+      console.error('[email-inbound] Resend receiving GET failed', {
+        emailId,
+        status: res.status,
+        statusText: res.statusText,
+      });
+      return null;
     }
-    return { email: fromRaw.trim().toLowerCase(), name: null };
+    const json = (await res.json()) as ResendReceivingEmailResponse;
+    const text = json.data?.text ?? '';
+    const html = json.data?.html ?? null;
+    return { text, html };
+  } catch (err) {
+    console.error('[email-inbound] Resend receiving GET threw', {
+      emailId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return null;
   }
-  if (typeof fromRaw === 'object' && fromRaw !== null) {
-    const o = fromRaw as Record<string, unknown>;
-    const email = typeof o.email === 'string' ? o.email.toLowerCase() : null;
-    const name = typeof o.name === 'string' ? o.name.trim() : null;
-    if (email) return { email, name: name || null };
-  }
-  return null;
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const secret = process.env.RESEND_INBOUND_WEBHOOK_SECRET;
+  const apiKey = process.env.RESEND_API_KEY;
   if (!secret) {
     console.error('[email-inbound] RESEND_INBOUND_WEBHOOK_SECRET not set');
+    return NextResponse.json({ error: 'misconfigured' }, { status: 500 });
+  }
+  if (!apiKey) {
+    console.error('[email-inbound] RESEND_API_KEY not set');
     return NextResponse.json({ error: 'misconfigured' }, { status: 500 });
   }
 
@@ -117,79 +131,38 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'invalid signature' }, { status: 400 });
   }
 
-  // Ignore non-inbound events. Resend sends every subscribed event type
-  // here; we only act on emails received TO the domain.
   if (event.type !== 'email.received') {
     return NextResponse.json({ received: true, ignored: true });
   }
 
   const data = event.data ?? {};
 
-  // DIAGNOSTIC: log the top-level keys of the inbound payload so we can
-  // confirm which field names Resend is using on this account. Cheap
-  // (a few keys, ~50 chars total) and only fires on real inbound events.
-  // Remove this log line once the field-name set has been confirmed.
-  console.log('[email-inbound] payload keys:', {
-    topLevelKeys: Object.keys(data),
-    hasEmailNested:
-      typeof data.email === 'object' && data.email !== null
-        ? Object.keys(data.email as Record<string, unknown>)
-        : null,
-  });
-
-  const fromParsed = extractFromEmail(data);
+  const fromParsed = parseFrom(data.from);
   if (!fromParsed) {
     console.warn('[email-inbound] missing from address', { eventId: svixId });
     return NextResponse.json({ received: true, error: 'no from' });
   }
 
-  // Try multiple known field paths. Resend's shape varies between
-  // SDK versions and beta endpoints; the first non-empty value wins.
-  const subject = pickString(data, [
-    'subject',
-    'email.subject',
-  ]).trim().slice(0, 998);
+  const subject =
+    typeof data.subject === 'string' ? data.subject.trim().slice(0, 998) : '';
 
-  const extractedBodyText = pickString(data, [
-    'text',
-    'body_plain',
-    'stripped_text',
-    'body_text',
-    'email.text',
-    'email.body_plain',
-    'email.body_text',
-  ]);
+  const emailId = typeof data.email_id === 'string' ? data.email_id : '';
+  const messageId =
+    typeof data.message_id === 'string' ? data.message_id : '';
+  const resendInboundId = emailId || messageId || svixId;
 
-  // Diagnostic fallback: if no recognised body field, store the raw payload
-  // as JSON so the admin detail view shows exactly what Resend sent. This
-  // lets us identify the correct field path without depending on Vercel
-  // function logs. Removed once the field set is confirmed.
-  const bodyText = extractedBodyText
-    ? extractedBodyText
-    : `[DIAGNOSTIC: body field not found in payload — raw Resend payload follows]\n\n${JSON.stringify(
-        data,
-        null,
-        2,
-      )}`;
-
-  const bodyHtml =
-    pickString(data, [
-      'html',
-      'body_html',
-      'stripped_html',
-      'email.html',
-      'email.body_html',
-    ]) || null;
-
-  const resendInboundId = pickString(data, [
-    'id',
-    'email_id',
-    'message_id',
-    'email.id',
-  ]) || svixId;
-
-  const createdAtRaw = pickString(data, ['created_at', 'received_at', 'email.created_at']);
+  const createdAtRaw =
+    typeof data.created_at === 'string' ? data.created_at : '';
   const receivedAt = createdAtRaw ? new Date(createdAtRaw) : new Date();
+
+  // Fetch body via Resend Receiving API. If it fails, create the row with
+  // a placeholder so the admin still sees the email arrived and can
+  // retrieve the body manually from the Resend dashboard.
+  const fetched = emailId ? await fetchInboundBody(emailId, apiKey) : null;
+  const bodyText = fetched
+    ? fetched.text
+    : `[Body could not be fetched from Resend. email_id: ${emailId || '(none)'} — check Resend dashboard or function logs.]`;
+  const bodyHtml = fetched?.html ?? null;
 
   let created;
   try {
@@ -215,11 +188,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'persistence failed' }, { status: 500 });
   }
 
-  // Trigger the AI categoriser asynchronously — Resend's retry pressure
-  // prefers fast 2xx responses. The categoriser updates the SupportEmail
-  // row in-place when it completes (locale, category, urgency, draftReply,
-  // status='drafted'). If it fails, the row stays at status='pending' and
-  // the admin can hit "Run AI" on the detail page to retry manually.
+  // Trigger AI categoriser asynchronously. The categoriser updates the
+  // SupportEmail row in-place when it completes. If it fails, the row
+  // stays at status='pending' and the admin can hit "Run AI" on the
+  // detail page to retry manually.
   waitUntil(
     (async () => {
       try {
