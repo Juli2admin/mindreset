@@ -140,7 +140,7 @@ as the chat gate — confirms the populate is the upstream contract.
 
 No further work needed.
 
-### 11. Welcome email cadence — `[blocker:launch]`
+### 11. Welcome email cadence — ✅ RESOLVED (verified 2026-06-01)
 
 Resend wired but no email sequence designed.
 
@@ -151,12 +151,16 @@ Resend wired but no email sequence designed.
 - Email 3: 7 days later if Free taster < 5 used — "what's been
   coming up?"
 
-Or simpler: just Email 1.
+**Resolution**: Email 1 only at launch (the locked recommendation).
+Shipped as PR #33 via `lib/email/sendWelcome.ts` — idempotent via
+`User.welcomeEmailSentAt` claim, fires from `/home` on first visit
+via `waitUntil`. EN + RU bodies hand-curated.
 
-**Recommendation**: Email 1 only at launch. Add Email 2/3 if data
-suggests retention drop. Avoid email-nag patterns from the start.
+Email 2 and Email 3 (onboarding drip) tracked as a separate PR
+(`claude/onboarding-drip-emails`) when retention data justifies them.
+Avoiding email-nag patterns at soft launch.
 
-**Logged**: pre-existing.
+**Logged**: pre-existing. Closed 2026-06-01.
 
 ### 12. AI support email Pattern A — ✅ RESOLVED (2026-05-31)
 
@@ -214,43 +218,45 @@ signup flow. See `docs/carry-forward.md`.
 
 **Logged**: pre-existing.
 
-### 17. Vercel production deploys broken — `[blocker:launch]` `[blocker:PR-5]`
+### 17. Vercel production deploys broken — ✅ RESOLVED (auto-resolved 2026-05-23, confirmed 2026-06-01)
 
 **Reported by owner 2026-05-22.** After merging PR #26 (commit
 `35d8338`) to `main` via GitHub MCP, no new Vercel deployment fired.
-Owner sees no Vercel activity in 20+ hours despite the merge.
+Owner saw no Vercel activity in 20+ hours despite the merge.
 
-Suspected causes (ranked):
-1. Vercel-GitHub integration paused/disconnected (possibly a
-   side-effect of disabling Deployment Protection earlier)
-2. Production Branch misconfigured (should be `main`)
-3. "Ignored Build Step" returning skip
-4. Build silently failing (less likely — Vercel surfaces these)
+**Resolution**: auto-resolved within ~24 hours. Owner debugged the
+Vercel-GitHub integration in their Vercel dashboard (likely
+reconnected the integration or unpaused it). 19+ merges have shipped
+since this was filed (PRs #27 through #93), every one of them
+triggering a Vercel deploy on `main`. Integration is healthy.
 
-Blocks: PR #27 cannot be tested live; any further deployment of
-production code. **Resolve before merging PR #27.**
+**Logged**: 2026-05-22. Closed 2026-06-01.
 
-**Logged**: 2026-05-22.
+### 18. `mindreset.ai` DNS connection — ✅ RESOLVED (2026-05-31)
 
-### 18. `mindreset.ai` DNS connection — `[blocker:launch]`
+Owner clarified 2026-05-22 that `mindreset.ai` was NOT yet connected
+to Vercel. All testing happened on Vercel-provided URLs.
 
-Owner clarified 2026-05-22 that `mindreset.ai` is NOT yet connected
-to Vercel. All testing has happened on Vercel-provided URLs.
+**Resolution**: connected 2026-05-31.
+- Removed Namecheap URL Redirect (`@ → http://www.mindreset.ai/`)
+  and CNAME (`www → parkingpage.namecheap.com`).
+- Added A record `@ → 216.198.79.1` (Vercel's apex IP).
+- Old `mindreset-kappa.vercel.app` auto-redirects to `mindreset.ai`
+  with 307.
+- Vercel status flipped to "Valid Configuration"; SSL cert
+  auto-provisioned.
+- Resend MX records (inbound + send subdomain) kept — separate DNS
+  record type, no conflict.
 
-Implications:
-- Stripe webhook URL is configured with `mindreset.ai` host plus a
-  `?x-vercel-protection-bypass=TOKEN` query string. The fact that
-  webhooks were succeeding in tests suggests the URL is resolving
-  somewhere — investigate.
-- Production tier copy / Stripe receipts referencing `mindreset.ai`
-  domain need to remain consistent.
-- Welcome emails (when wired) will need a working domain.
+Follow-ups still open (logged elsewhere):
+- Clerk allowed-origins update for `mindreset.ai` — handled by
+  Clerk's dev mode auto-allowlisting; will need explicit add when
+  Clerk goes to production mode.
+- Stripe webhook URL still uses the `?x-vercel-protection-bypass=...`
+  query string — can be cleaned up post-Vercel-Protection-OFF
+  verification.
 
-**Resolution path**: Block F item (Julia's external work). Connect
-DNS at registrar → Vercel auto-provisions SSL → update Stripe webhook
-to clean URL → update Clerk allowed origins.
-
-**Logged**: 2026-05-22.
+**Logged**: 2026-05-22. Closed 2026-05-31.
 
 ### 19. Tier-downgrade edge case — `[non-blocking]`
 
