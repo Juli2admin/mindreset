@@ -3,6 +3,7 @@ import { Webhook } from 'svix';
 import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
 import { categoriseSupport } from '@/lib/support/categorise';
+import { evaluateAutoSend } from '@/lib/support/autoSendEligibility';
 
 export const dynamic = 'force-dynamic';
 
@@ -205,6 +206,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           subject: created.subject,
           bodyText: created.bodyText,
         });
+
+        // Decide whether to enqueue auto-send (narrow whitelist) or
+        // stay on manual-review. evaluateAutoSend checks env kill-switch,
+        // category, urgency, locale, subject blacklist, and per-sender
+        // daily cap. The 60-second hold gives the admin a window to
+        // intervene before the cron picks the row up.
+        const autoDecision = await evaluateAutoSend({
+          fromEmail: created.fromEmail,
+          subject: created.subject,
+          category: result.category,
+          urgency: result.urgency,
+          locale: result.locale,
+          draftReply: result.draftReply,
+        });
+
         await prisma.supportEmail.update({
           where: { id: created.id },
           data: {
@@ -213,7 +229,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             urgency: result.urgency,
             draftReply: result.draftReply,
             draftLocale: result.draftLocale,
-            status: 'drafted',
+            status: autoDecision.eligible ? 'auto_queued' : 'drafted',
+            autoSendAt: autoDecision.eligible ? autoDecision.sendAt : null,
           },
         });
       } catch (err) {

@@ -14,6 +14,8 @@ function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; fg: string; label: string }> = {
     pending: { bg: 'bg-amber-100', fg: 'text-amber-800', label: 'Pending' },
     drafted: { bg: 'bg-blue-100', fg: 'text-blue-800', label: 'Drafted' },
+    auto_queued: { bg: 'bg-purple-100', fg: 'text-purple-800', label: 'Auto-queued' },
+    auto_sending: { bg: 'bg-purple-100', fg: 'text-purple-800', label: 'Auto-sending' },
     replied: { bg: 'bg-green-100', fg: 'text-green-800', label: 'Replied' },
     escalated: { bg: 'bg-red-100', fg: 'text-red-800', label: 'Escalated' },
   };

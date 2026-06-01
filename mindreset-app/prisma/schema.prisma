@@ -393,9 +393,16 @@ model SupportEmail {
   draftLocale     String?
 
   // Workflow state. pending = needs admin attention; drafted = AI has drafted
-  // a reply, awaiting review; replied = admin sent a reply; escalated = needs
+  // a reply, awaiting review; auto_queued = AI draft is on a short hold and
+  // will auto-send when autoSendAt passes (Phase 2 — narrow whitelist);
+  // replied = a reply has been sent (manual or auto); escalated = needs
   // manual handling outside this flow (e.g. crisis routed to phone resource).
   status          String    @default("pending")
+
+  // When status=auto_queued, the cron at /api/cron/support-autosend picks
+  // up rows where autoSendAt <= now() and dispatches the draftReply via
+  // Resend. Null for all manual-review rows.
+  autoSendAt      DateTime?
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -403,6 +410,7 @@ model SupportEmail {
   replies         SupportEmailReply[]
 
   @@index([status, receivedAt])
+  @@index([status, autoSendAt])
 }
 
 // =============================================================================
