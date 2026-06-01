@@ -60,35 +60,41 @@ export default async function HomePage({
         select: { id: true, result: true, createdAt: true },
       });
       if (screening) {
-        // Upsert (not update) the User row — the Clerk webhook upserts the
-        // User row asynchronously after sign-up and there's a 1-5s window
-        // where this server component runs first. `update` throws P2025 in
-        // that window, aborting the transaction; `upsert` creates a stub
-        // matching the webhook's shape, which the webhook later updates
-        // idempotently. Create shape mirrors app/api/webhooks/clerk/route.ts.
-        await prisma.$transaction([
-          prisma.screeningResponse.update({
-            where: { id: screening.id },
-            data: { userId: user.id },
-          }),
-          prisma.user.upsert({
-            where: { id: user.id },
-            create: {
-              id: user.id,
-              email: primaryEmail ?? `${user.id}@placeholder.invalid`,
-              locale,
-              themePref: 'system',
-              tcAcceptedAt: new Date(),
-              privacyAcceptedAt: new Date(),
-              screeningResult: screening.result,
-              screeningResultAt: screening.createdAt,
-            },
-            update: {
-              screeningResult: screening.result,
-              screeningResultAt: screening.createdAt,
-            },
-          }),
-        ]);
+        // Two separate idempotent writes, no transaction. Reason: the
+        // ScreeningResponse.userId FK references User.id (schema.prisma:156),
+        // so any transaction that sets userId on ScreeningResponse BEFORE
+        // the User row exists fails immediately with P2003 — that was the
+        // real cause of the post-signup loop (Clerk webhook lags 1-5s
+        // after sign-up creating the User row). Doing them as separate
+        // calls in the correct order — User first, ScreeningResponse
+        // second — sidesteps the FK race entirely. Both writes are
+        // idempotent: upsert on a key, updateMany with the not-yet-linked
+        // guard (won't throw on zero rows).
+        //
+        // Create payload mirrors app/api/webhooks/clerk/route.ts so the
+        // webhook's later upsert is a no-op merge that just refreshes
+        // the email field if Clerk's view of it changes.
+        await prisma.user.upsert({
+          where: { id: user.id },
+          create: {
+            id: user.id,
+            email: primaryEmail ?? `${user.id}@placeholder.invalid`,
+            locale,
+            themePref: 'system',
+            tcAcceptedAt: new Date(),
+            privacyAcceptedAt: new Date(),
+            screeningResult: screening.result,
+            screeningResultAt: screening.createdAt,
+          },
+          update: {
+            screeningResult: screening.result,
+            screeningResultAt: screening.createdAt,
+          },
+        });
+        await prisma.screeningResponse.updateMany({
+          where: { id: screening.id, userId: null },
+          data: { userId: user.id },
+        });
       }
       // Reached only when no exception — either linked successfully or
       // there was no anonymous screening matching the cookie. Either way
