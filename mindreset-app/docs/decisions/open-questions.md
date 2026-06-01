@@ -112,17 +112,33 @@ revisit if needed but not blocking launch. **See locked decisions
 
 ## Pre-launch — open questions (non-Block-B)
 
-### 10. `User.screeningResult` populate fix — `[blocker:launch]`
+### 10. `User.screeningResult` populate fix — ✅ RESOLVED (verified 2026-06-01)
 
-The cookie-based screening row links to the new User on first
-`/account` visit, but `User.screeningResult` (denormalised result
-field) is not currently written. Implementation sketch in
-`docs/carry-forward.md`. Pick a phase to fix it.
+The cookie-based screening row originally linked to the new User on
+first `/account` visit, but `User.screeningResult` (denormalised
+result field) was not written.
 
-**Recommendation**: Fold into the next non-Block-B PR after Block B
-ships, before launch.
+**Resolution**: verified in code, three paths now populate
+`User.screeningResult`:
 
-**Logged**: pre-existing (carried forward from earlier sessions).
+1. **Signed-in screening submission** —
+   `app/api/screening/route.ts:87-98` writes `screeningResult` directly
+   to the User row via `updateMany` immediately after creating the
+   `ScreeningResponse`.
+2. **Anonymous-then-signed-up flow (primary path)** —
+   `app/[locale]/home/page.tsx:57-70` reads the `mr_screening` cookie
+   on first /home visit, runs a transaction that both links the
+   `ScreeningResponse` to the new userId AND writes
+   `screeningResult` + `screeningResultAt` onto the User row.
+3. **Cookie-linkage race fallback** —
+   `app/[locale]/minimind/page.tsx:64-99` does the same transaction
+   if the user reaches /minimind before /home (e.g. Clerk webhook
+   timing race).
+
+`app/api/minimind/chat/route.ts:157` enforces `screeningResult !== null`
+as the chat gate — confirms the populate is the upstream contract.
+
+No further work needed.
 
 ### 11. Welcome email cadence — `[blocker:launch]`
 
