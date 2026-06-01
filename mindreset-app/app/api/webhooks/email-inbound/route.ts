@@ -28,18 +28,7 @@ export const dynamic = 'force-dynamic';
 
 type ResendInboundEvent = {
   type: string;
-  data?: {
-    // Resend Inbound payload — fields vary subtly between SDK versions
-    // so we treat each as optional and parse defensively.
-    id?: string;
-    email_id?: string;
-    from?: string | { email?: string; name?: string };
-    to?: string[] | Array<{ email?: string; name?: string }>;
-    subject?: string;
-    text?: string;
-    html?: string;
-    created_at?: string;
-  };
+  data?: Record<string, unknown>;
 };
 
 function isP2002(err: unknown): boolean {
@@ -51,26 +40,50 @@ function isP2002(err: unknown): boolean {
   );
 }
 
-function extractFromEmail(from: ResendInboundEvent['data'] extends infer T
-  ? T extends { from?: infer F }
-    ? F
-    : never
-  : never): { email: string; name: string | null } | null {
-  if (!from) return null;
-  if (typeof from === 'string') {
-    // Resend may give us "Name <email@x.com>" or just "email@x.com"
-    const angleMatch = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+// Defensive field extraction. The Resend Inbound payload shape varies
+// (and we're not 100% sure which fields exist on this account). Walk a
+// list of known field paths and return the first non-empty string.
+function pickString(data: Record<string, unknown>, paths: string[]): string {
+  for (const path of paths) {
+    const parts = path.split('.');
+    let cur: unknown = data;
+    for (const p of parts) {
+      if (cur && typeof cur === 'object' && p in cur) {
+        cur = (cur as Record<string, unknown>)[p];
+      } else {
+        cur = undefined;
+        break;
+      }
+    }
+    if (typeof cur === 'string' && cur.length > 0) return cur;
+  }
+  return '';
+}
+
+function extractFromEmail(data: Record<string, unknown>): { email: string; name: string | null } | null {
+  // Try common shapes: from string, from object, nested email object
+  const fromRaw =
+    (data.from as unknown) ??
+    (data.sender as unknown) ??
+    (typeof data.email === 'object' && data.email !== null
+      ? (data.email as Record<string, unknown>).from
+      : undefined);
+
+  if (!fromRaw) return null;
+
+  if (typeof fromRaw === 'string') {
+    const angleMatch = fromRaw.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
     if (angleMatch) {
       const name = angleMatch[1].trim().replace(/^["']|["']$/g, '');
       return { email: angleMatch[2].trim().toLowerCase(), name: name || null };
     }
-    return { email: from.trim().toLowerCase(), name: null };
+    return { email: fromRaw.trim().toLowerCase(), name: null };
   }
-  if (typeof from === 'object' && from && 'email' in from && typeof from.email === 'string') {
-    return {
-      email: from.email.toLowerCase(),
-      name: (from as { name?: string }).name?.trim() || null,
-    };
+  if (typeof fromRaw === 'object' && fromRaw !== null) {
+    const o = fromRaw as Record<string, unknown>;
+    const email = typeof o.email === 'string' ? o.email.toLowerCase() : null;
+    const name = typeof o.name === 'string' ? o.name.trim() : null;
+    if (email) return { email, name: name || null };
   }
   return null;
 }
@@ -111,17 +124,60 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const data = event.data ?? {};
-  const fromParsed = extractFromEmail(data.from);
+
+  // DIAGNOSTIC: log the top-level keys of the inbound payload so we can
+  // confirm which field names Resend is using on this account. Cheap
+  // (a few keys, ~50 chars total) and only fires on real inbound events.
+  // Remove this log line once the field-name set has been confirmed.
+  console.log('[email-inbound] payload keys:', {
+    topLevelKeys: Object.keys(data),
+    hasEmailNested:
+      typeof data.email === 'object' && data.email !== null
+        ? Object.keys(data.email as Record<string, unknown>)
+        : null,
+  });
+
+  const fromParsed = extractFromEmail(data);
   if (!fromParsed) {
     console.warn('[email-inbound] missing from address', { eventId: svixId });
     return NextResponse.json({ received: true, error: 'no from' });
   }
 
-  const subject = (data.subject ?? '').toString().trim().slice(0, 998);
-  const bodyText = (data.text ?? '').toString();
-  const bodyHtml = data.html ? data.html.toString() : null;
-  const resendInboundId = data.id ?? data.email_id ?? svixId;
-  const receivedAt = data.created_at ? new Date(data.created_at) : new Date();
+  // Try multiple known field paths. Resend's shape varies between
+  // SDK versions and beta endpoints; the first non-empty value wins.
+  const subject = pickString(data, [
+    'subject',
+    'email.subject',
+  ]).trim().slice(0, 998);
+
+  const bodyText = pickString(data, [
+    'text',
+    'body_plain',
+    'stripped_text',
+    'body_text',
+    'email.text',
+    'email.body_plain',
+    'email.body_text',
+  ]);
+
+  const bodyHtml =
+    pickString(data, [
+      'html',
+      'body_html',
+      'stripped_html',
+      'email.html',
+      'email.body_html',
+    ]) || null;
+
+  const resendInboundId = pickString(data, [
+    'id',
+    'email_id',
+    'message_id',
+    'email.id',
+  ]) || svixId;
+
+  const createdAtRaw = pickString(data, ['created_at', 'received_at', 'email.created_at']);
+  const receivedAt = createdAtRaw ? new Date(createdAtRaw) : new Date();
 
   let created;
   try {
