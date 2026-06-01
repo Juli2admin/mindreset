@@ -68,6 +68,17 @@ model User {
   // once. After that the user can still opt in / out via the toggle in
   // the /home Settings section.
   marketingConsentPromptedAt DateTime?
+  // Onboarding drip stamps (PR #96).
+  // - drip1SentAt: Day-1 nudge sent (Email 2, "Something brought you
+  //   here"). Sent when user signed up 24-48h ago AND hasn't sent a
+  //   MiniMind message yet AND marketingConsent=true.
+  // - drip2SentAt: Day-7 re-engagement sent (Email 3, "A gentle
+  //   reminder"). Sent when user signed up 7-14d ago AND lifetime
+  //   messages < 5 AND marketingConsent=true.
+  // Both are claimed via updateMany so the cron job is idempotent —
+  // re-running the cron after a partial failure won't double-send.
+  drip1SentAt               DateTime?
+  drip2SentAt               DateTime?
 
   // GDPR account-deletion flow (Article 17 "right to erasure").
   // - deletedAt: set when the user confirms deletion via email link. Soft-
