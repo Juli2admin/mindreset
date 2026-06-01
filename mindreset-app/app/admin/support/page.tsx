@@ -1,63 +1,14 @@
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import { categoriseSupport } from '@/lib/support/categorise';
-import AddTestEmailForm from './AddTestEmailForm';
 
 // /admin/support — inbound queue. Lists every SupportEmail row, newest
-// first. PR 2a renders the queue + a manual "add test email" form so the
-// UI can be driven without real Resend Inbound (DNS for support@mindreset.ai
-// is pending). PR 2b will fill AI categoriser fields; PR 2c removes the
-// test form and wires the real Resend Inbound webhook.
+// first. Real emails arrive via the Resend Inbound webhook
+// (app/api/webhooks/email-inbound/route.ts) which writes SupportEmail
+// rows and fires the AI categoriser. The PR-2a "Add test email" form
+// was removed in PR 2c when the real inbound path went live; if you
+// need to manually inject a test row, write to the SupportEmail table
+// directly via Supabase.
 
 export const dynamic = 'force-dynamic';
-
-async function addTestEmail(formData: FormData) {
-  'use server';
-  const fromEmail = String(formData.get('fromEmail') ?? '').trim();
-  const fromName = String(formData.get('fromName') ?? '').trim();
-  const subject = String(formData.get('subject') ?? '').trim();
-  const bodyText = String(formData.get('bodyText') ?? '').trim();
-
-  if (!fromEmail || !subject || !bodyText) return;
-
-  const created = await prisma.supportEmail.create({
-    data: {
-      fromEmail,
-      fromName: fromName || null,
-      subject,
-      bodyText,
-      receivedAt: new Date(),
-    },
-  });
-
-  // Trigger AI categoriser inline. If it fails the email is still in the
-  // queue (status='pending'); admin can use "Run AI" on the detail page
-  // to retry. We swallow the error here because the redirect must still
-  // fire — leaving the admin on the form with no feedback would be worse.
-  try {
-    const result = await categoriseSupport({
-      subject: created.subject,
-      bodyText: created.bodyText,
-    });
-    await prisma.supportEmail.update({
-      where: { id: created.id },
-      data: {
-        locale: result.locale,
-        category: result.category,
-        urgency: result.urgency,
-        draftReply: result.draftReply,
-        draftLocale: result.draftLocale,
-        status: 'drafted',
-      },
-    });
-  } catch (err) {
-    console.error('[admin/support] inline categorise failed:', err);
-  }
-
-  revalidatePath('/admin/support');
-  redirect(`/admin/support/${created.id}`);
-}
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; fg: string; label: string }> = {
@@ -119,16 +70,12 @@ export default async function AdminSupportQueue() {
       </div>
       <h1 className="text-[28px] mb-6 font-medium">Inbound queue</h1>
 
-      <AddTestEmailForm action={addTestEmail} />
-
       {emails.length === 0 ? (
         <div className="border border-dashed border-neutral-300 rounded-lg p-12 bg-white text-center mt-6">
-          <p className="text-[14px] text-neutral-500">
-            No emails in the queue. Use the form above to add a test email.
-          </p>
+          <p className="text-[14px] text-neutral-500">No emails in the queue yet.</p>
           <p className="text-[12px] text-neutral-400 mt-2">
-            PR 2c will wire Resend Inbound so real emails to{' '}
-            <code className="font-mono">support@mindreset.ai</code> land here automatically.
+            Real emails to <code className="font-mono">support@mindreset.ai</code> arrive
+            here automatically via the Resend Inbound webhook.
           </p>
         </div>
       ) : (

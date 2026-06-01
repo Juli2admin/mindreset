@@ -367,28 +367,28 @@ Whisper, sub-second response, multilingual — covers all 8 locales).
 
 **Logged**: 2026-05-22.
 
-### 23. Resend Inbound replacement when access lands — `[blocker:PR-2c]`
+### 23. Resend Inbound replacement when access lands — ✅ RESOLVED (2026-06-01)
 
-The Resend Inbound feature is not available on the current Resend
-account; an access request was sent to Resend support on 2026-05-31.
-The MX record for `@mindreset.ai` is already configured to point at
-Resend's inbound endpoint (`inbound-smtp.eu-west-1.amazonaws.com`),
-so the moment access lands the only steps are: create the Inbound
-endpoint in Resend Dashboard pointing at
-`/api/webhooks/email-inbound`, add `RESEND_INBOUND_WEBHOOK_SECRET` to
-Vercel env vars, ship the webhook handler.
+The Resend Inbound feature was thought unavailable on the account but
+Resend support clarified on 2026-06-01 that *receiving is enabled at
+the domain level* — the inbound webhook endpoint configuration lives on
+the same Webhooks page as outbound delivery events, with `email.received`
+as the dedicated event type.
 
-Until then, `/admin/support` is fed manually via the `Add test email`
-form (a server action that writes a `SupportEmail` row and triggers AI
-categorisation). Volume at soft launch is expected to be 5–20
-emails/day; manual paste is acceptable.
+**Resolution**: PR 2c (`claude/support-inbound-webhook`) shipped:
+- `app/api/webhooks/email-inbound/route.ts` — svix-verified, same
+  pattern as `webhooks/clerk`
+- Ignores non-`email.received` events (the page is shared with
+  outbound delivery webhooks; outbound events are no-op'd)
+- Idempotent via `SupportEmail.resendInboundId` unique constraint
+- AI categoriser fires via `waitUntil` so Resend gets a fast 200
+- Removed the `AddTestEmailForm` from `/admin/support` — real emails
+  to `support@mindreset.ai` now arrive automatically
 
-**Action when access lands**: PR `claude/support-inbound-webhook` —
-write the webhook (svix-verified, same pattern as `webhooks/clerk`),
-remove the `Add test email` form from the queue page, document the
-Resend Inbound configuration steps.
+Owner configured the Resend webhook endpoint and added
+`RESEND_INBOUND_WEBHOOK_SECRET` to Vercel env vars.
 
-**Logged**: 2026-05-31. Blocker on PR 2c only; not a launch blocker.
+**Logged**: 2026-05-31. Closed 2026-06-01.
 
 ### 24. Marketing-consent signup-time UI — `[blocker:launch]`
 
