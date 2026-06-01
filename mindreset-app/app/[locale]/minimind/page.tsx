@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { hasCapacity } from '@/lib/billing/limits';
@@ -71,14 +71,38 @@ export default async function MiniMindPage({
           select: { id: true, result: true, createdAt: true },
         });
         if (anonScreening) {
+          // Upsert handles the Clerk-webhook race: if the User row hasn't
+          // been created yet (webhook lag of 1-5s after sign-up),
+          // `update` throws P2025 and the transaction aborts — the
+          // exact bug that caused the screening loop. Create shape
+          // mirrors app/api/webhooks/clerk/route.ts so the webhook's
+          // later upsert is a no-op merge. Fetching currentUser() here
+          // adds one Clerk API call but only on the rare cookie path.
+          const clerkUser = await currentUser();
+          const primaryEmail =
+            clerkUser?.emailAddresses.find(
+              (e) => e.id === clerkUser.primaryEmailAddressId,
+            )?.emailAddress ??
+            clerkUser?.emailAddresses[0]?.emailAddress ??
+            null;
           await prisma.$transaction([
             prisma.screeningResponse.update({
               where: { id: anonScreening.id },
               data: { userId },
             }),
-            prisma.user.update({
+            prisma.user.upsert({
               where: { id: userId },
-              data: {
+              create: {
+                id: userId,
+                email: primaryEmail ?? `${userId}@placeholder.invalid`,
+                locale,
+                themePref: 'system',
+                tcAcceptedAt: new Date(),
+                privacyAcceptedAt: new Date(),
+                screeningResult: anonScreening.result,
+                screeningResultAt: anonScreening.createdAt,
+              },
+              update: {
                 screeningResult: anonScreening.result,
                 screeningResultAt: anonScreening.createdAt,
               },
