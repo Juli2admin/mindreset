@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
+import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { hasCapacity } from '@/lib/billing/limits';
 import { decrypt } from '@/lib/encrypt';
 import { redirect } from '@/i18n/navigation';
@@ -71,15 +72,6 @@ export default async function MiniMindPage({
           select: { id: true, result: true, createdAt: true },
         });
         if (anonScreening) {
-          // Two separate idempotent writes, no transaction. Reason: the
-          // ScreeningResponse.userId FK references User.id (schema.prisma:156),
-          // so a transaction setting userId on ScreeningResponse BEFORE
-          // the User row exists fails immediately with P2003 — that was
-          // the actual cause of the post-signup loop (Clerk webhook
-          // lags 1-5s after sign-up creating the User row). Doing them
-          // as separate calls — User first, ScreeningResponse second —
-          // sidesteps the FK race entirely.
-          //
           // currentUser() fetch is only on this rare cookie-retry path
           // (i.e. /home's primary linkage missed it), not per-request.
           const clerkUser = await currentUser();
@@ -89,26 +81,11 @@ export default async function MiniMindPage({
             )?.emailAddress ??
             clerkUser?.emailAddresses[0]?.emailAddress ??
             null;
-          await prisma.user.upsert({
-            where: { id: userId },
-            create: {
-              id: userId,
-              email: primaryEmail ?? `${userId}@placeholder.invalid`,
-              locale,
-              themePref: 'system',
-              tcAcceptedAt: new Date(),
-              privacyAcceptedAt: new Date(),
-              screeningResult: anonScreening.result,
-              screeningResultAt: anonScreening.createdAt,
-            },
-            update: {
-              screeningResult: anonScreening.result,
-              screeningResultAt: anonScreening.createdAt,
-            },
-          });
-          await prisma.screeningResponse.updateMany({
-            where: { id: anonScreening.id, userId: null },
-            data: { userId },
+          await linkScreeningToUser({
+            userId,
+            primaryEmail,
+            locale,
+            screening: anonScreening,
           });
           resolvedScreeningResult = anonScreening.result;
         }

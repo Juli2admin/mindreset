@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { currentUser } from '@clerk/nextjs/server';
 import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import { TIER_CAPS } from '@/lib/billing/limits';
 import HomeClient from './HomeClient';
@@ -60,40 +61,11 @@ export default async function HomePage({
         select: { id: true, result: true, createdAt: true },
       });
       if (screening) {
-        // Two separate idempotent writes, no transaction. Reason: the
-        // ScreeningResponse.userId FK references User.id (schema.prisma:156),
-        // so any transaction that sets userId on ScreeningResponse BEFORE
-        // the User row exists fails immediately with P2003 — that was the
-        // real cause of the post-signup loop (Clerk webhook lags 1-5s
-        // after sign-up creating the User row). Doing them as separate
-        // calls in the correct order — User first, ScreeningResponse
-        // second — sidesteps the FK race entirely. Both writes are
-        // idempotent: upsert on a key, updateMany with the not-yet-linked
-        // guard (won't throw on zero rows).
-        //
-        // Create payload mirrors app/api/webhooks/clerk/route.ts so the
-        // webhook's later upsert is a no-op merge that just refreshes
-        // the email field if Clerk's view of it changes.
-        await prisma.user.upsert({
-          where: { id: user.id },
-          create: {
-            id: user.id,
-            email: primaryEmail ?? `${user.id}@placeholder.invalid`,
-            locale,
-            themePref: 'system',
-            tcAcceptedAt: new Date(),
-            privacyAcceptedAt: new Date(),
-            screeningResult: screening.result,
-            screeningResultAt: screening.createdAt,
-          },
-          update: {
-            screeningResult: screening.result,
-            screeningResultAt: screening.createdAt,
-          },
-        });
-        await prisma.screeningResponse.updateMany({
-          where: { id: screening.id, userId: null },
-          data: { userId: user.id },
+        await linkScreeningToUser({
+          userId: user.id,
+          primaryEmail,
+          locale,
+          screening,
         });
       }
       // Reached only when no exception — either linked successfully or
