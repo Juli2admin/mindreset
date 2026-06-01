@@ -71,13 +71,17 @@ export default async function MiniMindPage({
           select: { id: true, result: true, createdAt: true },
         });
         if (anonScreening) {
-          // Upsert handles the Clerk-webhook race: if the User row hasn't
-          // been created yet (webhook lag of 1-5s after sign-up),
-          // `update` throws P2025 and the transaction aborts — the
-          // exact bug that caused the screening loop. Create shape
-          // mirrors app/api/webhooks/clerk/route.ts so the webhook's
-          // later upsert is a no-op merge. Fetching currentUser() here
-          // adds one Clerk API call but only on the rare cookie path.
+          // Two separate idempotent writes, no transaction. Reason: the
+          // ScreeningResponse.userId FK references User.id (schema.prisma:156),
+          // so a transaction setting userId on ScreeningResponse BEFORE
+          // the User row exists fails immediately with P2003 — that was
+          // the actual cause of the post-signup loop (Clerk webhook
+          // lags 1-5s after sign-up creating the User row). Doing them
+          // as separate calls — User first, ScreeningResponse second —
+          // sidesteps the FK race entirely.
+          //
+          // currentUser() fetch is only on this rare cookie-retry path
+          // (i.e. /home's primary linkage missed it), not per-request.
           const clerkUser = await currentUser();
           const primaryEmail =
             clerkUser?.emailAddresses.find(
@@ -85,29 +89,27 @@ export default async function MiniMindPage({
             )?.emailAddress ??
             clerkUser?.emailAddresses[0]?.emailAddress ??
             null;
-          await prisma.$transaction([
-            prisma.screeningResponse.update({
-              where: { id: anonScreening.id },
-              data: { userId },
-            }),
-            prisma.user.upsert({
-              where: { id: userId },
-              create: {
-                id: userId,
-                email: primaryEmail ?? `${userId}@placeholder.invalid`,
-                locale,
-                themePref: 'system',
-                tcAcceptedAt: new Date(),
-                privacyAcceptedAt: new Date(),
-                screeningResult: anonScreening.result,
-                screeningResultAt: anonScreening.createdAt,
-              },
-              update: {
-                screeningResult: anonScreening.result,
-                screeningResultAt: anonScreening.createdAt,
-              },
-            }),
-          ]);
+          await prisma.user.upsert({
+            where: { id: userId },
+            create: {
+              id: userId,
+              email: primaryEmail ?? `${userId}@placeholder.invalid`,
+              locale,
+              themePref: 'system',
+              tcAcceptedAt: new Date(),
+              privacyAcceptedAt: new Date(),
+              screeningResult: anonScreening.result,
+              screeningResultAt: anonScreening.createdAt,
+            },
+            update: {
+              screeningResult: anonScreening.result,
+              screeningResultAt: anonScreening.createdAt,
+            },
+          });
+          await prisma.screeningResponse.updateMany({
+            where: { id: anonScreening.id, userId: null },
+            data: { userId },
+          });
           resolvedScreeningResult = anonScreening.result;
         }
         // Reached only when no exception — either linked successfully
