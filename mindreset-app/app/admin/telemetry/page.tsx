@@ -53,12 +53,30 @@ export default function AdminTelemetry() {
           </a>
         </div>
 
+        <div className="border border-neutral-200 rounded-lg p-5 bg-white">
+          <div className="text-[11px] uppercase tracking-[0.12em] text-neutral-500 mb-2">
+            Errors + exceptions
+          </div>
+          <p className="text-[14px] leading-[1.6] text-neutral-700 mb-3">
+            Production server + client errors stream to Sentry. New issues,
+            stack traces, and release-tagged regressions live in the Sentry
+            dashboard.
+          </p>
+          <a
+            href="https://mindreset-ai.sentry.io/issues/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-[13px] text-neutral-900 underline underline-offset-4 hover:text-neutral-600"
+          >
+            Open Sentry Issues →
+          </a>
+        </div>
+
         <div className="border border-dashed border-neutral-300 rounded-lg p-5 bg-white">
           <div className="text-[11px] uppercase tracking-[0.12em] text-neutral-500 mb-2">
             Coming
           </div>
           <p className="text-[13px] leading-[1.6] text-neutral-500">
-            Sentry error monitoring (production errors are otherwise invisible).
             Time-series charts for signups + revenue. Per-locale and per-tier
             cohort breakdowns. All post-launch additions.
           </p>

@@ -150,7 +150,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     'email.subject',
   ]).trim().slice(0, 998);
 
-  const bodyText = pickString(data, [
+  const extractedBodyText = pickString(data, [
     'text',
     'body_plain',
     'stripped_text',
@@ -159,6 +159,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     'email.body_plain',
     'email.body_text',
   ]);
+
+  // Diagnostic fallback: if no recognised body field, store the raw payload
+  // as JSON so the admin detail view shows exactly what Resend sent. This
+  // lets us identify the correct field path without depending on Vercel
+  // function logs. Removed once the field set is confirmed.
+  const bodyText = extractedBodyText
+    ? extractedBodyText
+    : `[DIAGNOSTIC: body field not found in payload — raw Resend payload follows]\n\n${JSON.stringify(
+        data,
+        null,
+        2,
+      )}`;
 
   const bodyHtml =
     pickString(data, [
