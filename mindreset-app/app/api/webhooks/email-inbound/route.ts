@@ -36,11 +36,9 @@ type ResendInboundEvent = {
 };
 
 type ResendReceivingEmailResponse = {
-  data?: {
-    text?: string | null;
-    html?: string | null;
-    headers?: Array<{ name: string; value: string }>;
-  };
+  text?: string | null;
+  html?: string | null;
+  headers?: Record<string, string>;
 };
 
 function isP2002(err: unknown): boolean {
@@ -84,9 +82,13 @@ async function fetchInboundBody(
       });
       return null;
     }
+    // Resend's REST API returns the email fields FLAT (text, html, headers
+    // at the top level). The `{ data, error }` envelope only exists in the
+    // resend-node SDK's response wrapper — when calling REST directly via
+    // fetch, json.text and json.html are at the root.
     const json = (await res.json()) as ResendReceivingEmailResponse;
-    const text = json.data?.text ?? '';
-    const html = json.data?.html ?? null;
+    const text = typeof json.text === 'string' ? json.text : '';
+    const html = typeof json.html === 'string' && json.html.length > 0 ? json.html : null;
     return { text, html };
   } catch (err) {
     console.error('[email-inbound] Resend receiving GET threw', {
@@ -159,7 +161,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // a placeholder so the admin still sees the email arrived and can
   // retrieve the body manually from the Resend dashboard.
   const fetched = emailId ? await fetchInboundBody(emailId, apiKey) : null;
-  const bodyText = fetched
+  // Guard on `fetched.text` having content, not just `fetched` being
+  // truthy — fetchInboundBody returns `{ text: '', html: null }` on a
+  // successful response with empty plaintext (e.g. HTML-only mail), and
+  // we'd silently persist '' if we only checked the wrapper.
+  const bodyText = fetched && fetched.text
     ? fetched.text
     : `[Body could not be fetched from Resend. email_id: ${emailId || '(none)'} — check Resend dashboard or function logs.]`;
   const bodyHtml = fetched?.html ?? null;
