@@ -211,12 +211,36 @@ designed. Significant clinical-voice work. Schedule for post-launch.
 
 **Logged**: 2026-05-21.
 
-### 16. T&C duplication investigation — `[blocker:launch]`
+### 16. T&C duplication investigation — ✅ RESOLVED (verified 2026-06-01)
 
-A pre-existing bug on `main` where T&C capture happens twice in the
-signup flow. See `docs/carry-forward.md`.
+A pre-existing bug on `main` where T&C capture happened twice in the
+signup flow. Carry-forward notes flagged two candidates:
+1. `DisclaimerModal` firing twice across the chain
+2. Overlap between screening step-5 `ConsentScreen` and `/sign-up`
+   T&C+Privacy checkboxes
 
-**Logged**: pre-existing.
+**Resolution**: both candidates were fixed in earlier PRs.
+Confirmed by code audit + git history on 2026-06-01.
+
+- **PR #46** (`fix(sign-up): show T&C checkboxes only on initial step`)
+  gated the `/sign-up` checkboxes behind `isInitialStep =
+  pathname.endsWith('/sign-up')` so they don't re-render on Clerk's
+  `verify-email-address` sub-path. Killed the in-flow double T&C
+  render. See `SignUpClient.tsx:83`.
+- **PR #55** (`refactor(disclaimer): move modal from root layout to
+  /minimind page tree`) removed the `DisclaimerGate` from
+  `[locale]/layout.tsx` and mounted it only on
+  `app/[locale]/minimind/page.tsx:236`. The modal can no longer fire
+  on Landing, /screening, /sign-up, or /home because those pages no
+  longer render the component.
+
+The two consent surfaces that remain — screening's
+`ScreeningResponse.consentItems` (trauma-screening attestations) and
+`/sign-up`'s `User.tcAcceptedAt` (legal Terms agreement) — are
+**intentionally distinct**: different DB columns, different legal
+purposes. Not a duplication bug.
+
+**Logged**: pre-existing. Closed 2026-06-01.
 
 ### 17. Vercel production deploys broken — ✅ RESOLVED (auto-resolved 2026-05-23, confirmed 2026-06-01)
 

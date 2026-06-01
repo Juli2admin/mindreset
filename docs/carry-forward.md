@@ -520,7 +520,43 @@ canonical reference for the broader plan.
 
 ---
 
-## T&C duplication in signup flow (pre-existing on main, needs pre-launch investigation)
+## T&C duplication in signup flow — ✅ RESOLVED (verified 2026-06-01)
+
+**Original concern (pre-existing on main):** users testing the sign-up
+flow reported seeing T&C-style content twice — once between
+pre-screening and Clerk sign-up, then again after Clerk sign-in.
+
+**Resolution**: both candidate causes were fixed in earlier PRs.
+Audit completed 2026-06-01 confirmed no further work needed.
+
+- **PR #46** (`fix(sign-up): show T&C checkboxes only on initial step`)
+  added `isInitialStep = pathname.endsWith('/sign-up')` so the T&C +
+  Privacy checkboxes don't re-render on Clerk's
+  `verify-email-address` sub-path. The "double consent moment" PR
+  body explicitly called out is gone. See `SignUpClient.tsx:83`.
+- **PR #55** (`refactor(disclaimer): move modal from root layout to
+  /minimind page tree`) removed the `DisclaimerGate` from
+  `app/[locale]/layout.tsx` and mounted it only at
+  `app/[locale]/minimind/page.tsx:236`. The modal cannot fire on
+  Landing, /screening, /sign-up, or /home — those pages no longer
+  render the component.
+
+**The two consent surfaces that remain are intentionally distinct:**
+
+| Surface | DB column | Legal purpose |
+|---|---|---|
+| `/screening` step-5 `ConsentScreen` | `ScreeningResponse.consentItems` | Trauma-screening self-attestation (clinical) |
+| `/sign-up` T&C + Privacy checkboxes | `User.tcAcceptedAt`, `User.privacyAcceptedAt` | Legal contract for the service |
+
+Not a duplication bug — these capture different things for different
+reasons and would be inappropriate to merge.
+
+---
+
+## T&C duplication in signup flow (HISTORICAL — pre-resolution notes)
+
+Below is the original investigation note kept for historical context.
+Do not re-investigate based on this section; see the resolution above.
 
 Users testing the sign-up flow report seeing T&C-style content twice —
 once between pre-screening and Clerk sign-up, then again after
