@@ -57,6 +57,20 @@ async function runAi(formData: FormData) {
   revalidatePath(`/admin/support/${id}`);
 }
 
+// Cancel a queued auto-send before the cron fires. Moves the row back
+// to 'drafted' so the admin can review, edit, and send manually. Safe
+// to call regardless of state — only flips rows currently auto_queued.
+async function cancelAutoSend(formData: FormData) {
+  'use server';
+  const id = String(formData.get('id') ?? '');
+  if (!id) return;
+  await prisma.supportEmail.updateMany({
+    where: { id, status: 'auto_queued' },
+    data: { status: 'drafted', autoSendAt: null },
+  });
+  revalidatePath(`/admin/support/${id}`);
+}
+
 async function sendReply(formData: FormData) {
   'use server';
   const id = String(formData.get('id') ?? '');
@@ -162,6 +176,27 @@ export default async function SupportEmailDetail({
       {sentJustNow && (
         <div className="mb-6 bg-green-50 border border-green-200 text-green-900 rounded-lg px-4 py-3 text-[13px]">
           Reply sent.
+        </div>
+      )}
+      {email.status === 'auto_queued' && email.autoSendAt && (
+        <div className="mb-6 bg-purple-50 border border-purple-200 text-purple-900 rounded-lg px-4 py-3 text-[13px] flex items-start justify-between gap-4">
+          <div>
+            <div className="font-medium mb-1">Auto-send queued</div>
+            <div className="text-[12px] text-purple-800">
+              The AI draft below will be sent automatically at{' '}
+              {formatTimestamp(email.autoSendAt)}. Edit or cancel before then to
+              keep it in your manual queue.
+            </div>
+          </div>
+          <form action={cancelAutoSend}>
+            <input type="hidden" name="id" value={email.id} />
+            <button
+              type="submit"
+              className="text-[12px] px-3 py-1.5 rounded-md border border-purple-300 hover:bg-purple-100"
+            >
+              Cancel auto-send
+            </button>
+          </form>
         </div>
       )}
       {sendError && (
