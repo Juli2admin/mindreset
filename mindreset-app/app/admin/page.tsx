@@ -1,6 +1,25 @@
-import { getAdminStats } from '@/lib/admin/stats';
+import { getAdminStats, getSafetyByLocale } from '@/lib/admin/stats';
 
 export const dynamic = 'force-dynamic';
+
+// Locales with native safety-scanner keyword phrases. Users on other
+// locales rely on the AI verifier alone — track them here so the
+// owner can decide when to author keyword phrases for new locales.
+const NATIVE_SAFETY_LOCALES = new Set(['en', 'ru']);
+
+function localeLabel(locale: string): string {
+  const labels: Record<string, string> = {
+    en: 'English',
+    ru: 'Russian',
+    fr: 'French',
+    de: 'German',
+    es: 'Spanish',
+    it: 'Italian',
+    pl: 'Polish',
+    pt: 'Portuguese',
+  };
+  return labels[locale] ?? locale;
+}
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-GB', {
@@ -43,7 +62,10 @@ function StatTile({
 }
 
 export default async function AdminOverview() {
-  const stats = await getAdminStats();
+  const [stats, safetyByLocale] = await Promise.all([
+    getAdminStats(),
+    getSafetyByLocale(),
+  ]);
 
   return (
     <div className="max-w-4xl">
@@ -85,6 +107,61 @@ export default async function AdminOverview() {
           }
         />
       </div>
+
+      {/* Safety events by locale — only render when there's anything to
+          show. Tracks whether non-EN/RU users are hitting safety events
+          (the keyword scanner ships native phrases for EN+RU only; other
+          locales rely on the AI verifier). A non-native locale row with
+          Sev 3/4/5 hits is the signal to author keyword phrases for that
+          locale next. */}
+      {safetyByLocale.length > 0 && (
+        <div className="border border-neutral-200 rounded-lg p-5 bg-white mb-8">
+          <div className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-3">
+            Safety events by locale (last 7 days)
+          </div>
+          <table className="w-full text-[13px]">
+            <thead>
+              <tr className="text-left text-neutral-500 border-b border-neutral-100">
+                <th className="py-2 pr-4 font-medium">Locale</th>
+                <th className="py-2 pr-4 font-medium">Sev 5</th>
+                <th className="py-2 pr-4 font-medium">Sev 3/4</th>
+                <th className="py-2 pr-4 font-medium">Sev 2</th>
+                <th className="py-2 font-medium">Keyword coverage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {safetyByLocale.map((row) => {
+                const isNative = NATIVE_SAFETY_LOCALES.has(row.locale);
+                return (
+                  <tr key={row.locale} className="border-b border-neutral-100 last:border-0">
+                    <td className="py-2 pr-4 text-neutral-900">{localeLabel(row.locale)}</td>
+                    <td className={`py-2 pr-4 ${row.sev5 > 0 ? 'text-red-700 font-medium' : 'text-neutral-500'}`}>
+                      {row.sev5}
+                    </td>
+                    <td className={`py-2 pr-4 ${row.sev3to4 > 0 ? 'text-orange-700' : 'text-neutral-500'}`}>
+                      {row.sev3to4}
+                    </td>
+                    <td className="py-2 pr-4 text-neutral-500">{row.sev2}</td>
+                    <td className="py-2 text-[12px]">
+                      {isNative ? (
+                        <span className="text-green-700">native</span>
+                      ) : (
+                        <span className="text-orange-700">verifier-only</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <p className="text-[11px] text-neutral-500 mt-3 leading-[1.5]">
+            Native keyword phrases ship for EN + RU. Other locales rely on
+            the AI verifier alone (3s vs 5ms). A non-native locale with
+            Sev 3+ hits is the signal to author keyword phrases for that
+            locale.
+          </p>
+        </div>
+      )}
 
       <div className="border border-neutral-200 rounded-lg p-5 bg-white">
         <div className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-3">
