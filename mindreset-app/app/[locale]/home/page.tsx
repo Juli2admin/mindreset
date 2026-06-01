@@ -44,6 +44,11 @@ export default async function HomePage({
     redirect({ href: '/sign-in', locale });
   }
 
+  const primaryEmail =
+    user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ??
+    user.emailAddresses[0]?.emailAddress ??
+    null;
+
   const cookieStore = cookies();
   const screeningCookie = cookieStore.get('mr_screening')?.value;
   let cookieToClear = false;
@@ -55,14 +60,30 @@ export default async function HomePage({
         select: { id: true, result: true, createdAt: true },
       });
       if (screening) {
+        // Upsert (not update) the User row — the Clerk webhook upserts the
+        // User row asynchronously after sign-up and there's a 1-5s window
+        // where this server component runs first. `update` throws P2025 in
+        // that window, aborting the transaction; `upsert` creates a stub
+        // matching the webhook's shape, which the webhook later updates
+        // idempotently. Create shape mirrors app/api/webhooks/clerk/route.ts.
         await prisma.$transaction([
           prisma.screeningResponse.update({
             where: { id: screening.id },
             data: { userId: user.id },
           }),
-          prisma.user.update({
+          prisma.user.upsert({
             where: { id: user.id },
-            data: {
+            create: {
+              id: user.id,
+              email: primaryEmail ?? `${user.id}@placeholder.invalid`,
+              locale,
+              themePref: 'system',
+              tcAcceptedAt: new Date(),
+              privacyAcceptedAt: new Date(),
+              screeningResult: screening.result,
+              screeningResultAt: screening.createdAt,
+            },
+            update: {
               screeningResult: screening.result,
               screeningResultAt: screening.createdAt,
             },
@@ -71,19 +92,12 @@ export default async function HomePage({
       }
       // Reached only when no exception — either linked successfully or
       // there was no anonymous screening matching the cookie. Either way
-      // the cookie is no longer useful. On failure (Clerk-webhook race)
-      // we KEEP the cookie so /minimind/page.tsx can retry on the next
-      // navigation, by which point the User row has propagated.
+      // the cookie is no longer useful.
       cookieToClear = true;
     } catch (err) {
       console.error('[home] screening linkage failed', err);
     }
   }
-
-  const primaryEmail =
-    user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ??
-    user.emailAddresses[0]?.emailAddress ??
-    null;
 
   const firstName = user.firstName ?? (primaryEmail ? primaryEmail.split('@')[0] : null);
 
