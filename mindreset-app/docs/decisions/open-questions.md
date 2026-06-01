@@ -177,18 +177,30 @@ auto-send) and 3 (threshold tuning) deferred until volume justifies.
 Inbound webhook is held pending Resend Inbound beta access — see
 new question below.
 
-### 13. Russian audience for safety scanner — `[blocker:launch]`
+### 13. Russian audience for safety scanner — ✅ RESOLVED (2026-06-01)
 
-Phase 3c keyword scanner is EN-only. RU users go through with no
-keyword detection (LLM verifier still runs but doesn't get a
-keyword-fired flag).
+Phase 3c keyword scanner was EN-only. RU users went through with no
+keyword detection (LLM verifier still ran, with ~3s latency vs ~5ms
+keyword instant cooldown — Sev-5 still fired but not as fast).
 
-**Recommendation**: Add RU phrases to the keyword list before public
-launch. Reuse the EN structure; populate Russian crisis phrases (e.g.
-"больше не могу", "хочу умереть"). Owner-authored as a sensitive
-list.
+**Resolution**: owner-authored ~95 RU phrases across all four
+severity tiers, shipped in `lib/minimind/safety/keywords.ts`.
+Feminine grammatical forms canonical per CLAUDE.md. Multi-word
+phrases preferred for false-positive resistance. Scanner upgraded
+to handle Cyrillic word boundaries via Unicode-aware lookarounds
+(`(?<!\p{L})…(?!\p{L})` with the `u` flag) — preserves existing EN
+behaviour while extending the matcher to Cyrillic without
+false-positive substring matches.
 
-**Logged**: 2026-05-21.
+**Locale-policy decision (locked 2026-06-01)**: native keyword
+phrases ship for EN + RU only. The 6 placeholder locales (fr, de,
+es, it, pl, pt) rely on the AI verifier alone — acceptable because
+those locales are also UI-placeholders (byte-identical to en.json
+per CLAUDE.md), so a user on those locales is functionally on an
+English experience. When a placeholder locale gets promoted to
+native, author phrases for that locale in the same PR.
+
+**Logged**: 2026-05-21. Closed 2026-06-01.
 
 ## Process / longer-horizon — open questions
 

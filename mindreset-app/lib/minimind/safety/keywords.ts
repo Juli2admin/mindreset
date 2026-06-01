@@ -97,6 +97,66 @@ const SEVERITY_5: Entry[] = [
   { phrase: "i'm going to hurt her",            type: 'imminent_harm_to_others' },
   { phrase: "i'm going to hurt him",            type: 'imminent_harm_to_others' },
   { phrase: "i'm going to hurt them",           type: 'imminent_harm_to_others' },
+
+  // -----------------------------------------------------------------------
+  // RU — authored by owner 2026-06-01. Feminine forms canonical
+  // (CLAUDE.md). Multi-word for false-positive resistance.
+  // -----------------------------------------------------------------------
+
+  // Suicidal ideation — intent + plan/imminence
+  { phrase: 'я сегодня покончу с собой',                type: 'suicidal_ideation' },
+  { phrase: 'я сейчас покончу с собой',                 type: 'suicidal_ideation' },
+  { phrase: 'я убью себя сегодня',                      type: 'suicidal_ideation' },
+  { phrase: 'я собираюсь покончить с собой сегодня',    type: 'suicidal_ideation' },
+  { phrase: 'я уже всё решила и сделаю это сегодня',    type: 'suicidal_ideation' },
+  { phrase: 'я сегодня приму таблетки',                 type: 'suicidal_ideation' },
+  { phrase: 'у меня готовы таблетки',                   type: 'suicidal_ideation' },
+  { phrase: 'я сейчас выпью таблетки',                  type: 'suicidal_ideation' },
+  { phrase: 'я уже выпила таблетки',                    type: 'suicidal_ideation' },
+  { phrase: 'я уже приняла таблетки',                   type: 'suicidal_ideation' },
+  { phrase: 'я нашла способ покончить с собой',         type: 'suicidal_ideation' },
+  { phrase: 'у меня есть план покончить с собой',       type: 'suicidal_ideation' },
+  { phrase: 'я сейчас выйду из окна',                   type: 'suicidal_ideation' },
+  { phrase: 'я собираюсь прыгнуть',                     type: 'suicidal_ideation' },
+  { phrase: 'я сейчас вскрою вены',                     type: 'suicidal_ideation' },
+
+  // Self-harm in progress
+  { phrase: 'я сейчас режусь',                          type: 'self_harm' },
+  { phrase: 'я уже режу себя',                          type: 'self_harm' },
+  { phrase: 'я только что порезалась',                  type: 'self_harm' },
+  { phrase: 'я сейчас порежу себя',                     type: 'self_harm' },
+  { phrase: 'я специально порезалась',                  type: 'self_harm' },
+  { phrase: 'я приняла передозировку',                  type: 'self_harm' },
+  { phrase: 'я выпила слишком много таблеток',          type: 'self_harm' },
+  { phrase: 'я истекаю кровью',                         type: 'self_harm' },
+  { phrase: 'я порезала себя и кровь не останавливается', type: 'self_harm' },
+  { phrase: 'я сделала себе больно и не могу остановиться', type: 'self_harm' },
+
+  // Psychosis — command hallucinations
+  { phrase: 'голоса говорят мне убить себя',            type: 'psychosis_signal' },
+  { phrase: 'голоса велят мне убить себя',              type: 'psychosis_signal' },
+  { phrase: 'голоса приказывают мне покончить с собой', type: 'psychosis_signal' },
+  { phrase: 'голоса говорят мне убить его',             type: 'psychosis_signal' },
+  { phrase: 'голоса говорят мне убить её',              type: 'psychosis_signal' },
+  { phrase: 'голоса велят мне причинить кому-то вред',  type: 'psychosis_signal' },
+
+  // Acute medical
+  { phrase: 'сильная боль в груди',                     type: 'acute_medical' },
+  { phrase: 'давит в груди',                            type: 'acute_medical' },
+  { phrase: 'у меня инфаркт',                           type: 'acute_medical' },
+  { phrase: 'мне трудно дышать',                        type: 'acute_medical' },
+  { phrase: 'я не могу дышать',                         type: 'acute_medical' },
+  { phrase: 'я теряю сознание',                         type: 'acute_medical' },
+  { phrase: 'у меня онемела рука и боль в груди',       type: 'acute_medical' },
+  { phrase: 'у меня сильное кровотечение',              type: 'acute_medical' },
+
+  // Imminent harm to others
+  { phrase: 'я сейчас его ударю',                       type: 'imminent_harm_to_others' },
+  { phrase: 'я сейчас её ударю',                        type: 'imminent_harm_to_others' },
+  { phrase: 'я ему сейчас врежу',                       type: 'imminent_harm_to_others' },
+  { phrase: 'я сейчас причиню ему вред',                type: 'imminent_harm_to_others' },
+  { phrase: 'я сейчас причиню ей вред',                 type: 'imminent_harm_to_others' },
+  { phrase: 'я боюсь, что сейчас кого-то ударю',        type: 'imminent_harm_to_others' },
 ];
 
 // ============================================================================
@@ -147,6 +207,46 @@ const SEVERITY_4: Entry[] = [
   { phrase: "i'm done with life",               type: 'other' },
   { phrase: 'im done with life',                type: 'other' },
   { phrase: 'done with life',                   type: 'other' },
+
+  // -----------------------------------------------------------------------
+  // RU — authored by owner 2026-06-01. Feminine forms canonical.
+  // -----------------------------------------------------------------------
+
+  // Suicidal ideation — intent without specificity
+  { phrase: 'хочу умереть',                     type: 'suicidal_ideation' },
+  { phrase: 'я хочу умереть',                   type: 'suicidal_ideation' },
+  { phrase: 'я хочу покончить с собой',         type: 'suicidal_ideation' },
+  { phrase: 'не хочу жить',                     type: 'suicidal_ideation' },
+  { phrase: 'я не хочу жить',                   type: 'suicidal_ideation' },
+  { phrase: 'не хочу больше жить',              type: 'suicidal_ideation' },
+  { phrase: 'я больше не хочу жить',            type: 'suicidal_ideation' },
+  { phrase: 'хочу убить себя',                  type: 'suicidal_ideation' },
+  { phrase: 'я хочу убить себя',                type: 'suicidal_ideation' },
+  { phrase: 'лучше бы я умерла',                type: 'suicidal_ideation' },
+  { phrase: 'лучше бы меня не было',            type: 'suicidal_ideation' },
+  { phrase: 'не хочу просыпаться',              type: 'suicidal_ideation' },
+  { phrase: 'мне хочется не проснуться',        type: 'suicidal_ideation' },
+  { phrase: 'нет смысла жить',                  type: 'suicidal_ideation' },
+  { phrase: 'не вижу смысла жить',              type: 'suicidal_ideation' },
+  { phrase: 'всем будет лучше без меня',        type: 'suicidal_ideation' },
+  { phrase: 'устала жить',                      type: 'suicidal_ideation' },
+  { phrase: 'хочу исчезнуть навсегда',          type: 'suicidal_ideation' },
+  { phrase: 'хочу, чтобы меня не стало',        type: 'suicidal_ideation' },
+  { phrase: 'я думаю о самоубийстве',           type: 'suicidal_ideation' },
+  { phrase: 'думаю покончить с собой',          type: 'suicidal_ideation' },
+
+  // Self-harm intent
+  { phrase: 'хочу резать себя',                 type: 'self_harm' },
+  { phrase: 'хочу причинить себе боль',         type: 'self_harm' },
+  { phrase: 'я хочу причинить себе вред',       type: 'self_harm' },
+  { phrase: 'думаю о том, чтобы порезаться',    type: 'self_harm' },
+  { phrase: 'думаю причинить себе боль',        type: 'self_harm' },
+  { phrase: 'меня тянет порезаться',            type: 'self_harm' },
+  { phrase: 'я боюсь, что могу причинить себе вред', type: 'self_harm' },
+
+  // Other — hopelessness with escape language
+  { phrase: 'не вижу выхода',                   type: 'other' },
+  { phrase: 'не вижу никакого выхода',          type: 'other' },
 ];
 
 // ============================================================================
@@ -170,6 +270,29 @@ const SEVERITY_3: Entry[] = [
   { phrase: 'not really here anymore',          type: 'other' },
   { phrase: 'i lose hours',                     type: 'other' },
   { phrase: 'i lose time',                      type: 'other' },
+
+  // -----------------------------------------------------------------------
+  // RU — authored by owner 2026-06-01.
+  // -----------------------------------------------------------------------
+  { phrase: 'какой смысл',                      type: 'other' },
+  { phrase: 'какой смысл во всём этом',         type: 'other' },
+  { phrase: 'не могу больше',                   type: 'other' },
+  { phrase: 'не могу так дальше',               type: 'other' },
+  { phrase: 'ничто не имеет значения',          type: 'other' },
+  { phrase: 'ничего не имеет значения',         type: 'other' },
+  { phrase: 'ничего не чувствую',               type: 'other' },
+  { phrase: 'меня здесь нет',                   type: 'other' },
+  { phrase: 'я как будто не здесь',             type: 'other' },
+  { phrase: 'я не справляюсь',                  type: 'other' },
+  { phrase: 'я на пределе',                     type: 'other' },
+  { phrase: 'я больше не выдерживаю',           type: 'other' },
+  { phrase: 'всё слишком тяжело',               type: 'other' },
+  { phrase: 'я не понимаю, зачем всё это',      type: 'other' },
+  { phrase: 'я чувствую пустоту',               type: 'other' },
+  { phrase: 'я будто исчезла',                  type: 'other' },
+  { phrase: 'я как будто не существую',         type: 'other' },
+  { phrase: 'готова сдаться',                   type: 'other' },
+  { phrase: 'я со всем закончила',              type: 'other' },
 ];
 
 // ============================================================================
@@ -183,6 +306,22 @@ const SEVERITY_2: Entry[] = [
   { phrase: 'i hate being alive',               type: 'other' },
   { phrase: "i'm so tired of life",             type: 'other' },
   { phrase: 'tired of being here',              type: 'other' },
+
+  // -----------------------------------------------------------------------
+  // RU — authored by owner 2026-06-01.
+  // -----------------------------------------------------------------------
+  { phrase: 'я безнадёжна',                     type: 'other' },
+  { phrase: 'чувствую безнадёжность',           type: 'other' },
+  { phrase: 'ненавижу свою жизнь',              type: 'other' },
+  { phrase: 'так устала от жизни',              type: 'other' },
+  { phrase: 'устала находиться здесь',          type: 'other' },
+  { phrase: 'я устала от всего',                type: 'other' },
+  { phrase: 'я больше ничего не хочу',          type: 'other' },
+  { phrase: 'мне всё равно',                    type: 'other' },
+  { phrase: 'я чувствую себя сломанной',        type: 'other' },
+  { phrase: 'я потеряла себя',                  type: 'other' },
+  { phrase: 'я не вижу будущего',               type: 'other' },
+  { phrase: 'всё кажется бессмысленным',        type: 'other' },
 ];
 
 const TIERS: ReadonlyArray<{ severity: 2 | 3 | 4 | 5; entries: Entry[] }> = [
@@ -209,6 +348,29 @@ function normalizeForScan(text: string): string {
     .replace(/[“”]/g, '"');
 }
 
+// Cyrillic Unicode block — distinguishes RU phrases from the EN ones so we
+// can pick the right word-boundary semantics for each.
+const CYRILLIC_RANGE = /[Ѐ-ӿ]/;
+
+// Build a word-boundary regex appropriate for the phrase's script.
+// EN phrases use JavaScript's native `\b`, which is ASCII-only (boundaries
+// between [A-Za-z0-9_] and non-word). For Cyrillic phrases that fails:
+// `\bхочу` in "я хочу умереть" produces no match because `х` is not in `\w`
+// and the space-to-х transition doesn't fire `\b`.
+//
+// Fix: for Cyrillic phrases, use Unicode-aware lookarounds with `\p{L}`
+// (any letter from any script) — phrase NOT adjacent to a letter on
+// either side. The `u` flag enables Unicode property escapes. This also
+// prevents the false-positive where a phrase appears as a substring of a
+// longer word (e.g. phrase "умер" should NOT match inside "сумерек").
+function makePhraseRegex(phrase: string): RegExp {
+  const escaped = escapeForRegex(phrase);
+  if (CYRILLIC_RANGE.test(phrase)) {
+    return new RegExp(`(?<!\\p{L})${escaped}(?!\\p{L})`, 'iu');
+  }
+  return new RegExp(`\\b${escaped}\\b`, 'i');
+}
+
 export function scanForKeywords(text: string): KeywordMatch {
   if (!text || typeof text !== 'string') {
     return { matched: false };
@@ -216,7 +378,7 @@ export function scanForKeywords(text: string): KeywordMatch {
   const normalized = normalizeForScan(text);
   for (const tier of TIERS) {
     for (const entry of tier.entries) {
-      const re = new RegExp(`\\b${escapeForRegex(entry.phrase)}\\b`, 'i');
+      const re = makePhraseRegex(entry.phrase);
       const m = normalized.match(re);
       if (m && typeof m.index === 'number') {
         return {
