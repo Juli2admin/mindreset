@@ -390,15 +390,15 @@ Owner configured the Resend webhook endpoint and added
 
 **Logged**: 2026-05-31. Closed 2026-06-01.
 
-### 24. Marketing-consent signup-time UI — `[blocker:launch]`
+### 24. Marketing-consent signup-time UI — ✅ RESOLVED (shipped 2026-05-31)
 
 PR 3a added the `User.marketingConsent` schema field; PR 3b added the
 admin compose + send page that filters recipients by that field. But
-there is no UI for users to actually opt in — the field defaults to
-`false` and nothing flips it, so the compose page audience count is 0
+there was no UI for users to actually opt in — the field defaulted to
+`false` and nothing flipped it, so the compose page audience count was 0
 for every real signup.
 
-**Options**:
+**Options considered**:
 - **A**: Checkbox on the Clerk sign-up page (requires customising the
   Clerk `<SignUp />` component with `unsafeMetadata` or a follow-up
   POST after sign-up).
@@ -408,8 +408,10 @@ for every real signup.
 - **C**: Profile-settings toggle (passive — relies on user discovering
   it).
 
-**Recommendation**: **B** — banner on first `/home` visit. Matches
-brand voice (no pressure), no Clerk customisation needed, easy to A/B
-or remove later. Combine with C so the toggle exists post-dismissal.
+**Resolution**: PR #89 (`316e778`) shipped Option B + C — a one-time
+opt-in banner on first `/home` visit, plus a passive toggle in
+Settings. Schema added `marketingConsentPromptedAt` so the banner
+appears at most once per user. POST `/api/account/marketing-consent`
+backs both surfaces.
 
-**Logged**: 2026-05-31. Resolution before any marketing send.
+**Logged**: 2026-05-31. Closed 2026-06-01.
