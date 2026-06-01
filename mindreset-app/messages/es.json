@@ -288,7 +288,17 @@
     "closingTitle": "Comenzar.",
     "closingBody": "No necesita estar hecho pedazos para empezar. No necesita saber lo que quiere. La revisión le dice — con suavidad — si esto le corresponde en este momento.",
     "closingCta": "Comenzar la revisión",
-    "heroChip": "Prueba gratuita · 50 mensajes · sin tarjeta"
+    "heroChip": "Prueba gratuita · 50 mensajes · sin tarjeta",
+    "newsletter": {
+      "kicker": "MANTENGAMOS EL CONTACTO",
+      "title": "¿Aún no estás lista?",
+      "body": "Enviamos pocos emails — nuevos módulos, sugerencias suaves, alguna reflexión. Sin presión.",
+      "emailPlaceholder": "tu@email.com",
+      "consent": "Acepto recibir emails ocasionales. Puedo darme de baja cuando quiera.",
+      "submit": "Recibir actualizaciones",
+      "success": "Gracias. Te escribiremos cuando haya algo que compartir.",
+      "error": "Algo salió mal. Por favor, inténtalo de nuevo."
+    }
   },
   "MiniMind": {
     "opener": "Hola. Me alegra que esté aquí. ¿Cómo se encuentra hoy?",

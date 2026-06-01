@@ -288,7 +288,17 @@
     "closingTitle": "Commencer.",
     "closingBody": "Vous n’avez pas besoin d’être en morceaux pour commencer. Vous n’avez pas besoin de savoir ce que vous voulez. Le bilan vous dit — doucement — si cela vous correspond en ce moment.",
     "closingCta": "Commencer le bilan",
-    "heroChip": "Aperçu gratuit · 50 messages · sans carte"
+    "heroChip": "Aperçu gratuit · 50 messages · sans carte",
+    "newsletter": {
+      "kicker": "RESTONS EN CONTACT",
+      "title": "Pas encore prête ?",
+      "body": "On envoie peu d'e-mails — nouveaux modules, propositions douces, parfois une réflexion. Sans pression.",
+      "emailPlaceholder": "votre@email.com",
+      "consent": "J'accepte de recevoir des e-mails occasionnels. Je peux me désinscrire à tout moment.",
+      "submit": "Recevoir les mises à jour",
+      "success": "Merci. On reviendra vers toi quand on aura quelque chose à partager.",
+      "error": "Une erreur est survenue. Réessaie."
+    }
   },
   "MiniMind": {
     "opener": "Bonjour. Heureux que vous soyez là. Comment vous sentez-vous aujourd’hui ?",

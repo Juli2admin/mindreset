@@ -52,6 +52,21 @@ function getScreeningIpLimiter(): Ratelimit {
   return _screeningIp;
 }
 
+// Newsletter signup is an anonymous public endpoint. Same posture as
+// screening (fail-open on Redis blip; modest IP cap to deter spam
+// without blocking legitimate users sharing networks).
+let _newsletterIp: Ratelimit | null = null;
+function getNewsletterIpLimiter(): Ratelimit {
+  if (!_newsletterIp) {
+    _newsletterIp = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(5, '1 h'),
+      prefix: 'rl:newsletter:ip',
+    });
+  }
+  return _newsletterIp;
+}
+
 // Voice transcription rate limit. Slightly looser than chat (20/min vs
 // 10/min) so users can retake a recording without hitting the limit, but
 // tight enough to keep Groq API spend predictable. IP limiter at 60/min
@@ -142,6 +157,26 @@ export async function checkScreeningRateLimit(ip: string): Promise<RateLimitResu
     // Screening is fail-open: a transient Redis error should never block a user
     // from completing the one-time screening flow. Chat stays fail-closed (cost).
     console.error('[rateLimit] Upstash error on screening check — failing open:', err);
+    return { limited: false };
+  }
+}
+
+export async function checkNewsletterRateLimit(ip: string): Promise<RateLimitResult> {
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
+    return { limited: false };
+  }
+
+  try {
+    const result = await getNewsletterIpLimiter().limit(ip);
+    if (!result.success) {
+      return { limited: true, retryAfter: Math.ceil((result.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    // Fail-open like screening — newsletter signup is low-stakes; a Redis
+    // outage shouldn't keep a willing prospect from joining the list.
+    console.error('[rateLimit] Upstash error on newsletter check — failing open:', err);
     return { limited: false };
   }
 }
