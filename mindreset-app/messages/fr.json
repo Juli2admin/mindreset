@@ -477,7 +477,7 @@
       "preamble": {
         "operatorLabel": "Opérateur :",
         "operatorBody": "<strong>Plateforme d’auto-assistance MindReset AI</strong>, exploitée par <strong>MindReset AI Ltd</strong>, société enregistrée en Angleterre et au Pays de Galles, basée à Londres, Royaume-Uni.",
-        "note": "[NOTE : Le numéro d’enregistrement de la société et l’adresse du siège social seront ajoutés ultérieurement. La méthodologie et la structure du produit resteront inchangées.]",
+        "note": "",
         "contactLabel": "Contact :",
         "agreement": "En utilisant la plateforme d’auto-assistance MindReset AI (« Service »), disponible sur mindreset.ai, vous acceptez les présentes Conditions. Veuillez les lire attentivement. Si vous n’êtes pas d’accord, veuillez ne pas utiliser le Service."
       },
@@ -601,7 +601,7 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: Le nom du produit est finalisé sous la forme « The Journey ». La méthodologie est décrite comme le framework en huit étapes Reset 8 Blocks — terminologie interne uniquement.]",
+          "note": "The Journey is a structured eight-stage method.",
           "optionsLabel": "Deux options d’achat :",
           "onetime": {
             "title": "Option A — Programme complet, paiement unique :",
@@ -768,7 +768,7 @@
     "preamble": {
       "controllerLabel": "Responsable du traitement :",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, société enregistrée en England & Wales, basée à Londres, Royaume-Uni — <mail>support@mindreset.ai</mail>",
-      "note": "[NOTE: L’enregistrement auprès de l’ICO doit être obtenu via ico.org.uk avant le lancement public. Frais annuels ~£40-60. L’enregistrement doit être effectué avant toute activité marketing ou disponibilité publique.]"
+      "note": "MindReset AI Ltd is registered with the UK Information Commissioner's Office under registration number ZB642008."
     },
     "section1": {
       "title": "1. Ce que couvre la présente Privacy Policy",

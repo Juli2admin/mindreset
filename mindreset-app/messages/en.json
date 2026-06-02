@@ -452,7 +452,7 @@
       "preamble": {
         "operatorLabel": "Operator:",
         "operatorBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, a company registered in England & Wales, based in London, United Kingdom.",
-        "note": "[NOTE: Company registration number and registered office address to be inserted. The methodology and product structure remain the same.]",
+        "note": "",
         "contactLabel": "Contact:",
         "agreement": "By using the MindReset AI self-help platform (the \"Service\"), available at mindreset.ai, you agree to these Terms. Read them carefully. If you do not agree, please do not use the Service."
       },
@@ -576,7 +576,7 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: Product name finalised as \"The Journey\". Methodology described as the eight-stage Reset 8 Blocks framework — internal terminology only.]",
+          "note": "The Journey is a structured eight-stage method.",
           "optionsLabel": "Two purchase options:",
           "onetime": {
             "title": "Option A — Full programme, one-time payment:",

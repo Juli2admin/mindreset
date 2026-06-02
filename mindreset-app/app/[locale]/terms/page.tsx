@@ -160,7 +160,9 @@ export default async function TermsPage() {
               strong: (c) => <Strong>{c}</Strong>,
             })}
           </P>
-          <Note>{t('article1.preamble.note')}</Note>
+          {t('article1.preamble.note').length > 0 && (
+            <Note>{t('article1.preamble.note')}</Note>
+          )}
           <P>
             <Strong>{t('article1.preamble.contactLabel')}</Strong>{' '}
             <MailLink to="support@mindreset.ai" />
