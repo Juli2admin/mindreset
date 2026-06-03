@@ -76,7 +76,7 @@
     "acknowledge": "Ich verstehe — fortfahren"
   },
   "Footer": {
-    "about": "About",
+    "about": "Über die Methode",
     "pricing": "Preise",
     "terms": "Bedingungen",
     "privacy": "Datenschutz",
@@ -84,7 +84,7 @@
     "contact": "Kontakt",
     "shareYourStory": "Geschichte teilen",
     "languagePickerLabel": "Sprache",
-    "compliance": "MindReset AI Ltd · Registered with the UK Information Commissioner's Office, registration number ZB642008 · UK GDPR data rights (access, deletion, export) honoured under the Privacy Policy"
+    "compliance": "MindReset AI Ltd · Registriert beim UK Information Commissioner's Office unter der Registrierungsnummer ZB642008 · Die Rechte betroffener Personen gemäß UK GDPR (Auskunft, Löschung und Datenexport) werden entsprechend der Datenschutzrichtlinie gewahrt."
   },
   "Testimonials": {
     "kicker": "VON ANDEREN AUF DIESEM WEG",
@@ -961,40 +961,40 @@
     "wordmarkAria": "MindReset-Startseite"
   },
   "About": {
-    "metaTitle": "About — MindReset",
-    "metaDescription": "The story behind the method. How a personal way back became MindReset.",
+    "metaTitle": "Über die Methode — MindReset",
+    "metaDescription": "Die Geschichte hinter der Methode. Wie ein persönlicher Weg zurück zu sich selbst zu MindReset wurde.",
     "hero": {
-      "label": "About",
-      "title": "The story behind the method",
-      "subtitle": "The methodology that emerged from her own way back."
+      "label": "Über die Methode",
+      "title": "Die Geschichte hinter der Methode",
+      "subtitle": "Die Methodik, die aus ihrem eigenen Weg zurück zu sich selbst entstanden ist."
     },
     "howItBegan": {
-      "label": "How it began",
-      "p1": "MindReset.AI was not born in a boardroom or a university laboratory. It was born from a deeply personal experience — a moment when the founder looked at her own life and realised that somewhere along the way, she had lost herself completely.",
-      "pullQuote": "I had tried therapy. I had tried self-help books. Nothing gave me lasting results. So I built my own way back.",
-      "p2": "After years of difficult life experiences — including toxic relationships, major life transitions, and a profound sense of disconnection from her own identity — she reached a turning point. The personal-growth approaches she had tried offered some relief, but not the shift she was looking for.",
-      "p3": "As a trained methodologist and educator, she did what came naturally: she mapped the process. She studied her own inner world with rigorous honesty, used AI as a journalling and reflection tool, and drew on her training to design a structured path back to wholeness."
+      "label": "Wie alles begann",
+      "p1": "MindReset.AI entstand weder in einem Konferenzraum noch in einem Universitätslabor. Es entstand aus einer zutiefst persönlichen Erfahrung – dem Moment, in dem die Gründerin auf ihr eigenes Leben blickte und erkannte, dass sie sich irgendwo auf dem Weg vollständig verloren hatte.",
+      "pullQuote": "Ich hatte Therapie ausprobiert. Ich hatte Selbsthilfebücher gelesen. Nichts brachte eine nachhaltige Veränderung. Also entwickelte ich meinen eigenen Weg zurück zu mir selbst.",
+      "p2": "Nach Jahren schwieriger Lebenserfahrungen – darunter toxische Beziehungen, tiefgreifende Lebensveränderungen und ein starkes Gefühl der Entfremdung von der eigenen Identität – erreichte sie einen Wendepunkt. Die Ansätze zur persönlichen Entwicklung, die sie ausprobiert hatte, brachten zwar Erleichterung, aber nicht die tiefgreifende Veränderung, nach der sie suchte.",
+      "p3": "Als ausgebildete Methodikerin und Pädagogin tat sie das, was ihr am natürlichsten erschien: Sie strukturierte den Prozess. Mit schonungsloser Ehrlichkeit erforschte sie ihre eigene innere Welt, nutzte AI als Werkzeug für Reflexion und persönliches Journaling und verband ihre fachliche Ausbildung mit einem klaren, strukturierten Weg zurück zu innerer Ganzheit."
     },
     "whyItWorks": {
-      "label": "Why it works",
-      "p1": "The Journey is an 8-block method that moves a woman from her very first moment of awareness — the Stop — all the way through to a fully reclaimed sense of identity. It is not about becoming someone new. It is about returning to who you always were, before life asked you to be someone else.",
-      "p2": "The Journey is self-guided, structured, and supported by AI — available to any woman, anywhere, at any hour. It asks only honesty, courage, and the willingness to begin.",
-      "pullQuote": "She was always there. She just needed someone to come back for her.",
-      "p3": "Women who walk the method describe finding more space to breathe, room to question patterns they had carried for years, and a steadier sense of who they are.",
-      "p4": "Because every woman deserves to know herself — fully, freely, and on her own terms."
+      "label": "Warum es funktioniert",
+      "p1": "The Journey ist eine Methode aus acht aufeinander aufbauenden Modulen, die eine Frau von ihrem ersten Moment der Erkenntnis – dem Stop – bis hin zu einem wiedergewonnenen Gefühl von Identität begleitet. Es geht nicht darum, jemand Neues zu werden. Es geht darum, zu der Person zurückzukehren, die Sie immer waren, bevor das Leben von Ihnen verlangte, jemand anderes zu sein.",
+      "p2": "The Journey ist selbstgeführt, strukturiert und wird durch AI unterstützt – zugänglich für jede Frau, überall und zu jeder Tages- und Nachtzeit. Alles, was es erfordert, sind Ehrlichkeit, Mut und die Bereitschaft, den ersten Schritt zu machen.",
+      "pullQuote": "Sie war die ganze Zeit da. Es brauchte nur jemanden, der zu ihr zurückkehrte.",
+      "p3": "Frauen, die diesen Weg gehen, berichten von mehr Raum zum Atmen, der Möglichkeit, langjährige Muster zu hinterfragen, und einem stabileren Gefühl dafür, wer sie wirklich sind.",
+      "p4": "Denn jede Frau verdient es, sich selbst vollständig, frei und nach ihren eigenen Maßstäben kennenzulernen."
     },
     "results": {
-      "title": "What women experience",
-      "subtitle": "What women describe after working with the method.",
-      "card1": "More space to breathe in difficult moments.",
-      "card2": "Room to examine patterns they have been carrying.",
-      "card3": "A clearer sense of what matters to them.",
-      "card4": "Steadier ground in their own decisions."
+      "title": "Was Frauen erleben",
+      "subtitle": "Was Frauen nach der Arbeit mit der Methode beschreiben.",
+      "card1": "Mehr Raum zum Durchatmen in schwierigen Momenten.",
+      "card2": "Die Möglichkeit, langjährige Muster bewusst zu betrachten und zu hinterfragen.",
+      "card3": "Ein klareres Verständnis dessen, was ihnen wirklich wichtig ist.",
+      "card4": "Mehr innere Sicherheit bei den eigenen Entscheidungen."
     },
     "cta": {
-      "title": "Your journey back starts here.",
-      "body": "Meet MiniMind — your AI companion, available 24/7, trained in the MindReset method. Start with a free 50-message taster.",
-      "button": "Start free"
+      "title": "Ihr Weg zurück zu sich selbst beginnt hier.",
+      "body": "Lernen Sie MiniMind kennen – Ihren AI-Begleiter, der rund um die Uhr verfügbar ist und auf der MindReset-Methode basiert. Starten Sie mit einem kostenlosen Kontingent von 50 Nachrichten.",
+      "button": "Kostenlos starten"
     }
   },
   "Faq": {
