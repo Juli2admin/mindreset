@@ -10,12 +10,16 @@ import ShareYourStoryClient from './ShareYourStoryClient';
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations('ShareYourStory');
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: pageAlternates('/share-your-story'),
+    alternates: pageAlternates('/share-your-story', params.locale),
   };
 }
 

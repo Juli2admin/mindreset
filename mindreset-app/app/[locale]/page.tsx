@@ -8,10 +8,19 @@ import { getApprovedTestimonials } from '@/lib/testimonials/queries';
 // The Landing page is the SEO-most-important page. Title + OG defaults
 // from [locale]/layout.tsx are already correct for this page; we only
 // need to declare alternates so hreflang tags resolve to the right URLs
-// for every locale variant.
-export const metadata: Metadata = {
-  alternates: pageAlternates('/'),
-};
+// for every locale variant. generateMetadata (not static metadata) is
+// required so we can pass `params.locale` to pageAlternates — that
+// makes the canonical URL locale-correct (/ru/, /it/, etc.), preventing
+// Google from merging non-EN locales into the EN canonical.
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return {
+    alternates: pageAlternates('/', params.locale),
+  };
+}
 
 // Phase i18n.1d.2 — Footer (server-async component using getTranslations)
 // is pre-rendered here and passed as a slot prop, because LandingPage
