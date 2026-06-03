@@ -277,14 +277,14 @@
         "price": "À partir de £55/semaine · ou £599 en une fois"
       }
     ],
-    "differentKicker": "Ce qui le distingue",
-    "differentTitle": "La plupart des plateformes donnent des conseils.\nMindReset donne une structure.",
-    "differentItems": [
-      "Pas de diagnostic",
-      "Pas de fouille sans votre choix",
-      "Pas de dépendance au système",
-      "Pas de pression pour changer",
-      "Juste un chemin clair, contenu — à votre rythme"
+    "differentKicker": "Why MindReset feels different",
+    "differentBody": [
+      "Most AI tools respond to whatever you ask.",
+      "MindReset follows a structured methodology.",
+      "Instead of endless conversations, it helps you move through a clear process — from awareness and emotional regulation to deeper patterns, boundaries, identity, and self-trust.",
+      "You are not expected to know the right questions.",
+      "The method guides the journey.",
+      "Because insight alone rarely creates change. Structure does."
     ],
     "closingKicker": "Quand le moment est juste",
     "closingTitle": "Commencer.",

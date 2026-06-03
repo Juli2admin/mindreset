@@ -349,30 +349,39 @@ function PathsSection() {
 function Different() {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
-  const differentItems = t.raw('differentItems');
+  const lines = t.raw('differentBody');
+  // Last line is the punchline — render in italic serif for emphasis,
+  // matching the pull-quote treatment used on /about. All earlier lines
+  // render as plain sans body. Centred copy column, max-width tuned so
+  // the longer middle line wraps gracefully.
+  const lastIndex = lines.length - 1;
   return (
-    <section className="py-20 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
+    <section
+      className="py-20 sm:py-24 text-center"
+      style={{ borderTop: `1px solid ${c.border}` }}
+    >
       <SectionKicker text={t('differentKicker')} color={c.accent} />
-      <h2
-        className="text-[36px] sm:text-[44px] leading-[1.1] -tracking-[0.015em] whitespace-pre-line max-w-[36rem] mx-auto mb-12"
-        style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
-      >
-        {t('differentTitle')}
-      </h2>
-
-      <ul className="space-y-3 max-w-[26rem] mx-auto text-left">
-        {differentItems.map((item, i) => (
-          <li
-            key={i}
-            className="flex items-baseline gap-4 py-2"
-          >
-            <span className="text-[10px] mt-1" style={{ color: c.accentSage }}>●</span>
-            <span className="text-[16px] leading-[1.5]" style={{ ...sansStyle, color: c.text }}>
-              {item}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <div className="max-w-[34rem] mx-auto px-6 mt-10 space-y-6">
+        {lines.map((line, i) =>
+          i === lastIndex ? (
+            <p
+              key={i}
+              className="text-[20px] sm:text-[22px] italic leading-[1.5] pt-2"
+              style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
+            >
+              {line}
+            </p>
+          ) : (
+            <p
+              key={i}
+              className="text-[16px] sm:text-[17px] leading-[1.7]"
+              style={{ ...sansStyle, color: c.text }}
+            >
+              {line}
+            </p>
+          ),
+        )}
+      </div>
     </section>
   );
 }
