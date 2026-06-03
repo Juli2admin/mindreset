@@ -960,40 +960,40 @@
     "wordmarkAria": "MindReset главная"
   },
   "About": {
-    "metaTitle": "About — MindReset",
-    "metaDescription": "The story behind the method. How a personal way back became MindReset.",
+    "metaTitle": "О платформе — MindReset",
+    "metaDescription": "История метода. Как личный путь обратно к себе стал MindReset.",
     "hero": {
-      "label": "About",
-      "title": "The story behind the method",
-      "subtitle": "The methodology that emerged from her own way back."
+      "label": "О платформе",
+      "title": "История за этим методом",
+      "subtitle": "Методика, родившаяся из её собственного пути обратно к себе."
     },
     "howItBegan": {
-      "label": "How it began",
-      "p1": "MindReset.AI was not born in a boardroom or a university laboratory. It was born from a deeply personal experience — a moment when the founder looked at her own life and realised that somewhere along the way, she had lost herself completely.",
-      "pullQuote": "I had tried therapy. I had tried self-help books. Nothing gave me lasting results. So I built my own way back.",
-      "p2": "After years of difficult life experiences — including toxic relationships, major life transitions, and a profound sense of disconnection from her own identity — she reached a turning point. The personal-growth approaches she had tried offered some relief, but not the shift she was looking for.",
-      "p3": "As a trained methodologist and educator, she did what came naturally: she mapped the process. She studied her own inner world with rigorous honesty, used AI as a journalling and reflection tool, and drew on her training to design a structured path back to wholeness."
+      "label": "С чего всё началось",
+      "p1": "MindReset.AI родилась не в зале заседаний и не в университетской лаборатории. Она появилась из глубоко личного опыта — из момента, когда основательница посмотрела на свою жизнь и осознала, что где-то по пути полностью потеряла саму себя.",
+      "pullQuote": "Я пробовала терапию. Я читала книги по саморазвитию. Ничто не давало устойчивого результата. Поэтому я построила свой собственный путь обратно.",
+      "p2": "После лет тяжёлых жизненных событий — токсичных отношений, серьёзных перемен и глубокого ощущения оторванности от собственной личности — она дошла до поворотной точки. Подходы к личностному росту, которые она пробовала, давали некоторое облегчение, но не тот сдвиг, который она искала.",
+      "p3": "Как профессиональный методолог и педагог, она поступила естественно: разложила процесс на этапы. С честностью изучила свой внутренний мир, использовала ИИ как инструмент для дневника и саморефлексии и опиралась на своё обучение, чтобы спроектировать структурированный путь обратно к целостности."
     },
     "whyItWorks": {
-      "label": "Why it works",
-      "p1": "The Journey is an 8-block method that moves a woman from her very first moment of awareness — the Stop — all the way through to a fully reclaimed sense of identity. It is not about becoming someone new. It is about returning to who you always were, before life asked you to be someone else.",
-      "p2": "The Journey is self-guided, structured, and supported by AI — available to any woman, anywhere, at any hour. It asks only honesty, courage, and the willingness to begin.",
-      "pullQuote": "She was always there. She just needed someone to come back for her.",
-      "p3": "Women who walk the method describe finding more space to breathe, room to question patterns they had carried for years, and a steadier sense of who they are.",
-      "p4": "Because every woman deserves to know herself — fully, freely, and on her own terms."
+      "label": "Почему это работает",
+      "p1": "The Journey — это метод из восьми блоков, который ведёт женщину от самого первого момента осознания — от Остановки — к полностью возвращённому ощущению себя. Речь не о том, чтобы стать кем-то новым. Речь о том, чтобы вернуться к той, кем Вы всегда были, до того как жизнь попросила Вас стать кем-то другим.",
+      "p2": "The Journey — самостоятельный, структурированный и поддерживаемый ИИ путь, доступный любой женщине, в любом месте, в любой час. От Вас требуется только честность, смелость и готовность начать.",
+      "pullQuote": "Она всегда была здесь. Просто кто-то должен был вернуться за ней.",
+      "p3": "Женщины, которые проходят этот метод, рассказывают, что находят больше пространства для дыхания, возможность пересмотреть закреплённые годами шаблоны и более устойчивое ощущение того, кто они есть.",
+      "p4": "Потому что каждая женщина заслуживает узнать себя — полностью, свободно и на собственных условиях."
     },
     "results": {
-      "title": "What women experience",
-      "subtitle": "What women describe after working with the method.",
-      "card1": "More space to breathe in difficult moments.",
-      "card2": "Room to examine patterns they have been carrying.",
-      "card3": "A clearer sense of what matters to them.",
-      "card4": "Steadier ground in their own decisions."
+      "title": "Что переживают женщины",
+      "subtitle": "Что женщины описывают после работы с этим методом.",
+      "card1": "Больше пространства, чтобы дышать в трудные моменты.",
+      "card2": "Возможность рассмотреть шаблоны, которые они в себе несут.",
+      "card3": "Более ясное ощущение того, что для них важно.",
+      "card4": "Более устойчивая опора в собственных решениях."
     },
     "cta": {
-      "title": "Your journey back starts here.",
-      "body": "Meet MiniMind — your AI companion, available 24/7, trained in the MindReset method. Start with a free 50-message taster.",
-      "button": "Start free"
+      "title": "Ваш путь обратно начинается здесь.",
+      "body": "Познакомьтесь с MiniMind — Вашим ИИ-собеседником, доступным круглосуточно и обученным методу MindReset. Начните с бесплатной пробной версии на 50 сообщений.",
+      "button": "Начать бесплатно"
     }
   },
   "Faq": {
