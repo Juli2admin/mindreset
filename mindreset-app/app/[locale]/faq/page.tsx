@@ -35,12 +35,16 @@ const FAQ_SLUGS = [
   'contact',
 ] as const;
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations('Faq');
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    alternates: pageAlternates('/faq'),
+    alternates: pageAlternates('/faq', params.locale),
   };
 }
 

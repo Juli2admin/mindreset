@@ -4,17 +4,64 @@ import prisma from '@/lib/prisma';
 import PricingClient from './PricingClient';
 import Footer from '@/components/Footer';
 import TestimonialsSection from '@/components/TestimonialsSection';
-import { pageAlternates } from '@/lib/seo/alternates';
+import { pageAlternates, SITE_URL } from '@/lib/seo/alternates';
 import { getApprovedTestimonials } from '@/lib/testimonials/queries';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'Pricing',
+// Product JSON-LD for /pricing — gives Google enough structured data to
+// render rich snippets (price + currency + availability) in search
+// results. Three Offers cover MiniMind Essential, MiniMind Extended,
+// and the message top-up. Prices are GBP, monthly recurring + one-off.
+// Schema.org Product + Offer is the conventional shape Google expects.
+const PRODUCT_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'MindReset MiniMind',
   description:
-    'MiniMind Essential and Extended subscriptions. Message top-up. Free 50-message taster with every new account — no card required.',
-  alternates: pageAlternates('/pricing'),
+    'AI companion for daily reflection. Trauma-informed, self-guided, UK-based. Subscription with a free 50-message taster.',
+  brand: { '@type': 'Brand', name: 'MindReset.ai' },
+  url: `${SITE_URL}/pricing`,
+  offers: [
+    {
+      '@type': 'Offer',
+      name: 'MiniMind Essential — monthly',
+      price: '14.99',
+      priceCurrency: 'GBP',
+      availability: 'https://schema.org/InStock',
+      url: `${SITE_URL}/pricing`,
+    },
+    {
+      '@type': 'Offer',
+      name: 'MiniMind Extended — monthly',
+      price: '24.99',
+      priceCurrency: 'GBP',
+      availability: 'https://schema.org/InStock',
+      url: `${SITE_URL}/pricing`,
+    },
+    {
+      '@type': 'Offer',
+      name: 'Message top-up',
+      price: '4.99',
+      priceCurrency: 'GBP',
+      availability: 'https://schema.org/InStock',
+      url: `${SITE_URL}/pricing`,
+    },
+  ],
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return {
+    title: 'Pricing',
+    description:
+      'MiniMind Essential and Extended subscriptions. Message top-up. Free 50-message taster with every new account — no card required.',
+    alternates: pageAlternates('/pricing', params.locale),
+  };
+}
 
 // /pricing is public — signed-out prospects can view plans before
 // signing up. Buy buttons in PricingClient detect anonymous state via
@@ -36,10 +83,19 @@ export default async function PricingPage({ params }: { params: { locale: string
   const testimonials = await getApprovedTestimonials(params.locale);
 
   return (
-    <PricingClient
-      currentTier={currentTier}
-      footerSlot={<Footer />}
-      testimonialsSlot={<TestimonialsSection testimonials={testimonials} />}
-    />
+    <>
+      {/* Product JSON-LD: Google indexes structured data from the initial
+          HTML response. Rendered inline (not via next/script) so it's
+          present on first crawl, no JS execution required. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(PRODUCT_JSONLD) }}
+      />
+      <PricingClient
+        currentTier={currentTier}
+        footerSlot={<Footer />}
+        testimonialsSlot={<TestimonialsSection testimonials={testimonials} />}
+      />
+    </>
   );
 }

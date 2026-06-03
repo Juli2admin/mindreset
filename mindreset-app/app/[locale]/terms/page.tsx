@@ -14,12 +14,18 @@ const SERIF = TOKENS.serif;
 
 const LAST_UPDATED = '26 May 2026';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service',
-  description:
-    'Terms of Service, Refund & Cancellation Policy, and Medical & Crisis Disclaimer for the MindReset AI self-help platform.',
-  alternates: pageAlternates('/terms'),
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return {
+    title: 'Terms of Service',
+    description:
+      'Terms of Service, Refund & Cancellation Policy, and Medical & Crisis Disclaimer for the MindReset AI self-help platform.',
+    alternates: pageAlternates('/terms', params.locale),
+  };
+}
 
 export default async function TermsPage() {
   const t = await getTranslations('Terms');

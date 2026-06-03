@@ -12,12 +12,18 @@ const SERIF = TOKENS.serif;
 
 const LAST_UPDATED = '26 May 2026';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description:
-    'Privacy Policy for the MindReset AI self-help platform — what data we collect, how we use it, and your rights under UK GDPR.',
-  alternates: pageAlternates('/privacy'),
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return {
+    title: 'Privacy Policy',
+    description:
+      'Privacy Policy for the MindReset AI self-help platform — what data we collect, how we use it, and your rights under UK GDPR.',
+    alternates: pageAlternates('/privacy', params.locale),
+  };
+}
 
 export default async function PrivacyPage() {
   const t = await getTranslations('Privacy');

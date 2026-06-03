@@ -69,48 +69,58 @@ const DEFAULT_TITLE = 'MindReset.ai — A way back to yourself';
 const DEFAULT_DESCRIPTION =
   'A trauma-informed self-help platform. Not therapy, not a crisis service — a structured digital reflection tool for emotional clarity.';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: DEFAULT_TITLE,
-    template: '%s · MindReset.ai',
-  },
-  description: DEFAULT_DESCRIPTION,
-  applicationName: 'MindReset.ai',
-  alternates: pageAlternates('/'),
-  icons: {
-    icon: [
-      { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },
-      { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' },
-    ],
-    apple: '/logo-light.png',
-  },
-  openGraph: {
-    type: 'website',
-    siteName: 'MindReset.ai',
-    title: DEFAULT_TITLE,
+// Locale-aware base metadata. Pages override `alternates` with their
+// own locale-correct canonical via pageAlternates(path, params.locale);
+// this layout-level metadata is the fallback for any page that doesn't
+// declare its own metadata export.
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: DEFAULT_TITLE,
+      template: '%s · MindReset.ai',
+    },
     description: DEFAULT_DESCRIPTION,
-    url: SITE_URL,
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'MindReset.ai — A way back to yourself',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: ['/og-image.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+    applicationName: 'MindReset.ai',
+    alternates: pageAlternates('/', params.locale),
+    icons: {
+      icon: [
+        { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },
+        { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' },
+      ],
+      apple: '/logo-light.png',
+    },
+    openGraph: {
+      type: 'website',
+      siteName: 'MindReset.ai',
+      title: DEFAULT_TITLE,
+      description: DEFAULT_DESCRIPTION,
+      url: SITE_URL,
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'MindReset.ai — A way back to yourself',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: DEFAULT_TITLE,
+      description: DEFAULT_DESCRIPTION,
+      images: ['/og-image.png'],
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 // Without this, mobile browsers render every page at a fixed ~980px CSS
 // width and shrink to fit, making text tiny and breaking all responsive
