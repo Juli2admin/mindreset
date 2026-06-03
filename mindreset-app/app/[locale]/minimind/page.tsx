@@ -103,6 +103,40 @@ export default async function MiniMindPage({
     }
   }
 
+  // Second-fallback: backfill from any prior ScreeningResponse linked to
+  // this user. Covers two real cases:
+  //   1. Accounts created BEFORE the screening-denormalization path
+  //      shipped — their User.screeningResult is null even though they
+  //      may have completed screening as an anonymous visitor and the
+  //      ScreeningResponse exists in the DB.
+  //   2. Any other state where User.screeningResult got out of sync
+  //      with the ScreeningResponse rows (e.g. a failed write during
+  //      the cookie-linkage transaction in earlier code).
+  //
+  // We pick the most recent green/yellow row. If none exists, the gate
+  // below still redirects to /screening (correct — the user genuinely
+  // hasn't been screened).
+  //
+  // updateMany (not update) keeps this safe if the User row somehow
+  // doesn't exist — zero-match no-op, no exception.
+  if (!resolvedScreeningResult) {
+    const pastScreening = await prisma.screeningResponse.findFirst({
+      where: { userId, result: { in: ['green', 'yellow'] } },
+      orderBy: { createdAt: 'desc' },
+      select: { result: true, createdAt: true },
+    });
+    if (pastScreening) {
+      await prisma.user.updateMany({
+        where: { id: userId, screeningResult: null },
+        data: {
+          screeningResult: pastScreening.result,
+          screeningResultAt: pastScreening.createdAt,
+        },
+      });
+      resolvedScreeningResult = pastScreening.result;
+    }
+  }
+
   if (!resolvedScreeningResult || resolvedScreeningResult === 'red') {
     redirect({ href: '/screening', locale });
   }
