@@ -34,6 +34,12 @@ export default async function Footer({ omit }: Props) {
         style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
       >
         <Link
+          href="/about"
+          className="py-2 hover:underline underline-offset-2 transition-colors"
+        >
+          {t('about')}
+        </Link>
+        <Link
           href="/pricing"
           className="py-2 hover:underline underline-offset-2 transition-colors"
         >
