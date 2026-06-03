@@ -126,10 +126,11 @@ export default async function AdminTestimonialsPage() {
       <div className="mb-8 p-4 rounded-lg bg-blue-50 border border-blue-200 text-[13px] text-blue-900">
         <div className="font-medium mb-1">Display rule</div>
         <div>
-          Approved testimonials show on the matching-locale Landing + Pricing pages
-          only when there are at least <strong>3 approved entries</strong> in that
-          locale. Locales currently below the threshold won&apos;t render the
-          public block.
+          Approved testimonials show on Landing + Pricing on <strong>every locale</strong>
+          once there are at least <strong>3 approved entries globally</strong>.
+          Matching-locale testimonials are preferred (shown first); approved
+          testimonials from other locales fill the remaining slots if the
+          current-locale pool is small.
         </div>
         {approvedByLocale.size > 0 && (
           <div className="mt-2 flex gap-2 flex-wrap">
@@ -138,15 +139,15 @@ export default async function AdminTestimonialsPage() {
               .map(([locale, count]) => (
                 <span
                   key={locale}
-                  className={`text-[11px] px-2 py-0.5 rounded-full ${
-                    count >= 3
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-amber-100 text-amber-800'
-                  }`}
+                  className="text-[11px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800"
                 >
                   {locale}: {count}
                 </span>
               ))}
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-neutral-200 text-neutral-800">
+              total: {approved.length}
+              {approved.length >= 3 ? ' ✓ visible' : ' (need 3+ to render)'}
+            </span>
           </div>
         )}
       </div>
