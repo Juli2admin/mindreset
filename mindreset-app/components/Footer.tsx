@@ -85,6 +85,16 @@ export default async function Footer({ omit }: Props) {
       <div className="mt-4 flex items-center justify-center">
         <LanguagePicker label={t('languagePickerLabel')} />
       </div>
+      {/* Compliance line — factual statements only, no copyrighted logos.
+          ICO registration number is publicly verifiable on the ICO
+          register; UK GDPR rights (access / rectification / deletion /
+          portability) are all implemented in account API routes. */}
+      <p
+        className="mt-6 px-4 text-[11px] leading-[1.6]"
+        style={{ color: PALETTE.textHint, fontFamily: TOKENS.sans }}
+      >
+        {t('compliance')}
+      </p>
     </footer>
   );
 }
