@@ -59,27 +59,19 @@ In Stripe Dashboard, top-right toggle **TEST → LIVE**.
 | 3 | MiniMind Extended | £24.99 | Recurring monthly | `STRIPE_PRICE_EXTENDED_MONTHLY` |
 | 4 | MiniMind Extended | £209 | Recurring yearly | `STRIPE_PRICE_EXTENDED_ANNUAL` |
 | 5 | Top-up | £4.99 | One-off | `STRIPE_PRICE_TOPUP` |
-| 6 | Calm an anxious moment | £59 | One-off | `STRIPE_PRICE_STATE_ANXIETY` |
-| 7 | Find energy when you have none | £59 | One-off | `STRIPE_PRICE_STATE_LOW_ENERGY` |
-| 8 | Come back to yourself | £59 | One-off | `STRIPE_PRICE_STATE_COME_BACK` |
-| 9 | Reconnect when you feel empty | £59 | One-off | `STRIPE_PRICE_STATE_EMPTY` |
-| 10 | Money & Abundance | £59 | One-off | `STRIPE_PRICE_THEME_MONEY` |
-| 11 | Body & Sexuality | £59 | One-off | `STRIPE_PRICE_THEME_BODY` |
-| 12 | Family scripts | £59 | One-off | `STRIPE_PRICE_THEME_FAMILY` |
-| 13 | Shame & Guilt | £59 | One-off | `STRIPE_PRICE_THEME_SHAME` |
-| 14 | Self-realisation | £59 | One-off | `STRIPE_PRICE_THEME_SELF_REALISATION` |
-| 15 | The Journey — full programme | £599 | One-off | `STRIPE_PRICE_JOURNEY_FULL` |
-| 16 | The Journey — weekly plan | £55 | Recurring weekly, max 12 cycles | `STRIPE_PRICE_JOURNEY_WEEKLY` |
 
-- [ ] Create products 1–16 in Live mode
+- [ ] Create products 1–5 in Live mode
 - [ ] Copy each new `price_...` ID to a safe place (notes app, password manager)
 
-### 1.3 Recreate the subscriber coupon
+> **States & Themes modules (£59 × 9) and The Journey (£599 / £55-weekly) are Block C** —
+> the checkout endpoint only knows the 5 launch SKUs above. Pricing page renders S&T and
+> Journey cards with "available soon" badges. **Do NOT create the additional Stripe
+> products at launch.** Add them when Block C content ships.
 
-- [ ] Stripe Dashboard → Products → Coupons → + New
-- [ ] Type: **Amount discount**, £30, GBP, Duration: **Once**
-- [ ] Name: "Subscriber module discount" (internal)
-- [ ] Copy the new `coupon_...` ID
+### 1.3 Subscriber module coupon — DEFERRED to Block C
+
+- [ ] **Skip at launch.** The £30 "Subscriber module discount" coupon is only used by S&T
+  module checkout, which is Block C. Create the coupon when Block C ships.
 
 ### 1.4 Generate live webhook signing secret
 
@@ -95,6 +87,20 @@ In Stripe Dashboard, top-right toggle **TEST → LIVE**.
 - [ ] Save → copy the new `whsec_...` signing secret
 - [ ] Optional: enable promo codes in the new prices (per-checkout-session
       flag is already on in our code)
+
+### 1.5 Save Customer Portal configuration in Live mode
+
+> Stripe does **not** copy Customer Portal settings from Test mode to
+> Live mode. They must be re-saved per environment, or the Portal
+> session creation in `/api/stripe/portal` will return a generic
+> default Portal without the toggles we expect.
+
+- [ ] Stripe Dashboard → Settings → Customer Portal → **switch to Live mode** (top-right toggle)
+- [ ] Toggle ON: **Cancel subscriptions**, **Update payment method**, **View invoices**
+- [ ] Toggle OFF: **Pause subscriptions** (locked decision — no pause at launch)
+- [ ] Switch tier / interval: leave at Stripe defaults
+- [ ] Click **Save** at the bottom — settings are environment-scoped, this is the canonical step
+- [ ] Sanity-check: open the live portal preview link, confirm only the three enabled buttons show
 
 ---
 

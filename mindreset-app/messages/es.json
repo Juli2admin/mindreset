@@ -477,7 +477,7 @@
       "preamble": {
         "operatorLabel": "Operador:",
         "operatorBody": "<strong>Plataforma de autoayuda MindReset AI</strong>, operada por <strong>MindReset AI Ltd</strong>, empresa registrada en Inglaterra y Gales, con sede en Londres, Reino Unido.",
-        "note": "[NOTA: El número de registro de la empresa y la dirección registrada se añadirán posteriormente. La metodología y la estructura del producto seguirán siendo las mismas.]",
+        "note": "",
         "contactLabel": "Contacto:",
         "agreement": "Al utilizar la plataforma de autoayuda MindReset AI (el «Servicio»), disponible en mindreset.ai, usted acepta estos Términos. Léalos atentamente. Si no está de acuerdo, por favor no utilice el Servicio."
       },
@@ -601,7 +601,7 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: El nombre del producto se ha finalizado como «The Journey». La metodología se describe como el framework de ocho etapas Reset 8 Blocks — terminología únicamente interna.]",
+          "note": "The Journey is a structured eight-stage method.",
           "optionsLabel": "Dos opciones de compra:",
           "onetime": {
             "title": "Opción A — Programa completo, pago único:",
@@ -768,7 +768,7 @@
     "preamble": {
       "controllerLabel": "Responsable del tratamiento:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, empresa registrada en England & Wales, con sede en Londres, Reino Unido — <mail>support@mindreset.ai</mail>",
-      "note": "[NOTE: El registro ante la ICO debe obtenerse en ico.org.uk antes del lanzamiento público. Tarifa anual ~£40-60. El registro debe completarse antes de cualquier actividad de marketing o disponibilidad pública.]"
+      "note": "MindReset AI Ltd is registered with the UK Information Commissioner's Office under registration number ZB642008."
     },
     "section1": {
       "title": "1. Qué cubre esta Privacy Policy",

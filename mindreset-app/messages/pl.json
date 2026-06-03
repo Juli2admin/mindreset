@@ -477,7 +477,7 @@
       "preamble": {
         "operatorLabel": "Operator:",
         "operatorBody": "<strong>Platforma samopomocy MindReset AI</strong>, prowadzona przez <strong>MindReset AI Ltd</strong>, spółkę zarejestrowaną w Anglii i Walii, z siedzibą w Londynie, Wielka Brytania.",
-        "note": "[UWAGA: Numer rejestracyjny spółki oraz adres siedziby zostaną dodane później. Metodologia i struktura produktu pozostają bez zmian.]",
+        "note": "",
         "contactLabel": "Kontakt:",
         "agreement": "Korzystając z platformy samopomocy MindReset AI („Usługa“), dostępnej pod adresem mindreset.ai, akceptujesz niniejsze Warunki. Prosimy o uważne zapoznanie się z nimi. Jeśli się z nimi nie zgadzasz, prosimy nie korzystać z Usługi."
       },
@@ -601,7 +601,7 @@
         },
         "journey": {
           "title": "The Journey",
-          "note": "[NOTE: Nazwa produktu została ostatecznie ustalona jako „The Journey“. Metodologia opisywana jest jako ośmiostopniowy framework Reset 8 Blocks — wyłącznie terminologia wewnętrzna.]",
+          "note": "The Journey is a structured eight-stage method.",
           "optionsLabel": "Dwie opcje zakupu:",
           "onetime": {
             "title": "Opcja A — Pełny program, jednorazowa płatność:",
@@ -768,7 +768,7 @@
     "preamble": {
       "controllerLabel": "Administrator danych:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, spółka zarejestrowana w England & Wales, z siedzibą w Londynie, Wielka Brytania — <mail>support@mindreset.ai</mail>",
-      "note": "[NOTE: Rejestracja w ICO musi zostać uzyskana poprzez ico.org.uk przed publicznym uruchomieniem. Roczna opłata ~£40-60. Rejestracja musi zostać ukończona przed rozpoczęciem jakiegokolwiek marketingu lub publicznej dostępności.]"
+      "note": "MindReset AI Ltd is registered with the UK Information Commissioner's Office under registration number ZB642008."
     },
     "section1": {
       "title": "1. Zakres niniejszej Privacy Policy",
