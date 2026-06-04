@@ -87,12 +87,25 @@ export async function generateMetadata({
     description: DEFAULT_DESCRIPTION,
     applicationName: 'MindReset.ai',
     alternates: pageAlternates('/', params.locale),
+    manifest: '/manifest.json',
+    appleWebApp: {
+      capable: true,
+      title: 'MindReset',
+      statusBarStyle: 'default',
+    },
+    // Google Search Console verification — paste the token from the
+    // "Other verification methods" → meta tag option in Search Console.
+    // Leave empty until the token is issued; Google won't penalise a
+    // missing tag, just won't trust the property until present.
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION,
+    },
     icons: {
       icon: [
         { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },
         { url: '/logo-dark.png', media: '(prefers-color-scheme: dark)' },
       ],
-      apple: '/logo-light.png',
+      apple: '/apple-touch-icon.png',
     },
     openGraph: {
       type: 'website',
@@ -125,9 +138,12 @@ export async function generateMetadata({
 // Without this, mobile browsers render every page at a fixed ~980px CSS
 // width and shrink to fit, making text tiny and breaking all responsive
 // Tailwind breakpoints. Required for the rest of this PR's mobile fixes.
+// themeColor drives the iOS Safari + Android status-bar tint and
+// matches the brand accent (lib/brand/colors.ts day-palette accent).
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  themeColor: '#2D7A85',
 };
 
 export default async function LocaleLayout({
