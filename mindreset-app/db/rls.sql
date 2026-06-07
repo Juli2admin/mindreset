@@ -67,6 +67,13 @@ ALTER TABLE public."SupportEmail"         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."SupportEmailReply"    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."MarketingSend"        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."NewsletterSubscriber" ENABLE ROW LEVEL SECURITY;
+-- The Journey tables (added Slice 1, enabled via Supabase "Run and enable RLS").
+ALTER TABLE public."JourneyTurn"           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."JourneyPracticeRun"    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."JourneyPart"           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."JourneyForeignFile"    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."JourneySignatureImage" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."JourneyMessage"        ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- Block 2: Strip the table-level grants from anon and authenticated.
@@ -94,5 +101,13 @@ REVOKE ALL ON public."SupportEmail"         FROM anon, authenticated;
 REVOKE ALL ON public."SupportEmailReply"    FROM anon, authenticated;
 REVOKE ALL ON public."MarketingSend"        FROM anon, authenticated;
 REVOKE ALL ON public."NewsletterSubscriber" FROM anon, authenticated;
+-- The Journey tables (added Slice 1 — the REVOKE side has not yet run on the
+-- live database; needs a small one-off SQL paste in Supabase, see below).
+REVOKE ALL ON public."JourneyTurn"           FROM anon, authenticated;
+REVOKE ALL ON public."JourneyPracticeRun"    FROM anon, authenticated;
+REVOKE ALL ON public."JourneyPart"           FROM anon, authenticated;
+REVOKE ALL ON public."JourneyForeignFile"    FROM anon, authenticated;
+REVOKE ALL ON public."JourneySignatureImage" FROM anon, authenticated;
+REVOKE ALL ON public."JourneyMessage"        FROM anon, authenticated;
 
 COMMIT;
