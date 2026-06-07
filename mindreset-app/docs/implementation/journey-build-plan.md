@@ -123,43 +123,62 @@ mindreset-app/
 
 ### 3.1 Extend `RecodeProgress`
 
+All user-words fields are stored encrypted at rest using `lib/encrypt.ts` (same pattern as MiniMind messages). The `mii` JSON field holds the full state of all seven MII criteria so they are visible in one place for clinical review.
+
 ```sql
 ALTER TABLE "RecodeProgress"
-  ADD COLUMN "anchorText"             TEXT,
-  ADD COLUMN "anchorSetAt"            TIMESTAMP(3),
-  ADD COLUMN "identityAnchor"         TEXT,
-  ADD COLUMN "identityAnchorSetAt"    TIMESTAMP(3),
-  ADD COLUMN "processingChannel"      TEXT,
-  ADD COLUMN "currentStage"           INTEGER     NOT NULL DEFAULT 1,
-  ADD COLUMN "currentDepth"           TEXT        NOT NULL DEFAULT 'surface',
-  ADD COLUMN "lastIntensity"          INTEGER,
-  ADD COLUMN "lastIntensityAt"        TIMESTAMP(3),
-  ADD COLUMN "lastDeepLayerContactAt" TIMESTAMP(3),
-  ADD COLUMN "mii6Status"             TEXT,
-  ADD COLUMN "stage8WeeksElapsed"     INTEGER     NOT NULL DEFAULT 0,
-  ADD COLUMN "frozenForReview"        BOOLEAN     NOT NULL DEFAULT FALSE,
-  ADD COLUMN "frozenAt"               TIMESTAMP(3),
-  ADD COLUMN "frozenReason"           TEXT,
-  ADD COLUMN "dischargedAt"           TIMESTAMP(3);
+  ADD COLUMN "anchorTextEncrypted"        TEXT,
+  ADD COLUMN "anchorSetAt"                TIMESTAMP(3),
+  ADD COLUMN "identityAnchorEncrypted"    TEXT,
+  ADD COLUMN "identityAnchorSetAt"        TIMESTAMP(3),
+  ADD COLUMN "adultSelfQualitiesEncrypted" TEXT,
+  ADD COLUMN "processingChannel"          TEXT,
+  ADD COLUMN "currentStage"               INTEGER     NOT NULL DEFAULT 1,
+  ADD COLUMN "currentDepth"               TEXT        NOT NULL DEFAULT 'surface',
+  ADD COLUMN "lastIntensity"              INTEGER,
+  ADD COLUMN "lastIntensityAt"            TIMESTAMP(3),
+  ADD COLUMN "lastDeepLayerContactAt"     TIMESTAMP(3),
+  ADD COLUMN "mii"                        JSONB       NOT NULL DEFAULT '{}',
+  ADD COLUMN "stage8WeeksElapsed"         INTEGER     NOT NULL DEFAULT 0,
+  ADD COLUMN "frozenForReview"            BOOLEAN     NOT NULL DEFAULT FALSE,
+  ADD COLUMN "frozenAt"                   TIMESTAMP(3),
+  ADD COLUMN "frozenReason"               TEXT,
+  ADD COLUMN "dischargedAt"               TIMESTAMP(3),
+  ADD COLUMN "continuityNoteEncrypted"    TEXT;
+```
+
+The `mii` JSON shape:
+```json
+{
+  "mii1_adultSelfStability": { "status": "met" | "pending" | "failed", "lastChecked": "ISO8601", "score": 0.0-1.0 },
+  "mii2_partRecognition":    { "status": "...", "partInUserWordsEncrypted": "..." },
+  "mii3_noOverwhelm":        { "status": "...", "lastOverwhelmAt": "ISO8601 | null" },
+  "mii4_safeRelationship":   { "status": "...", "quality": "compassion|curiosity|acceptance|willingness_to_comfort" },
+  "mii5_reparentingCapacity":{ "status": "...", "offeringInUserWordsEncrypted": "..." },
+  "mii6_noDestabilisation":  { "status": "...", "lastCheckedAt": "ISO8601" },
+  "mii7_internalCohesion":   { "status": "...", "userWordsEncrypted": "..." }
+}
 ```
 
 (The existing `currentBlock` column stays for compatibility but is no longer authoritative — `currentStage` is. We can drop `currentBlock` in a later cleanup PR.)
 
 ### 3.2 New table — `JourneyTurn` (append-only audit log)
 
+Operational metadata is queryable in plain columns (no user content); the full state report blob — which may contain user-words content — is encrypted.
+
 ```sql
 CREATE TABLE "JourneyTurn" (
-  "id"                  TEXT          PRIMARY KEY,
-  "userId"              TEXT          NOT NULL,
-  "createdAt"           TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "stageAtTurn"         INTEGER       NOT NULL,
-  "depthAtTurn"         TEXT          NOT NULL,
-  "intensityReported"   INTEGER,
-  "safetyFlag"          TEXT          NOT NULL DEFAULT 'none',
-  "redFlagType"         TEXT,
-  "recommendedAction"   TEXT,
-  "stateReportRaw"      JSONB,
-  "userMessageHash"     TEXT,
+  "id"                       TEXT          PRIMARY KEY,
+  "userId"                   TEXT          NOT NULL,
+  "createdAt"                TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "stageAtTurn"              INTEGER       NOT NULL,
+  "depthAtTurn"              TEXT          NOT NULL,
+  "intensityReported"        INTEGER,
+  "safetyFlag"               TEXT          NOT NULL DEFAULT 'none',
+  "redFlagType"              TEXT,
+  "recommendedAction"        TEXT,
+  "stateReportEncrypted"     TEXT,
+  "userMessageHash"          TEXT,
   CONSTRAINT "JourneyTurn_userId_fkey" FOREIGN KEY ("userId")
     REFERENCES "User"("id") ON DELETE CASCADE
 );
@@ -194,18 +213,20 @@ CREATE INDEX "JourneyPracticeRun_userId_idx" ON "JourneyPracticeRun"("userId");
 
 ### 3.4 New table — `JourneyPart` (parts known per user, in user's words)
 
+User-words fields encrypted at rest.
+
 ```sql
 CREATE TABLE "JourneyPart" (
-  "id"                  TEXT          PRIMARY KEY,
-  "userId"              TEXT          NOT NULL,
-  "createdAt"           TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updatedAt"           TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "userDescription"     TEXT          NOT NULL,
-  "channel"             TEXT,
-  "safeDistance"        TEXT,
-  "compassionBridgeQuality" TEXT,
-  "currentRestingPlace" TEXT,
-  "active"              BOOLEAN       NOT NULL DEFAULT TRUE,
+  "id"                            TEXT          PRIMARY KEY,
+  "userId"                        TEXT          NOT NULL,
+  "createdAt"                     TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt"                     TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "userDescriptionEncrypted"      TEXT          NOT NULL,
+  "channel"                       TEXT,
+  "safeDistanceEncrypted"         TEXT,
+  "compassionBridgeQuality"       TEXT,
+  "currentRestingPlaceEncrypted"  TEXT,
+  "active"                        BOOLEAN       NOT NULL DEFAULT TRUE,
   CONSTRAINT "JourneyPart_userId_fkey" FOREIGN KEY ("userId")
     REFERENCES "User"("id") ON DELETE CASCADE
 );
@@ -214,18 +235,20 @@ CREATE INDEX "JourneyPart_userId_idx" ON "JourneyPart"("userId");
 
 ### 3.5 New table — `JourneyForeignFile`
 
+User-words fields encrypted at rest.
+
 ```sql
 CREATE TABLE "JourneyForeignFile" (
-  "id"                  TEXT          PRIMARY KEY,
-  "userId"              TEXT          NOT NULL,
-  "createdAt"           TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "identifiedAt"        TIMESTAMP(3),
-  "releasedAt"          TIMESTAMP(3),
-  "userDescription"     TEXT          NOT NULL,
-  "originDescription"   TEXT,
-  "returnedTo"          TEXT,
-  "honouringPhrase"     TEXT,
-  "whatStaysAsMine"     TEXT,
+  "id"                            TEXT          PRIMARY KEY,
+  "userId"                        TEXT          NOT NULL,
+  "createdAt"                     TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "identifiedAt"                  TIMESTAMP(3),
+  "releasedAt"                    TIMESTAMP(3),
+  "userDescriptionEncrypted"      TEXT          NOT NULL,
+  "originDescriptionEncrypted"    TEXT,
+  "returnedToEncrypted"           TEXT,
+  "honouringPhraseEncrypted"      TEXT,
+  "whatStaysAsMineEncrypted"      TEXT,
   CONSTRAINT "JourneyForeignFile_userId_fkey" FOREIGN KEY ("userId")
     REFERENCES "User"("id") ON DELETE CASCADE
 );
@@ -234,13 +257,15 @@ CREATE INDEX "JourneyForeignFile_userId_idx" ON "JourneyForeignFile"("userId");
 
 ### 3.6 New table — `JourneySignatureImage`
 
+User-words field encrypted at rest.
+
 ```sql
 CREATE TABLE "JourneySignatureImage" (
-  "id"                  TEXT          PRIMARY KEY,
-  "userId"              TEXT          NOT NULL,
-  "createdAt"           TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "userDescription"     TEXT          NOT NULL,
-  "context"             TEXT,
+  "id"                            TEXT          PRIMARY KEY,
+  "userId"                        TEXT          NOT NULL,
+  "createdAt"                     TIMESTAMP(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "userDescriptionEncrypted"      TEXT          NOT NULL,
+  "context"                       TEXT,
   CONSTRAINT "JourneySignatureImage_userId_fkey" FOREIGN KEY ("userId")
     REFERENCES "User"("id") ON DELETE CASCADE
 );

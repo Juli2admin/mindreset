@@ -335,16 +335,16 @@ Code holds the user in Stage 4 until **all seven MII criteria** are met. This is
 - This must come from the Adult Self, not from the part itself.
 - State report check: `adultSelfOfferingToPart: "..."` captured at least once in the user's words.
 
-### MII-6 — No Delayed Destabilisation (the 48-hour gate)
-- Within 48 hours after any Deep Layer contact, the user shows no panic, no dissociation, no persistent emotional flooding, and normal functioning is preserved.
-- **Code-enforced.** This criterion is the only one that cannot be met inside a single session — it requires elapsed time.
-- **Implementation:**
-  - At the start of the user's next session after a Deep Layer contact, code checks `timeSinceLastDeepLayerContact >= 48h`.
-  - If yes, code asks (through the AI, in natural language): *"It's been a few days since we last sat with the [part]. How have things been? Any panic, feeling 'not here', or trouble carrying on with normal things?"*
+### MII-6 — No Delayed Destabilisation (a settling-time signal, not a lockout)
+- The 48-hour window after Deep Layer contact is **the typical settling time** during which the system is most fragile. It is **not** a 2-day lockout. The user is never blocked from coming back. The window is a guideline for the AI to be gentler in the next 1–2 sessions after Deep work.
+- **What we check:**
+  - At the start of the user's **next session** — whenever that is, in 6 hours or 6 days — the AI runs a soft check-in in natural language: *"How have things been since we last sat together?"*
   - User self-reports. The AI captures the answer in `mii6Check: "stable" | "destabilised" | "unsure"`.
-  - If `stable` → MII-6 passes. The user may attempt further Deep Layer work and progress toward Stage 5.
-  - If `destabilised` or `unsure` → MII-6 fails. Code returns the user to Surface or Middle Layer work in Stage 4. No further Deep Layer until 48 hours of stable functioning are reported.
-- If the user attempts to skip ahead (e.g. logs in within 24 hours wanting more deep work), the AI honours the wait: *"Let's stay with what's here today. We'll come back to deeper work when a few more days have passed."*
+  - If `stable` → MII-6 passes for that contact.
+  - If `destabilised` or `unsure` → MII-6 does not pass yet. In that session, the AI stays at Surface or Middle Layer (no new Deep Layer work) and tends to whatever surfaced. MII-6 is rechecked at the next session.
+- **The AI's posture in this window:**
+  - If the user comes back soon (e.g. within 24 hours) and is steady, the AI continues normally — but does not initiate a new Deep Layer contact in the same session. *"Let's stay with what's here today; we can come to deeper work when there's more ground."*
+  - The pacing is the AI's gentleness, not a code-blocked timer.
 
 ### MII-7 — Internal Cohesion Awareness
 - The user can verbalise, in their own words, an experience of internal cohesion:

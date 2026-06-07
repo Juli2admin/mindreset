@@ -94,7 +94,7 @@ Stage 5 has its own layered structure. The AI does not advance unless the user i
 - Symbolic stepping out of an imposed role.
 - Symbolic dissolving of an introjected voice.
 - **No trauma re-enactment. No memory work. No real-world action rehearsal.**
-- After Deep Layer release, the same kind of 48-hour stability watch applies as in Stage 4 — though it is not a code-gated MII criterion here, the AI explicitly checks the next session and code records the timestamp.
+- After Deep Layer release, the same settling-time guideline as Stage 4 applies. The AI runs a soft check-in at the start of the next session (whenever that is): *"How have things been since we last sat together?"* If the user reports destabilisation, the AI stays at Surface or Middle Layer in that session and tends to whatever surfaced. The user is never blocked from returning early; pacing is the AI's gentleness, not a code timer.
 
 If at any layer the user destabilises (shame spike, rage spike, dissociation, somatic collapse), the AI immediately steps back to Surface or returns to Stage 4 Adult Self + Anchor work.
 

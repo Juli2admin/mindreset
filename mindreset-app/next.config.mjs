@@ -6,6 +6,15 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Bundle the Journey clinical specs into serverless function output so the
+  // runtime can read them at module load. The .md files in docs/journey/ are
+  // the canonical human-readable source of truth; lib/journey/prompts/*
+  // reads them via fs.readFileSync. Without this hint, Next's file-trace
+  // would not include the .md files in the function bundle.
+  outputFileTracingIncludes: {
+    '/api/journey/turn': ['./docs/journey/**/*.md'],
+    '/api/journey/start': ['./docs/journey/**/*.md'],
+  },
 };
 
 // Compose: next-intl wraps the base config, Sentry wraps that.
