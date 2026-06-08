@@ -12,8 +12,8 @@ const nextConfig = {
   // reads them via fs.readFileSync. Without this hint, Next's file-trace
   // would not include the .md files in the function bundle.
   outputFileTracingIncludes: {
-    '/api/journey/turn': ['./docs/journey/**/*.md'],
-    '/api/journey/start': ['./docs/journey/**/*.md'],
+    '/api/journey/turn': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
+    '/api/journey/start': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
   },
 };
 

@@ -4,9 +4,13 @@
 //
 // The user never sees any of this. Only the AI does.
 
-import { sharedCore, loadStageSpec } from './load-spec';
+import { sharedCore, loadStageSpec, loadEngineeredStagePrompt } from './load-spec';
 import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
 import type { JourneyState } from '../state/types';
+
+// Token in the engineered prompt files where the runtime state block is
+// substituted in. Matches the placeholder in docs/journey/runtime/*.md.
+const STATE_INJECTION_TOKEN = '{{STATE_INJECTION}}';
 
 const STATE_REPORT_FORMAT_INSTRUCTION = `
 ---
@@ -166,6 +170,19 @@ function renderStateBlock(state: JourneyState): string {
 const DIVIDER = '\n\n---\n\n';
 
 export function assembleSystemPrompt(state: JourneyState): string {
+  // If an engineered runtime prompt exists for this stage, use it.
+  // Engineered prompts are self-contained — they already include identity,
+  // voice, prohibitions, clinical reading, current work, practice generation,
+  // memory, examples, and output format — so we just substitute the runtime
+  // state block into the {{STATE_INJECTION}} placeholder. No Shared Core
+  // append, no separate output-format instruction.
+  const engineered = loadEngineeredStagePrompt(state.currentStage);
+  if (engineered) {
+    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
+  }
+
+  // Fallback: stages that don't have an engineered runtime prompt yet still
+  // use the original Shared Core + clinical spec concatenation.
   return [
     sharedCore(),
     loadStageSpec(state.currentStage),
