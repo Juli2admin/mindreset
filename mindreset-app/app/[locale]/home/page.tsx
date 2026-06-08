@@ -120,6 +120,15 @@ export default async function HomePage({
     cycleRemaining = Math.max(0, TIER_CAPS.free.lifetime - (dbUser?.lifetimeMessagesUsed ?? 0));
   }
 
+  // Slice 3 — flag whether the user has bought The Journey, so HomeClient
+  // can flip the Journey card from "Available soon" to a "Continue →" link
+  // into /journey. Cheap query: one indexed row by userId.
+  const journeyPurchase = await prisma.purchase.findFirst({
+    where: { userId: user.id, productType: 'recode', status: 'completed' },
+    select: { id: true },
+  });
+  const journeyPurchased = journeyPurchase != null;
+
   return (
     <HomeClient
       firstName={firstName}
@@ -131,6 +140,7 @@ export default async function HomePage({
       deletionScheduledAt={dbUser?.deletionScheduledAt?.toISOString() ?? null}
       marketingConsent={dbUser?.marketingConsent ?? false}
       marketingPrompted={dbUser?.marketingConsentPromptedAt != null}
+      journeyPurchased={journeyPurchased}
       footerSlot={<Footer />}
     />
   );

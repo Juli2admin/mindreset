@@ -8,25 +8,24 @@ import TopBar from '@/components/TopBar';
 import { useTheme } from '@/lib/theme/useTheme';
 import { TOKENS } from '@/lib/brand/colors';
 
-// The Journey UI — deliberately quiet.
+// The Journey UI — mirrors MiniMind's visual structure (TopBar, message
+// column, opener pseudo-message, composer at bottom). Deliberately quiet.
 //
 // What the user sees:
-//   - TopBar (shared with the rest of the app)
-//   - A column of message bubbles, slow line height, serif AI / sans user
-//   - A soft anchor badge (top-right) once an anchor exists, in their words
-//   - A simple composer at the bottom
+//   - TopBar (shared)
+//   - On first contact: a single warm AI opener — "I'm glad you're here.
+//     Take whatever time you need." — and a composer.
+//   - On return: the recent conversation history, then the composer.
+//   - When frozenForReview is true: composer replaced by a calm holding
+//     view (history above stays visible — continuity preserved).
 //
-// What the user does NOT see:
-//   - Stage names, numbers, or transitions
-//   - Depth labels (surface / middle / deep)
-//   - Progress indicators
-//   - Completion criteria
-//   - Any clinical scaffolding
-//
-// When frozenForReview is true, the chat is replaced with a calm holding
-// view showing the crisis resources (Shared Core §7). The user can still
-// see the conversation history above the holding view so they don't lose
-// continuity — they simply can't send a new message.
+// What the user NEVER sees:
+//   - stage names, numbers, transitions, depth labels
+//   - progress indicators or completion criteria
+//   - the Personal Anchor as a UI element (internal method only; the AI
+//     recalls it in conversation, code stores it, the user knows their own
+//     anchor because they spoke it — it does not get displayed)
+//   - any clinical scaffolding
 
 type Message = {
   id: string;
@@ -37,29 +36,37 @@ type Message = {
 
 type Props = {
   initialMessages: Array<{ id: string; role: 'user' | 'assistant'; content: string }>;
-  anchorText: string | null;
   frozen: boolean;
 };
 
 const TEXTAREA_MIN_HEIGHT = 56;
 const TEXTAREA_MAX_HEIGHT = 200;
 
-export default function JourneyClient({ initialMessages, anchorText, frozen }: Props) {
+export default function JourneyClient({ initialMessages, frozen }: Props) {
   const t = useTranslations('Journey');
   const { palette: PALETTE } = useTheme();
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+
+  const opener = t('opener');
+  const streamErrorSuffix = t('streamErrorSuffix');
+
+  // If the user has no prior history, render a single opener pseudo-message
+  // (not persisted to the DB — purely UI scaffolding to warm the first turn,
+  // same pattern as MiniMind).
+  const [messages, setMessages] = useState<Message[]>(() =>
+    initialMessages.length > 0
+      ? initialMessages
+      : [{ id: 'opener', role: 'assistant', content: opener }],
+  );
   const [composerValue, setComposerValue] = useState('');
   const [sending, setSending] = useState(false);
   const [streamError, setStreamError] = useState(false);
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll to bottom when messages change.
   useEffect(() => {
     scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Auto-grow the textarea up to TEXTAREA_MAX_HEIGHT.
   useEffect(() => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -68,7 +75,6 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
     ta.style.height = `${next}px`;
   }, [composerValue]);
 
-  const isFirstContact = messages.length === 0;
   const canSend = !frozen && !sending && composerValue.trim().length > 0;
 
   async function send() {
@@ -103,7 +109,7 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsg.id
-              ? { ...m, content: t('streamErrorSuffix'), streaming: false }
+              ? { ...m, content: streamErrorSuffix, streaming: false }
               : m,
           ),
         );
@@ -123,7 +129,6 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
           ),
         );
       }
-      // Final flush.
       accumulated += decoder.decode();
       setMessages((prev) =>
         prev.map((m) =>
@@ -137,7 +142,7 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantMsg.id
-            ? { ...m, content: t('streamErrorSuffix'), streaming: false }
+            ? { ...m, content: streamErrorSuffix, streaming: false }
             : m,
         ),
       );
@@ -162,20 +167,14 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
 
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-2xl mx-auto px-6 py-10 relative">
-            {anchorText && <AnchorBadge anchorText={anchorText} />}
-
-            {isFirstContact && (
-              <FirstContactSpace />
-            )}
-
+          <div className="max-w-2xl mx-auto px-6 py-10">
             <div className="space-y-8">
               {messages.map((m) => (
                 <MessageRow key={m.id} message={m} />
               ))}
               {streamError && messages.length > 0 && (
                 <p style={{ color: PALETTE.textMuted }} className="text-sm italic">
-                  {t('streamErrorSuffix')}
+                  {streamErrorSuffix}
                 </p>
               )}
               <div ref={scrollEndRef} />
@@ -193,7 +192,7 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
             onKeyDown={onKeyDown}
             disabled={sending}
             textareaRef={textareaRef}
-            placeholder={isFirstContact ? t('firstContactPlaceholder') : t('placeholder')}
+            placeholder={t('placeholder')}
             sending={sending}
           />
         )}
@@ -205,13 +204,6 @@ export default function JourneyClient({ initialMessages, anchorText, frozen }: P
 // ===========================================================================
 // Sub-components — kept colocated for Slice 3 simplicity.
 // ===========================================================================
-
-function FirstContactSpace() {
-  // Deliberately blank. No "Hi I'm your AI guide". The user opens the page
-  // and is invited by the placeholder to say whatever is there. The AI's
-  // first reply does the welcoming.
-  return <div className="h-16" />;
-}
 
 function MessageRow({ message }: { message: Message }) {
   const { palette: PALETTE } = useTheme();
@@ -248,37 +240,6 @@ function MessageRow({ message }: { message: Message }) {
         ) : (
           <div className="whitespace-pre-wrap">{message.content}</div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function AnchorBadge({ anchorText }: { anchorText: string }) {
-  const t = useTranslations('Journey.anchorBadge');
-  const { palette: PALETTE } = useTheme();
-  return (
-    <div
-      className="absolute top-4 right-4 max-w-xs px-4 py-3 rounded-xl text-xs"
-      style={{
-        background: PALETTE.bgCard,
-        border: `1px solid ${PALETTE.border}`,
-        color: PALETTE.textMuted,
-        fontFamily: TOKENS.sans,
-      }}
-    >
-      <div className="mb-1 uppercase tracking-wider" style={{ fontSize: '0.65rem' }}>
-        {t('label')}
-      </div>
-      <div
-        className="italic"
-        style={{
-          fontFamily: TOKENS.serif,
-          color: PALETTE.text,
-          fontSize: '0.85rem',
-          lineHeight: '1.4',
-        }}
-      >
-        {anchorText}
       </div>
     </div>
   );

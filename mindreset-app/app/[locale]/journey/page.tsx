@@ -67,7 +67,6 @@ export default async function JourneyPage() {
     },
     update: {}, // no-op on existing row
     select: {
-      anchorTextEncrypted: true,
       frozenForReview: true,
       dischargedAt: true,
     },
@@ -90,14 +89,9 @@ export default async function JourneyPage() {
       content: decrypt(m.contentEncrypted),
     }));
 
-  const anchorText = progress.anchorTextEncrypted
-    ? safeDecrypt(progress.anchorTextEncrypted)
-    : null;
-
   return (
     <JourneyClient
       initialMessages={messages}
-      anchorText={anchorText}
       frozen={progress.frozenForReview}
     />
   );
@@ -143,10 +137,3 @@ function NoAccessInner() {
   );
 }
 
-function safeDecrypt(v: string): string | null {
-  try {
-    return decrypt(v);
-  } catch {
-    return null;
-  }
-}

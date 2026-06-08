@@ -29,6 +29,7 @@ type Props = {
   deletionScheduledAt: string | null;
   marketingConsent: boolean;
   marketingPrompted: boolean;
+  journeyPurchased: boolean;
   footerSlot: ReactNode;
 };
 
@@ -42,10 +43,12 @@ export default function HomeClient({
   deletionScheduledAt,
   marketingConsent,
   marketingPrompted,
+  journeyPurchased,
   footerSlot,
 }: Props) {
   const t = useTranslations('Home');
   const tDel = useTranslations('AccountDeletion');
+  const tJourney = useTranslations('Journey');
   const locale = useLocale();
   const { palette: PALETTE } = useTheme();
   const [loading, setLoading] = useState<string | null>(null);
@@ -433,40 +436,70 @@ export default function HomeClient({
           >
             {t('journey.intro')}
           </p>
-          <div
-            className="rounded-lg p-6"
-            style={{
-              background: PALETTE.bgCard,
-              border: `1px solid ${PALETTE.border}`,
-            }}
-          >
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <h3
-                className="text-[20px]"
-                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-              >
-                {t('journey.title')}
-              </h3>
-              <span
-                className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                style={{
-                  background: PALETTE.bgSubtle,
-                  color: PALETTE.textHint,
-                  border: `1px solid ${PALETTE.border}`,
-                  fontFamily: SANS,
-                  fontWeight: 500,
-                }}
-              >
-                {t('availableSoon')}
-              </span>
-            </div>
-            <p
-              className="text-[13px]"
-              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          {journeyPurchased ? (
+            <Link
+              href="/journey"
+              className="block rounded-lg p-6 transition-colors hover:bg-[color:var(--journey-hover-bg)]"
+              style={{
+                background: PALETTE.bgCard,
+                border: `1px solid ${PALETTE.border}`,
+              }}
             >
-              {t('journey.priceFormat')}
-            </p>
-          </div>
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h3
+                  className="text-[20px]"
+                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                >
+                  {t('journey.title')}
+                </h3>
+                <span
+                  className="text-[12px] inline-flex items-center whitespace-nowrap shrink-0"
+                  style={{
+                    color: PALETTE.accent,
+                    fontFamily: SANS,
+                    fontWeight: 500,
+                  }}
+                >
+                  {tJourney('homeCardCta')}
+                </span>
+              </div>
+            </Link>
+          ) : (
+            <div
+              className="rounded-lg p-6"
+              style={{
+                background: PALETTE.bgCard,
+                border: `1px solid ${PALETTE.border}`,
+              }}
+            >
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h3
+                  className="text-[20px]"
+                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+                >
+                  {t('journey.title')}
+                </h3>
+                <span
+                  className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                  style={{
+                    background: PALETTE.bgSubtle,
+                    color: PALETTE.textHint,
+                    border: `1px solid ${PALETTE.border}`,
+                    fontFamily: SANS,
+                    fontWeight: 500,
+                  }}
+                >
+                  {t('availableSoon')}
+                </span>
+              </div>
+              <p
+                className="text-[13px]"
+                style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+              >
+                {t('journey.priceFormat')}
+              </p>
+            </div>
+          )}
         </div>
 
         {footerSlot}
