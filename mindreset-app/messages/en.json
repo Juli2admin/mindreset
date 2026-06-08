@@ -330,6 +330,21 @@
     "noAccessTitle": "The Journey isn't open for you yet.",
     "noAccessBody": "When you're ready, you can begin from the pricing page.",
     "seePricing": "See pricing →",
+    "voice": {
+      "startAria": "Start voice input",
+      "stopAria": "Stop recording",
+      "transcribing": "Transcribing…",
+      "errors": {
+        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
+        "noMic": "No microphone found.",
+        "transcriptionFailed": "Couldn't transcribe — please try again.",
+        "rateLimited": "Please pause a moment, then try again.",
+        "unavailable": "Voice input is unavailable right now.",
+        "networkError": "Network error — please try again.",
+        "startFailed": "Couldn't start recording.",
+        "emptyAudio": "Didn't hear anything. Try again."
+      }
+    },
     "frozen": {
       "title": "Let's pause here.",
       "body": "I want you safe. Please reach out to a person who can be with you in this.",

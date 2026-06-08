@@ -41,6 +41,9 @@ type Props = {
 
 const TEXTAREA_MIN_HEIGHT = 56;
 const TEXTAREA_MAX_HEIGHT = 200;
+// Voice input — push-to-talk cap. Mirrors MiniMind's 120s. Protects against
+// runaway sessions and bounds upload payload + Groq transcription latency.
+const MAX_RECORDING_SECONDS = 120;
 
 export default function JourneyClient({ initialMessages, frozen }: Props) {
   const t = useTranslations('Journey');
@@ -63,6 +66,39 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Voice input state — mirrors MiniMind. Push-to-talk, audio sent to Groq
+  // Whisper via /api/journey/transcribe, transcript fills the textarea.
+  // Audio is never persisted by us.
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Feature detection in an effect so the first render is SSR-stable.
+  useEffect(() => {
+    setVoiceSupported(
+      typeof MediaRecorder !== 'undefined' &&
+        typeof navigator !== 'undefined' &&
+        !!navigator.mediaDevices?.getUserMedia,
+    );
+  }, []);
+
+  // Cleanup on unmount: stop any active recording and release the mic tracks.
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -74,6 +110,121 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
     const next = Math.min(ta.scrollHeight, TEXTAREA_MAX_HEIGHT);
     ta.style.height = `${next}px`;
   }, [composerValue]);
+
+  async function startRecording() {
+    setVoiceError(null);
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      const name = (err as Error).name;
+      if (name === 'NotAllowedError' || name === 'SecurityError') {
+        setVoiceError(t('voice.errors.permissionDenied'));
+      } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+        setVoiceError(t('voice.errors.noMic'));
+      } else {
+        setVoiceError(t('voice.errors.startFailed'));
+      }
+      return;
+    }
+
+    const recorder = new MediaRecorder(stream);
+    const chunks: Blob[] = [];
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((track) => track.stop());
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
+      setRecording(false);
+      setRecordingSeconds(0);
+
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      if (blob.size === 0) {
+        setVoiceError(t('voice.errors.emptyAudio'));
+        return;
+      }
+
+      const ext = recorder.mimeType.includes('mp4')
+        ? 'm4a'
+        : recorder.mimeType.includes('ogg')
+          ? 'ogg'
+          : 'webm';
+
+      setTranscribing(true);
+      try {
+        const form = new FormData();
+        form.append('audio', blob, `voice.${ext}`);
+        const res = await fetch('/api/journey/transcribe', {
+          method: 'POST',
+          body: form,
+        });
+        if (!res.ok) {
+          if (res.status === 429) setVoiceError(t('voice.errors.rateLimited'));
+          else if (res.status === 503) setVoiceError(t('voice.errors.unavailable'));
+          else setVoiceError(t('voice.errors.transcriptionFailed'));
+          return;
+        }
+        const data: { text?: string } = await res.json();
+        if (data.text && data.text.trim().length > 0) {
+          // Append rather than replace so a user mid-typing doesn't lose
+          // their text when they tap mic.
+          setComposerValue((prev) => (prev.length > 0 ? `${prev} ${data.text}` : data.text!));
+          textareaRef.current?.focus();
+        } else {
+          setVoiceError(t('voice.errors.emptyAudio'));
+        }
+      } catch {
+        setVoiceError(t('voice.errors.networkError'));
+      } finally {
+        setTranscribing(false);
+      }
+    };
+
+    recorder.start();
+    mediaRecorderRef.current = recorder;
+    setRecording(true);
+    setRecordingSeconds(0);
+
+    // Tick once a second and auto-stop at the cap.
+    recordingTimerRef.current = setInterval(() => {
+      setRecordingSeconds((prev) => {
+        const next = prev + 1;
+        if (next >= MAX_RECORDING_SECONDS) {
+          if (mediaRecorderRef.current?.state === 'recording') {
+            mediaRecorderRef.current.stop();
+          }
+          if (recordingTimerRef.current) {
+            clearInterval(recordingTimerRef.current);
+            recordingTimerRef.current = null;
+          }
+        }
+        return next;
+      });
+    }, 1000);
+  }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current?.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+  }
+
+  function handleMicClick() {
+    if (transcribing) return;
+    if (recording) stopRecording();
+    else startRecording();
+  }
+
+  function formatRecordingTime(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
 
   const canSend = !frozen && !sending && composerValue.trim().length > 0;
 
@@ -190,10 +341,17 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
             onChange={setComposerValue}
             onSend={send}
             onKeyDown={onKeyDown}
-            disabled={sending}
+            disabled={sending || recording || transcribing}
             textareaRef={textareaRef}
             placeholder={t('placeholder')}
             sending={sending}
+            voiceSupported={voiceSupported}
+            recording={recording}
+            transcribing={transcribing}
+            recordingSeconds={recordingSeconds}
+            voiceError={voiceError}
+            onMicClick={handleMicClick}
+            formatRecordingTime={formatRecordingTime}
           />
         )}
       </main>
@@ -254,6 +412,13 @@ function Composer({
   textareaRef,
   placeholder,
   sending,
+  voiceSupported,
+  recording,
+  transcribing,
+  recordingSeconds,
+  voiceError,
+  onMicClick,
+  formatRecordingTime,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -263,6 +428,13 @@ function Composer({
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   placeholder: string;
   sending: boolean;
+  voiceSupported: boolean;
+  recording: boolean;
+  transcribing: boolean;
+  recordingSeconds: number;
+  voiceError: string | null;
+  onMicClick: () => void;
+  formatRecordingTime: (s: number) => string;
 }) {
   const { palette: PALETTE } = useTheme();
   const t = useTranslations('Journey');
@@ -284,7 +456,34 @@ function Composer({
             {t('preparingResponse')}…
           </div>
         )}
-        <div className="flex items-end gap-3">
+        {recording && (
+          <div
+            className="mb-2 text-xs"
+            style={{ color: PALETTE.accent, fontFamily: TOKENS.sans }}
+            aria-live="polite"
+          >
+            ● {formatRecordingTime(recordingSeconds)}
+          </div>
+        )}
+        {transcribing && (
+          <div
+            className="mb-2 text-xs italic"
+            style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+            aria-live="polite"
+          >
+            {t('voice.transcribing')}
+          </div>
+        )}
+        {voiceError && (
+          <div
+            className="mb-2 text-xs"
+            style={{ color: PALETTE.danger, fontFamily: TOKENS.sans }}
+            role="alert"
+          >
+            {voiceError}
+          </div>
+        )}
+        <div className="flex items-end gap-2">
           <textarea
             ref={textareaRef}
             value={value}
@@ -305,16 +504,40 @@ function Composer({
               lineHeight: '1.5',
             }}
           />
+          {voiceSupported && (
+            <button
+              type="button"
+              onClick={onMicClick}
+              disabled={transcribing}
+              className="rounded-full transition-opacity disabled:opacity-30"
+              style={{
+                background: recording ? PALETTE.danger : PALETTE.bgCard,
+                color: recording ? PALETTE.accentText : PALETTE.text,
+                border: `1px solid ${recording ? PALETTE.danger : PALETTE.border}`,
+                fontFamily: TOKENS.sans,
+                width: 44,
+                height: 44,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.1rem',
+              }}
+              aria-label={recording ? t('voice.stopAria') : t('voice.startAria')}
+            >
+              {recording ? '■' : '🎙'}
+            </button>
+          )}
           <button
             type="button"
             onClick={onSend}
             disabled={!canSend}
-            className="rounded-full px-4 py-2 text-sm transition-opacity disabled:opacity-30"
+            className="rounded-full px-4 transition-opacity disabled:opacity-30"
             style={{
               background: PALETTE.accent,
               color: PALETTE.accentText,
               fontFamily: TOKENS.sans,
               minHeight: 44,
+              height: 44,
             }}
             aria-label="Send"
           >
