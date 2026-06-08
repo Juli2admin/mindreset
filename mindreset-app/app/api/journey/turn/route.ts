@@ -31,6 +31,8 @@ import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, CRISIS_RESPONSE_EN } from '@/lib/journey/safety/keywords';
+import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
+import { freezeJourney } from '@/lib/journey/safety/freeze';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,13 +77,11 @@ export async function POST(request: NextRequest) {
   if (flag.matched) {
     // Persist messages, freeze, audit, return canned crisis response — no LLM.
     await persistMessages(userId, state.currentStage, userMessage, CRISIS_RESPONSE_EN);
-    await prisma.recodeProgress.update({
-      where: { userId },
-      data: {
-        frozenForReview: true,
-        frozenAt: new Date(),
-        frozenReason: `keyword:${flag.flagType ?? 'unknown'}`,
-      },
+    await freezeJourney({
+      userId,
+      source: 'keyword_scan',
+      redFlagType: flag.flagType,
+      reasoning: `pattern: ${flag.matchedPattern}`,
     });
     await writeAuditTurn({
       userId,
@@ -121,9 +121,16 @@ export async function POST(request: NextRequest) {
   const systemPrompt = assembleSystemPrompt(state);
   const model = getModelForStage(state.currentStage, body.modelOverride);
 
-  const messages: Anthropic.MessageParam[] = recent.map((m) => ({
-    role: m.role === 'assistant' ? 'assistant' : 'user',
-    content: decrypt(m.contentEncrypted),
+  const decryptedHistory: { role: 'user' | 'assistant'; content: string }[] = recent.map(
+    (m) => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      content: decrypt(m.contentEncrypted),
+    }),
+  );
+
+  const messages: Anthropic.MessageParam[] = decryptedHistory.map((m) => ({
+    role: m.role,
+    content: m.content,
   }));
 
   const stream = anthropic.messages.stream({
@@ -187,6 +194,10 @@ export async function POST(request: NextRequest) {
       } finally {
         controller.close();
         // Background: parse + persist state report and assistant message.
+        // The verifier classifies the user's most recent message in the
+        // context of the prior turns. `decryptedHistory` includes that most
+        // recent message at the end (we persisted it before loading history),
+        // so we strip it: `slice(0, -1)`.
         waitUntil(
           finaliseTurn({
             userId,
@@ -194,6 +205,7 @@ export async function POST(request: NextRequest) {
             depthAtTurn: state.currentDepth,
             userMessage,
             fullText,
+            recentForVerifier: decryptedHistory.slice(0, -1),
           }),
         );
       }
@@ -216,6 +228,7 @@ async function finaliseTurn(args: {
   depthAtTurn: string;
   userMessage: string;
   fullText: string;
+  recentForVerifier: { role: 'user' | 'assistant'; content: string }[];
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   const report = parseStateReport(split.rawStateReport);
@@ -231,14 +244,55 @@ async function finaliseTurn(args: {
     },
   });
 
-  await applyStateReportToProgress(args.userId, report);
+  // Run the async safety verifier in parallel with state persistence + audit.
+  // The verifier classifies the USER message in context. If it returns
+  // clear_crisis, we freeze — the user's NEXT message will receive the canned
+  // holding response. Their CURRENT reply has already gone out; that's the
+  // trade-off documented in lib/journey/safety/verifier.ts.
+  const [verifierResult] = await Promise.all([
+    runJourneyVerifier(args.userMessage, args.recentForVerifier),
+    applyStateReportToProgress(args.userId, report),
+  ]);
+
+  // If the LLM's own state report flagged red_flag (subtler than keywords),
+  // honour that too.
+  if (report.safetyFlag === 'red_flag') {
+    await freezeJourney({
+      userId: args.userId,
+      source: 'state_report',
+      redFlagType: (report.redFlagType as any) ?? null,
+      reasoning: 'AI state report safetyFlag=red_flag',
+    });
+  }
+
+  // If the verifier caught crisis content the keyword scan missed, freeze.
+  if (verifierResult.verdict === 'clear_crisis') {
+    await freezeJourney({
+      userId: args.userId,
+      source: 'verifier',
+      redFlagType: verifierResult.redFlagType,
+      reasoning: verifierResult.reasoning,
+    });
+  }
+
+  // Always write an audit row. If the verifier disagreed with the state
+  // report (e.g. report said safe, verifier said crisis), the recorded
+  // safetyFlag is the WORSE of the two so downstream review surfaces it.
+  const finalReport = { ...report };
+  if (verifierResult.verdict === 'clear_crisis') {
+    finalReport.safetyFlag = 'red_flag';
+    finalReport.recommendedAction = 'red_flag';
+    finalReport.redFlagType = verifierResult.redFlagType ?? undefined;
+  } else if (verifierResult.verdict === 'ambiguous' && finalReport.safetyFlag === 'none') {
+    finalReport.safetyFlag = 'watch';
+  }
 
   await writeAuditTurn({
     userId: args.userId,
     stageAtTurn: args.stageAtTurn,
     depthAtTurn: args.depthAtTurn,
     userMessage: args.userMessage,
-    report,
+    report: finalReport,
   });
 }
 
