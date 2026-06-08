@@ -33,6 +33,8 @@ import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, CRISIS_RESPONSE_EN } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
 import { freezeJourney } from '@/lib/journey/safety/freeze';
+import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
+import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 
 export const dynamic = 'force-dynamic';
 
@@ -294,6 +296,24 @@ async function finaliseTurn(args: {
     userMessage: args.userMessage,
     report: finalReport,
   });
+
+  // Router — decide stage transition. Runs AFTER the audit row is written
+  // so the gate functions can inspect the just-completed turn. Skipped if
+  // the user was just frozen this turn (the frozen path is its own holding
+  // pattern and shouldn't accidentally trigger advancement).
+  if (finalReport.safetyFlag !== 'red_flag') {
+    try {
+      const freshState = await reloadJourneyState(args.userId);
+      if (freshState) {
+        const decision = await decideRoute(freshState);
+        await applyRouteDecision(args.userId, decision);
+      }
+    } catch (err) {
+      console.error('[journey/turn] router error:', err);
+      // Non-fatal — the user's turn already streamed cleanly. Worst case
+      // they stay in the current stage until the next turn re-evaluates.
+    }
+  }
 }
 
 function cannedResponse(text: string): NextResponse {

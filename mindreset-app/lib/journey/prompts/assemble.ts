@@ -5,6 +5,7 @@
 // The user never sees any of this. Only the AI does.
 
 import { sharedCore, loadStageSpec } from './load-spec';
+import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
 import type { JourneyState } from '../state/types';
 
 const STATE_REPORT_FORMAT_INSTRUCTION = `
@@ -151,6 +152,12 @@ function renderStateBlock(state: JourneyState): string {
   if (state.frozenForReview) {
     lines.push('');
     lines.push('**This user is currently frozen-for-review. Deliver the verbatim crisis response from Shared Core §7 and do not engage method work.**');
+  }
+
+  const settling = renderSettlingSignalInstruction(state);
+  if (settling) {
+    lines.push('');
+    lines.push(settling);
   }
 
   return lines.join('\n');
