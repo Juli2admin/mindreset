@@ -335,6 +335,39 @@
       "seePlans": "Ver planes →"
     }
   },
+  "Journey": {
+    "opener": "I'm glad you're here. Take whatever time you need.",
+    "placeholder": "Take your time.",
+    "preparingResponse": "Listening",
+    "streamErrorSuffix": " *(I lost my thread for a moment. Please send again when you're ready.)*",
+    "noAccessTitle": "The Journey isn't open for you yet.",
+    "noAccessBody": "When you're ready, you can begin from the pricing page.",
+    "seePricing": "See pricing →",
+    "voice": {
+      "startAria": "Start voice input",
+      "stopAria": "Stop recording",
+      "transcribing": "Transcribing…",
+      "errors": {
+        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
+        "noMic": "No microphone found.",
+        "transcriptionFailed": "Couldn't transcribe — please try again.",
+        "rateLimited": "Please pause a moment, then try again.",
+        "unavailable": "Voice input is unavailable right now.",
+        "networkError": "Network error — please try again.",
+        "startFailed": "Couldn't start recording.",
+        "emptyAudio": "Didn't hear anything. Try again."
+      }
+    },
+    "frozen": {
+      "title": "Let's pause here.",
+      "body": "I want you safe. Please reach out to a person who can be with you in this.",
+      "samaritans": "Samaritans — 116 123 (free, 24/7)",
+      "nhs": "NHS 111, option 2 — for mental health crisis",
+      "gp": "Your GP if you have one",
+      "emergency": "If you're in immediate physical danger, call 999 or go to A&E."
+    },
+    "homeCardCta": "Continue →"
+  },
   "Screening": {
     "brand": "MindReset",
     "tagline": "Un compañero de auto-ayuda de inspiración trauma-informada — ni terapia, ni servicio de crisis.",

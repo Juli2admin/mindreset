@@ -1,0 +1,307 @@
+// Apply a parsed state report's findings to the persistent landscape.
+// Encrypts all user-words fields on write. Idempotent where it can be.
+// Anchor is set-once and never overwritten (Shared Core §6).
+
+import prisma from '@/lib/prisma';
+import { encrypt, decrypt } from '@/lib/encrypt';
+import type { JourneyChannel, MiiState } from './types';
+import type { StateReport } from '../stateReport/schema';
+
+type Updates = {
+  // Anchor capture (Stage 1 — set once, never overwritten)
+  anchorIdentified?: string;
+  // Identity Anchor capture (Stage 6 — added alongside, not replacing the original)
+  identityAnchor?: string;
+  // Channel detection / refinement
+  processingChannel?: JourneyChannel | null;
+  // Adult Self qualities (Stage 3+)
+  adultSelfQualities?: string;
+  // Operational metadata
+  lastIntensity?: number | null;
+  recommendedDepth?: 'surface' | 'middle' | 'deep';
+  // Deep Layer settling-time signal (Stage 4 / Stage 5)
+  deepLayerContact?: boolean;
+  // Rolling continuity note for the next session
+  continuityNote?: string;
+  // MII updates (partial — merged into existing mii JSON)
+  miiPatch?: Partial<MiiState>;
+  // Frozen-for-review (Red Flag)
+  frozen?: { reason: string };
+};
+
+export async function applyStateReportToProgress(
+  userId: string,
+  report: StateReport,
+): Promise<void> {
+  const updates: Updates = {};
+
+  if (report.anchorIdentified) updates.anchorIdentified = report.anchorIdentified;
+  if (report.identityAnchor) updates.identityAnchor = report.identityAnchor;
+  if (report.channel) updates.processingChannel = report.channel;
+  if (report.adultSelfQualities) updates.adultSelfQualities = report.adultSelfQualities;
+  if (typeof report.intensity === 'number') updates.lastIntensity = report.intensity;
+  if (report.continuityNote) updates.continuityNote = report.continuityNote;
+  if (report.practiceRun?.depth === 'deep') updates.deepLayerContact = true;
+  if (report.safetyFlag === 'red_flag') {
+    updates.frozen = { reason: report.redFlagType ?? 'unspecified' };
+  }
+
+  await applyUpdates(userId, updates);
+  await applyLandscapeAdditions(userId, report);
+}
+
+async function applyUpdates(userId: string, u: Updates): Promise<void> {
+  // Read current state so we can: (a) not overwrite the anchor once set,
+  // (b) merge the MII patch into the existing JSON.
+  const current = await prisma.recodeProgress.findUnique({
+    where: { userId },
+    select: {
+      anchorTextEncrypted: true,
+      mii: true,
+    },
+  });
+  if (!current) return; // start endpoint must have been called first
+
+  const data: Record<string, unknown> = {
+    lastActivityAt: new Date(),
+  };
+
+  // Anchor is set-once. If already present, do nothing.
+  if (u.anchorIdentified && !current.anchorTextEncrypted) {
+    data.anchorTextEncrypted = encrypt(u.anchorIdentified);
+    data.anchorSetAt = new Date();
+  }
+  if (u.identityAnchor) {
+    data.identityAnchorEncrypted = encrypt(u.identityAnchor);
+    data.identityAnchorSetAt = new Date();
+  }
+  if (u.processingChannel) data.processingChannel = u.processingChannel;
+  if (u.adultSelfQualities) data.adultSelfQualitiesEncrypted = encrypt(u.adultSelfQualities);
+  if (typeof u.lastIntensity === 'number') {
+    data.lastIntensity = u.lastIntensity;
+    data.lastIntensityAt = new Date();
+  }
+  if (u.recommendedDepth) data.currentDepth = u.recommendedDepth;
+  if (u.deepLayerContact) data.lastDeepLayerContactAt = new Date();
+  if (u.continuityNote) data.continuityNoteEncrypted = encrypt(u.continuityNote);
+
+  if (u.miiPatch) {
+    const merged = { ...(current.mii as MiiState), ...u.miiPatch };
+    data.mii = merged;
+  }
+
+  if (u.frozen) {
+    data.frozenForReview = true;
+    data.frozenAt = new Date();
+    data.frozenReason = u.frozen.reason;
+  }
+
+  await prisma.recodeProgress.update({
+    where: { userId },
+    data,
+  });
+}
+
+async function applyLandscapeAdditions(userId: string, report: StateReport): Promise<void> {
+  // Parts touched — upsert. Match on the user's exact words. If a JourneyPart
+  // row already exists for this user with the same decrypted description,
+  // touch updatedAt only. Otherwise insert a new row. Stops the same part
+  // (e.g. "the 10-year-old with two braids") from being inserted 20 times
+  // across 20 turns.
+  if (report.partsTouched && report.partsTouched.length > 0) {
+    const activeParts = await prisma.journeyPart.findMany({
+      where: { userId, active: true },
+      select: { id: true, userDescriptionEncrypted: true, channel: true, safeDistanceEncrypted: true },
+    });
+    const byDescription = new Map<string, (typeof activeParts)[number]>();
+    for (const row of activeParts) {
+      try {
+        byDescription.set(decrypt(row.userDescriptionEncrypted), row);
+      } catch {
+        // ignore decryption failure for dedup lookup
+      }
+    }
+    for (const p of report.partsTouched) {
+      if (!p.description) continue;
+      const existing = byDescription.get(p.description);
+      if (existing) {
+        // Same part already in the landscape — only update if new info arrived.
+        const data: Record<string, unknown> = { updatedAt: new Date() };
+        if (p.channel && !existing.channel) data.channel = p.channel;
+        if (p.safeDistance && !existing.safeDistanceEncrypted) {
+          data.safeDistanceEncrypted = encrypt(p.safeDistance);
+        }
+        if (Object.keys(data).length > 1) {
+          await prisma.journeyPart.update({ where: { id: existing.id }, data });
+        }
+      } else {
+        await prisma.journeyPart.create({
+          data: {
+            userId,
+            userDescriptionEncrypted: encrypt(p.description),
+            channel: p.channel ?? null,
+            safeDistanceEncrypted: p.safeDistance ? encrypt(p.safeDistance) : null,
+          },
+        });
+      }
+    }
+  }
+
+  // Stage 4 MII-5 — Adult Self offering / part secured at a resting place.
+  // Updates the matching JourneyPart row in-place. Match on the user's exact
+  // words for the part's description.
+  if (report.partSecured?.partDescription) {
+    const match = await findActivePartByDescription(userId, report.partSecured.partDescription);
+    if (match) {
+      const data: Record<string, unknown> = { updatedAt: new Date() };
+      if (report.partSecured.restingPlace) {
+        data.currentRestingPlaceEncrypted = encrypt(report.partSecured.restingPlace);
+      }
+      // The Adult-Self-offering is the textual capture of MII-5. We store it
+      // on the part's currentRestingPlace if no separate field; otherwise we
+      // could add a dedicated column later. For now, prefix the offering into
+      // restingPlace text only if no resting place text was given.
+      if (!report.partSecured.restingPlace && report.partSecured.adultSelfOffering) {
+        data.currentRestingPlaceEncrypted = encrypt(report.partSecured.adultSelfOffering);
+      }
+      if (Object.keys(data).length > 1) {
+        await prisma.journeyPart.update({ where: { id: match.id }, data });
+      }
+    }
+  }
+
+  // Foreign files touched — insert if new (identified for the first time).
+  if (report.foreignFilesTouched && report.foreignFilesTouched.length > 0) {
+    const existing = await prisma.journeyForeignFile.findMany({
+      where: { userId },
+      select: { id: true, userDescriptionEncrypted: true },
+    });
+    const knownDescriptions = new Set<string>();
+    for (const row of existing) {
+      try {
+        knownDescriptions.add(decrypt(row.userDescriptionEncrypted));
+      } catch {
+        // ignore decryption failure for dedup lookup
+      }
+    }
+    for (const f of report.foreignFilesTouched) {
+      if (!f.description) continue;
+      if (knownDescriptions.has(f.description)) continue; // already in the landscape
+      await prisma.journeyForeignFile.create({
+        data: {
+          userId,
+          userDescriptionEncrypted: encrypt(f.description),
+          identifiedAt: new Date(),
+        },
+      });
+    }
+  }
+
+  // Stage 5 — Symbolic Return of the Burden. Match an existing
+  // JourneyForeignFile by description, set releasedAt + the returned-to,
+  // honouring-phrase, and what-stays-as-mine fields. This is what closes
+  // Block 5's completion gate.
+  if (report.foreignFileReleased?.description) {
+    const all = await prisma.journeyForeignFile.findMany({
+      where: { userId, releasedAt: null },
+      select: {
+        id: true,
+        userDescriptionEncrypted: true,
+      },
+    });
+    let matchId: string | null = null;
+    for (const row of all) {
+      try {
+        if (decrypt(row.userDescriptionEncrypted) === report.foreignFileReleased.description) {
+          matchId = row.id;
+          break;
+        }
+      } catch {
+        // ignore
+      }
+    }
+    if (matchId) {
+      await prisma.journeyForeignFile.update({
+        where: { id: matchId },
+        data: {
+          releasedAt: new Date(),
+          returnedToEncrypted: report.foreignFileReleased.returnedTo
+            ? encrypt(report.foreignFileReleased.returnedTo)
+            : null,
+          honouringPhraseEncrypted: report.foreignFileReleased.honouringPhrase
+            ? encrypt(report.foreignFileReleased.honouringPhrase)
+            : null,
+          whatStaysAsMineEncrypted: report.foreignFileReleased.whatStaysAsMine
+            ? encrypt(report.foreignFileReleased.whatStaysAsMine)
+            : null,
+        },
+      });
+    } else {
+      // No prior identification — insert as released immediately. Rare but
+      // possible if the user named and released foreign material in one move.
+      await prisma.journeyForeignFile.create({
+        data: {
+          userId,
+          userDescriptionEncrypted: encrypt(report.foreignFileReleased.description),
+          identifiedAt: new Date(),
+          releasedAt: new Date(),
+          returnedToEncrypted: report.foreignFileReleased.returnedTo
+            ? encrypt(report.foreignFileReleased.returnedTo)
+            : null,
+          honouringPhraseEncrypted: report.foreignFileReleased.honouringPhrase
+            ? encrypt(report.foreignFileReleased.honouringPhrase)
+            : null,
+          whatStaysAsMineEncrypted: report.foreignFileReleased.whatStaysAsMine
+            ? encrypt(report.foreignFileReleased.whatStaysAsMine)
+            : null,
+        },
+      });
+    }
+  }
+
+  // Signature images discovered — dedup on description so a user re-mentioning
+  // the same image across many turns doesn't create dozens of rows.
+  if (report.userImagesCaptured && report.userImagesCaptured.length > 0) {
+    const existing = await prisma.journeySignatureImage.findMany({
+      where: { userId },
+      select: { userDescriptionEncrypted: true },
+    });
+    const known = new Set<string>();
+    for (const row of existing) {
+      try {
+        known.add(decrypt(row.userDescriptionEncrypted));
+      } catch {
+        // ignore
+      }
+    }
+    for (const img of report.userImagesCaptured) {
+      if (!img) continue;
+      if (known.has(img)) continue;
+      await prisma.journeySignatureImage.create({
+        data: {
+          userId,
+          userDescriptionEncrypted: encrypt(img),
+        },
+      });
+    }
+  }
+}
+
+/** Find an active part by the decrypted description. */
+async function findActivePartByDescription(
+  userId: string,
+  description: string,
+): Promise<{ id: string } | null> {
+  const all = await prisma.journeyPart.findMany({
+    where: { userId, active: true },
+    select: { id: true, userDescriptionEncrypted: true },
+  });
+  for (const row of all) {
+    try {
+      if (decrypt(row.userDescriptionEncrypted) === description) return { id: row.id };
+    } catch {
+      // ignore
+    }
+  }
+  return null;
+}

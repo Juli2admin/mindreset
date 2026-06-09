@@ -91,16 +91,23 @@ model User {
   deletionScheduledAt    DateTime?
 
   // Relations
-  screeningResponses ScreeningResponse[]
-  wellbeingSnapshot  WellbeingSnapshot?
-  conversations      Conversation[]
-  safetyEvents       SafetyEvent[]
-  purchases          Purchase[]
-  moduleProgress     ModuleProgress[]
-  recodeProgress     RecodeProgress?
-  practices          Practice[]
-  deletionTokens     AccountDeletionToken[]
-  testimonials       Testimonial[]
+  screeningResponses     ScreeningResponse[]
+  wellbeingSnapshot      WellbeingSnapshot?
+  conversations          Conversation[]
+  safetyEvents           SafetyEvent[]
+  purchases              Purchase[]
+  moduleProgress         ModuleProgress[]
+  recodeProgress         RecodeProgress?
+  practices              Practice[]
+  deletionTokens         AccountDeletionToken[]
+  testimonials           Testimonial[]
+  // The Journey
+  journeyTurns           JourneyTurn[]
+  journeyPracticeRuns    JourneyPracticeRun[]
+  journeyParts           JourneyPart[]
+  journeyForeignFiles    JourneyForeignFile[]
+  journeySignatureImages JourneySignatureImage[]
+  journeyMessages        JourneyMessage[]
 }
 
 // =============================================================================
@@ -523,15 +530,179 @@ model RecodeProgress {
   startedAt      DateTime  @default(now())
   lastActivityAt DateTime  @default(now())
 
-  currentBlock   Int       @default(1)  // 1..8
-
-  // Per-block state — JSON keeps it flexible while we iterate:
-  // { "1": { "startedAt": "...", "completedAt": "...", "sscPassed": true, "depth": "deep" }, "2": {...} }
+  // Legacy field — kept for backward compatibility, no longer authoritative.
+  // `currentStage` below is the source of truth.
+  currentBlock   Int       @default(1)
   blockProgress  Json      @default("{}")
 
   isPaused       Boolean   @default(false)
   pausedAt       DateTime?
   pauseReason    String?
+
+  // ---------------------------------------------------------------------------
+  // The Journey runtime — added Slice 1 of docs/implementation/journey-build-plan.md
+  // All *Encrypted fields use lib/encrypt.ts (AES-256-GCM). User-words content
+  // is encrypted at rest per UK GDPR Article 9 (special-category data).
+  // ---------------------------------------------------------------------------
+
+  // The persistent inner landscape (1:1 fields)
+  anchorTextEncrypted          String?
+  anchorSetAt                  DateTime?
+  identityAnchorEncrypted      String?
+  identityAnchorSetAt          DateTime?
+  adultSelfQualitiesEncrypted  String?
+  processingChannel            String?   // visual | kinesthetic | emotional | cognitive | verbal | mixed
+
+  // Stage + depth state
+  currentStage                 Int       @default(1)   // 1..8 internal stage
+  currentDepth                 String    @default("surface") // surface | middle | deep
+  lastIntensity                Int?      // 0..10
+  lastIntensityAt              DateTime?
+  lastDeepLayerContactAt       DateTime? // for the soft 48-hour settling-time signal
+
+  // MII (7 criteria), JSON for queryability and clinical review.
+  // Shape documented in docs/implementation/journey-build-plan.md §3.1
+  mii                          Json      @default("{}")
+
+  // Stage 8 tracking
+  stage8WeeksElapsed           Int       @default(0)
+
+  // Frozen-for-review (Red Flag protocol per Shared Core §7)
+  frozenForReview              Boolean   @default(false)
+  frozenAt                     DateTime?
+  frozenReason                 String?
+
+  // Discharge
+  dischargedAt                 DateTime?
+
+  // Rolling 2–4 sentence continuity note the AI writes for itself at session
+  // close. Loaded fresh on every turn — gives cross-session continuity without
+  // replaying every prior message.
+  continuityNoteEncrypted      String?
+}
+
+// =============================================================================
+// JOURNEY AUDIT LOG — append-only, one row per AI turn
+// =============================================================================
+model JourneyTurn {
+  id                       String         @id @default(cuid())
+  user                     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                   String
+  createdAt                DateTime       @default(now())
+
+  // Operational metadata — plain (no user content), queryable for analytics + gate logic
+  stageAtTurn              Int
+  depthAtTurn              String
+  intensityReported        Int?
+  safetyFlag               String         @default("none") // none | watch | red_flag
+  redFlagType              String?
+  recommendedAction        String?
+
+  // The full state report (may contain user-words content) is encrypted
+  stateReportEncrypted     String?
+
+  // Hash of the user's message — for audit cross-reference without storing content
+  userMessageHash          String?
+
+  practiceRuns             JourneyPracticeRun[]
+
+  @@index([userId, createdAt])
+}
+
+// =============================================================================
+// JOURNEY PRACTICE RUNS — canonical (named, anatomy-defined) + generated practices
+// =============================================================================
+model JourneyPracticeRun {
+  id                       String         @id @default(cuid())
+  user                     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                   String
+  turn                     JourneyTurn    @relation(fields: [turnId], references: [id], onDelete: Cascade)
+  turnId                   String
+  createdAt                DateTime       @default(now())
+
+  stageAtRun               Int
+  kind                     String         // canonical | generated
+  name                     String         // "Personal Anchor Identification" | "Inner Child Visit at age 10" | ...
+  family                   String?        // regulation | somatic | landscape | narrative | compassion
+  triggeredBy              String?        // brief abstract note (no user-words content)
+  userImagesEncrypted      String?        // user's images for this practice (encrypted)
+  depth                    String?        // surface | middle | deep
+  status                   String         // started | mid | completed | aborted_user_request | aborted_overwhelm
+  modalitySwitchedFrom     String?
+  modalitySwitchedTo       String?
+
+  @@index([userId])
+}
+
+// =============================================================================
+// JOURNEY INNER PARTS — parts the user has met, in their own words
+// =============================================================================
+model JourneyPart {
+  id                              String         @id @default(cuid())
+  user                            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                          String
+  createdAt                       DateTime       @default(now())
+  updatedAt                       DateTime       @updatedAt
+
+  userDescriptionEncrypted        String         // e.g. "the 10-year-old with two braids" (encrypted)
+  channel                         String?        // visual | kinesthetic | emotional | cognitive | verbal
+  safeDistanceEncrypted           String?        // "across the room" | "right beside me" (encrypted)
+  compassionBridgeQuality         String?        // compassion | curiosity | acceptance | willingness_to_comfort
+  currentRestingPlaceEncrypted    String?        // "with the Adult Self" | "the inner garden" (encrypted)
+  active                          Boolean        @default(true)
+
+  @@index([userId])
+}
+
+// =============================================================================
+// JOURNEY FOREIGN FILES — material identified as not-mine, released or pending
+// =============================================================================
+model JourneyForeignFile {
+  id                              String         @id @default(cuid())
+  user                            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                          String
+  createdAt                       DateTime       @default(now())
+  identifiedAt                    DateTime?
+  releasedAt                      DateTime?
+
+  userDescriptionEncrypted        String         // "I must always be useful" (encrypted)
+  originDescriptionEncrypted      String?        // "my mother" | "unknown but not mine" (encrypted)
+  returnedToEncrypted             String?        // "back to my mother's house" (encrypted)
+  honouringPhraseEncrypted        String?        // "this was yours, I return it..." (encrypted)
+  whatStaysAsMineEncrypted        String?        // "I love to make things for people" (encrypted)
+
+  @@index([userId])
+}
+
+// =============================================================================
+// JOURNEY SIGNATURE IMAGES — images the user discovered in their work
+// =============================================================================
+model JourneySignatureImage {
+  id                              String         @id @default(cuid())
+  user                            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                          String
+  createdAt                       DateTime       @default(now())
+
+  userDescriptionEncrypted        String         // "the field of bluebells" (encrypted)
+  context                         String?        // brief operational tag (no user content)
+
+  @@index([userId])
+}
+
+// =============================================================================
+// JOURNEY MESSAGES — the conversation surface, encrypted at rest
+// =============================================================================
+model JourneyMessage {
+  id                   String         @id @default(cuid())
+  user                 User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+  createdAt            DateTime       @default(now())
+
+  role                 String         // user | assistant
+  contentEncrypted     String
+  stageAtTime          Int
+
+  @@index([userId, createdAt])
 }
 
 // =============================================================================
