@@ -62,6 +62,24 @@ export type StateReport = {
   }>;
   foreignFilesTouched?: Array<{ description: string }>;
 
+  // Landscape updates (mutate existing rows rather than insert new ones)
+  // Stage 4 MII-5 — the Adult Self's offering / part's resting place. The AI
+  // emits this when the Adult Self has given something to a known part
+  // (a soothing phrase, a gesture, an intention to protect, a resting place).
+  partSecured?: {
+    partDescription: string; // user's exact words for which part — matches an existing JourneyPart
+    restingPlace?: string;   // user's exact words for where the part now rests
+    adultSelfOffering?: string; // user's exact words for what the Adult Self offered
+  };
+  // Stage 5 — Symbolic Return of the Burden. Released a previously-identified
+  // foreign file. Code marks releasedAt on the matching JourneyForeignFile row.
+  foreignFileReleased?: {
+    description: string;     // user's exact words — matches an existing JourneyForeignFile
+    returnedTo?: string;     // user's exact words
+    honouringPhrase?: string;// user's exact words
+    whatStaysAsMine?: string;// user's exact words
+  };
+
   // Stage-specific captures (named per the specs)
   anchorIdentified?: string; // Stage 1 — set once
   identityAnchor?: string; // Stage 6

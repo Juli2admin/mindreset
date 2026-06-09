@@ -128,6 +128,13 @@ export function scanForJourneyRedFlag(message: string): RedFlagHit {
 // Verbatim from Shared Core §7. Delivered as-is when the keyword scan trips,
 // or when the async verifier returns clear_crisis, or while the Journey is
 // in frozen-for-review state.
+//
+// Localised per the user's locale on the request. UK lines are kept for the EN
+// and RU defaults — Samaritans operates in EN; the RU translation routes UK
+// users who speak Russian to the same lines (Samaritans accepts non-English
+// callers via translation, and Russian-speaking UK residents are the primary
+// MindReset audience for RU). When MindReset expands to other markets,
+// localisation per locale follows here.
 export const CRISIS_RESPONSE_EN = `I hear how serious this is. What you're carrying right now is more than this conversation is built for, and I want you safe. Please reach out to a person who can be with you in this:
 
 Samaritans — 116 123 (free, 24/7)
@@ -136,3 +143,22 @@ Your GP if you have one
 If you're in immediate physical danger, call 999 or go to A&E
 
 I'll be here when you're ready to come back.`;
+
+export const CRISIS_RESPONSE_RU = `Я слышу, насколько это серьёзно. То, что вы сейчас несёте, — больше, чем может вместить этот разговор, и я хочу, чтобы вы были в безопасности. Пожалуйста, обратитесь к человеку, который сможет побыть рядом:
+
+Samaritans — 116 123 (бесплатно, круглосуточно)
+NHS 111, вариант 2 — кризисная психиатрическая помощь
+Ваш врач общей практики, если есть
+Если жизнь в непосредственной опасности — звоните 999 или обратитесь в отделение скорой помощи (A&E)
+
+Я буду здесь, когда вы будете готовы вернуться.`;
+
+/**
+ * Pick the canned crisis response for the user's locale.
+ * Default to EN for any locale we don't yet have a translation for —
+ * never silently fail to deliver some response in a Red Flag situation.
+ */
+export function getCrisisResponseForLocale(locale: string | null | undefined): string {
+  if (locale === 'ru') return CRISIS_RESPONSE_RU;
+  return CRISIS_RESPONSE_EN;
+}

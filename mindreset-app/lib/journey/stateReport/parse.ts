@@ -128,6 +128,33 @@ export function parseStateReport(raw: string | null): StateReport {
     });
   }
 
+  // Stage 4 MII-5 — Adult Self offering to part / part secured at resting place
+  const ps = obj.partSecured;
+  if (ps && typeof ps === 'object') {
+    const psObj = ps as Record<string, unknown>;
+    if (typeof psObj.partDescription === 'string' && psObj.partDescription.length > 0) {
+      report.partSecured = {
+        partDescription: psObj.partDescription,
+        restingPlace: typeof psObj.restingPlace === 'string' ? psObj.restingPlace : undefined,
+        adultSelfOffering: typeof psObj.adultSelfOffering === 'string' ? psObj.adultSelfOffering : undefined,
+      };
+    }
+  }
+
+  // Stage 5 — Symbolic Return of the Burden
+  const ffr = obj.foreignFileReleased;
+  if (ffr && typeof ffr === 'object') {
+    const ffrObj = ffr as Record<string, unknown>;
+    if (typeof ffrObj.description === 'string' && ffrObj.description.length > 0) {
+      report.foreignFileReleased = {
+        description: ffrObj.description,
+        returnedTo: typeof ffrObj.returnedTo === 'string' ? ffrObj.returnedTo : undefined,
+        honouringPhrase: typeof ffrObj.honouringPhrase === 'string' ? ffrObj.honouringPhrase : undefined,
+        whatStaysAsMine: typeof ffrObj.whatStaysAsMine === 'string' ? ffrObj.whatStaysAsMine : undefined,
+      };
+    }
+  }
+
   copyStringField(obj, 'anchorIdentified', report);
   copyStringField(obj, 'identityAnchor', report);
   if (typeof obj.observerSeatTouched === 'boolean') {

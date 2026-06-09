@@ -30,7 +30,7 @@ import { assembleSystemPrompt } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
-import { scanForJourneyRedFlag, CRISIS_RESPONSE_EN } from '@/lib/journey/safety/keywords';
+import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
 import { freezeJourney } from '@/lib/journey/safety/freeze';
 import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  let body: { message?: string; modelOverride?: string };
+  let body: { message?: string; modelOverride?: string; locale?: string };
   try {
     body = await request.json();
   } catch {
@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
   }
   const userMessage = (body.message ?? '').trim();
   if (!userMessage) return NextResponse.json({ error: 'Empty message' }, { status: 400 });
+
+  // Localised crisis response. Default to EN if absent or unknown — never
+  // silently fail to deliver SOME canned response in a Red Flag situation.
+  const crisisResponse = getCrisisResponseForLocale(body.locale ?? null);
 
   // Access check.
   const purchase = await prisma.purchase.findFirst({
@@ -70,15 +74,15 @@ export async function POST(request: NextRequest) {
 
   // Frozen-for-review: return holding response, no LLM call.
   if (state.frozenForReview) {
-    await persistMessages(userId, state.currentStage, userMessage, CRISIS_RESPONSE_EN);
-    return cannedResponse(CRISIS_RESPONSE_EN);
+    await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
+    return cannedResponse(crisisResponse);
   }
 
   // Synchronous safety check.
   const flag = scanForJourneyRedFlag(userMessage);
   if (flag.matched) {
     // Persist messages, freeze, audit, return canned crisis response — no LLM.
-    await persistMessages(userId, state.currentStage, userMessage, CRISIS_RESPONSE_EN);
+    await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
     await freezeJourney({
       userId,
       source: 'keyword_scan',
@@ -97,7 +101,7 @@ export async function POST(request: NextRequest) {
         redFlagType: flag.flagType,
       },
     });
-    return cannedResponse(CRISIS_RESPONSE_EN);
+    return cannedResponse(crisisResponse);
   }
 
   // Persist the user's message before calling the LLM so we don't lose it on

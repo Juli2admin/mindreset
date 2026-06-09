@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import TopBar from '@/components/TopBar';
@@ -47,6 +47,7 @@ const MAX_RECORDING_SECONDS = 120;
 
 export default function JourneyClient({ initialMessages, frozen }: Props) {
   const t = useTranslations('Journey');
+  const locale = useLocale();
   const { palette: PALETTE } = useTheme();
 
   const opener = t('opener');
@@ -252,7 +253,7 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
       const res = await fetch('/api/journey/turn', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, locale }),
       });
 
       if (!res.ok || !res.body) {
