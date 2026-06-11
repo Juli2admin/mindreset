@@ -323,7 +323,7 @@
     }
   },
   "Journey": {
-    "opener": "I'm glad you're here. Take whatever time you need.",
+    "opener": "Hello. Good to have you here. How are you doing today?",
     "placeholder": "Say what's here today.",
     "preparingResponse": "Listening",
     "streamErrorSuffix": " *(I lost my thread for a moment. Please send again when you're ready.)*",
