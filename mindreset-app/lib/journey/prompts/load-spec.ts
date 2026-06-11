@@ -77,11 +77,38 @@ function extractCodeBlock(md: string): string | null {
 }
 
 const runtimeCache = new Map<number, string | null>();
+const masterCache = { value: null as string | null, loaded: false };
+
+/**
+ * Load the single master Journey runtime prompt, if it exists.
+ * The master prompt holds the full 8-block toolkit as MOVES available
+ * every turn — a clinician using whichever move serves the user now,
+ * rather than walking them through fixed per-stage prompts.
+ *
+ * Returns the prompt body (extracted from the markdown code block), or
+ * null if no master prompt file exists.
+ */
+export function loadMasterJourneyPrompt(): string | null {
+  if (masterCache.loaded) return masterCache.value;
+  const full = path.join(RUNTIME_DIR, 'journey-master.md');
+  if (!existsSync(full)) {
+    masterCache.loaded = true;
+    masterCache.value = null;
+    return null;
+  }
+  const md = readFileSync(full, 'utf8');
+  masterCache.value = extractCodeBlock(md);
+  masterCache.loaded = true;
+  return masterCache.value;
+}
 
 /**
  * Load the engineered runtime prompt for a stage, if one exists.
  * Returns the prompt body (already extracted from its code block), or
  * null if no engineered version exists for this stage yet.
+ *
+ * Deprecated in favour of `loadMasterJourneyPrompt` — kept for fallback
+ * during rollout.
  */
 export function loadEngineeredStagePrompt(stage: number): string | null {
   if (runtimeCache.has(stage)) return runtimeCache.get(stage)!;
