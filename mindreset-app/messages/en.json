@@ -323,7 +323,7 @@
     }
   },
   "Journey": {
-    "opener": "Hello. Good to have you here. How are you doing today?",
+    "opener": "Hello. Good to have you here.\n\nThis isn't just a chat. It's a deep, gradual process for re-shaping the patterns you've been carrying: old beliefs, stuck reactions, parts of you that have been waiting to be heard. Real change here takes weeks, sometimes months. There's no rush.\n\nA few things to know before we begin:\n\n- You can bring anything. If it gets too much, we slow down.\n- You don't need to know where to start. We'll find it together, in your own words.\n- You can pause at any moment, in a session or for days at a time. There's no failing here.\n- What you share is private. Your words are encrypted and seen only by you and this work.\n- If you're in immediate crisis — feeling unsafe with yourself or someone else — please reach out to Samaritans (116 123) or NHS 111 option 2 in the UK. If you're outside the UK, please look up your local crisis line. This space isn't built for crisis care.\n\nI'm here to listen, reflect what you say, and help you find what's underneath. The work is yours. I'm with you in it.\n\nWhen you're ready — tell me how you're feeling today. Whatever's here is fine.",
     "placeholder": "Say what's here today.",
     "preparingResponse": "Listening",
     "streamErrorSuffix": " *(I lost my thread for a moment. Please send again when you're ready.)*",

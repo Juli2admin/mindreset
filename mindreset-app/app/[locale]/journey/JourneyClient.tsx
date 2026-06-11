@@ -13,8 +13,10 @@ import { TOKENS } from '@/lib/brand/colors';
 //
 // What the user sees:
 //   - TopBar (shared)
-//   - On first contact: a single warm AI opener — same shape as MiniMind:
-//     "Hello. Good to have you here. How are you doing today?" — and a composer.
+//   - On first contact: a welcome message that frames The Journey for the
+//     user — what this is, how it works, what their part is, safety lines,
+//     soft invitation to begin. Rendered as a single opener pseudo-message
+//     (not persisted) above the composer. Markdown-rendered.
 //   - On return: the recent conversation history, then the composer.
 //   - When frozenForReview is true: composer replaced by a calm holding
 //     view (history above stays visible — continuity preserved).
