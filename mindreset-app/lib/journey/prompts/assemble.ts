@@ -4,7 +4,12 @@
 //
 // The user never sees any of this. Only the AI does.
 
-import { sharedCore, loadStageSpec, loadEngineeredStagePrompt } from './load-spec';
+import {
+  sharedCore,
+  loadStageSpec,
+  loadEngineeredStagePrompt,
+  loadMasterJourneyPrompt,
+} from './load-spec';
 import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
 import type { JourneyState } from '../state/types';
 
@@ -170,19 +175,24 @@ function renderStateBlock(state: JourneyState): string {
 const DIVIDER = '\n\n---\n\n';
 
 export function assembleSystemPrompt(state: JourneyState): string {
-  // If an engineered runtime prompt exists for this stage, use it.
-  // Engineered prompts are self-contained — they already include identity,
-  // voice, prohibitions, clinical reading, current work, practice generation,
-  // memory, examples, and output format — so we just substitute the runtime
-  // state block into the {{STATE_INJECTION}} placeholder. No Shared Core
-  // append, no separate output-format instruction.
+  // Preferred: single master Journey prompt holding the full 8-block toolkit
+  // as MOVES available every turn. The clinician uses whichever move serves
+  // the user now — not constrained to a per-stage prompt. The currentStage
+  // marker in the state block tells the AI the furthest point of accumulated
+  // work, not a constraint on what moves are available.
+  const master = loadMasterJourneyPrompt();
+  if (master) {
+    return master.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
+  }
+
+  // Fallback (rollout phase): per-stage engineered prompts if a master isn't
+  // present.
   const engineered = loadEngineeredStagePrompt(state.currentStage);
   if (engineered) {
     return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
   }
 
-  // Fallback: stages that don't have an engineered runtime prompt yet still
-  // use the original Shared Core + clinical spec concatenation.
+  // Last resort: Shared Core + clinical spec concatenation.
   return [
     sharedCore(),
     loadStageSpec(state.currentStage),
