@@ -78,7 +78,7 @@ State report schema (all fields except the three required are optional; omit fie
   "feltAligned": ["saying no without explaining"],                     // Stage 8.
   "feltOld": ["pull to apologise to mother"],                          // Stage 8.
 
-  "continuityNote": "2-4 sentences for the next session: what you'd want to know on returning to this user."
+  "continuityNote": "Your running case formulation across sessions — internal, never shown to the user. Structured prose covering presenting issues, working hypotheses (tentative), resources identified, worked so far, queued material, stuck points, and notes for next session. Read existing → revise additively → emit; omit if today added nothing strategic."
 }
 </state-report>
 \`\`\`
@@ -154,7 +154,7 @@ function renderStateBlock(state: JourneyState): string {
 
   if (state.continuityNote) {
     lines.push('');
-    lines.push('**Continuity note from last session (for natural re-entry):**');
+    lines.push('**Case formulation across sessions (your running model — internal, never recited to user):**');
     lines.push(`> ${state.continuityNote}`);
   }
 
