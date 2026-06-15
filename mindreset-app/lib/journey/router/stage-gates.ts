@@ -56,12 +56,25 @@ function standardGuards(
 }
 
 // ---------------------------------------------------------------------------
-// Stage 1 — Stabilisation
+// Stage 1 — Assessment & Stabilisation
 // ---------------------------------------------------------------------------
-// Per docs/journey/01-stage-stabilisation.md §10
+// Per docs/journey/01-stage-stabilisation.md §10 + assessment-phase framing
+// in docs/journey/runtime/journey-master.md.
+//
+// Block 1 is the assessment phase. To advance, the AI must have:
+//   (a) helped the user name an anchor (set-once on RecodeProgress), AND
+//   (b) built a working case formulation across sessions AND shared it
+//       back to the user for explicit confirmation. That confirmation is
+//       captured via readinessTouched: "formulation_confirmed" on any
+//       turn in the window. Without it the deeper work in Block 2+ rests
+//       on the AI's unilateral interpretation — see trap #11.
 export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 3);
   if (!state.anchorText) reasons.push('anchor_not_set');
+  const formulationConfirmed = turns.some((t) =>
+    (t.report.readinessTouched ?? []).some((r) => /formulation[_-]?confirmed/i.test(r)),
+  );
+  if (!formulationConfirmed) reasons.push('formulation_not_confirmed_with_user');
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
