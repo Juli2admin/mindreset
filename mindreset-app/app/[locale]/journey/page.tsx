@@ -24,6 +24,12 @@ import { TOKENS } from '@/lib/brand/colors';
 import JourneyClient from './JourneyClient';
 
 export const dynamic = 'force-dynamic';
+// Neutralises Next.js fetch cache and intermediate edge caches for this
+// page. Combined with `dynamic = 'force-dynamic'` above, this stops a user
+// from seeing a stale empty conversation on return after a session (a
+// "where did my chat go?" UX issue observed in live test — DB was intact;
+// only the page render was stale).
+export const fetchCache = 'force-no-store';
 
 // Auth-gated chat surface. noindex so search engines don't try to crawl it —
 // signed-out crawlers would be redirected to /sign-in by middleware anyway.
