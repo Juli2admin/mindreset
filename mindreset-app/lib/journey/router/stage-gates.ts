@@ -20,6 +20,7 @@ import {
   distinctDays,
   heldOnDistinctDays,
   lastTwoIntensities,
+  noRedFlagInLast,
   safetyNoneForLast,
 } from './history';
 
@@ -68,8 +69,27 @@ function standardGuards(
 //       captured via readinessTouched: "formulation_confirmed" on any
 //       turn in the window. Without it the deeper work in Block 2+ rests
 //       on the AI's unilateral interpretation — see trap #11.
+//
+// Stage 1 uses a LOOSER safety guard than the other stages: only 'red_flag'
+// blocks advancement, not 'watch'. Rationale: Block 1 assessment explores
+// material (financial pressure, difficult relationships, past content) that
+// the AI appropriately flags 'watch'. If watch blocked progression, the gate
+// would never close for any real user doing real work. 'red_flag' still
+// blocks here (and triggers freeze separately).
 export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
-  const reasons = standardGuards(state, turns, 3);
+  const reasons: string[] = [];
+
+  // Inlined version of standardGuards with the looser safety check.
+  if (state.frozenForReview) reasons.push('frozen_for_review');
+  const intensities = lastTwoIntensities(turns);
+  if (intensities.length < 2) reasons.push('insufficient_intensity_history');
+  else if (intensities.some((i) => i > 5)) reasons.push('recent_intensity_above_5');
+  if (!noRedFlagInLast(turns, 3)) reasons.push('red_flag_in_last_3_turns');
+  const last = turns[turns.length - 1];
+  if (last?.report.recommendedAction !== 'advance') {
+    reasons.push('ai_did_not_recommend_advance');
+  }
+
   if (!state.anchorText) reasons.push('anchor_not_set');
   const formulationConfirmed = turns.some((t) =>
     (t.report.readinessTouched ?? []).some((r) => /formulation[_-]?confirmed/i.test(r)),
