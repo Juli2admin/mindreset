@@ -319,9 +319,30 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
           })}
         </div>
 
+        {/* Coming soon — wrapper around the three in-development sections
+            (States, Themes, Journey). Visually understated to keep the
+            actively-buyable tiers above the fold and signal these are not
+            yet open without making the page look unfinished. */}
+        <div
+          className="mt-24 pt-10 opacity-90"
+          style={{ borderTop: `1px solid ${PALETTE.border}` }}
+        >
+          <h2
+            className="text-[14px] uppercase tracking-[0.22em] mb-2"
+            style={{ color: PALETTE.textHint, fontWeight: 500, fontFamily: SANS }}
+          >
+            {t('comingSoon')}
+          </h2>
+          <p
+            className="text-[13px] leading-[1.65] mb-10"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {t('comingSoonIntro')}
+          </p>
+
         {/* Your States — 4 individually-priced modules. Cards are
             informational until PR3 wires per-module Stripe checkout. */}
-        <div className="mt-12 mb-12">
+        <div className="mb-10">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
             style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
@@ -376,7 +397,7 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
         </div>
 
         {/* Your Themes — 5 individually-priced modules. */}
-        <div className="mb-12">
+        <div className="mb-10">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
             style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
@@ -431,7 +452,7 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
         </div>
 
         {/* Your Journey — single card, two purchase options. */}
-        <div className="mb-12">
+        <div className="mb-2">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
             style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
@@ -479,6 +500,7 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
             </p>
           </div>
         </div>
+        </div>{/* /Coming soon wrapper */}
 
         {checkoutError && (
           <p

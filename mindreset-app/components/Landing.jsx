@@ -386,11 +386,11 @@ function Different() {
   );
 }
 
-function ClosingCTA({ onBegin }) {
+function ClosingCTA({ onBegin, sectionRef }) {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   return (
-    <section className="py-24 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
+    <section ref={sectionRef} className="py-24 text-center" style={{ borderTop: `1px solid ${c.border}` }}>
       <SectionKicker text={t('closingKicker')} color={c.accent} />
       <h2
         className="text-[40px] sm:text-[56px] md:text-[72px] leading-[1] mb-8 -tracking-[0.02em]"
@@ -444,6 +444,54 @@ function Toast({ message, onClose }) {
   );
 }
 
+// Sticky free-taster CTA — visible on mobile (bottom-centre with iOS
+// safe-area padding) and desktop (bottom-right). Fades out when the
+// page's existing ClosingCTA section enters the viewport so we don't
+// show two primary CTAs stacked at the bottom of the page. Native
+// IntersectionObserver — no new dependency.
+function StickyTryFreeCTA({ closingCtaRef }) {
+  const { palette: c } = useTheme();
+  const t = useTranslations('Landing');
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const el = closingCtaRef?.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      ([entry]) => setHidden(entry.isIntersecting),
+      { threshold: 0.1 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [closingCtaRef]);
+
+  return (
+    <Link
+      href="/minimind"
+      aria-label={t('stickyTryFree')}
+      className={[
+        'fixed z-50 inline-flex items-center justify-center gap-2',
+        'h-12 px-6 rounded-full text-[14px] tracking-wide transition-all duration-300',
+        // Mobile: bottom-centre with safe-area padding; capped width to keep readable
+        'left-1/2 -translate-x-1/2 max-w-[20rem] w-[calc(100vw-2rem)]',
+        // Desktop overrides: bottom-right, auto width
+        'md:left-auto md:translate-x-0 md:right-8 md:w-auto md:max-w-none',
+        hidden ? 'opacity-0 pointer-events-none' : 'opacity-100',
+      ].join(' ')}
+      style={{
+        ...sansStyle,
+        fontWeight: 500,
+        background: c.accent,
+        color: c.accentText,
+        bottom: 'max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem))',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+      }}
+    >
+      {t('stickyTryFree')}
+    </Link>
+  );
+}
+
 // ============================================================================
 // Main
 // ============================================================================
@@ -459,6 +507,10 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
   // Global theme + matchMedia auto-detection are owned by ThemeProvider
   // in [locale]/layout.tsx now. Landing just reads the current palette.
   const { palette: c } = useTheme();
+  // Ref on the ClosingCTA section so the StickyTryFreeCTA can hide itself
+  // when that section is in view (avoids two primary CTAs stacked at the
+  // bottom).
+  const closingCtaRef = useRef(null);
 
   useEffect(() => {
     if (!document.getElementById(FONT_LINK_ID)) {
@@ -490,13 +542,14 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
         <Different />
         <NewsletterSignup />
         {testimonialsSlot}
-        <ClosingCTA onBegin={onBegin} />
+        <ClosingCTA onBegin={onBegin} sectionRef={closingCtaRef} />
         {/* Phase 1d.2 — Landing-only crisis-resource block + safety
             disclaimer, rendered above the shared Footer. Footer arrives
             as a server-rendered slot from [locale]/page.tsx. */}
         <CrisisResources />
         {footerSlot}
       </div>
+      <StickyTryFreeCTA closingCtaRef={closingCtaRef} />
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
