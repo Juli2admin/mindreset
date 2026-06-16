@@ -107,3 +107,18 @@ export function safetyNoneForLast(turns: AuditTurn[], n: number): boolean {
   if (tail.length < n) return false;
   return tail.every((t) => t.safetyFlag === 'none');
 }
+
+/**
+ * Looser safety guard: returns true if NO turn in the last N has a 'red_flag'
+ * safetyFlag. 'watch' does not block. Used by Stage 1 (assessment phase),
+ * where exploring difficult material appropriately carries 'watch' flags —
+ * if 'watch' blocked advancement, the gate would never close for any real
+ * user. Red flag still blocks (also triggers freeze separately).
+ *
+ * Unlike safetyNoneForLast, this does NOT require N turns to exist —
+ * shorter histories pass as long as nothing in them is red_flag.
+ */
+export function noRedFlagInLast(turns: AuditTurn[], n: number): boolean {
+  const tail = turns.slice(-n);
+  return tail.every((t) => t.safetyFlag !== 'red_flag');
+}
