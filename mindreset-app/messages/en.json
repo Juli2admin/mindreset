@@ -1,6 +1,7 @@
 {
   "Pricing": {
     "comingSoon": "Coming soon",
+    "comingSoonIntro": "Modules in development. We'll open them as each one is ready.",
     "tierOpen": "Open",
     "tierActive": "Active",
     "tiers": {
@@ -277,6 +278,7 @@
     "closingTitle": "Begin.",
     "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
     "closingCta": "Start the check-in",
+    "stickyTryFree": "Try MiniMind free — 50 messages, no card",
     "heroChip": "Free taster · 50 messages · no card needed",
     "newsletter": {
       "kicker": "STAY IN TOUCH",
