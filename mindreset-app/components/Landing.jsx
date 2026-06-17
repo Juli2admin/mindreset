@@ -126,11 +126,21 @@ function Hero({ onBegin }) {
       </div>
 
       <h1
-        className="text-[44px] sm:text-[60px] md:text-[76px] leading-[0.98] mb-12 -tracking-[0.025em] whitespace-pre-line"
+        className="text-[44px] sm:text-[60px] md:text-[76px] leading-[0.98] mb-5 -tracking-[0.025em] whitespace-pre-line"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
         {t('heroTitle')}
       </h1>
+
+      {/* Demoted poetic anchor — preserved from the original H1, now a
+          smaller italic line sitting between the new H1 and the body. Keeps
+          the brand soul as a punctuation under the audience-naming H1. */}
+      <div
+        className="text-[18px] sm:text-[22px] italic mb-12 -tracking-[0.005em]"
+        style={{ ...serifStyle, color: c.textMuted, fontWeight: 300 }}
+      >
+        {t('heroSubtitle')}
+      </div>
 
       <div className="max-w-[36rem] mx-auto space-y-5 mb-12">
         {heroBody.map((para, i) => (
@@ -154,14 +164,10 @@ function Hero({ onBegin }) {
         <ArrowRight size={14} />
       </button>
 
-      <div
-        className="text-[13px] mt-5"
-        style={{ ...sansStyle, color: c.accent, fontWeight: 500 }}
-      >
-        {t('heroChip')}
-      </div>
-
-      <div className="text-[11px] mt-2" style={{ ...sansStyle, color: c.textHint }}>
+      {/* heroChip removed — the new heroCta text now carries the
+          "50 messages, no card" promise inside the button itself,
+          which made the chip duplicative. */}
+      <div className="text-[11px] mt-4" style={{ ...sansStyle, color: c.textHint }}>
         {t('heroNote')}
       </div>
     </section>

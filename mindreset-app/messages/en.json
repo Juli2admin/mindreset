@@ -202,15 +202,16 @@
   "Landing": {
     "signIn": "Sign in",
     "account": "Account",
-    "heroKicker": "A turning point. A method.",
-    "heroTitle": "A way back\nto yourself.",
+    "heroKicker": "For women in midlife",
+    "heroTitle": "You held it together.\nNow you can put it down.",
+    "heroSubtitle": "A way back to yourself.",
     "heroBody": [
-      "You feel it, don't you? That quiet sense that something inside is misaligned.",
-      "You are functioning. You are capable. But underneath — there is confusion, exhaustion, or emptiness you cannot quite explain.",
-      "This is where you stop. And begin again."
+      "You're the one who notices everything. The one who keeps the family running, the work moving, the house standing. You're functioning. You're capable. You're tired in a way sleep doesn't quite fix.",
+      "You've read the books. Maybe you've tried therapy. You've journalled, reflected, worked on yourself — and something underneath still hasn't moved.",
+      "This is what MindReset is for. Daily support when you need to land. Focused modules when something specific surfaces. And a longer, slower method when you're ready to actually put it down."
     ],
-    "heroCta": "Begin",
-    "heroNote": "Begins with a five-minute check-in.",
+    "heroCta": "Try MiniMind free — 50 messages, no card",
+    "heroNote": "Begins with a 5-minute check-in.",
     "whatKicker": "What this is",
     "whatTitle": "Structure, not advice.",
     "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
