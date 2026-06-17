@@ -66,8 +66,24 @@ const CLERK_LOCALIZATIONS = {
 // Vercel-generated URL — keeps social-share previews stable across
 // preview/prod.
 const DEFAULT_TITLE = 'MindReset.ai — A way back to yourself';
+// DEFAULT_DESCRIPTION is load-bearing in three places at once:
+//   1. Meta description fallback for any page that doesn't set its
+//      own (currently /screening, /terms, /privacy, sign-in/up).
+//   2. OG and Twitter card description (the sitewide social-share
+//      preview text).
+//   3. Both Organization and WebSite JSON-LD descriptions (the entity
+//      summary AI search engines quote when grounding brand identity).
+//
+// Phase B item 3 update: dropped "trauma-informed" (ASA-risk wording
+// in self-help wellbeing positioning) and added the audience signal
+// "women in midlife" plus the three-product generic summary. Kept the
+// "not therapy, not a crisis service" legal/positioning lockup intact.
+// Reads correctly as both meta description (148 chars, under the
+// 155-limit) AND as a neutral entity description in JSON-LD — the
+// pain-state copy "who feel stuck" lives on the landing page
+// description only (pure marketing surface), not here.
 const DEFAULT_DESCRIPTION =
-  'A trauma-informed self-help platform. Not therapy, not a crisis service — a structured digital reflection tool for emotional clarity.';
+  'A self-help wellbeing platform for women in midlife — daily reflection, focused modules, and a structured method. Not therapy, not a crisis service.';
 
 // Locale-aware base metadata. Pages override `alternates` with their
 // own locale-correct canonical via pageAlternates(path, params.locale);
