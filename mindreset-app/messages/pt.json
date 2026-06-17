@@ -223,20 +223,13 @@
     "heroNote": "Começa com uma conversa inicial de cinco minutos.",
     "whatKicker": "O que é isto",
     "whatTitle": "Estrutura, não conselhos.",
-    "whatLead": "MindReset é uma plataforma estruturada de reflexão digital, pensada para o ajudar a recuperar clareza emocional, estabilidade interior e um sentido de direcção própria.",
     "whatNot": [
       "terapia",
       "coaching",
       "um serviço de crise"
     ],
     "notWord": "Nem",
-    "whatHelpsLead": "Ajuda-o a:",
-    "whatHelpsItems": [
-      "abrandar o ruído interior",
-      "reconhecer padrões emocionais",
-      "reconstruir uma coerência interior",
-      "voltar a ligar-se a quem é por baixo dos papéis e das expectativas"
-    ],
+    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
     "whoKicker": "Para quem é",
     "whoTitle": "Desorientação por dentro,\nfuncionamento por fora.",
     "whoScenarios": [

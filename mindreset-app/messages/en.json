@@ -214,16 +214,9 @@
     "heroNote": "Begins with a 5-minute check-in.",
     "whatKicker": "What this is",
     "whatTitle": "Structure, not advice.",
-    "whatLead": "MindReset is a structured digital reflection platform designed to help you regain emotional clarity, inner stability, and a sense of self-direction.",
     "whatNot": ["therapy", "coaching", "a crisis service"],
     "notWord": "Not",
-    "whatHelpsLead": "It helps you:",
-    "whatHelpsItems": [
-      "Slow down internal noise",
-      "Recognise emotional patterns",
-      "Rebuild inner coherence",
-      "Reconnect with who you are beneath roles and expectations"
-    ],
+    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
     "whoKicker": "Who it is for",
     "whoTitle": "This is for the women who…",
     "whoScenarios": [

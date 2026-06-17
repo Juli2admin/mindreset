@@ -223,20 +223,13 @@
     "heroNote": "Beginnt mit einem fünfminütigen Check-in.",
     "whatKicker": "Was es ist",
     "whatTitle": "Struktur, keine Ratschläge.",
-    "whatLead": "MindReset ist eine strukturierte digitale Reflexionsplattform — entwickelt, um Ihnen zu helfen, emotionale Klarheit, innere Stabilität und ein Gefühl für die eigene Richtung zurückzugewinnen.",
     "whatNot": [
       "Therapie",
       "Coaching",
       "ein Krisendienst"
     ],
     "notWord": "Nicht",
-    "whatHelpsLead": "Sie hilft Ihnen:",
-    "whatHelpsItems": [
-      "inneres Rauschen zu verlangsamen",
-      "emotionale Muster zu erkennen",
-      "innere Stimmigkeit wieder aufzubauen",
-      "sich wieder mit dem zu verbinden, wer Sie unter Rollen und Erwartungen sind"
-    ],
+    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
     "whoKicker": "Für wen es gedacht ist",
     "whoTitle": "Innerlich orientierungslos,\nnach außen funktional.",
     "whoScenarios": [
