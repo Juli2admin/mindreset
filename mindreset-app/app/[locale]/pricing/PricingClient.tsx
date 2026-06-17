@@ -127,6 +127,29 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
         <TopBar right={isSignedIn ? <UserButton /> : null} />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
+        {/* Phase B item 4 — Pricing H1 + subtitle. The page previously
+            had NO H1 (first heading was an H3 inside a tier card), a real
+            SEO weakness flagged in the Phase 2 audit. H1 is brand-voice
+            consistent with the rewritten landing sections. Subtitle is
+            accuracy-corrected — the free 50-message taster is MiniMind-
+            only, NOT all plans (States & Themes and Journey have no
+            taster), so the subtitle is explicit about which product
+            carries it. Misleading-offer risk eliminated. */}
+        <header className="mb-10 sm:mb-12">
+          <h1
+            className="text-[36px] sm:text-[44px] leading-[1.05] -tracking-[0.018em] mb-3"
+            style={{ ...{ fontFamily: SERIF }, color: PALETTE.text, fontWeight: 400 }}
+          >
+            {t('h1Title')}
+          </h1>
+          <p
+            className="text-[15px] leading-[1.6]"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {t('h1Subtitle')}
+          </p>
+        </header>
+
         <div className="space-y-4">
           {TIERS.map((tier) => {
             const title = t(`tiers.${tier.id}.title`);
