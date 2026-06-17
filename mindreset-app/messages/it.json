@@ -256,21 +256,18 @@
         "name": "MiniMind",
         "kind": "Compagno quotidiano",
         "body": "Un compagno di conversazione caldo, a cui tornare in qualsiasi momento. Check-in quotidiani, brevi pratiche di radicamento, un posto dove approdare quando qualcosa pesa. Apprende i Suoi schemi con dolcezza e propone un lavoro più profondo quando può aiutare.",
-        "anchor": "About the price of a Pret breakfast a week. Daily. Yours.",
         "price": "Da £14.99 / mese"
       },
       {
         "name": "Stati e Temi",
         "kind": "Moduli mirati",
         "body": "Percorsi brevi e strutturati per momenti precisi. Gli Stati per il presente: ansia, disconnessione, vuoto interiore, intorpidimento. I Temi per gli schemi sottostanti: denaro e autostima, famiglia, corpo, vergogna, realizzazione di sé.",
-        "anchor": "About what one private therapy session costs. Yours to return to.",
         "price": "£29–£59 a modulo"
       },
       {
         "name": "Il Cammino",
         "kind": "Un rinnovamento in otto tappe",
         "body": "Un percorso lento e sequenziale, dalla stabilizzazione fino a un nuovo senso di chi è Lei. Mesi di lavoro, al ritmo di ciò che il Suo sistema può sostenere. Pensato per lasciare andare credenze che non sono mai state Sue, ristabilire i confini, e ricordarsi di sé.",
-        "anchor": "About what 6 hours of private therapy would cost. Months of structured work.",
         "price": "Da £55/settimana · o £599 una sola volta"
       }
     ],

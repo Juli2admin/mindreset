@@ -256,21 +256,18 @@
         "name": "MiniMind",
         "kind": "Codzienny towarzysz",
         "body": "Ciepły towarzysz rozmowy, do którego można wrócić w każdej chwili. Codzienne rozmowy, krótkie praktyki uziemiające, miejsce, w którym można wylądować, gdy coś ciąży. Łagodnie poznaje Pani wzorce i proponuje głębszą pracę, gdy może pomóc.",
-        "anchor": "About the price of a Pret breakfast a week. Daily. Yours.",
         "price": "Od £14.99 / miesiąc"
       },
       {
         "name": "Stany i Tematy",
         "kind": "Skupione moduły",
         "body": "Krótkie ustrukturyzowane ścieżki na konkretne chwile. Stany na teraz: lęk, odłączenie, wewnętrzna pustka, odrętwienie. Tematy dla wzorców głębszych: pieniądze i poczucie własnej wartości, rodzina, ciało, wstyd, samorealizacja.",
-        "anchor": "About what one private therapy session costs. Yours to return to.",
         "price": "£29–£59 za moduł"
       },
       {
         "name": "Droga",
         "kind": "Ośmioetapowy reset",
         "body": "Powolna, sekwencyjna ścieżka od stabilizacji do nowego poczucia tego, kim Pani jest. Miesiące pracy, w tempie, jakie Pani system jest w stanie utrzymać. Stworzone, by puścić przekonania, które nigdy nie były Pani, przywrócić granice i znów pamiętać o sobie.",
-        "anchor": "About what 6 hours of private therapy would cost. Months of structured work.",
         "price": "Od £55/tydzień · lub £599 jednorazowo"
       }
     ],
