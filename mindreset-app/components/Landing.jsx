@@ -126,7 +126,7 @@ function Hero({ onBegin }) {
       </div>
 
       <h1
-        className="text-[44px] sm:text-[60px] md:text-[76px] leading-[0.98] mb-5 -tracking-[0.025em] whitespace-pre-line"
+        className="text-[36px] sm:text-[44px] md:text-[52px] leading-[0.98] mb-5 -tracking-[0.025em] whitespace-pre-line"
         style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
       >
         {t('heroTitle')}
