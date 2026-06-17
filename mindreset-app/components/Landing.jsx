@@ -320,6 +320,20 @@ function PathsSection() {
               <p className="text-[16px] leading-[1.65]" style={{ ...sansStyle, color: c.textMuted }}>
                 {p.body}
               </p>
+              {/* Phase A · Section 4 — pricing tier anchor. Italic serif
+                  in muted colour, sits between body and price link as a
+                  quiet value-reference aside. Anchors against something
+                  the buyer already understands (Pret breakfast / private
+                  therapy session / 6 hours of therapy) without claiming
+                  equivalence. */}
+              {p.anchor && (
+                <p
+                  className="mt-3 text-[14px] leading-[1.5] italic max-w-[28rem]"
+                  style={{ ...serifStyle, color: c.textHint, fontWeight: 400 }}
+                >
+                  {p.anchor}
+                </p>
+              )}
               <Link
                 href="/pricing"
                 className="mt-4 inline-flex items-center gap-2 text-[14px] hover:underline underline-offset-4"

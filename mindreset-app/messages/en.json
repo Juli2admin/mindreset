@@ -243,18 +243,21 @@
         "name": "MiniMind",
         "kind": "Daily companion",
         "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help.",
+        "anchor": "About the price of a Pret breakfast a week. Daily. Yours.",
         "price": "From £14.99 / month"
       },
       {
         "name": "States & Themes",
         "kind": "Focused modules",
         "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation.",
+        "anchor": "About what one private therapy session costs. Yours to return to.",
         "price": "£29–£59 per module"
       },
       {
         "name": "The Journey",
         "kind": "Eight-stage reset",
         "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself.",
+        "anchor": "About what 6 hours of private therapy would cost. Months of structured work.",
         "price": "From £55/week · or £599 once"
       }
     ],
