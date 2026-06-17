@@ -56,9 +56,14 @@ export async function generateMetadata({
   params: { locale: string };
 }): Promise<Metadata> {
   return {
-    title: 'Pricing',
+    // Phase B item 4: title.absolute bypasses the layout's "%s · MindReset.ai"
+    // template so the full title sits keywords-first with brand at end.
+    // Exact-match for "MindReset pricing" branded commercial-intent query.
+    title: {
+      absolute: 'MindReset pricing — MiniMind from £14.99/month, free taster',
+    },
     description:
-      'MiniMind Essential and Extended subscriptions. Message top-up. Free 50-message taster with every new account — no card required.',
+      'Choose how to begin: MiniMind from £14.99/month, focused modules, and the eight-stage method. Free 50-message taster, no card.',
     alternates: pageAlternates('/pricing', params.locale),
   };
 }
