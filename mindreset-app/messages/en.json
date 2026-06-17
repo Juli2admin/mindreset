@@ -266,14 +266,22 @@
       "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
     "differentKicker": "Why MindReset feels different",
-    "differentBody": [
-      "Most AI tools respond to whatever you ask.",
-      "MindReset follows a structured methodology.",
-      "Instead of endless conversations, it helps you move through a clear process — from awareness and emotional regulation to deeper patterns, boundaries, identity, and self-trust.",
-      "You are not expected to know the right questions.",
-      "The method guides the journey.",
-      "Because insight alone rarely creates change. Structure does."
+    "differentTitle": "Built for the work, not the noise.",
+    "differentRows": [
+      {
+        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
+        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+      },
+      {
+        "headline": "CBT scripts don't reach the pattern.",
+        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+      },
+      {
+        "headline": "Therapy is precious — and not always accessible.",
+        "body": "Human therapy is £200+ a month. MindReset is structured self-help wellbeing at £14.99 — with deeper, sequenced work for about what 6 hours of private therapy would cost, yours to return to. Not a replacement. A different shape of work."
+      }
     ],
+    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
     "closingKicker": "Whenever you are ready",
     "closingTitle": "Begin.",
     "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",

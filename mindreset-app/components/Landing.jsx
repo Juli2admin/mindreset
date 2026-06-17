@@ -365,42 +365,53 @@ function MethodSection() {
   );
 }
 
+// Phase A · Section 5 — competitor positioning rewrite. Old prose-array
+// replaced with: title + three rows (headline + body, separated by
+// dividers, naming category descriptions only — not competitor brand
+// names) + italic-serif punchline. Brand-name competitor comparison
+// lives on dedicated /vs/* pages in Phase D, not here. Therapy-cost
+// SEO/AI-search vocabulary lands naturally in Row 3 body prose.
 function Different() {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
-  const lines = t.raw('differentBody');
-  // Last line is the punchline — render in italic serif for emphasis,
-  // matching the pull-quote treatment used on /about. All earlier lines
-  // render as plain sans body. Centred copy column, max-width tuned so
-  // the longer middle line wraps gracefully.
-  const lastIndex = lines.length - 1;
+  const rows = t.raw('differentRows');
   return (
     <section
-      className="py-20 sm:py-24 text-center"
+      className="py-20 sm:py-24"
       style={{ borderTop: `1px solid ${c.border}` }}
     >
       <SectionKicker text={t('differentKicker')} color={c.accent} />
-      <div className="max-w-[34rem] mx-auto px-6 mt-10 space-y-6">
-        {lines.map((line, i) =>
-          i === lastIndex ? (
-            <p
-              key={i}
-              className="text-[20px] sm:text-[22px] italic leading-[1.5] pt-2"
-              style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
+      <SectionTitle text={t('differentTitle')} />
+
+      <div className="mt-12 max-w-[36rem]">
+        {rows.map((row, i) => (
+          <div
+            key={i}
+            className="py-8"
+            style={{ borderTop: `1px solid ${c.border}` }}
+          >
+            <h3
+              className="text-[20px] sm:text-[22px] leading-[1.35] -tracking-[0.01em] mb-3"
+              style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
             >
-              {line}
-            </p>
-          ) : (
+              {row.headline}
+            </h3>
             <p
-              key={i}
-              className="text-[16px] sm:text-[17px] leading-[1.7]"
-              style={{ ...sansStyle, color: c.text }}
+              className="text-[16px] leading-[1.65]"
+              style={{ ...sansStyle, color: c.textMuted }}
             >
-              {line}
+              {row.body}
             </p>
-          ),
-        )}
+          </div>
+        ))}
       </div>
+
+      <p
+        className="mt-10 text-[20px] sm:text-[22px] italic leading-[1.5] whitespace-pre-line max-w-[34rem]"
+        style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
+      >
+        {t('differentClose')}
+      </p>
     </section>
   );
 }
