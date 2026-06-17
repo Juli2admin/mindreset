@@ -41,6 +41,7 @@ MindReset is not therapy. Not coaching. Not a crisis service. Not a mental-healt
 
 - [Homepage](${SITE_URL}/) — what MindReset is, who it's for, the method
 - [Pricing](${SITE_URL}/pricing) — plans + free 50-message taster
+- [Alternatives](${SITE_URL}/alternatives) — comparison of self-help wellbeing apps + where MindReset fits
 - [FAQ](${SITE_URL}/faq) — common questions about products, privacy, contact
 - [About](${SITE_URL}/about) — the method and the founder. Built by Julia Loya.
 - [Share your story](${SITE_URL}/share-your-story) — user testimonials

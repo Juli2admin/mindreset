@@ -1132,5 +1132,67 @@
         "answer": "You can reach us at support@mindreset.ai. We'll do our best to reply, though please remember we're not a crisis service — for urgent help, use the contacts in the crisis question above."
       }
     }
+  },
+  "Alternatives": {
+    "metaTitle": "MindReset alternatives — wellbeing apps compared · MindReset.ai",
+    "metaDescription": "A clear, honest comparison of self-help wellbeing apps for women in midlife. Headspace, Calm, Wysa, BetterHelp, and where MindReset fits.",
+    "kicker": "THE LANDSCAPE",
+    "pageTitle": "MindReset alternatives.",
+    "introParagraphs": [
+      "We made this page because we want you to find the right thing, not just choose us. The wellbeing space is crowded, and most roundup articles are paid placements.",
+      "Here is a clear picture of what each named tool actually does, who it serves best, and where MindReset fits."
+    ],
+    "mindresetBlock": {
+      "name": "MindReset",
+      "bestFor": "Best for: women aged 35–55 in midlife who want a structured method for inner work, not a meditation library or CBT exercises.",
+      "description": "MiniMind (£14.99/month) is a daily companion for thinking out loud and grounding in the moment. The Journey (£599 once or £55/week) is an eight-stage structured method for sustained, paced inner work."
+    },
+    "ctaTryFree": "Try MiniMind free — 50 messages, no card",
+    "listingHeader": "Other apps in the landscape.",
+    "competitors": [
+      {
+        "name": "Headspace",
+        "bestFor": "Best for: stress reduction, meditation practice, sleep stories.",
+        "description": "One of the most established meditation apps. Large library of guided meditations, courses, and sleep stories. Excellent for daily relaxation and meditation practice. Not built for inner-pattern work or sustained method."
+      },
+      {
+        "name": "Calm",
+        "bestFor": "Best for: relaxation, sleep, ambient wellbeing.",
+        "description": "Strong sleep stories, meditations, masterclasses, music. Particularly known for sleep content. Calming, accessible, broad audience."
+      },
+      {
+        "name": "Wysa",
+        "bestFor": "Best for: CBT exercises on demand, mild anxiety symptom management.",
+        "description": "AI chatbot that uses CBT and DBT techniques and cites a research base. Useful for users who want short structured exercises for anxiety, low mood, or stress."
+      },
+      {
+        "name": "Woebot",
+        "bestFor": "Best for: short daily CBT check-ins, symptom management.",
+        "description": "AI chatbot that offers CBT-based conversations aimed at mild-to-moderate low mood. Brief, structured, designed for everyday use."
+      },
+      {
+        "name": "BetterHelp",
+        "bestFor": "Best for: weekly therapy sessions with a licensed clinician.",
+        "description": "Online therapy platform connecting users with licensed human therapists. Weekly sessions plus messaging. Premium subscription. For users who want real human therapy."
+      },
+      {
+        "name": "Talkspace",
+        "bestFor": "Best for: messaging-first therapy, psychiatry options.",
+        "description": "Online therapy and psychiatry platform. Licensed human therapists via text, voice, or video. Premium subscription. Comparable to BetterHelp."
+      },
+      {
+        "name": "Insight Timer",
+        "bestFor": "Best for: free meditation, large teacher library.",
+        "description": "Meditation app with thousands of free guided meditations from independent teachers. Wide-ranging styles and traditions. Free core with a premium subscription tier."
+      },
+      {
+        "name": "Ten Percent Happier",
+        "bestFor": "Best for: meditation skeptics, pragmatic tone.",
+        "description": "Meditation app founded by journalist Dan Harris. Research-oriented, pragmatic register. Premium subscription. For users who want meditation without the spiritual register."
+      }
+    ],
+    "closingTitle": "If you want a method, not a library.",
+    "closingBody": "MindReset is a different shape of work. MiniMind sits with you in the moment. The Journey takes you through the patterns underneath, over weeks to months. Both are built for women in midlife who feel stuck and are ready for structure, not quick fixes.",
+    "ctaReadMore": "Read about the method"
   }
 }
