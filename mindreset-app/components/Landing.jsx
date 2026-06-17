@@ -178,18 +178,20 @@ function WhatIs() {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const whatNot = t.raw('whatNot');
-  const whatHelpsItems = t.raw('whatHelpsItems');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
       <SectionKicker text={t('whatKicker')} color={c.accent} />
       <SectionTitle text={t('whatTitle')} />
 
-      <p className="text-[17px] leading-[1.65] mt-8 mb-12 max-w-[36rem]" style={{ ...sansStyle, color: c.textMuted }}>
-        {t('whatLead')}
-      </p>
+      {/* Phase A · Section 4 rewrite — Section dropped its
+          platform-description paragraph and four "It helps you" bullets
+          (both redundant after the Hero ¶3 rewrite and the new
+          MethodSection downstream). What remains is the locked
+          legal/positioning lockup plus a single closing line in the new
+          voice register. */}
 
-      {/* "Not therapy. Not coaching. Not a crisis service." */}
-      <div className="space-y-3 mb-14">
+      {/* "Not therapy. Not coaching. Not a crisis service." — locked. */}
+      <div className="space-y-3 mt-8 mb-10">
         {whatNot.map((word, i) => (
           <div
             key={i}
@@ -202,24 +204,12 @@ function WhatIs() {
         ))}
       </div>
 
-      <div
-        className="text-[11px] uppercase tracking-[0.18em] mb-5"
-        style={{ ...sansStyle, color: c.textHint, fontWeight: 500 }}
+      <p
+        className="text-[18px] leading-[1.55] italic max-w-[34rem]"
+        style={{ ...serifStyle, color: c.textMuted, fontWeight: 400 }}
       >
-        {t('whatHelpsLead')}
-      </div>
-      <ul className="space-y-3">
-        {whatHelpsItems.map((item, i) => (
-          <li key={i} className="flex gap-4">
-            <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
-              0{i + 1}
-            </span>
-            <span className="text-[16px] leading-[1.6] flex-1" style={{ ...sansStyle, color: c.text }}>
-              {item}
-            </span>
-          </li>
-        ))}
-      </ul>
+        {t('whatClose')}
+      </p>
     </section>
   );
 }
