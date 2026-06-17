@@ -230,7 +230,7 @@ function wrapHtml(body: string): string {
           <td style="padding:20px 40px 32px;border-top:1px solid #D9D2C2;
                      font-size:12px;color:#6A6A6A;font-family:Georgia,serif;
                      line-height:1.6;">
-            MindReset.ai &nbsp;·&nbsp; A trauma-informed self-help companion — not therapy,
+            MindReset.ai &nbsp;·&nbsp; A self-help wellbeing companion — not therapy,
             not a crisis service. &nbsp;·&nbsp;
             <a href="https://mindreset.ai" style="color:#2D7A85;text-decoration:none;">
               mindreset.ai
