@@ -203,8 +203,17 @@ export default async function LocaleLayout({
             rel="stylesheet"
           />
           {/* JSON-LD: Organization + WebSite. Inline (not via next/script)
-              so the markup is in the initial HTML response — Google
-              indexes it on first crawl, no need for JS execution. */}
+              so the markup is in the initial HTML response — Google +
+              AI crawlers index it on first crawl, no need for JS
+              execution.
+
+              Phase B note: previously missing a description field on the
+              WebSite entity. Added so AI search engines (Perplexity,
+              Claude, ChatGPT browse) get a clean canonical sentence about
+              what MindReset is when grounding entity identity. The
+              Organization description stays on the layout DEFAULT_
+              DESCRIPTION so it stays aligned with any future tweak to
+              the default meta description. */}
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -227,7 +236,13 @@ export default async function LocaleLayout({
                 '@type': 'WebSite',
                 name: 'MindReset.ai',
                 url: SITE_URL,
+                description: DEFAULT_DESCRIPTION,
                 inLanguage: routing.locales,
+                publisher: {
+                  '@type': 'Organization',
+                  name: 'MindReset.ai',
+                  url: SITE_URL,
+                },
               }),
             }}
           />
