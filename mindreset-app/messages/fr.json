@@ -279,14 +279,22 @@
       "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
     "differentKicker": "Pourquoi MindReset est différent",
-    "differentBody": [
-      "La plupart des outils d’AI répondent simplement aux questions que vous leur posez.",
-      "MindReset suit une méthodologie structurée.",
-      "Au lieu de conversations sans fin, il vous accompagne à travers un processus clair et progressif — de la prise de conscience et de la régulation émotionnelle vers des schémas plus profonds, les limites personnelles, l’identité et la confiance en soi.",
-      "Vous n’avez pas besoin de connaître les bonnes questions.",
-      "C’est la méthode qui guide le cheminement.",
-      "Car la compréhension seule crée rarement un véritable changement. La structure, elle, le permet."
+    "differentTitle": "Built for the work, not the noise.",
+    "differentRows": [
+      {
+        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
+        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+      },
+      {
+        "headline": "CBT scripts don't reach the pattern.",
+        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+      },
+      {
+        "headline": "Therapy is precious — and not always accessible.",
+        "body": "Human therapy is £200+ a month. MindReset is structured self-help wellbeing at £14.99 — with deeper, sequenced work for about what 6 hours of private therapy would cost, yours to return to. Not a replacement. A different shape of work."
+      }
     ],
+    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
     "closingKicker": "Quand le moment est juste",
     "closingTitle": "Commencer.",
     "closingBody": "Vous n’avez pas besoin d’être en morceaux pour commencer. Vous n’avez pas besoin de savoir ce que vous voulez. Le bilan vous dit — doucement — si cela vous correspond en ce moment.",

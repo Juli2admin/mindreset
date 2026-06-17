@@ -279,14 +279,22 @@
       "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
     "differentKicker": "Dlaczego MindReset działa inaczej",
-    "differentBody": [
-      "Większość narzędzi AI odpowiada na wszystko, o co je zapytasz.",
-      "MindReset opiera się na uporządkowanej metodologii.",
-      "Zamiast niekończących się rozmów prowadzi Cię przez jasny proces — od świadomości i regulacji emocjonalnej do głębszych wzorców, granic, tożsamości i zaufania do samej siebie.",
-      "Nie musisz znać właściwych pytań.",
-      "To metoda prowadzi Cię przez tę drogę.",
-      "Ponieważ sama świadomość rzadko prowadzi do zmiany. To struktura ją umożliwia."
+    "differentTitle": "Built for the work, not the noise.",
+    "differentRows": [
+      {
+        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
+        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+      },
+      {
+        "headline": "CBT scripts don't reach the pattern.",
+        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+      },
+      {
+        "headline": "Therapy is precious — and not always accessible.",
+        "body": "Human therapy is £200+ a month. MindReset is structured self-help wellbeing at £14.99 — with deeper, sequenced work for about what 6 hours of private therapy would cost, yours to return to. Not a replacement. A different shape of work."
+      }
     ],
+    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
     "closingKicker": "Kiedy będzie Pani gotowa",
     "closingTitle": "Zacząć.",
     "closingBody": "Nie trzeba być w kawałkach, by zacząć. Nie trzeba wiedzieć, czego się chce. Rozmowa wstępna mówi — delikatnie — czy to jest dla Pani w tej chwili.",
