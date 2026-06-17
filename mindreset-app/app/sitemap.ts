@@ -23,11 +23,27 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/seo/alternates';
+import { ARTICLES } from '@/lib/journal/articles';
 
 // Public paths to include in the sitemap. Each entry lists every locale
 // variant + hreflang alternates so search engines know about the full
 // multi-locale graph.
-const PUBLIC_PATHS = ['/', '/about', '/screening', '/pricing', '/alternatives', '/faq', '/terms', '/privacy', '/share-your-story'] as const;
+const STATIC_PATHS = [
+  '/',
+  '/about',
+  '/screening',
+  '/pricing',
+  '/alternatives',
+  '/journal',
+  '/faq',
+  '/terms',
+  '/privacy',
+  '/share-your-story',
+] as const;
+
+// Journal article paths are sourced from the typed registry so adding a
+// new article automatically extends the sitemap on next deploy.
+const ARTICLE_PATHS = ARTICLES.map((a) => `/journal/${a.slug}`);
 
 function buildAlternates(path: string): Record<string, string> {
   const trimmed = path === '/' ? '' : path;
@@ -42,10 +58,11 @@ function buildAlternates(path: string): Record<string, string> {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+  const allPaths = [...STATIC_PATHS, ...ARTICLE_PATHS];
 
   // One sitemap entry per (path × locale) pairing so each variant has
   // its own crawl URL. hreflang alternates are attached to each entry.
-  return PUBLIC_PATHS.flatMap((path) => {
+  return allPaths.flatMap((path) => {
     const trimmed = path === '/' ? '' : path;
     const languages = buildAlternates(path);
     return routing.locales.map((locale) => {
