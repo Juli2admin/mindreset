@@ -346,6 +346,35 @@ function PathsSection() {
   );
 }
 
+// Phase A · Section 3 — "Method described, not named". Substantiates The
+// Journey claim from PathsSection above without revealing the 8-stage IP.
+// Three paragraphs in the brand voice: what it is / the arc in user-
+// experience language / what it isn't. Sits after PathsSection introduces
+// the three paths, before Different positions vs competitors.
+function MethodSection() {
+  const { palette: c } = useTheme();
+  const t = useTranslations('Landing');
+  const body = t.raw('methodBody');
+  return (
+    <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
+      <SectionKicker text={t('methodKicker')} color={c.accent} />
+      <SectionTitle text={t('methodTitle')} />
+
+      <div className="mt-10 mb-2 space-y-6 max-w-[36rem]">
+        {body.map((para, i) => (
+          <p
+            key={i}
+            className="text-[16px] leading-[1.65]"
+            style={{ ...sansStyle, color: c.text }}
+          >
+            {para}
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Different() {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
@@ -539,6 +568,7 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
         <WhoFor />
         <Safety />
         <PathsSection />
+        <MethodSection />
         <Different />
         <NewsletterSignup />
         {testimonialsSlot}
