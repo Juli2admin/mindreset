@@ -233,31 +233,25 @@ function WhoFor() {
       <SectionKicker text={t('whoKicker')} color={c.accentSage} />
       <SectionTitle text={t('whoTitle')} />
 
-      <p
-        className="text-[15px] uppercase tracking-[0.04em] mt-10 mb-6"
-        style={{ ...sansStyle, color: c.textMuted }}
-      >
-        {t('whoLead')}
-      </p>
-
-      {/* Lighter visual treatment than the prose sections — dropped
-          per-item border dividers and tightened spacing so this section
-          reads as a quick scannable list rather than a heavy block. */}
-      <ul className="space-y-2 mb-12">
+      {/* Sentence-completion treatment: the H2 ends "…" and each scenario
+          begins with "…" so the whole block reads as one continuous
+          thought. Numbered list dropped (was 01/02/…); previous whoLead
+          caption dropped (now redundant once H2 leads directly into the
+          scenarios). */}
+      <div className="mt-10 mb-12 space-y-5 max-w-[34rem]">
         {whoScenarios.map((item, i) => (
-          <li key={i} className="flex gap-4 py-1.5">
-            <span className="text-[14px] tabular-nums mt-1" style={{ ...serifStyle, color: c.textHint }}>
-              0{i + 1}
-            </span>
-            <span className="text-[16px] leading-[1.6] flex-1" style={{ ...sansStyle, color: c.text }}>
-              {item}
-            </span>
-          </li>
+          <p
+            key={i}
+            className="text-[16px] leading-[1.6]"
+            style={{ ...sansStyle, color: c.text }}
+          >
+            {item}
+          </p>
         ))}
-      </ul>
+      </div>
 
       <p
-        className="text-[22px] leading-[1.4] italic max-w-[34rem]"
+        className="text-[22px] leading-[1.4] italic max-w-[34rem] whitespace-pre-line"
         style={{ ...serifStyle, color: c.accent, fontWeight: 400 }}
       >
         {t('whoClose')}
