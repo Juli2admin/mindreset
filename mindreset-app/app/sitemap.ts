@@ -27,7 +27,7 @@ import { SITE_URL } from '@/lib/seo/alternates';
 // Public paths to include in the sitemap. Each entry lists every locale
 // variant + hreflang alternates so search engines know about the full
 // multi-locale graph.
-const PUBLIC_PATHS = ['/', '/about', '/screening', '/pricing', '/faq', '/terms', '/privacy', '/share-your-story'] as const;
+const PUBLIC_PATHS = ['/', '/about', '/screening', '/pricing', '/alternatives', '/faq', '/terms', '/privacy', '/share-your-story'] as const;
 
 function buildAlternates(path: string): Record<string, string> {
   const trimmed = path === '/' ? '' : path;
