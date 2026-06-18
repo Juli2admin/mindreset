@@ -171,7 +171,7 @@ const ALL_RED_FLAG_TYPES: RedFlagType[] = [
   'flashback_in_progress',
 ];
 
-function stripCodeFences(text: string): string {
+export function stripCodeFences(text: string): string {
   const trimmed = text.trim();
   if (trimmed.startsWith('```')) {
     return trimmed.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
@@ -179,7 +179,7 @@ function stripCodeFences(text: string): string {
   return trimmed;
 }
 
-function parseResult(parsed: unknown): VerifierResult | null {
+export function parseResult(parsed: unknown): VerifierResult | null {
   if (!parsed || typeof parsed !== 'object') return null;
   const obj = parsed as Record<string, unknown>;
   const verdict = obj.verdict;
