@@ -47,6 +47,12 @@ MindReset is not therapy. Not coaching. Not a crisis service. Not a mental-healt
 - [About](${SITE_URL}/about) — the method and the founder. Built by Julia Loya.
 - [Share your story](${SITE_URL}/share-your-story) — user testimonials
 
+## Official accounts
+
+- Instagram: https://www.instagram.com/mindreset_journey
+- YouTube: https://youtube.com/@method_to_reconnect
+- TikTok: https://www.tiktok.com/@mindreset.ai0
+
 ## Audience
 
 - Women 35–55, mostly UK
