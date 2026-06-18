@@ -23,7 +23,9 @@ import {
   getArticleBySlug,
   ARTICLES,
   isAdviceParagraph,
+  DEFAULT_PRODUCT_LINKS,
   type Article,
+  type ProductLink,
 } from '@/lib/journal/articles';
 import { TOKENS } from '@/lib/brand/colors';
 
@@ -88,40 +90,74 @@ function buildJsonLd(article: Article): string {
 }
 
 /**
- * Render the closing paragraph with the word "MiniMind" wrapped in a Link
- * to /minimind. The article copy refers to MiniMind once in the closing
- * paragraph — we transform that single token to a styled link. If the
- * token doesn't appear, the paragraph renders unchanged.
+ * Walk `text` and wrap every occurrence of any product-link token in an
+ * inline Link to the configured href. Earliest match wins; tokens are
+ * sorted by length descending so multi-word tokens (e.g. "The Journey")
+ * match before any single-word substring overlap. Returns a fragment
+ * array suitable for embedding in a <p>.
  */
-function ClosingParagraph({ text }: { text: string }) {
-  const token = 'MiniMind';
-  const idx = text.indexOf(token);
-  if (idx < 0) {
-    return (
-      <p
-        className="text-[17px] leading-[1.7]"
-        style={{ color: '#393939', fontFamily: SANS }}
+function renderTextWithLinks(
+  text: string,
+  links: ProductLink[],
+): React.ReactNode[] {
+  if (links.length === 0) return [text];
+  // Sort once so the inner loop always picks the longest-token match
+  // first if multiple tokens start at the same position.
+  const sortedLinks = [...links].sort(
+    (a, b) => b.token.length - a.token.length,
+  );
+  const out: React.ReactNode[] = [];
+  let remaining = text;
+  let keyCounter = 0;
+  while (remaining.length > 0) {
+    let earliestIdx = -1;
+    let matched: ProductLink | undefined;
+    for (const link of sortedLinks) {
+      const idx = remaining.indexOf(link.token);
+      if (idx >= 0 && (earliestIdx === -1 || idx < earliestIdx)) {
+        earliestIdx = idx;
+        matched = link;
+      }
+    }
+    if (!matched || earliestIdx < 0) {
+      out.push(remaining);
+      break;
+    }
+    if (earliestIdx > 0) {
+      out.push(remaining.slice(0, earliestIdx));
+    }
+    out.push(
+      <Link
+        key={`pl-${keyCounter++}`}
+        href={matched.href}
+        className="underline underline-offset-4 hover:no-underline"
+        style={{ color: '#2D7A85', fontWeight: 500 }}
       >
-        {text}
-      </p>
+        {matched.token}
+      </Link>,
     );
+    remaining = remaining.slice(earliestIdx + matched.token.length);
   }
-  const before = text.slice(0, idx);
-  const after = text.slice(idx + token.length);
+  return out;
+}
+
+/**
+ * Render a single closing paragraph with product-token Links woven in
+ * where they appear in the prose.
+ */
+function ClosingParagraph({
+  text,
+  links,
+}: {
+  text: string;
+  links: ProductLink[];
+}) {
   return (
     <p
       className="text-[17px] leading-[1.7]"
       style={{ color: '#393939', fontFamily: SANS }}
     >
-      {before}
-      <Link
-        href="/minimind"
-        className="underline underline-offset-4 hover:no-underline"
-        style={{ color: '#2D7A85', fontWeight: 500 }}
-      >
-        {token}
-      </Link>
-      {after}
+      {renderTextWithLinks(text, links)}
     </p>
   );
 }
@@ -238,14 +274,28 @@ export default async function ArticlePage({
           </section>
         ))}
 
-        {/* Closing — last paragraph(s); MiniMind link inlined */}
+        {/* Closing — optional H2 + paragraphs with product-token links
+            wrapped in inline Links. Each article supplies its own
+            productLinks map; falls back to the MiniMind → /minimind
+            default for articles that don't override. */}
         <section
           className="pt-10 mt-6 mb-10"
           style={{ borderTop: `1px solid #D4D0C5` }}
         >
+          {article.closingHeading && (
+            <h2
+              className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5"
+              style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            >
+              {article.closingHeading}
+            </h2>
+          )}
           {article.closing.map((p, i) => (
             <div key={i} className="mb-5">
-              <ClosingParagraph text={p} />
+              <ClosingParagraph
+                text={p}
+                links={article.productLinks ?? DEFAULT_PRODUCT_LINKS}
+              />
             </div>
           ))}
         </section>
