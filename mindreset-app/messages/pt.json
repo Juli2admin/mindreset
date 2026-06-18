@@ -376,7 +376,12 @@
       "samaritans": "Samaritans — 116 123 (free, 24/7)",
       "nhs": "NHS 111, option 2 — for mental health crisis",
       "gp": "Your GP if you have one",
-      "emergency": "If you're in immediate physical danger, call 999 or go to A&E."
+      "emergency": "If you're in immediate physical danger, call 999 or go to A&E.",
+      "reviewIntro": "If you think this happened by mistake, you can ask for a review.",
+      "reviewButton": "Request a review",
+      "reviewSending": "Sending…",
+      "reviewSent": "Thank you. We've received your request and will review it as soon as we can.",
+      "reviewError": "Couldn't send right now. Please try again later, or email support."
     },
     "homeCardCta": "Continue →"
   },

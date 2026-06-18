@@ -40,6 +40,49 @@ function getChatIpLimiter(): Ratelimit {
   return _chatIp;
 }
 
+// Journey rate limiters — same posture as MiniMind chat (10/min/user,
+// 30/min/ip, fail-closed in prod). The Journey is a paid product on the
+// same Anthropic API path; without rate limiting a single purchaser
+// (or stolen token) can hammer Anthropic at will. £ cost vector.
+let _journeyUser: Ratelimit | null = null;
+function getJourneyUserLimiter(): Ratelimit {
+  if (!_journeyUser) {
+    _journeyUser = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(10, '1 m'),
+      prefix: 'rl:journey:user',
+    });
+  }
+  return _journeyUser;
+}
+let _journeyIp: Ratelimit | null = null;
+function getJourneyIpLimiter(): Ratelimit {
+  if (!_journeyIp) {
+    _journeyIp = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(30, '1 m'),
+      prefix: 'rl:journey:ip',
+    });
+  }
+  return _journeyIp;
+}
+
+// Review-request rate limiter — caps how often a frozen user can ask
+// for review. One request per 24 hours per user is enough for the
+// pattern; prevents a frozen user from spamming the review queue with
+// repeated requests.
+let _journeyReview: Ratelimit | null = null;
+function getJourneyReviewLimiter(): Ratelimit {
+  if (!_journeyReview) {
+    _journeyReview = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(1, '1 d'),
+      prefix: 'rl:journey:review',
+    });
+  }
+  return _journeyReview;
+}
+
 let _screeningIp: Ratelimit | null = null;
 function getScreeningIpLimiter(): Ratelimit {
   if (!_screeningIp) {
@@ -138,6 +181,54 @@ export async function checkChatRateLimit(
   } catch (err) {
     console.error('[rateLimit] Upstash error — failing closed with 503:', err);
     return { limited: true, retryAfter: 60 };
+  }
+}
+
+export async function checkJourneyRateLimit(
+  userId: string,
+  ip: string,
+): Promise<RateLimitResult> {
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
+    return { limited: false };
+  }
+  try {
+    const [userResult, ipResult] = await Promise.all([
+      getJourneyUserLimiter().limit(userId),
+      getJourneyIpLimiter().limit(ip),
+    ]);
+    if (!userResult.success) {
+      return { limited: true, retryAfter: Math.ceil((userResult.reset - Date.now()) / 1000) };
+    }
+    if (!ipResult.success) {
+      return { limited: true, retryAfter: Math.ceil((ipResult.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    console.error('[rateLimit] Upstash error on journey check — failing closed with 503:', err);
+    return { limited: true, retryAfter: 60 };
+  }
+}
+
+export async function checkJourneyReviewRateLimit(
+  userId: string,
+): Promise<RateLimitResult> {
+  assertRedisInProd();
+  if (!isRedisConfigured()) {
+    return { limited: false };
+  }
+  try {
+    const result = await getJourneyReviewLimiter().limit(userId);
+    if (!result.success) {
+      return { limited: true, retryAfter: Math.ceil((result.reset - Date.now()) / 1000) };
+    }
+    return { limited: false };
+  } catch (err) {
+    // Fail open here — the review request is the user's only path out of
+    // a frozen state. A Redis blip should not block them from asking for
+    // help. Worst case: they get to send a couple of duplicate requests.
+    console.error('[rateLimit] Upstash error on review request — failing open:', err);
+    return { limited: false };
   }
 }
 
