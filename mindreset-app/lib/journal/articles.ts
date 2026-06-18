@@ -67,6 +67,84 @@ export type Article = {
 
 export const ARTICLES: Article[] = [
   {
+    slug: 'why-am-i-so-tired-all-the-time',
+    title: 'Why Am I So Tired All the Time? The Exhaustion No Test Can Find',
+    metaTitle:
+      'Why Am I So Tired All the Time? The Exhaustion No Test Can Find · MindReset',
+    metaDescription:
+      "Tired all the time even after sleeping, but your tests are normal? For women in midlife, the cause is often the mental load no test can find. Here's how to rest.",
+    author: { name: 'Julia Loya', url: '/about' },
+    publishedAt: '2026-06-20',
+    intro: [
+      'You did the sensible thing. You went to the doctor. They checked your iron, your thyroid, your vitamin D, asked about your sleep. And the results came back — normal. Nothing wrong. Try to rest more, they said.',
+      "And yet here you are, tired all the time. You sleep, and you wake up exhausted anyway — not sleepy-tired, but empty-tired, drained before the day has even begun. If you're a woman in midlife who feels tired all the time even after a full night's sleep, and every test says you're fine, please hear this first: it's real, and you're not imagining it.",
+      "There's a kind of exhaustion that no standard test is designed to find — because it doesn't live in your blood. It lives in your mind, in everything your mind has been carrying, silently and without a break, for years.",
+    ],
+    sections: [
+      {
+        heading: 'First, the honest bit',
+        paragraphs: [
+          "Let's be responsible about this. Genuine fatigue can have physical causes — low iron, an underactive thyroid, sleep problems, perimenopause, and others — and several are common in women aged 35 to 55. So if you haven't had it properly checked, do. Rule the physical things out first. That matters.",
+          "But if you've done that — if they've run the tests, told you you're fine, and you're still dragging yourself through every day on empty — then the thing draining you probably isn't physical at all. No amount of early nights will fix it, because you were never short on sleep. You're short on something else.",
+        ],
+      },
+      {
+        heading: 'The exhaustion of a mind that never switches off',
+        paragraphs: [
+          "Here's what mental exhaustion actually looks like in midlife.",
+          "It's eleven at night. Your body is finally still. Your mind is not. It's already running tomorrow — who needs to be where, what you forgot, the thing you should have said differently, the appointment to book, what's for dinner three days from now, the thing you mustn't forget next week. You're lying perfectly still, and your mind is doing everything, the way it always does, the way it never stops. This is why so many women say they can't switch their brain off at night.",
+          "This is the part nobody can see. The people around you see a woman who's finished for the day, sitting down, apparently resting. What they can't see is that you never actually clock off — because you're the one holding it all: the schedules, the needs, the what-comes-next for everyone in your life. You remember, anticipate, plan, notice, smooth, manage. All day. In the background. Even when your eyes are closed.",
+          "It has a name now — researchers call it the mental load — and the studies are clear on two things. It falls overwhelmingly on women. And it doesn't get lighter when you're successful: women with demanding careers and good incomes hand off some of the physical chores, but the invisible thinking-work stays exactly where it was. You can have help with the cleaning and still be the only person who knows when the school shoes need replacing.",
+          'That is the tiredness no test can find — the exhaustion of carrying so much, every waking hour, that your mind never once gets to be empty.',
+        ],
+      },
+      {
+        heading: 'Why exhaustion hits so hard for women in midlife',
+        paragraphs: [
+          "You can carry the mental load for years before it catches up with you. In your twenties and thirties there's enough momentum — building, proving, small children, the sheer pace — that you don't notice the weight. You just carry it.",
+          "Then midlife arrives, the noise drops a little, and you finally feel what you've been holding. You lift your head one ordinary evening and realise you can't remember the last time your mind was simply, genuinely off. Not distracted. Not numbed in front of the telly. Off. At peace. Yours.",
+          "That's not weakness, and it's not a character flaw. It's the entirely predictable result of being the one who plans, tracks and holds everything — for a decade or two — with a mind that was never taught how to stop.",
+        ],
+      },
+      {
+        heading: "How to stop feeling tired when sleep isn't the problem",
+        paragraphs: [
+          "Here's the heart of it. If the exhaustion comes from a mind that never switches off, then the answer was never more sleep or more discipline. It's learning, slowly, how to stop — how to finish the thinking instead of carrying it into the night, and how to finally put yourself somewhere on the list. That's slower work, but it's the real fix, and it does work.",
+          {
+            lead: 'Name it for what it is.',
+            body: "Half the weight of the mental load is that it's invisible — even to you. You just feel vaguely, permanently frazzled. The moment you can say I'm not lazy and I'm not ill — I'm carrying an enormous invisible load and no one can see it, something eases. You stop blaming yourself for being tired. That's where it begins.",
+          },
+          {
+            lead: 'Learn how to finish the thinking.',
+            body: "Most of what keeps you awake isn't being solved — it's just circling. The mind picks the same worries up again and again because they were never properly set down. Learning to close the loop — to decide there is nothing more I can usefully do about this tonight and actually put it down until morning — is a skill. It feels impossible at first. It gets easier every time you practise it.",
+          },
+          {
+            lead: "Question what's actually yours to carry.",
+            body: "Some of what you hold, you hold out of love. Some of it you hold purely out of habit — because you've always done it, because you're good at it, because no one else picked it up so you did. Not all of it is genuinely yours. Ask, gently, of each thing: does this really have to live in my head?",
+          },
+          {
+            lead: 'Put yourself back on the list — and be kinder to yourself there.',
+            body: "You organise rest, treats and care for everyone around you, and almost never extend the same to yourself; when you do, you call it selfish. It isn't. A mind that is appreciated, spoken to gently, and allowed its own small comforts recovers. A mind that is endlessly criticised and never thanked simply runs until it's empty. Learning to be on your own side isn't a luxury — for you, it's the medicine.",
+          },
+          {
+            lead: 'Reclaim one quiet that belongs to no one but you.',
+            body: "Not a spa day. Something small and real — ten minutes where your mind is off-duty and you're not tracking anyone or anything. You'll be astonished how foreign it feels at first, and how much it gives back.",
+          },
+        ],
+      },
+      {
+        heading: "You're not tired. Your mind has never been allowed to rest.",
+        paragraphs: [
+          "That's the real reason you're exhausted all the time — the one the blood test wasn't looking for. You're not failing at being rested. You've been thinking for everyone, holding everything, in the one place no one can see it, for years — and never once being told that you're allowed to stop.",
+          "Coming back from it isn't dramatic. It's quiet. It starts the first time you let your mind put something down and discover the world doesn't fall apart. Then again. Then a little more — until one evening you notice your mind has gone quiet on its own, and that the quiet, finally, is yours.",
+        ],
+      },
+    ],
+    closing: [
+      "If you want somewhere to set the load down and hear yourself think, that's what MiniMind is for — a daily companion for women in midlife to think out loud with, to empty out what your mind has been carrying, finish the thoughts that keep circling, and slowly learn to let it rest. The first 50 messages are free, no card needed. Not therapy. Not a quick fix. Just a quiet place to put it down — when you're ready, and at your own pace.",
+    ],
+  },
+  {
     slug: 'how-to-stop-people-pleasing-in-midlife',
     title: 'How to Stop People-Pleasing in Midlife',
     metaTitle: 'How to Stop People-Pleasing in Midlife · MindReset',
