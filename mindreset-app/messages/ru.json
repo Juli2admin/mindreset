@@ -1154,6 +1154,7 @@
     },
     "ctaTryFree": "Попробуйте MiniMind бесплатно — 50 сообщений, без карты",
     "listingHeader": "Другие приложения на этой карте.",
+    "readFullComparison": "Подробнее: MindReset.ai и {competitor} →",
     "competitors": [
       {
         "name": "Headspace",
@@ -1198,6 +1199,19 @@
     ],
     "closingTitle": "Если вам нужен метод, а не библиотека.",
     "closingBody": "MindReset — другая форма работы. MiniMind сидит с вами в моменте. Путь проводит через паттерны, лежащие под этим, в течение недель или месяцев. И то, и другое создано для женщин в среднем возрасте, которые чувствуют, что застряли, и готовы к структуре, а не к быстрым решениям.",
+    "ctaReadMore": "Узнать о методе"
+  },
+  "Vs": {
+    "kicker": "СРАВНЕНИЕ",
+    "h1Pattern": "MindReset.ai и {competitor}: чем они различаются.",
+    "byline": "MindReset.ai · создано Юлией Лоя · Великобритания",
+    "backToAlternatives": "Все альтернативы",
+    "whatTheyAreHeading": "Что такое {competitor}.",
+    "whatMindResetIsHeading": "Что такое MindReset.ai.",
+    "theyFitWhenHeading": "{competitor} подойдёт, если:",
+    "mindresetFitsWhenHeading": "MindReset.ai подойдёт, если:",
+    "honestOverlapHeading": "Что у них общего.",
+    "ctaTryFree": "Попробовать MiniMind бесплатно — 50 сообщений, без карты",
     "ctaReadMore": "Узнать о методе"
   }
 }

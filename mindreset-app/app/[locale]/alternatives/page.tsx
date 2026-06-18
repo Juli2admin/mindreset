@@ -24,6 +24,18 @@ import Footer from '@/components/Footer';
 import { Link } from '@/i18n/navigation';
 import { pageAlternates } from '@/lib/seo/alternates';
 import { TOKENS } from '@/lib/brand/colors';
+import { COMPARISONS } from '@/lib/competitors';
+
+/**
+ * Returns the /vs slug for a competitor name if a comparison page
+ * exists; undefined otherwise. Match is case-insensitive on the name
+ * because the alternatives copy uses display names ("Wysa") and the
+ * registry uses lowercase slugs ("wysa").
+ */
+function comparisonSlugForCompetitor(name: string): string | undefined {
+  const lc = name.toLowerCase();
+  return COMPARISONS.find((c) => c.name.toLowerCase() === lc)?.slug;
+}
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -138,34 +150,51 @@ export default async function AlternativesPage({
           {t('listingHeader')}
         </h2>
 
-        {/* Competitor list — same row treatment as MindReset, lighter visual */}
+        {/* Competitor list — same row treatment as MindReset, lighter visual.
+            When a /vs/{slug} comparison page exists for the competitor, a
+            small "Read full comparison →" link appears below the
+            description routing to the deeper page. The link only renders
+            for competitors that have been written up — most rows stay
+            link-free until their dedicated page ships. */}
         <div className="space-y-10 mb-16">
-          {competitors.map((c, i) => (
-            <div
-              key={c.name}
-              className="pt-8"
-              style={{ borderTop: `1px solid #D4D0C5` }}
-            >
-              <h3
-                className="text-[20px] sm:text-[22px] mb-3"
-                style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+          {competitors.map((c) => {
+            const compareSlug = comparisonSlugForCompetitor(c.name);
+            return (
+              <div
+                key={c.name}
+                className="pt-8"
+                style={{ borderTop: `1px solid #D4D0C5` }}
               >
-                {c.name}
-              </h3>
-              <p
-                className="text-[14px] leading-[1.6] mb-3"
-                style={{ color: '#6A6A6A', fontFamily: SANS }}
-              >
-                {c.bestFor}
-              </p>
-              <p
-                className="text-[15px] leading-[1.65]"
-                style={{ color: '#555', fontFamily: SANS }}
-              >
-                {c.description}
-              </p>
-            </div>
-          ))}
+                <h3
+                  className="text-[20px] sm:text-[22px] mb-3"
+                  style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+                >
+                  {c.name}
+                </h3>
+                <p
+                  className="text-[14px] leading-[1.6] mb-3"
+                  style={{ color: '#6A6A6A', fontFamily: SANS }}
+                >
+                  {c.bestFor}
+                </p>
+                <p
+                  className="text-[15px] leading-[1.65] mb-3"
+                  style={{ color: '#555', fontFamily: SANS }}
+                >
+                  {c.description}
+                </p>
+                {compareSlug && (
+                  <Link
+                    href={`/vs/${compareSlug}`}
+                    className="inline-block text-[14px] hover:no-underline underline underline-offset-4"
+                    style={{ color: '#2D7A85', fontFamily: SANS, fontWeight: 500 }}
+                  >
+                    {t('readFullComparison', { competitor: c.name })}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Closing block */}

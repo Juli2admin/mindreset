@@ -1154,6 +1154,7 @@
     },
     "ctaTryFree": "Try MiniMind free — 50 messages, no card",
     "listingHeader": "Other apps in the landscape.",
+    "readFullComparison": "Read MindReset.ai vs {competitor} →",
     "competitors": [
       {
         "name": "Headspace",
@@ -1198,6 +1199,19 @@
     ],
     "closingTitle": "If you want a method, not a library.",
     "closingBody": "MindReset is a different shape of work. MiniMind sits with you in the moment. The Journey takes you through the patterns underneath, over weeks to months. Both are built for women in midlife who feel stuck and are ready for structure, not quick fixes.",
+    "ctaReadMore": "Read about the method"
+  },
+  "Vs": {
+    "kicker": "HEAD TO HEAD",
+    "h1Pattern": "MindReset.ai vs {competitor}: how they compare.",
+    "byline": "MindReset.ai · built by Julia Loya · UK",
+    "backToAlternatives": "All alternatives",
+    "whatTheyAreHeading": "What {competitor} is.",
+    "whatMindResetIsHeading": "What MindReset.ai is.",
+    "theyFitWhenHeading": "{competitor} fits when:",
+    "mindresetFitsWhenHeading": "MindReset.ai fits when:",
+    "honestOverlapHeading": "Honest overlap.",
+    "ctaTryFree": "Try MiniMind free — 50 messages, no card",
     "ctaReadMore": "Read about the method"
   }
 }
