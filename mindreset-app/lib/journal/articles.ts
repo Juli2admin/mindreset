@@ -37,6 +37,25 @@ export type ArticleAuthor = {
   url?: string;
 };
 
+/**
+ * In-prose product link. When `token` (case-sensitive substring) appears
+ * in any closing paragraph, the renderer wraps that exact substring in
+ * a Link to `href`. Used so each article can route its product mentions
+ * to wherever is most useful at the time of writing — MiniMind to
+ * /minimind for direct sign-up; The Journey to / (homepage) while the
+ * product is still in phased rollout and not yet purchasable.
+ *
+ * Default if Article.productLinks is unspecified: a single entry
+ * mapping "MiniMind" to "/minimind". Articles that want different
+ * behaviour set the field explicitly.
+ */
+export type ProductLink = {
+  /** Exact substring to match in closing prose. Case-sensitive. */
+  token: string;
+  /** Target href for the wrapped Link. */
+  href: string;
+};
+
 export type Article = {
   slug: string;
   /** H1 on the article page + headline in JSON-LD. */
@@ -58,14 +77,106 @@ export type Article = {
   /** Body sections, in order. */
   sections: ArticleSection[];
   /**
-   * Closing paragraphs after the last section. The MiniMind CTA paragraph
-   * is rendered with a Link wrapping the word "MiniMind" — the renderer
-   * looks for the exact token in this prose.
+   * Optional H2 heading rendered above the closing paragraphs. Useful
+   * when the closing call-to-action wants its own labelled section
+   * (e.g. "Where to begin") rather than reading as an unlabelled coda.
+   */
+  closingHeading?: string;
+  /**
+   * Closing paragraphs after the last section. Product tokens listed in
+   * `productLinks` are wrapped in inline Links by the renderer.
    */
   closing: string[];
+  /**
+   * Optional per-article product-link map. If unspecified, the renderer
+   * uses a default of [{ token: "MiniMind", href: "/minimind" }].
+   */
+  productLinks?: ProductLink[];
 };
 
+/**
+ * Default product-link map used when an article omits `productLinks`.
+ * Articles 1 and 2 (people-pleasing, tired) rely on this default.
+ */
+export const DEFAULT_PRODUCT_LINKS: ProductLink[] = [
+  { token: 'MiniMind', href: '/minimind' },
+];
+
 export const ARTICLES: Article[] = [
+  {
+    slug: 'how-to-find-yourself-again',
+    title:
+      'How to Find Yourself Again After Years of Putting Everyone Else First',
+    metaTitle:
+      'How to Find Yourself Again After Years of Putting Everyone Else First · MindReset',
+    metaDescription:
+      "How to find yourself again in midlife after years of putting everyone else first — why it's not a single moment but a journey back to the parts of you that got lost.",
+    author: { name: 'Julia Loya', url: '/about' },
+    publishedAt: '2026-06-22',
+    intro: [
+      'There comes a point — often somewhere in midlife — when a quiet, frightening question surfaces. Who am I, underneath all of this?',
+      "You've spent years, maybe decades, being what everyone needed. The dependable one. The one who held it together, who put herself last so often it stopped feeling like a choice and started feeling like who you were. And now the question arrives, usually at an ordinary moment, and you realise you genuinely don't know the answer anymore. You don't know what you'd do with a free afternoon that was truly your own. You can't remember what you used to love. Somewhere along the way, you lost yourself — and you're not even sure when.",
+      "If you're trying to work out how to find yourself again, this is for you. But I want to be honest with you from the start about what that actually takes, because most of what's written about it isn't.",
+    ],
+    sections: [
+      {
+        heading: "Finding yourself isn't a moment. It's a return journey.",
+        paragraphs: [
+          "Here's the thing nobody tells you. You will not wake up one morning suddenly restored to yourself. There is no single afternoon where you light a candle, write in a journal, and emerge whole. That fantasy is everywhere, and it sets women up to feel like failures when one good day of self-care doesn't fix a lifetime of self-abandonment.",
+          "The truth is slower, and far more real. You didn't lose yourself all at once, so you don't find yourself all at once either. You lost yourself in pieces — a little in childhood, when you learned which parts of you were welcome and which were not. A little more as a teenager, shaping yourself to be accepted. More again in your relationships, your marriages, your years of raising and providing and keeping everyone afloat. Each time, you left a small piece of yourself behind to be what the moment required.",
+          "So finding yourself again is not a moment of arrival. It's a journey back — through your own life — to the places where you left those pieces, to pick them up and bring them home. It's real work. And it's exactly because it's real work that it actually lasts.",
+        ],
+      },
+      {
+        heading: 'Why you can’t just "choose yourself" overnight',
+        paragraphs: [
+          "The popular advice says: put yourself first, rediscover your passions, do what makes you happy. Good intentions, useless in practice. Because if you've spent thirty years not knowing what you want, you can't simply decide to want things on a Tuesday. The wanting muscle has wasted away. The voice that knew what you loved has been quiet so long you can't hear it.",
+          "You can't choose yourself when you've lost track of who that self even is. First you have to go and find her. And she isn't in the future, in some reinvented version of you — she's in your past, in the moments you had to leave her behind. The talents you abandoned. The dreams you called unrealistic. The version of you that existed before you learned to make yourself small. She's still there. She's just waiting in the places you stopped looking.",
+        ],
+      },
+      {
+        heading: 'What the journey back actually looks like',
+        paragraphs: [
+          'This is the slower work, and here is roughly how it unfolds.',
+          {
+            lead: 'You go back to where you lost yourself.',
+            body: "Not to wallow, and not to blame — but to look honestly at the turning points. The moment you learned love had conditions. The relationship where you slowly disappeared. The decade you gave to everyone but yourself. You revisit them not as wounds but as places where pieces of you were left.",
+          },
+          {
+            lead: 'You meet the parts you left behind.',
+            body: "This is the heart of it. The bold child. The creative teenager. The young woman who had plans. They didn't die — they went quiet. When you go back and actually meet them, something extraordinary happens: they come back. The talents return. The feelings you'd numbed start working again. You begin to recognise yourself.",
+          },
+          {
+            lead: 'You gather the pieces together.',
+            body: "Slowly, the fragments you've collected start to form a whole again — and the whole is not the worn-out role you'd been playing. It's the real you, the one who was there all along underneath the function. And almost always, there's a quiet shock in it: I was designed for a different life than the one I've been living.",
+          },
+          {
+            lead: 'You start living as her, not as the role.',
+            body: "This is where it becomes real. You begin making choices as the person you actually are, not the person everyone got used to. It's not loud. It's a hundred small moments of choosing yourself, until one day you realise the choosing has become natural.",
+          },
+        ],
+      },
+      {
+        heading: 'The moment of truth',
+        paragraphs: [
+          "For most women who do this work, there's no fireworks — but there is a moment of truth, and it tends to arrive after the work, not instead of it. A quiet morning when you realise the person making the decisions is finally you. That the talents and feelings and wants that came back are yours. That you are not, and never were, the diminished version you'd been living as — you were simply someone who lost herself, and has now, piece by piece, come home.",
+          "That's what finding yourself again actually means. Not a reinvention. A recovery. The return of someone who was there the whole time.",
+        ],
+      },
+    ],
+    closingHeading: 'Where to begin',
+    closing: [
+      "You begin by noticing — gently, daily — the small moments where you still abandon yourself, and by letting your own wants start to speak again. That's the work MiniMind supports: a daily companion you can think out loud with, to start hearing your own voice again underneath the noise of everyone else's needs. The first 50 messages are free, no card needed.",
+      "And when you're ready for the deeper work — the real journey back through where you lost yourself, structured and paced so you can do it safely — that's what The Journey is built for: an eight-stage method that takes you, step by step, from where you are now to the self you'd left behind. Not therapy. Not a quick fix. A structured way to actually come home to yourself — at your own pace, when you're ready.",
+    ],
+    // Both product mentions route to the homepage for now — The Journey
+    // is still in phased rollout and not yet purchasable, and MiniMind
+    // links to / for consistency with the dual-product mention.
+    productLinks: [
+      { token: 'MiniMind', href: '/' },
+      { token: 'The Journey', href: '/' },
+    ],
+  },
   {
     slug: 'why-am-i-so-tired-all-the-time',
     title: 'Why Am I So Tired All the Time? The Exhaustion No Test Can Find',
