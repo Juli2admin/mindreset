@@ -109,12 +109,22 @@ export async function generateMetadata({
       title: 'MindReset',
       statusBarStyle: 'default',
     },
-    // Google Search Console verification — paste the token from the
-    // "Other verification methods" → meta tag option in Search Console.
-    // Leave empty until the token is issued; Google won't penalise a
-    // missing tag, just won't trust the property until present.
+    // Search Console verification tokens. Each is env-gated — the meta
+    // tag only renders when the token is present in env, so the surface
+    // ships dark and goes live the moment the token is set in Vercel.
+    //   Google: Search Console → Add property → "Other verification
+    //   methods" → meta tag. Copy the `content` value into
+    //   GOOGLE_SITE_VERIFICATION.
+    //   Bing: Webmaster Tools → Add site → Verify ownership → HTML
+    //   meta tag. Copy the `content` value into BING_SITE_VERIFICATION.
+    //   (msvalidate.01 is Bing's tag name.) Bing also imports Google
+    //   verification automatically if Google is already set, but pasting
+    //   the explicit token short-circuits the import wait.
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION,
+      other: process.env.BING_SITE_VERIFICATION
+        ? { 'msvalidate.01': process.env.BING_SITE_VERIFICATION }
+        : undefined,
     },
     icons: {
       icon: [
