@@ -24,6 +24,7 @@ import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 import { SITE_URL } from '@/lib/seo/alternates';
 import { ARTICLES } from '@/lib/journal/articles';
+import { COMPARISONS } from '@/lib/competitors';
 
 // Public paths to include in the sitemap. Each entry lists every locale
 // variant + hreflang alternates so search engines know about the full
@@ -45,6 +46,9 @@ const STATIC_PATHS = [
 // new article automatically extends the sitemap on next deploy.
 const ARTICLE_PATHS = ARTICLES.map((a) => `/journal/${a.slug}`);
 
+// /vs/{competitor} comparison paths — same registry-driven pattern.
+const VS_PATHS = COMPARISONS.map((c) => `/vs/${c.slug}`);
+
 function buildAlternates(path: string): Record<string, string> {
   const trimmed = path === '/' ? '' : path;
   const languages: Record<string, string> = {};
@@ -58,7 +62,7 @@ function buildAlternates(path: string): Record<string, string> {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const allPaths = [...STATIC_PATHS, ...ARTICLE_PATHS];
+  const allPaths = [...STATIC_PATHS, ...ARTICLE_PATHS, ...VS_PATHS];
 
   // One sitemap entry per (path × locale) pairing so each variant has
   // its own crawl URL. hreflang alternates are attached to each entry.
