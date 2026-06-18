@@ -15,6 +15,18 @@
 // New articles are appended to ARTICLES. The /journal index sorts
 // newest-first by publishedAt and the [slug] route generates static
 // pages for each entry via generateStaticParams.
+//
+// PHASE C STATUS (2026-06-22):
+// Three articles published; Phase C article-writing PAUSED. Articles
+// 4–10 from the SEO commercial plan are DEFERRED (not cancelled).
+// 2-per-month cadence will resume later. When we resume, the
+// candidate next topics are:
+//   - "Burnout vs exhaustion: which do you actually have?" (preferred
+//     — ladders off Article 2 "Why Am I So Tired All the Time?")
+//   - "Why nothing feels meaningful anymore"
+// "When therapy didn't help" is ON HOLD pending careful ASA-safe
+// review before it's written. The three live articles below must
+// stay exactly as published — do not edit.
 
 export type AdviceParagraph = {
   /** Bold lead-in phrase (e.g. "Catch the moment, not the lifetime."). */

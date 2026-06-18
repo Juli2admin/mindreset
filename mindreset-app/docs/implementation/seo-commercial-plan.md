@@ -278,6 +278,33 @@ Disallow: /api/
 
 ## Section 3 — Content engine for SEO + AI search (Phase C)
 
+> **Status update (2026-06-22): Phase C article-writing PAUSED.**
+>
+> Three articles are live and that's the stopping point for this
+> round:
+>
+> 1. *How to Stop People-Pleasing in Midlife* — Article 1
+> 2. *Why Am I So Tired All the Time?* — Article 2
+> 3. *How to Find Yourself Again After Years of Putting Everyone Else
+>    First* — Article 3
+>
+> Articles 4–10 from this plan are **deferred, not cancelled.** The
+> 2-per-month cadence will resume later.
+>
+> When we resume, candidate next topics:
+> - *"Burnout vs exhaustion: which do you actually have?"* —
+>   **preferred next**, ladders thematically off Article 2
+> - *"Why nothing feels meaningful anymore"*
+>
+> *"When therapy didn't help"* is **ON HOLD** pending careful ASA-safe
+> review before it is written. The therapy-comparison framing carries
+> the highest ASA risk surface of any topic in this list and requires
+> dedicated review against the brand-language constraints in
+> CLAUDE.md before drafting.
+>
+> The three live articles above must stay exactly as published — do
+> not edit them when resuming.
+
 ### 3.1 URL pattern recommendation
 
 **Recommendation: `/journal`**

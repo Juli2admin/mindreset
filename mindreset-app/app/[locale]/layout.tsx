@@ -240,7 +240,11 @@ export default async function LocaleLayout({
                 url: SITE_URL,
                 logo: `${SITE_URL}/logo-light.png`,
                 description: DEFAULT_DESCRIPTION,
-                sameAs: [],
+                sameAs: [
+                  'https://www.instagram.com/mindreset_journey',
+                  'https://youtube.com/@method_to_reconnect',
+                  'https://www.tiktok.com/@mindreset.ai0',
+                ],
               }),
             }}
           />
