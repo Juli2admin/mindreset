@@ -35,12 +35,18 @@ import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
 import { freezeJourney } from '@/lib/journey/safety/freeze';
 import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
+import { checkJourneyRateLimit } from '@/lib/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const HISTORY_LIMIT = 30;
 const MAX_TOKENS = 1500;
+// Max characters in a single user message. ~4000 chars ≈ 1000 tokens —
+// keeps any one turn within reasonable bounds for cost AND for the
+// 30-message history replay (no risk of one user blowing the prompt
+// budget). MiniMind enforces a similar cap.
+const MAX_USER_MESSAGE_CHARS = 4000;
 // Tag pair used by the assembler's output-format instruction; we strip
 // everything from STATE_REPORT_OPEN onward before streaming to the client.
 const STATE_REPORT_OPEN = '<state-report>';
@@ -48,6 +54,19 @@ const STATE_REPORT_OPEN = '<state-report>';
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  // Rate limit BEFORE auth-paid checks so a stolen token can't burn cost
+  // by spamming /api/journey/turn. Per-user cap + per-IP cap, same posture
+  // as MiniMind chat (10/min/user, 30/min/ip). Fails closed in prod on a
+  // Redis blip to protect against cost vector.
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  const rateLimit = await checkJourneyRateLimit(userId, ip);
+  if (rateLimit.limited) {
+    return NextResponse.json(
+      { error: 'Rate limited', retryAfter: rateLimit.retryAfter },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } },
+    );
+  }
 
   let body: { message?: string; modelOverride?: string; locale?: string };
   try {
@@ -57,6 +76,20 @@ export async function POST(request: NextRequest) {
   }
   const userMessage = (body.message ?? '').trim();
   if (!userMessage) return NextResponse.json({ error: 'Empty message' }, { status: 400 });
+  // Cap message length to prevent token blow-out / cost DoS. A 200KB
+  // paste would otherwise be encrypted, stored, replayed in history every
+  // turn, and sent to Anthropic. 4000 chars is plenty for a single
+  // honest message in this product context.
+  if (userMessage.length > MAX_USER_MESSAGE_CHARS) {
+    return NextResponse.json(
+      {
+        error: 'Message too long',
+        maxChars: MAX_USER_MESSAGE_CHARS,
+        gotChars: userMessage.length,
+      },
+      { status: 413 },
+    );
+  }
 
   // Localised crisis response. Default to EN if absent or unknown — never
   // silently fail to deliver SOME canned response in a Red Flag situation.
@@ -72,9 +105,29 @@ export async function POST(request: NextRequest) {
   const state = await loadJourneyState(userId);
   if (!state) return NextResponse.json({ error: 'Journey not started' }, { status: 409 });
 
-  // Frozen-for-review: return holding response, no LLM call.
+  // Frozen-for-review: return the holding crisis response, no LLM call.
+  // Item 4.6 fix: STILL run the synchronous keyword scan on the message so
+  // an escalating self-harm utterance from a frozen user is logged as a
+  // distinct audit row with the new flag. Without this, a frozen user
+  // sending escalating content leaves no audit trace at all — owner
+  // loses the signal they need to triage.
   if (state.frozenForReview) {
     await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
+    const flag = scanForJourneyRedFlag(userMessage);
+    if (flag.matched) {
+      await writeAuditTurn({
+        userId,
+        stageAtTurn: state.currentStage,
+        depthAtTurn: state.currentDepth,
+        userMessage,
+        report: {
+          intensity: 10,
+          safetyFlag: 'red_flag',
+          recommendedAction: 'red_flag',
+          redFlagType: flag.flagType,
+        },
+      });
+    }
     return cannedResponse(crisisResponse);
   }
 

@@ -555,6 +555,36 @@ function Composer({
 function FrozenView() {
   const t = useTranslations('Journey.frozen');
   const { palette: PALETTE } = useTheme();
+  // Day 1 audit fix item 4.3 — Request Review affordance. Lets a
+  // paying user who tripped a false positive ask for a human review
+  // instead of being permanently locked out. State machine:
+  //   idle -> sending -> sent | error -> (stays sent or returns to idle on retry)
+  const [reviewState, setReviewState] = useState<
+    'idle' | 'sending' | 'sent' | 'error'
+  >('idle');
+
+  async function handleRequestReview() {
+    setReviewState('sending');
+    try {
+      const res = await fetch('/api/journey/request-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        setReviewState('sent');
+        return;
+      }
+      // 429 from rate limiter still counts as "we got your request" UX-wise
+      if (res.status === 429) {
+        setReviewState('sent');
+        return;
+      }
+      setReviewState('error');
+    } catch {
+      setReviewState('error');
+    }
+  }
+
   return (
     <div
       className="px-6 py-8"
@@ -590,6 +620,52 @@ function FrozenView() {
         >
           {t('emergency')}
         </p>
+
+        {/* Review-request affordance — sits below the crisis lines so
+            the safety information is read first, and the "this might
+            be a mistake" option is offered second. */}
+        <div
+          className="mt-6 pt-6"
+          style={{ borderTop: `1px solid ${PALETTE.border}` }}
+        >
+          {reviewState === 'sent' ? (
+            <p
+              className="text-sm"
+              style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+            >
+              {t('reviewSent')}
+            </p>
+          ) : (
+            <>
+              <p
+                className="mb-3 text-sm"
+                style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+              >
+                {t('reviewIntro')}
+              </p>
+              <button
+                onClick={handleRequestReview}
+                disabled={reviewState === 'sending'}
+                className="px-4 py-2 rounded-md text-sm disabled:opacity-50"
+                style={{
+                  background: PALETTE.accent,
+                  color: PALETTE.accentText,
+                  fontFamily: TOKENS.sans,
+                }}
+              >
+                {reviewState === 'sending' ? t('reviewSending') : t('reviewButton')}
+              </button>
+              {reviewState === 'error' && (
+                <p
+                  className="mt-2 text-sm"
+                  style={{ color: '#B45454', fontFamily: TOKENS.sans }}
+                >
+                  {t('reviewError')}
+                </p>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
