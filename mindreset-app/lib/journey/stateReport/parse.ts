@@ -172,6 +172,9 @@ export function parseStateReport(raw: string | null): StateReport {
   copyStringField(obj, 'cohesionAwareness', report);
   const mii6 = pickEnumOptional(obj.mii6Check, MII6_CHECKS as unknown as Mii6CheckValue[]);
   if (mii6) report.mii6Check = mii6;
+  if (typeof obj.internalConsensus === 'boolean') {
+    report.internalConsensus = obj.internalConsensus;
+  }
   copyStringField(obj, 'cleanIdentityStatement', report);
   copyStringField(obj, 'whatStaysAsMine', report);
   copyStringField(obj, 'symbolicIdentityMap', report);

@@ -231,26 +231,46 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // Stage 6 — Integration & Identity Consolidation
 // ---------------------------------------------------------------------------
 // Per docs/journey/06-stage-integration.md §10
+//
+// Audit P0 #2 (2026-06-19) made this gate reachable. Before the fix:
+//   - The cohesion check used a regex over readinessTouched tokens that
+//     existed only in the gate, not in any prompt's vocabulary. The
+//     gate could not pass even when the user reached internal
+//     consensus correctly.
+//   - The "no separated parts" check tested compassionBridgeQuality,
+//     which is a Stage 4 MII-4 milestone, not a Stage 6 separation
+//     signal. It also passed vacuously when state.parts.length === 0.
+//
+// The fix uses an explicit `internalConsensus: boolean` field the AI
+// emits after running the Internal Consensus Check (canon §8.1), and
+// requires the user has at least one captured part in their landscape
+// before Stage 6 advancement can be evaluated.
+//
+// What this gate still does NOT enforce (deliberate, P1/P2 follow-up):
+//   - selfLoyaltyStatement (canon §10)
+//   - oneSmallAction (canon §10)
+//   - adultSelfPresent ≥ 70% of last 3 sessions (currently implicit
+//     in standardGuards intensity/safety reads only)
+// These require schema additions queued for the stage-safeguards work.
 export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
   if (!state.identityAnchor) reasons.push('identity_anchor_not_set');
-  // "I feel like myself" on ≥ 2 distinct days — captured via readinessTouched
-  const feelLikeMyselfTwice = heldOnDistinctDays(
+  // Internal consensus reached on ≥ 2 distinct days. Canon §10 names
+  // this exactly as `internalConsensus: true`.
+  const consensusTwice = heldOnDistinctDays(
     turns,
-    (t) =>
-      (t.report.readinessTouched ?? []).some((r) =>
-        /feel[_-]?like[_-]?myself|internal[_-]?consensus|cohesion/i.test(r),
-      ),
+    (t) => t.report.internalConsensus === true,
     2,
   );
-  if (!feelLikeMyselfTwice) reasons.push('felt_cohesion_not_reached_on_two_days');
-  // No separated/angry/unseen parts in last 3 sessions — proxied by no part
-  // having compassionBridgeQuality cleared back to null
-  const allPartsBridged = state.parts.every(
-    (p) => p.compassionBridgeQuality != null,
-  );
-  if (!allPartsBridged) reasons.push('part_without_compassion_bridge');
+  if (!consensusTwice) reasons.push('internal_consensus_not_reached_on_two_days');
+  // Stage 6 evaluates parts cohesion; without any captured parts the
+  // check is meaningless. The earlier `parts.every(...)` shape passed
+  // vacuously for empty arrays, which let users without any parts in
+  // their landscape advance through Stage 6.
+  if (state.parts.length === 0) {
+    reasons.push('no_parts_in_landscape_for_cohesion_check');
+  }
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
