@@ -38,6 +38,10 @@ const ACTIONS: RecommendedAction[] = [
 const BRIDGE_QUALITIES: CompassionBridgeQuality[] = [
   'compassion', 'curiosity', 'acceptance', 'willingness_to_comfort',
 ];
+const MII6_CHECKS = [
+  'stable', 'destabilised', 'unsure', 'destabilised_then_recovered',
+] as const;
+type Mii6CheckValue = (typeof MII6_CHECKS)[number];
 const PRACTICE_FAMILIES: PracticeFamily[] = [
   'regulation', 'somatic', 'landscape', 'narrative', 'compassion', 'none',
 ];
@@ -166,6 +170,8 @@ export function parseStateReport(raw: string | null): StateReport {
   if (bridge) report.compassionBridgeQuality = bridge;
 
   copyStringField(obj, 'cohesionAwareness', report);
+  const mii6 = pickEnumOptional(obj.mii6Check, MII6_CHECKS as unknown as Mii6CheckValue[]);
+  if (mii6) report.mii6Check = mii6;
   copyStringField(obj, 'cleanIdentityStatement', report);
   copyStringField(obj, 'whatStaysAsMine', report);
   copyStringField(obj, 'symbolicIdentityMap', report);

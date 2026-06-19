@@ -46,6 +46,32 @@ export async function applyStateReportToProgress(
     updates.frozen = { reason: report.redFlagType ?? 'unspecified' };
   }
 
+  // Stage 4 MII-6 (48-hour settling check). The AI emits mii6Check ONLY
+  // when the soft check-in instruction was injected this turn. Map the
+  // AI's verdict to the persisted MII status:
+  //   stable                       → met   (the gate passes)
+  //   destabilised_then_recovered  → met   (wobble already resolved)
+  //   unsure                       → pending (log only; gate does not fail)
+  //   destabilised                 → failed (gate trips; Stage 4→5 held)
+  // The gate check at stage-gates.ts mii6Status === 'failed' was previously
+  // unreachable because no code path wrote to mii6_noDestabilisation —
+  // this is the wiring fix from the 2026-06-19 audit (CRITICAL #2).
+  if (report.mii6Check) {
+    const status =
+      report.mii6Check === 'destabilised'
+        ? 'failed'
+        : report.mii6Check === 'unsure'
+          ? 'pending'
+          : 'met';
+    updates.miiPatch = {
+      ...(updates.miiPatch ?? {}),
+      mii6_noDestabilisation: {
+        status,
+        lastCheckedAt: new Date().toISOString(),
+      },
+    };
+  }
+
   await applyUpdates(userId, updates);
   await applyLandscapeAdditions(userId, report);
 }
