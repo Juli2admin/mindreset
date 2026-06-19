@@ -87,6 +87,15 @@ export type StateReport = {
   adultSelfQualities?: string; // Stage 3
   compassionBridgeQuality?: CompassionBridgeQuality; // Stage 4 — MII-4
   cohesionAwareness?: string; // Stage 4 — MII-7
+  // Stage 4 — MII-6, the 48-hour soft check-in result. The AI emits this
+  // ONLY when the soft check-in instruction was injected this turn (i.e.
+  // a Deep Layer practice ran last session). `stable` = nothing unusual
+  // surfaced. `destabilised` = real settling difficulty (sleep, intrusive
+  // material, distress beyond baseline) — fails the MII-6 gate so the
+  // Stage 4→5 advance is held. `destabilised_then_recovered` = the user
+  // had a wobble but is grounded now — counts as met. `unsure` = code
+  // logs but does not fail the gate.
+  mii6Check?: 'stable' | 'destabilised' | 'unsure' | 'destabilised_then_recovered';
   cleanIdentityStatement?: string; // Stage 5
   whatStaysAsMine?: string; // Stage 5 / 6
   symbolicIdentityMap?: string; // Stage 7
