@@ -597,6 +597,7 @@ Discrete event captures (set the turn the event happens, in the user's exact wor
 - `compassionBridgeQuality` — one of "compassion" | "curiosity" | "acceptance" | "willingness_to_comfort".
 - `cohesionAwareness` — STRING, user's words.
 - `mii6Check` — one of "stable" | "destabilised" | "unsure" | "destabilised_then_recovered". Emit ONLY when the soft 48-hour check-in instruction was injected this turn (a Deep Layer practice ran last session). "stable" = nothing unusual surfaced. "destabilised" = real settling difficulty (sleep, intrusive material, distress beyond baseline). "destabilised_then_recovered" = the user had a wobble but is grounded now. "unsure" if you genuinely cannot tell.
+- `internalConsensus` — BOOLEAN. Set to `true` ONLY after running the Internal Consensus Check (the four cohesion questions) in this turn and the user has confirmed all parts present, aligned with the Adult Self, and not in conflict. Set to `false` (or omit) if any part is still scared, unseen, or in tension. Stage 6 advancement requires this to be true on two different days.
 
 Arrays of discrete events:
 - `readinessTouched` — array of strings, from this vocabulary: "anchor_identified", "body_located", "emotion_named", "orientation_present", "pain_named", "alliance_formed", "observer_seat_touched", "adult_self_present", "foreign_file_identified", "foreign_file_released", "formulation_confirmed".

@@ -98,6 +98,13 @@ export type StateReport = {
   mii6Check?: 'stable' | 'destabilised' | 'unsure' | 'destabilised_then_recovered';
   cleanIdentityStatement?: string; // Stage 5
   whatStaysAsMine?: string; // Stage 5 / 6
+  // Stage 6 — Internal Consensus Check verdict for this turn. Per
+  // 06-stage-integration.md §10, advancement requires this to be true
+  // on at least two different days. The AI sets `true` only after
+  // running the four cohesion questions (§8.1) and the user has
+  // confirmed all parts present, aligned with the Adult Self, and not
+  // in conflict. False / unset = consensus not reached this turn.
+  internalConsensus?: boolean;
   symbolicIdentityMap?: string; // Stage 7
   emergingQualities?: string[]; // Stage 7
   innerDirection?: string; // Stage 7
