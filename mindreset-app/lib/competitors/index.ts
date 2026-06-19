@@ -94,6 +94,45 @@ export const COMPARISONS: CompetitorComparison[] = [
       "If you'd like to try MindReset.ai, MiniMind's first 50 messages are free, no card needed. Not therapy. Not a quick fix. A structured way to come home to yourself, at your own pace.",
     ],
   },
+  {
+    slug: 'betterhelp',
+    name: 'BetterHelp',
+    homepage: 'https://www.betterhelp.com/',
+    metaTitle: 'MindReset.ai vs BetterHelp — honest comparison · MindReset.ai',
+    metaDescription:
+      'MindReset.ai vs BetterHelp — one is therapy with a licensed clinician, the other is self-help reflection. An honest guide to which you actually need.',
+    intro: [
+      "These two get compared, and they shouldn't be — not because the comparison is unfair, but because they're solving for different problems. BetterHelp is therapy. MindReset.ai is self-help reflection. The first is a clinical service with a licensed professional; the second is a structured digital tool you use alone.",
+      "If you're searching for one and considering the other, this page is to help you tell which you actually need. Honest is more useful than persuasive here.",
+    ],
+    whatTheyAre:
+      "BetterHelp is an online therapy platform connecting users with licensed human therapists. You book weekly sessions, message between them, and the therapist is a real clinical professional held to professional standards in their jurisdiction. It's a subscription service with a premium price tag, and what you're paying for is access to qualified human therapy. BetterHelp serves a general adult population — no specific demographic targeting beyond the broad \"people who want therapy.\"",
+    whatMindResetIs: [
+      "MindReset.ai is not therapy and is not a substitute for therapy. It's a self-help wellbeing platform for women aged 35 to 55 in midlife. There is no human clinician on the other end — there's an AI built to support structured self-reflection in a specific, paced way. If your situation calls for clinical care, MindReset is not the right tool and we'll tell you so plainly: get therapy.",
+      MINDRESET_LOCKED_PARAGRAPH,
+    ],
+    theyFitWhen: [
+      "You're in active distress — depression, anxiety severe enough to interfere with daily life, trauma symptoms — and want clinical support",
+      'You want a real human professional you can speak to and who can adjust the approach to you',
+      'You may benefit from a formal diagnosis, treatment plan, or referral to additional clinical care depending on what BetterHelp offers in your region',
+      "You're in or approaching crisis and need someone with clinical training in the room",
+      'You can afford weekly therapy and are committed to the cadence',
+    ],
+    mindresetFitsWhen: [
+      "You're not in crisis, not in active clinical distress, but you feel internally stuck and you want structure for the slower work",
+      "You've done therapy already — sometimes years of it — and want a self-directed way to keep reflecting at your own pace",
+      "You're specifically a woman in midlife and want material designed for that stage of life, not a general-population tool",
+      'You want a daily companion (MiniMind) for noticing patterns, or a structured method (The Journey) for sustained inner work',
+      "You'd rather think out loud at your own pace than book a weekly slot",
+    ],
+    honestOverlap: [
+      "Less than the comparison suggests — because they solve different problems. BetterHelp is regulated clinical care; MindReset.ai is self-help reflection. The category boundary matters: therapy is for people who need clinical support, and we'd rather you have that than try to replace it with a self-help tool. If a friend asked us which to pick when they were in real distress, we'd say BetterHelp every time.",
+      "Where the two touch is the everyday reality that many women have done therapy, are doing therapy, or have decided therapy isn't where they are right now — and still want somewhere to do their own work. MindReset is built for that space, not in place of therapy.",
+    ],
+    closing: [
+      "If you think you need therapy, get therapy — BetterHelp is one route. If you're not sure, MindReset's screening check-in at the start of MiniMind asks gentle questions to help orient. And if MiniMind is the right fit, the first 50 messages are free, no card needed. Not therapy. Not a quick fix. A structured way to come home to yourself, at your own pace.",
+    ],
+  },
 ];
 
 /** Newest-first not relevant — return registry order. */
