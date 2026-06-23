@@ -85,7 +85,24 @@ export type StateReport = {
   identityAnchor?: string; // Stage 6
   observerSeatTouched?: boolean; // Stage 3
   adultSelfQualities?: string; // Stage 3
+  // Stage 3 — Adult Self Co-Creation §8.2 captures.
+  // adultSelfAnchorLinked: true when the Adult Self has been linked to
+  // the Stage 1 Personal Anchor in the user's felt experience (the
+  // pairing canon §10 calls "permanent"). heldEmotionInAdultSelf: true
+  // when an emotion identified in Stage 2 has been held / met inside
+  // the Adult Self's capacity (the test of MII-1 readiness).
+  adultSelfAnchorLinked?: boolean;
+  heldEmotionInAdultSelf?: boolean;
   compassionBridgeQuality?: CompassionBridgeQuality; // Stage 4 — MII-4
+  // Stage 4 — Compassion Bridge §8.2 timestamp of the bridge moment.
+  // Captured when one of the four allowed qualities lands. Used by the
+  // gate to verify the bridge held across two distinct days (canon §10).
+  bridgeAchievedAt?: string; // ISO timestamp
+  // Stage 4 — Securing the Part §8.3 close-of-session ritual marker.
+  // userGrounded: true when the closing return-to-anchor has landed
+  // and the user is verifiably grounded before session end. Canon §10
+  // requires this for every Stage 4 session close.
+  userGrounded?: boolean;
   cohesionAwareness?: string; // Stage 4 — MII-7
   // Stage 4 — MII-6, the 48-hour soft check-in result. The AI emits this
   // ONLY when the soft check-in instruction was injected this turn (i.e.
@@ -96,6 +113,23 @@ export type StateReport = {
   // had a wobble but is grounded now — counts as met. `unsure` = code
   // logs but does not fail the gate.
   mii6Check?: 'stable' | 'destabilised' | 'unsure' | 'destabilised_then_recovered';
+  // Stage 5 — Origin Voice Mapping §8.1 captures the user's identification
+  // of the origin of the foreign material in their own words ("my mother",
+  // "the boys at school", "the man who taught me at fifteen"). Distinct
+  // from foreignFileReleased.returnedTo, which is the destination of the
+  // symbolic return practice.
+  originIdentified?: string;
+  // Stage 5 — Symbolic Return of the Burden §8.2 body confirmation that
+  // the release landed somatically (not just verbally). Per canon §10,
+  // somaticRelease: true is required for the stage-close gate. The AI
+  // sets this when the user describes a clear body change after release
+  // (lighter, more room, settled, an exhale that landed).
+  somaticRelease?: boolean;
+  // Stage 5 — Clean Identity Statement §8.3 body sense after the both-
+  // halves statement has been spoken. The AI captures the user's own
+  // words for the felt sense after declaring what stays and what was
+  // released. Confirms the statement landed in the body, not only the head.
+  bodyConfirmation?: string;
   cleanIdentityStatement?: string; // Stage 5
   whatStaysAsMine?: string; // Stage 5 / 6
   // Stage 6 — Internal Consensus Check verdict for this turn. Per
@@ -105,16 +139,35 @@ export type StateReport = {
   // confirmed all parts present, aligned with the Adult Self, and not
   // in conflict. False / unset = consensus not reached this turn.
   internalConsensus?: boolean;
+  // Stage 6 — Self-Loyalty Commitment §8.3. The user's own words for
+  // their commitment to themselves at the close of Stage 6, plus one
+  // concrete small action they will carry. Canon §10 requires both to
+  // be set for the Stage 6 → 7 advancement.
+  selfLoyaltyStatement?: string;
+  oneSmallAction?: string;
   symbolicIdentityMap?: string; // Stage 7
   emergingQualities?: string[]; // Stage 7
   innerDirection?: string; // Stage 7
   urgencyMarkers?: 'present' | 'absent'; // Stage 7
+  // Stage 7 — Safety Reorientation §8.3 mandatory session-close ritual.
+  // Canon §10 names this as "the mandatory closing practice of every
+  // Stage 7 session." The AI sets `true` only when the reorientation has
+  // been delivered ("we're not making any major external decisions from
+  // here — months, not days"). Without this, the Stage 7 → 8 advancement
+  // is held.
+  safetyReorientation?: boolean;
   calRunOn?: string; // Stage 8
   calLayer?: 1 | 2 | 3; // Stage 8 TLSM
   userReportedRedirection?: boolean | 'partial'; // Stage 8
   adultSelfThisWeek?: string; // Stage 8 — Identity Reinforcement Check-In
   feltAligned?: string[]; // Stage 8
   feltOld?: string[]; // Stage 8
+  // Stage 8 — Discharge Protocol §8.3 readiness signal. The AI assesses
+  // whether the user is genuinely ready for discharge per the canonical
+  // 6-step protocol criteria. `not_ready` and `maybe` keep the user in
+  // Stage 8. `ready` is required (with the router's own discharge gate)
+  // before `recommendedAction: "discharge"` is honoured.
+  dischargeReadiness?: 'not_ready' | 'maybe' | 'ready';
 
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
