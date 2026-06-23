@@ -104,6 +104,21 @@ function renderStateBlock(state: JourneyState): string {
   if (typeof state.lastIntensity === 'number') {
     lines.push(`- Last intensity reading: ${state.lastIntensity}/10`);
   }
+  // PR 5 / Bundle C — continuity signals so the AI honours "across two
+  // different days" reproducibility requirements without inferring from
+  // conversational density. session count + days engaged + this-session
+  // message count + stage-just-advanced are derived from JourneyTurn audit
+  // log in load.ts.
+  lines.push('');
+  lines.push(
+    `- Sessions so far: ${state.sessionCount} · distinct days engaged: ${state.daysEngaged} · this session: message ${state.thisSessionMessageCount + 1} (the user message you're about to read)`,
+  );
+  if (state.stageJustAdvanced) {
+    lines.push('');
+    lines.push(
+      `**Stage just advanced to ${state.currentStage}.** This is the FIRST turn at the new stage. Per the canonical method, the new stage may have a session-open ritual (e.g. Stage 8 opens every session with Identity Reinforcement Check-In; Stage 6 typically opens with the Internal Consensus Check). Refer to the active stage spec above for the canonical opener and run it now.`,
+    );
+  }
 
   if (state.anchorText) {
     lines.push('');
