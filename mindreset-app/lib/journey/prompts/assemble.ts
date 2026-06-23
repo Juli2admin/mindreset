@@ -174,18 +174,17 @@ function renderStateBlock(state: JourneyState): string {
 
 const DIVIDER = '\n\n---\n\n';
 
-const CANON_HEADER = `
+// Header introducing the canon section. Placed at the top of the cached
+// canon blocks so the AI sees its layer-ordering hint before reading
+// Shared Core.
+const CANON_PROMPT_HEADER = `# CLINICAL METHOD SOURCE (canon)
 
----
-
-# CLINICAL METHOD SOURCE (canon)
-
-Two documents follow.
+Two documents follow, then your operational behavior layer.
 
 **1. Shared Core** — your clinical constitution. Applies every turn, every stage.
 **2. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
 
-The clinical method source below is the authoritative reference for the method you are delivering. Where this content overlaps with the general behavior prompt above, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the general behavior prompt takes precedence on voice, character, and operational format.
+This canon is the authoritative reference for the method you are delivering. Where it overlaps with the general behavior layer (master prompt) that follows, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the master prompt takes precedence on voice, character, and operational format.
 
 ---
 
@@ -200,6 +199,103 @@ const CANON_STAGE_HEADER = `
 ## ACTIVE STAGE SPEC
 
 `;
+
+// Header introducing the operational behavior layer (master prompt) after
+// the canon. Brief — orients the AI to the layer transition.
+const MASTER_PROMPT_HEADER = `
+
+---
+
+# OPERATIONAL BEHAVIOR LAYER (master prompt)
+
+What follows is your operational guidance — the 12 traps, the 8-moves toolkit summary, worked examples, and the output format you must follow every turn. Voice and character behavior also live here. Apply this alongside the canon above.
+
+---
+
+`;
+
+export type SystemPromptBlock = {
+  type: 'text';
+  text: string;
+  cache_control?: { type: 'ephemeral' };
+};
+
+/**
+ * Assemble the system prompt as a block array for Anthropic prompt
+ * caching. Returns 5 blocks in order:
+ *   1. Shared Core (CACHED — stable across all turns)
+ *   2. Active stage spec (CACHED — stable per stage)
+ *   3. Master prompt BEFORE the state-injection token (CACHED — stable
+ *      across all turns)
+ *   4. State block (NOT cached — changes per turn)
+ *   5. Master prompt AFTER the state-injection token (NOT cached because
+ *      it sits after dynamic content; small remainder of master)
+ *
+ * Anthropic's prompt cache requires the cache prefix to start from the
+ * beginning of the system message — so cacheable content goes first,
+ * dynamic content after. The Shared Core + stage spec + master-before-
+ * state account for ~95% of system-prompt tokens; caching them cuts
+ * effective input cost to ~10% of the full price for repeat turns
+ * within the 5-minute cache TTL.
+ *
+ * Order rationale: canon docs first so the AI has the method content
+ * fresh in working memory before reading the operational layer. Master
+ * comes last so the most recently-read content for the AI is its 12
+ * traps + output format reminder.
+ */
+export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlock[] {
+  const master = loadMasterJourneyPrompt();
+  if (!master) {
+    // Fallback: legacy single-block assembly (no caching).
+    return [{ type: 'text', text: assembleSystemPrompt(state) }];
+  }
+
+  // Split master at the STATE_INJECTION_TOKEN so the dynamic state block
+  // can be its own (uncached) middle block.
+  const idx = master.indexOf(STATE_INJECTION_TOKEN);
+  const masterBeforeState =
+    idx >= 0 ? master.slice(0, idx) : master;
+  const masterAfterState =
+    idx >= 0 ? master.slice(idx + STATE_INJECTION_TOKEN.length) : '';
+
+  const blocks: SystemPromptBlock[] = [
+    // Canon header + Shared Core (cached). The header introduces the
+    // clinical-method-source framing and the canon-precedence rule.
+    {
+      type: 'text',
+      text: CANON_PROMPT_HEADER + sharedCore() + CANON_STAGE_HEADER,
+    },
+    // Active stage spec (cached). Cache breakpoint here — turns that
+    // stay in the same stage hit the cache; advancing to a new stage
+    // rebuilds from this block onward.
+    {
+      type: 'text',
+      text: loadStageSpec(state.currentStage),
+      cache_control: { type: 'ephemeral' },
+    },
+    // Master prompt body before the state injection slot (cached).
+    // Header announces the operational layer.
+    {
+      type: 'text',
+      text: MASTER_PROMPT_HEADER + masterBeforeState,
+      cache_control: { type: 'ephemeral' },
+    },
+    // State block — dynamic per turn (NOT cached).
+    {
+      type: 'text',
+      text: renderStateBlock(state),
+    },
+    // Master prompt body after the state injection (not cached because
+    // it follows dynamic content; this is the rest of master —
+    // <examples>, <output_format>, etc.).
+    {
+      type: 'text',
+      text: masterAfterState,
+    },
+  ];
+
+  return blocks;
+}
 
 export function assembleSystemPrompt(state: JourneyState): string {
   // Architecture (2026-06-23 refactor):
@@ -221,19 +317,12 @@ export function assembleSystemPrompt(state: JourneyState): string {
   //
   // Fallback: if the master prompt is missing for any reason, fall through
   // to the older path (engineered per-stage prompt → Shared Core + spec).
-  const master = loadMasterJourneyPrompt();
-  if (master) {
-    const masterWithState = master.replace(
-      STATE_INJECTION_TOKEN,
-      renderStateBlock(state),
-    );
-    return [
-      masterWithState,
-      CANON_HEADER,
-      sharedCore(),
-      CANON_STAGE_HEADER,
-      loadStageSpec(state.currentStage),
-    ].join('');
+  // String-form fallback: collapse the block array into a single string.
+  // Used by callers / tests that don't need the per-block cache_control
+  // markers; production code paths should call assembleSystemPromptBlocks.
+  const blocks = assembleSystemPromptBlocks(state);
+  if (blocks.length > 0) {
+    return blocks.map((b) => b.text).join('');
   }
 
   // Fallback (rollout phase): per-stage engineered prompts if a master isn't
