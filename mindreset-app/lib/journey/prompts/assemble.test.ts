@@ -48,8 +48,8 @@ function makeState(stage: number): JourneyState {
 describe('assembleSystemPrompt — 3-layer architecture', () => {
   it('includes the master prompt body', () => {
     const prompt = assembleSystemPrompt(makeState(1));
-    // Master has the <identity> tag opener
-    expect(prompt).toContain('<identity>');
+    // Master has the <method> tag (8-moves toolkit)
+    expect(prompt).toContain('<method>');
     // Master has the trap list intro
     expect(prompt).toContain('Clinical pitfalls that can undo good work');
   });
@@ -97,7 +97,7 @@ describe('assembleSystemPrompt — 3-layer architecture', () => {
 
   it('orders the layers as master → Shared Core → active stage spec', () => {
     const prompt = assembleSystemPrompt(makeState(2));
-    const masterIdx = prompt.indexOf('<identity>');
+    const masterIdx = prompt.indexOf('<method>');
     const sharedCoreIdx = prompt.indexOf('## SHARED CORE');
     const stageSpecIdx = prompt.indexOf('## ACTIVE STAGE SPEC');
 
