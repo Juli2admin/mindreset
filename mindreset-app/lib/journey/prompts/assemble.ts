@@ -174,15 +174,66 @@ function renderStateBlock(state: JourneyState): string {
 
 const DIVIDER = '\n\n---\n\n';
 
+const CANON_HEADER = `
+
+---
+
+# CLINICAL METHOD SOURCE (canon)
+
+Two documents follow.
+
+**1. Shared Core** — your clinical constitution. Applies every turn, every stage.
+**2. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
+
+The clinical method source below is the authoritative reference for the method you are delivering. Where this content overlaps with the general behavior prompt above, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the general behavior prompt takes precedence on voice, character, and operational format.
+
+---
+
+## SHARED CORE
+
+`;
+
+const CANON_STAGE_HEADER = `
+
+---
+
+## ACTIVE STAGE SPEC
+
+`;
+
 export function assembleSystemPrompt(state: JourneyState): string {
-  // Preferred: single master Journey prompt holding the full 8-block toolkit
-  // as MOVES available every turn. The clinician uses whichever move serves
-  // the user now — not constrained to a per-stage prompt. The currentStage
-  // marker in the state block tells the AI the furthest point of accumulated
-  // work, not a constraint on what moves are available.
+  // Architecture (2026-06-23 refactor):
+  //   Layer 1: Master prompt — general AI behavior, character, voice,
+  //            12 traps, 8-moves toolkit, worked examples, output format,
+  //            STATE_INJECTION_TOKEN replaced with the rendered state block.
+  //   Layer 2: Shared Core — the clinical constitution (00-shared-core.md).
+  //            Loaded every turn.
+  //   Layer 3: Active stage spec — the full canonical playbook for the
+  //            user's current stage (01-...md through 08-...md).
+  //            Loaded based on state.currentStage.
+  //
+  // The master prompt was previously the only system prompt; the canon
+  // docs were reviewable reference material for humans only. The audit on
+  // 2026-06-19 showed this produced a ~70:1 conversation-to-practice ratio
+  // because the master prompt's "moves" section is a compressed summary
+  // of the per-stage method content. This architecture loads the canonical
+  // source so the AI receives the full method content for the active stage.
+  //
+  // Fallback: if the master prompt is missing for any reason, fall through
+  // to the older path (engineered per-stage prompt → Shared Core + spec).
   const master = loadMasterJourneyPrompt();
   if (master) {
-    return master.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
+    const masterWithState = master.replace(
+      STATE_INJECTION_TOKEN,
+      renderStateBlock(state),
+    );
+    return [
+      masterWithState,
+      CANON_HEADER,
+      sharedCore(),
+      CANON_STAGE_HEADER,
+      loadStageSpec(state.currentStage),
+    ].join('');
   }
 
   // Fallback (rollout phase): per-stage engineered prompts if a master isn't
