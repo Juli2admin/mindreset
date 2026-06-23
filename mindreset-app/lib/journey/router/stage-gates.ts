@@ -246,12 +246,10 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // requires the user has at least one captured part in their landscape
 // before Stage 6 advancement can be evaluated.
 //
-// What this gate still does NOT enforce (deliberate, P1/P2 follow-up):
-//   - selfLoyaltyStatement (canon §10)
-//   - oneSmallAction (canon §10)
-//   - adultSelfPresent ≥ 70% of last 3 sessions (currently implicit
-//     in standardGuards intensity/safety reads only)
-// These require schema additions queued for the stage-safeguards work.
+// PR 4 (2026-06-23) adds two further canon §10 criteria:
+//   - selfLoyaltyStatement captured at least once
+//   - oneSmallAction captured at least once
+// These were previously missing from schema; now they land.
 export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
@@ -271,6 +269,21 @@ export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   if (state.parts.length === 0) {
     reasons.push('no_parts_in_landscape_for_cohesion_check');
   }
+  // Self-Loyalty Commitment (canon §8.3 / §10) — captured at least once
+  // in user's own words. PR 4 schema additions land this field.
+  const loyaltyCaptured = turns.some(
+    (t) =>
+      typeof t.report.selfLoyaltyStatement === 'string' &&
+      t.report.selfLoyaltyStatement.length > 0,
+  );
+  if (!loyaltyCaptured) reasons.push('self_loyalty_statement_missing');
+  // One small action committed (canon §8.3 / §10).
+  const actionCaptured = turns.some(
+    (t) =>
+      typeof t.report.oneSmallAction === 'string' &&
+      t.report.oneSmallAction.length > 0,
+  );
+  if (!actionCaptured) reasons.push('one_small_action_missing');
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
@@ -310,6 +323,17 @@ export function checkStage7Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   // turns across last 2 sessions (we approximate as last 5 turns total).
   const recentUrgency = turns.slice(-5).some((t) => t.report.urgencyMarkers === 'present');
   if (recentUrgency) reasons.push('urgency_present_in_recent_turns');
+
+  // Safety Reorientation — canon §8.3 names this as the "mandatory closing
+  // practice of every Stage 7 session." PR 4 lands the schema field; here
+  // we require it to have been delivered at least twice in the audit
+  // window before stage advancement.
+  const reorientationCount = turns.filter(
+    (t) => t.report.safetyReorientation === true,
+  ).length;
+  if (reorientationCount < 2) {
+    reasons.push('safety_reorientation_missing_in_recent_sessions');
+  }
 
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
@@ -352,6 +376,17 @@ export function checkStage8Gate(
     (t) => t.report.urgencyMarkers === 'present',
   );
   if (recentUrgency) reasons.push('urgency_in_recent_two_weeks');
+
+  // Discharge readiness (PR 4 / canon §8.3 §10). The AI must explicitly
+  // signal `dischargeReadiness: 'ready'` at least twice across the audit
+  // window before the gate can fire. `not_ready` or `maybe` count as
+  // not-ready; missing values count as not-ready.
+  const readyTurns = turns.filter(
+    (t) => t.report.dischargeReadiness === 'ready',
+  );
+  if (readyTurns.length < 2) {
+    reasons.push('discharge_readiness_not_signalled_twice');
+  }
 
   return reasons.length === 0 ? pass() : fail(...reasons);
 }

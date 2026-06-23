@@ -165,16 +165,38 @@ export function parseStateReport(raw: string | null): StateReport {
     report.observerSeatTouched = obj.observerSeatTouched;
   }
   copyStringField(obj, 'adultSelfQualities', report);
+  // Stage 3 — Adult Self Co-Creation captures (audit P3 #6 of 11).
+  if (typeof obj.adultSelfAnchorLinked === 'boolean') {
+    report.adultSelfAnchorLinked = obj.adultSelfAnchorLinked;
+  }
+  if (typeof obj.heldEmotionInAdultSelf === 'boolean') {
+    report.heldEmotionInAdultSelf = obj.heldEmotionInAdultSelf;
+  }
 
   const bridge = pickEnumOptional(obj.compassionBridgeQuality, BRIDGE_QUALITIES);
   if (bridge) report.compassionBridgeQuality = bridge;
+  // Stage 4 — Compassion Bridge timestamp + Securing the Part captures.
+  copyStringField(obj, 'bridgeAchievedAt', report);
+  if (typeof obj.userGrounded === 'boolean') {
+    report.userGrounded = obj.userGrounded;
+  }
 
   copyStringField(obj, 'cohesionAwareness', report);
   const mii6 = pickEnumOptional(obj.mii6Check, MII6_CHECKS as unknown as Mii6CheckValue[]);
   if (mii6) report.mii6Check = mii6;
+  // Stage 5 — Origin Voice Mapping + Symbolic Return + Clean Identity
+  // Statement captures.
+  copyStringField(obj, 'originIdentified', report);
+  if (typeof obj.somaticRelease === 'boolean') {
+    report.somaticRelease = obj.somaticRelease;
+  }
+  copyStringField(obj, 'bodyConfirmation', report);
   if (typeof obj.internalConsensus === 'boolean') {
     report.internalConsensus = obj.internalConsensus;
   }
+  // Stage 6 — Self-Loyalty Commitment captures.
+  copyStringField(obj, 'selfLoyaltyStatement', report);
+  copyStringField(obj, 'oneSmallAction', report);
   copyStringField(obj, 'cleanIdentityStatement', report);
   copyStringField(obj, 'whatStaysAsMine', report);
   copyStringField(obj, 'symbolicIdentityMap', report);
@@ -185,6 +207,10 @@ export function parseStateReport(raw: string | null): StateReport {
   copyStringField(obj, 'innerDirection', report);
   if (obj.urgencyMarkers === 'present' || obj.urgencyMarkers === 'absent') {
     report.urgencyMarkers = obj.urgencyMarkers;
+  }
+  // Stage 7 — Safety Reorientation mandatory session-close capture.
+  if (typeof obj.safetyReorientation === 'boolean') {
+    report.safetyReorientation = obj.safetyReorientation;
   }
   copyStringField(obj, 'calRunOn', report);
   if (obj.calLayer === 1 || obj.calLayer === 2 || obj.calLayer === 3) {
@@ -202,6 +228,14 @@ export function parseStateReport(raw: string | null): StateReport {
   }
   if (Array.isArray(obj.feltOld)) {
     report.feltOld = obj.feltOld.filter((v): v is string => typeof v === 'string');
+  }
+  // Stage 8 — Discharge Protocol readiness enum.
+  if (
+    obj.dischargeReadiness === 'not_ready' ||
+    obj.dischargeReadiness === 'maybe' ||
+    obj.dischargeReadiness === 'ready'
+  ) {
+    report.dischargeReadiness = obj.dischargeReadiness;
   }
   copyStringField(obj, 'continuityNote', report);
 

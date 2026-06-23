@@ -95,7 +95,11 @@ describe('checkStage6Gate — internal consensus reachability', () => {
   it('passes when internalConsensus:true on two distinct days + other criteria', () => {
     const turns: AuditTurn[] = [
       ...FIVE_CLEAN_TURNS,
-      makeTurn(6, { internalConsensus: true }),
+      makeTurn(6, {
+        internalConsensus: true,
+        selfLoyaltyStatement: 'I choose to stay on my own side',
+        oneSmallAction: 'put my own coffee first tomorrow morning',
+      }),
       makeTurn(2, { internalConsensus: true, recommendedAction: 'advance' }),
     ];
     const result = checkStage6Gate(makeState(), turns);
@@ -145,7 +149,11 @@ describe('checkStage6Gate — parts cohesion vacuous-true guard', () => {
   it('passes with at least one captured part + consensus on two days', () => {
     const turns: AuditTurn[] = [
       ...FIVE_CLEAN_TURNS,
-      makeTurn(6, { internalConsensus: true }),
+      makeTurn(6, {
+        internalConsensus: true,
+        selfLoyaltyStatement: 'I choose to stay on my own side',
+        oneSmallAction: 'put my own coffee first tomorrow morning',
+      }),
       makeTurn(2, { internalConsensus: true, recommendedAction: 'advance' }),
     ];
     const result = checkStage6Gate(makeState(), turns);
