@@ -13,7 +13,10 @@
 // loads canon as the source of method.
 
 import { describe, expect, it } from 'vitest';
-import { assembleSystemPrompt } from './assemble';
+import {
+  assembleSystemPrompt,
+  assembleSystemPromptBlocks,
+} from './assemble';
 import type { JourneyState } from '../state/types';
 
 function makeState(stage: number): JourneyState {
@@ -95,14 +98,66 @@ describe('assembleSystemPrompt — 3-layer architecture', () => {
     expect(prompt).not.toContain('{{STATE_INJECTION}}');
   });
 
-  it('orders the layers as master → Shared Core → active stage spec', () => {
+  it('orders the layers as Shared Core → active stage spec → master', () => {
+    // Layer ordering changed in PR 3 (prompt caching): canon docs come
+    // first because Anthropic prompt cache requires the cacheable prefix
+    // to start from the beginning of the system message. Master with
+    // its dynamic state block comes after canon.
     const prompt = assembleSystemPrompt(makeState(2));
-    const masterIdx = prompt.indexOf('<method>');
     const sharedCoreIdx = prompt.indexOf('## SHARED CORE');
     const stageSpecIdx = prompt.indexOf('## ACTIVE STAGE SPEC');
+    const masterIdx = prompt.indexOf('<method>');
 
-    expect(masterIdx).toBeGreaterThanOrEqual(0);
-    expect(sharedCoreIdx).toBeGreaterThan(masterIdx);
+    expect(sharedCoreIdx).toBeGreaterThanOrEqual(0);
     expect(stageSpecIdx).toBeGreaterThan(sharedCoreIdx);
+    expect(masterIdx).toBeGreaterThan(stageSpecIdx);
+  });
+});
+
+describe('assembleSystemPromptBlocks — Anthropic prompt caching', () => {
+  it('returns 5 blocks: shared core / stage spec / master-before-state / state / master-after-state', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(2));
+    expect(blocks).toHaveLength(5);
+  });
+
+  it('marks the stage spec and master-before-state blocks with cache_control', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(2));
+    // Block 0 (Shared Core): no cache_control on its own (gets cached
+    // by virtue of cache_control on block 1).
+    expect(blocks[0].cache_control).toBeUndefined();
+    // Block 1 (active stage spec): cache breakpoint.
+    expect(blocks[1].cache_control).toEqual({ type: 'ephemeral' });
+    // Block 2 (master-before-state): cache breakpoint.
+    expect(blocks[2].cache_control).toEqual({ type: 'ephemeral' });
+    // Block 3 (state block): NOT cached — dynamic per turn.
+    expect(blocks[3].cache_control).toBeUndefined();
+    // Block 4 (master-after-state): NOT cached — sits after dynamic
+    // content so caching it would never hit.
+    expect(blocks[4].cache_control).toBeUndefined();
+  });
+
+  it('every block declares type "text"', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(3));
+    for (const b of blocks) {
+      expect(b.type).toBe('text');
+    }
+  });
+
+  it('shared core block contains Shared Core canon', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(1));
+    expect(blocks[0].text).toContain('## SHARED CORE');
+    expect(blocks[0].text).toContain('Practice Generation Algorithm');
+  });
+
+  it('stage spec block contains the active stage', () => {
+    const blocks4 = assembleSystemPromptBlocks(makeState(4));
+    expect(blocks4[1].text).toContain('Compassion Bridge');
+    const blocks5 = assembleSystemPromptBlocks(makeState(5));
+    expect(blocks5[1].text).toContain('Foreign Material');
+  });
+
+  it('state block sits at index 3 and contains the rendered state', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(3));
+    expect(blocks[3].text).toContain('Active internal stage: 3/8');
   });
 });

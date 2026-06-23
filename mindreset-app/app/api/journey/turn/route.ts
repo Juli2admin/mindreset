@@ -26,7 +26,7 @@ import prisma from '@/lib/prisma';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import { loadJourneyState } from '@/lib/journey/state/load';
 import { applyStateReportToProgress } from '@/lib/journey/state/save';
-import { assembleSystemPrompt } from '@/lib/journey/prompts/assemble';
+import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
@@ -177,7 +177,11 @@ export async function POST(request: NextRequest) {
   });
   recent.reverse();
 
-  const systemPrompt = assembleSystemPrompt(state);
+  // System prompt is assembled as a block array so Anthropic prompt
+  // caching can cache the canon (Shared Core + active stage spec) +
+  // master-before-state. Dynamic content (the state block + master tail)
+  // sits in uncached blocks at the end. See lib/journey/prompts/assemble.ts.
+  const systemBlocks = assembleSystemPromptBlocks(state);
   const model = getModelForStage(state.currentStage, body.modelOverride);
 
   const decryptedHistory: { role: 'user' | 'assistant'; content: string }[] = recent.map(
@@ -195,7 +199,7 @@ export async function POST(request: NextRequest) {
   const stream = anthropic.messages.stream({
     model,
     max_tokens: MAX_TOKENS,
-    system: systemPrompt,
+    system: systemBlocks,
     messages,
   });
 
