@@ -56,6 +56,10 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     ],
     foreignFiles: [],
     signatureImages: [],
+    sessionCount: 0,
+    daysEngaged: 0,
+    thisSessionMessageCount: 0,
+    stageJustAdvanced: false,
     ...overrides,
   };
 }
