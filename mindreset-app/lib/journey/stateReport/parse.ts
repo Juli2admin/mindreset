@@ -237,6 +237,28 @@ export function parseStateReport(raw: string | null): StateReport {
   ) {
     report.dischargeReadiness = obj.dischargeReadiness;
   }
+  // Stabilising-before-closing protocol (PR 8). Captures the user's
+  // 1-10 stability score + brief context. Accept score in any numeric
+  // form clamped to [1, 10]; reject non-numeric. Truncate contextNote
+  // to 80 chars.
+  if (obj.stabilityCheck && typeof obj.stabilityCheck === 'object') {
+    const sc = obj.stabilityCheck as Record<string, unknown>;
+    const rawScore = sc.score;
+    let parsedScore: number | undefined;
+    if (typeof rawScore === 'number' && Number.isFinite(rawScore)) {
+      parsedScore = Math.max(1, Math.min(10, Math.round(rawScore)));
+    } else if (typeof rawScore === 'string') {
+      const n = Number(rawScore);
+      if (Number.isFinite(n)) parsedScore = Math.max(1, Math.min(10, Math.round(n)));
+    }
+    if (parsedScore !== undefined) {
+      const check: { score: number; contextNote?: string } = { score: parsedScore };
+      if (typeof sc.contextNote === 'string') {
+        check.contextNote = sc.contextNote.slice(0, 80);
+      }
+      report.stabilityCheck = check;
+    }
+  }
   copyStringField(obj, 'continuityNote', report);
 
   return report;
