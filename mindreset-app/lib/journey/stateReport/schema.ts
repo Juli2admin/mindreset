@@ -169,6 +169,29 @@ export type StateReport = {
   // before `recommendedAction: "discharge"` is honoured.
   dischargeReadiness?: 'not_ready' | 'maybe' | 'ready';
 
+  // Stabilising-before-closing protocol (PR 8, 2026-06-26).
+  // The AI emits this when it runs an explicit 1-10 stability check on
+  // the user — typically before a session pause/close, after destabil-
+  // isation in-session, or periodically when the user has been in the
+  // body for a sustained period. The check is mandated by the master
+  // prompt's stabilising-before-closing rule: "the number is the
+  // discipline. 'Are you OK?' / 'Is the dizziness easing?' is not
+  // enough." A score below 6 means the AI must NOT close on this turn
+  // and must run another grounding/micro-movement practice before
+  // asking again.
+  stabilityCheck?: {
+    /** User's reported stability, 1 (overwhelmed) to 10 (fully grounded). */
+    score: number;
+    /**
+     * Brief reason / context. Suggested values:
+     *   "before_close"           — asking before session pause/close
+     *   "after_destabilisation"  — asking after a wobble in-session
+     *   "periodic"               — proactive check during deep work
+     *   free text up to 80 chars also accepted (truncated by parser)
+     */
+    contextNote?: string;
+  };
+
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
 
