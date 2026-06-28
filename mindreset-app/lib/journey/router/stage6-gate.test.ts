@@ -1,16 +1,24 @@
-// Tests for the Stage 6 advancement gate (audit P0 #2).
+// Tests for the Stage 6 advancement gate (audit P0 #2 + canon §10
+// alignment 2026-06-27).
 //
-// Before the fix:
-//   - The cohesion check searched readinessTouched for tokens
-//     (feel_like_myself, internal_consensus, cohesion) that did not
-//     exist in any prompt's vocabulary — the gate was unreachable.
-//   - The "no separated parts" check used parts.every() which passed
-//     vacuously when state.parts.length === 0.
+// Audit P0 #2 (2026-06-19):
+//   Before that fix:
+//     - The cohesion check searched readinessTouched for tokens that did
+//       not exist in any prompt's vocabulary — the gate was unreachable.
+//     - The "no separated parts" check used parts.every() which passed
+//       vacuously when state.parts.length === 0.
+//   After:
+//     - The cohesion check reads the `internalConsensus: true` boolean.
+//     - Empty parts array correctly fails the gate.
 //
-// After the fix:
-//   - The cohesion check reads the new `internalConsensus: true`
-//     boolean field, captured on ≥ 2 distinct days.
-//   - Empty parts array correctly fails the gate.
+// Canon §10 alignment (2026-06-27, this PR):
+//   - Canon §10 also requires "Adult Self present ≥ 70% of turns in the
+//     last 3 sessions." The gate now enforces this using
+//     lastNSessionsTurns(turns, 3) and the 0.7 ratio.
+//   - The default makeTurn helper below now sets adultSelfPresent: true,
+//     so existing canon-compliant tests pass without modification; new
+//     tests override with adultSelfPresent: false to exercise the 70%
+//     threshold and 3-session history requirement.
 
 import { describe, expect, it } from 'vitest';
 import { checkStage6Gate } from './stage-gates';
@@ -82,6 +90,10 @@ function makeTurn(
       intensity: 3,
       safetyFlag: 'none',
       recommendedAction: 'stay',
+      // Default to adultSelfPresent: true so existing canon-compliant
+      // tests pass under the new 70%-across-last-3-sessions check.
+      // New tests can override with adultSelfPresent: false.
+      adultSelfPresent: true,
       ...report,
     },
   };
@@ -196,5 +208,124 @@ describe('checkStage6Gate — standard guards still apply', () => {
     ];
     const result = checkStage6Gate(makeState({ frozenForReview: true }), turns);
     expect(result.passed).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Canon §10 alignment 2026-06-27 — Adult Self present ≥ 70% across the
+// last 3 sessions. Sessions are separated by a 4-hour gap, matching
+// state/load.ts. Turns at 10-minute increments stay inside one session.
+// ---------------------------------------------------------------------------
+function makeTurnAt(
+  at: Date,
+  report: Partial<StateReport> = {},
+): AuditTurn {
+  return {
+    id: `turn_${at.getTime()}_${Math.random().toString(36).slice(2)}`,
+    createdAt: at,
+    stageAtTurn: 6,
+    depthAtTurn: 'middle',
+    intensityReported: 3,
+    safetyFlag: 'none',
+    recommendedAction: 'stay',
+    report: {
+      intensity: 3,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      adultSelfPresent: true,
+      ...report,
+    },
+  };
+}
+
+function makeSession(
+  startDay: Date,
+  perTurn: Partial<StateReport>[],
+): AuditTurn[] {
+  return perTurn.map((r, i) => {
+    const t = new Date(startDay);
+    t.setMinutes(t.getMinutes() + i * 10);
+    return makeTurnAt(t, r);
+  });
+}
+
+describe('checkStage6Gate — canon §10 adult-self 70% across last 3 sessions', () => {
+  const day1 = new Date('2026-06-22T10:00:00Z');
+  const day2 = new Date('2026-06-24T10:00:00Z');
+  const day3 = new Date('2026-06-26T10:00:00Z');
+
+  function passingMultiSession(): AuditTurn[] {
+    return [
+      ...makeSession(day1, [
+        { internalConsensus: true },
+        {},
+        {},
+      ]),
+      ...makeSession(day2, [
+        { internalConsensus: true },
+        {},
+        {},
+      ]),
+      ...makeSession(day3, [
+        {},
+        {
+          selfLoyaltyStatement: 'I will not abandon myself.',
+          oneSmallAction: 'one slow walk this week',
+        },
+        { recommendedAction: 'advance' },
+      ]),
+    ];
+  }
+
+  it('passes when adultSelfPresent on all 9 turns across 3 sessions', () => {
+    const result = checkStage6Gate(makeState(), passingMultiSession());
+    expect(result.passed).toBe(true);
+  });
+
+  it('REGRESSION GUARD: fails when adult self below 70% across last 3 sessions', () => {
+    const turns: AuditTurn[] = [
+      ...makeSession(day1, [
+        { internalConsensus: true },
+        { adultSelfPresent: false },
+        { adultSelfPresent: false },
+      ]),
+      ...makeSession(day2, [
+        { internalConsensus: true },
+        { adultSelfPresent: false },
+        { adultSelfPresent: false },
+      ]),
+      ...makeSession(day3, [
+        {},
+        {
+          adultSelfPresent: false,
+          selfLoyaltyStatement: 'I will not abandon myself.',
+          oneSmallAction: 'one slow walk',
+        },
+        { adultSelfPresent: false, recommendedAction: 'advance' },
+      ]),
+    ];
+    const result = checkStage6Gate(makeState(), turns);
+    expect(result.passed).toBe(false);
+    expect(result.reasons).toContain(
+      'adult_self_below_70_percent_across_last_3_sessions',
+    );
+  });
+
+  it('fails when only one session of history exists (cannot evaluate stability)', () => {
+    const oneDay = new Date('2026-06-26T10:00:00Z');
+    const turns: AuditTurn[] = makeSession(oneDay, [
+      { internalConsensus: true },
+      { internalConsensus: true },
+      {
+        selfLoyaltyStatement: 'I will not abandon myself.',
+        oneSmallAction: 'one slow walk',
+      },
+      { recommendedAction: 'advance' },
+    ]);
+    const result = checkStage6Gate(makeState(), turns);
+    expect(result.passed).toBe(false);
+    expect(result.reasons).toContain(
+      'insufficient_history_for_adult_self_stability',
+    );
   });
 });

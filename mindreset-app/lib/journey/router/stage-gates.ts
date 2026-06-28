@@ -17,8 +17,10 @@
 import type { JourneyState } from '../state/types';
 import {
   type AuditTurn,
+  countSessions,
   distinctDays,
   heldOnDistinctDays,
+  lastNSessionsTurns,
   lastTwoIntensities,
   noRedFlagInLast,
   safetyNoneForLast,
@@ -373,6 +375,25 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 //   - selfLoyaltyStatement captured at least once
 //   - oneSmallAction captured at least once
 // These were previously missing from schema; now they land.
+//
+// CANON-ALIGNED (2026-06-27 audit). Canon §10 also requires:
+//   "The Adult Self has been present (`adultSelfPresent: true`) across
+//    ≥ 70% of turns in the last 3 sessions."
+// This is the same MII-1 reproducibility check Stage 4 enforces, applied
+// to Stage 6's longer window. Without it, a user can drift away from
+// Adult Self late in Stage 6 and still advance because earlier internal
+// consensus moments survive in the audit. This PR wires the check using
+// the new session-aware lastNSessionsTurns helper (4-hour boundary,
+// matches state/load.ts).
+//
+// Note on the remaining canon §10 items still not gated:
+//   - "I feel like myself" reported on ≥ 2 different days — no schema
+//     field exists; deferred to a later PR that adds the field.
+//   - "No part has surfaced as separate, angry, or unseen in last 3
+//     sessions" — implicitly enforced by the internalConsensus = true
+//     requirement on ≥ 2 distinct days, since the consensus check's
+//     definition (per schema doc) is "all parts present, aligned with
+//     the Adult Self, and not in conflict."
 export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
@@ -407,6 +428,20 @@ export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateRe
       t.report.oneSmallAction.length > 0,
   );
   if (!actionCaptured) reasons.push('one_small_action_missing');
+  // Canon §10: Adult Self present ≥ 70% of turns in the last 3 sessions.
+  // Same shape as Stage 4 MII-1; the 70% threshold is the canon ratio.
+  // We need ≥ 3 actual sessions of history — without them the
+  // reproducibility canon mandates can't be evaluated.
+  if (countSessions(turns) < 3) {
+    reasons.push('insufficient_history_for_adult_self_stability');
+  } else {
+    const last3Sessions = lastNSessionsTurns(turns, 3);
+    const adultPresent = last3Sessions.filter(
+      (t) => t.report.adultSelfPresent === true,
+    ).length;
+    const ratio = adultPresent / last3Sessions.length;
+    if (ratio < 0.7) reasons.push('adult_self_below_70_percent_across_last_3_sessions');
+  }
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 

@@ -122,3 +122,48 @@ export function noRedFlagInLast(turns: AuditTurn[], n: number): boolean {
   const tail = turns.slice(-n);
   return tail.every((t) => t.safetyFlag !== 'red_flag');
 }
+
+// Mirrors the session boundary used by state/load.ts. A gap ≥ 4 hours
+// between two consecutive turns marks the start of a new session.
+const SESSION_BOUNDARY_MS = 4 * 60 * 60 * 1000;
+
+/**
+ * Return the subset of `turns` that belong to the most recent `n` sessions.
+ * Sessions are detected by gaps ≥ 4 hours between consecutive turns —
+ * the same rule state/load.ts uses for sessionCount. Used by stage gates
+ * whose canon §10 thresholds are session-scoped (e.g. Stage 6 / Stage 7
+ * "across last 3 sessions"). If the audit window contains fewer than `n`
+ * sessions, returns every turn it has.
+ */
+export function lastNSessionsTurns(turns: AuditTurn[], n: number): AuditTurn[] {
+  if (turns.length === 0 || n <= 0) return [];
+  // Walk backwards counting boundaries until we have n sessions.
+  let sessionsSeen = 1;
+  let startIdx = 0;
+  for (let i = turns.length - 1; i > 0; i--) {
+    const gap = turns[i].createdAt.getTime() - turns[i - 1].createdAt.getTime();
+    if (gap >= SESSION_BOUNDARY_MS) {
+      sessionsSeen++;
+      if (sessionsSeen > n) {
+        startIdx = i;
+        break;
+      }
+    }
+  }
+  return turns.slice(startIdx);
+}
+
+/**
+ * Count how many distinct sessions exist across the supplied turns,
+ * using the same 4-hour boundary as lastNSessionsTurns / state/load.ts.
+ * Returns 0 if there are no turns.
+ */
+export function countSessions(turns: AuditTurn[]): number {
+  if (turns.length === 0) return 0;
+  let sessions = 1;
+  for (let i = 1; i < turns.length; i++) {
+    const gap = turns[i].createdAt.getTime() - turns[i - 1].createdAt.getTime();
+    if (gap >= SESSION_BOUNDARY_MS) sessions++;
+  }
+  return sessions;
+}
