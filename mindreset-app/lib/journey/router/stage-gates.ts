@@ -175,7 +175,20 @@ export function checkStage2Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // Stage 3 — Inner Adult Self Activation
 // ---------------------------------------------------------------------------
 // Per docs/journey/03-stage-adult-self.md §10
-// Non-negotiable: Adult Self reached on at least TWO DIFFERENT DAYS.
+//
+// CANON-ALIGNED (2026-06-26 audit). Before alignment, this gate was
+// missing two canonical conditions:
+//   - "Adult Self linked to Anchor at least once" (the pairing canon §10
+//     calls permanent)
+//   - "User held a named emotion in Adult Self + Anchor at least once"
+//     (the MII-1 readiness test)
+//
+// PR 4 (Bundle B) added the schema fields `adultSelfAnchorLinked` and
+// `heldEmotionInAdultSelf` but never wired them to the gate. This PR
+// wires them.
+//
+// Non-negotiable per canon: Adult Self reached on at least TWO DIFFERENT
+// DAYS.
 export function checkStage3Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 3);
   if (!state.anchorText) reasons.push('anchor_missing');
@@ -194,6 +207,15 @@ export function checkStage3Gate(state: JourneyState, turns: AuditTurn[]): GateRe
     2,
   );
   if (!reproducible) reasons.push('adult_self_not_reproducible_across_days');
+  // Canon §10: Adult Self linked to Anchor at least once.
+  // PR 4 schema field: adultSelfAnchorLinked.
+  const anchorLinked = turns.some((t) => t.report.adultSelfAnchorLinked === true);
+  if (!anchorLinked) reasons.push('adult_self_not_linked_to_anchor');
+  // Canon §10: User has demonstrated capacity to hold a named emotion in
+  // Adult Self + Anchor at least once.
+  // PR 4 schema field: heldEmotionInAdultSelf.
+  const heldEmotion = turns.some((t) => t.report.heldEmotionInAdultSelf === true);
+  if (!heldEmotion) reasons.push('emotion_not_held_in_adult_self');
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
