@@ -203,11 +203,20 @@ export function checkStage4Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   );
   if (!bridgeOnTwoDays) reasons.push('mii4_compassion_bridge_not_landed_twice');
 
-  // MII-5 — Basic Reparenting Capacity: any active part has a recorded
-  // currentRestingPlace OR any state report carries an "offering" string.
+  // MII-5 — Basic Reparenting Capacity (canon §10): a part has a
+  // recorded currentRestingPlace OR any turn in the window captured the
+  // Adult Self's offering to a part via partSecured.adultSelfOffering.
+  // Audit P0 #3 (2026-06-19) fix: was previously falling back to
+  // adultSelfQualities (a Stage 3 capture meaning "the calm older me"),
+  // which made MII-5 trivially pass for any user who reached Stage 3
+  // regardless of whether actual reparenting work happened.
   const reparenting =
-    state.parts.some((p) => p.currentRestingPlace) ||
-    turns.some((t) => typeof t.report.adultSelfQualities === 'string');
+    state.parts.some((p) => p.currentRestingPlace != null) ||
+    turns.some(
+      (t) =>
+        typeof t.report.partSecured?.adultSelfOffering === 'string' &&
+        t.report.partSecured.adultSelfOffering.length > 0,
+    );
   if (!reparenting) reasons.push('mii5_no_reparenting_capacity');
 
   // MII-6 — No Delayed Destabilisation (soft check). If a Deep Layer contact
