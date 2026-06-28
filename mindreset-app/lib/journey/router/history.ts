@@ -167,3 +167,23 @@ export function countSessions(turns: AuditTurn[]): number {
   }
   return sessions;
 }
+
+/**
+ * Group turns into sessions (oldest session first), using the same
+ * 4-hour boundary. Useful for stage gates that need to evaluate a
+ * predicate per-session (e.g. "Safety Reorientation delivered in EVERY
+ * Stage 7 session" — canon §10).
+ */
+export function groupSessions(turns: AuditTurn[]): AuditTurn[][] {
+  if (turns.length === 0) return [];
+  const sessions: AuditTurn[][] = [[turns[0]]];
+  for (let i = 1; i < turns.length; i++) {
+    const gap = turns[i].createdAt.getTime() - turns[i - 1].createdAt.getTime();
+    if (gap >= SESSION_BOUNDARY_MS) {
+      sessions.push([turns[i]]);
+    } else {
+      sessions[sessions.length - 1].push(turns[i]);
+    }
+  }
+  return sessions;
+}
