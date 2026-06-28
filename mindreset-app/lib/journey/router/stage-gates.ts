@@ -19,6 +19,7 @@ import {
   type AuditTurn,
   countSessions,
   distinctDays,
+  groupSessions,
   heldOnDistinctDays,
   lastNSessionsTurns,
   lastTwoIntensities,
@@ -451,6 +452,22 @@ export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // Per docs/journey/07-stage-new-identity.md §10
 // CRITICAL: urgency criterion is non-negotiable — even an eloquent user
 // cannot advance if urgency has appeared in the recent turn window.
+//
+// CANON-ALIGNED (2026-06-27 audit). Before alignment:
+//   - Adult Self stability across last 3 sessions was not gated. Canon §10:
+//     "Adult Self stable (`adultSelfPresent: true` in ≥ 70% of turns across
+//      last 3 sessions)."
+//   - Safety Reorientation was checked as "at least twice in window."
+//     Canon §10: "delivered at the close of every Stage 7 session (no
+//     exceptions)." The looser check let a user advance with one
+//     reorientation skipped — exactly the failure mode the canon names.
+// This PR uses the session-aware helpers (lastNSessionsTurns / groupSessions
+// / countSessions, 4-hour boundary) to enforce both canon properly.
+//
+// Still NOT gated (deferred):
+//   - "Identity Anchor recalled at least once per session" — no per-turn
+//     emit field exists yet; would require an `identityAnchorRecalled`
+//     schema addition.
 export function checkStage7Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.identityAnchor) reasons.push('identity_anchor_missing');
@@ -482,15 +499,37 @@ export function checkStage7Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   const recentUrgency = turns.slice(-5).some((t) => t.report.urgencyMarkers === 'present');
   if (recentUrgency) reasons.push('urgency_present_in_recent_turns');
 
-  // Safety Reorientation — canon §8.3 names this as the "mandatory closing
-  // practice of every Stage 7 session." PR 4 lands the schema field; here
-  // we require it to have been delivered at least twice in the audit
-  // window before stage advancement.
-  const reorientationCount = turns.filter(
-    (t) => t.report.safetyReorientation === true,
-  ).length;
-  if (reorientationCount < 2) {
-    reasons.push('safety_reorientation_missing_in_recent_sessions');
+  // Canon §10: Safety Reorientation delivered in EVERY Stage 7 session
+  // (no exceptions). We check that the last 2 sessions in the audit window
+  // each have at least one turn with safetyReorientation: true. We pick 2
+  // sessions because canon §10 elsewhere frames the urgency-window the
+  // same way ("last 5 turns of the most recent 2 sessions"); requiring
+  // every session forever would mean a single missed close would block
+  // advancement permanently, which is not the design.
+  if (countSessions(turns) < 2) {
+    reasons.push('insufficient_history_for_safety_reorientation_check');
+  } else {
+    const sessions = groupSessions(turns);
+    const last2 = sessions.slice(-2);
+    const allHaveReorientation = last2.every((s) =>
+      s.some((t) => t.report.safetyReorientation === true),
+    );
+    if (!allHaveReorientation) {
+      reasons.push('safety_reorientation_missing_in_at_least_one_recent_session');
+    }
+  }
+
+  // Canon §10: Adult Self present ≥ 70% of turns across the last 3 sessions.
+  // Same shape as Stage 6 (same canon ratio).
+  if (countSessions(turns) < 3) {
+    reasons.push('insufficient_history_for_adult_self_stability');
+  } else {
+    const last3Sessions = lastNSessionsTurns(turns, 3);
+    const adultPresent = last3Sessions.filter(
+      (t) => t.report.adultSelfPresent === true,
+    ).length;
+    const ratio = adultPresent / last3Sessions.length;
+    if (ratio < 0.7) reasons.push('adult_self_below_70_percent_across_last_3_sessions');
   }
 
   return reasons.length === 0 ? pass() : fail(...reasons);
