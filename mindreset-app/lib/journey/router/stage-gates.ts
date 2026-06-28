@@ -59,23 +59,35 @@ function standardGuards(
 // ---------------------------------------------------------------------------
 // Stage 1 — Assessment & Stabilisation
 // ---------------------------------------------------------------------------
-// Per docs/journey/01-stage-stabilisation.md §10 + assessment-phase framing
-// in docs/journey/runtime/journey-master.md.
+// Per docs/journey/01-stage-stabilisation.md §10 (the canon source of truth).
 //
-// Block 1 is the assessment phase. To advance, the AI must have:
-//   (a) helped the user name an anchor (set-once on RecodeProgress), AND
-//   (b) built a working case formulation across sessions AND shared it
-//       back to the user for explicit confirmation. That confirmation is
-//       captured via readinessTouched: "formulation_confirmed" on any
-//       turn in the window. Without it the deeper work in Block 2+ rests
-//       on the AI's unilateral interpretation — see trap #11.
+// CANON-ALIGNED (2026-06-26 audit). Previously this gate required
+// `formulation_confirmed` in readinessTouched — a milestone invented in the
+// master prompt's <assessment_phase> section but NOT present in canon §10.
+// That extra requirement made the gate effectively impassable in real
+// conversation, because users rarely give the clean explicit confirmation
+// the master prompt's share-back protocol demands ("nearly, maybe" is the
+// realistic shape of confirmation; canon §10 doesn't require any). Test
+// data 2026-06-26: users stuck at Stage 1 across 67 turns and 2 sessions.
 //
-// Stage 1 uses a LOOSER safety guard than the other stages: only 'red_flag'
-// blocks advancement, not 'watch'. Rationale: Block 1 assessment explores
-// material (financial pressure, difficult relationships, past content) that
-// the AI appropriately flags 'watch'. If watch blocked progression, the gate
-// would never close for any real user doing real work. 'red_flag' still
-// blocks here (and triggers freeze separately).
+// Canon §10 requires:
+//   - `anchorText` set
+//   - Last 2 intensities ≤ 5
+//   - Last 3 turns' safetyFlag is `none` (canon strict reading)
+//   - `readinessTouched` includes: anchor-identified, one emotion-or-body-
+//     state named, basic orientation present
+//   - recommendedAction: advance
+//   - No frozen_for_review
+//
+// SAFETY GUARD: Stage 1 uses a LOOSER safety guard than canon (B option per
+// owner sign-off, 2026-06-26): only 'red_flag' blocks advancement, not
+// 'watch'. Rationale documented in the prior version of this gate — Block 1
+// assessment legitimately explores material (financial pressure, difficult
+// relationships, past content) that the AI appropriately flags 'watch'. If
+// watch blocked progression, the gate would never close for any real user
+// doing real work. 'red_flag' still blocks (and triggers freeze separately).
+// Owner has reserved the right to tighten to canon-strict (A) later via a
+// one-line change.
 export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons: string[] = [];
 
@@ -91,10 +103,20 @@ export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   }
 
   if (!state.anchorText) reasons.push('anchor_not_set');
-  const formulationConfirmed = turns.some((t) =>
-    (t.report.readinessTouched ?? []).some((r) => /formulation[_-]?confirmed/i.test(r)),
-  );
-  if (!formulationConfirmed) reasons.push('formulation_not_confirmed_with_user');
+
+  // Canon §10's three readiness tokens.
+  const hasToken = (regex: RegExp): boolean =>
+    turns.some((t) =>
+      (t.report.readinessTouched ?? []).some((r) => regex.test(r)),
+    );
+  const anchorIdentified = hasToken(/anchor[_-]?identified/i);
+  if (!anchorIdentified) reasons.push('anchor_identified_token_missing');
+  // Canon: "one emotion-or-body-state named" — either token counts.
+  const emotionOrBody = hasToken(/emotion[_-]?named|body[_-]?located/i);
+  if (!emotionOrBody) reasons.push('no_emotion_or_body_state_named');
+  const orientationPresent = hasToken(/orientation[_-]?present/i);
+  if (!orientationPresent) reasons.push('orientation_not_present');
+
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
