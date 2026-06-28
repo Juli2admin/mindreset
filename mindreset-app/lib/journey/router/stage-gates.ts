@@ -43,6 +43,7 @@ function standardGuards(
   state: JourneyState,
   turns: AuditTurn[],
   safetyWindow: number,
+  expectedAction: 'advance' | 'discharge' = 'advance',
 ): string[] {
   const reasons: string[] = [];
   if (state.frozenForReview) reasons.push('frozen_for_review');
@@ -53,8 +54,12 @@ function standardGuards(
     reasons.push(`safety_not_clean_for_last_${safetyWindow}_turns`);
   }
   const last = turns[turns.length - 1];
-  if (last?.report.recommendedAction !== 'advance') {
-    reasons.push('ai_did_not_recommend_advance');
+  if (last?.report.recommendedAction !== expectedAction) {
+    reasons.push(
+      expectedAction === 'discharge'
+        ? 'ai_did_not_recommend_discharge'
+        : 'ai_did_not_recommend_advance',
+    );
   }
   return reasons;
 }
@@ -540,6 +545,28 @@ export function checkStage7Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // ---------------------------------------------------------------------------
 // Per docs/journey/08-stage-embodiment.md §10
 // Non-negotiable minimum: 6 weeks in Stage 8.
+//
+// CANON-ALIGNED (2026-06-27 audit). Added the Identity Reinforcement
+// Check-In requirement — canon §10:
+//   "The Identity Reinforcement Check-In has been completed at the start
+//    of every Stage 8 session for the last 4 sessions, with the Adult
+//    Self reported as 'close / steady' (not faint, not distant) in at
+//    least 3 of them."
+// Schema field: `adultSelfThisWeek` (string, user's words). We require it
+// to be captured in EACH of the last 4 sessions (the check-in happened)
+// AND ≥ 3 of those captures match /close|steady/i (the canon qualitative
+// requirement). The keyword match is intentionally lenient — Russian /
+// other-locale variants will land in follow-up if needed; English close /
+// steady covers the AI's actual emit vocabulary today.
+//
+// Still NOT gated (deferred, need new schema fields):
+//   - Identity Anchor used ≥ 1× / week between sessions (no per-week field)
+//   - "I feel like myself, and I know how to live from here" on ≥ 2 days
+//   - No active foreign material reactivation
+//   - No part flagged as separate / unseen in last 4 sessions
+//   - User has not pushed back at the suggestion of discharge (the
+//     dischargeReadiness = 'ready' check covers this implicitly: a
+//     pushed-back user won't be flagged as ready by the AI)
 const STAGE_8_MIN_WEEKS = 6;
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 
@@ -548,7 +575,11 @@ export function checkStage8Gate(
   turns: AuditTurn[],
   stage8StartedAt: Date,
 ): GateResult {
-  const reasons = standardGuards(state, turns, 10);
+  // Stage 8 expects the AI to emit `recommendedAction: 'discharge'`, not
+  // 'advance'. The previous standardGuards default forced 'advance' which
+  // made the gate unreachable — the router checks the gate first, then
+  // the action, so the gate is consulted with whatever the AI emitted.
+  const reasons = standardGuards(state, turns, 10, 'discharge');
   if (!state.identityAnchor) reasons.push('identity_anchor_missing');
 
   // Minimum 6 weeks in Stage 8
@@ -583,6 +614,37 @@ export function checkStage8Gate(
   );
   if (readyTurns.length < 2) {
     reasons.push('discharge_readiness_not_signalled_twice');
+  }
+
+  // Canon §10 — Identity Reinforcement Check-In:
+  //   - Completed at start of every session for the last 4 sessions
+  //     (each of those 4 sessions has at least one turn with
+  //     adultSelfThisWeek captured).
+  //   - At least 3 of those 4 captures report the Adult Self as "close"
+  //     or "steady" (substring match on the user's reported text).
+  if (countSessions(turns) < 4) {
+    reasons.push('insufficient_history_for_identity_reinforcement_check_in');
+  } else {
+    const sessions = groupSessions(turns);
+    const last4 = sessions.slice(-4);
+    const captures: string[] = [];
+    for (const s of last4) {
+      const cap = s
+        .map((t) => t.report.adultSelfThisWeek)
+        .find((v) => typeof v === 'string' && v.length > 0);
+      if (cap == null) {
+        // Missing in this session — gate fails the per-session requirement.
+        reasons.push('identity_reinforcement_check_in_missing_in_recent_session');
+        break;
+      }
+      captures.push(cap);
+    }
+    if (captures.length === last4.length) {
+      const closeOrSteady = captures.filter((c) => /close|steady/i.test(c)).length;
+      if (closeOrSteady < 3) {
+        reasons.push('adult_self_not_close_or_steady_in_three_of_last_four_sessions');
+      }
+    }
   }
 
   return reasons.length === 0 ? pass() : fail(...reasons);
