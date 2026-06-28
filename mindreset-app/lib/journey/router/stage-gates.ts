@@ -301,6 +301,24 @@ export function checkStage4Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // Stage 5 — Foreign Material
 // ---------------------------------------------------------------------------
 // Per docs/journey/05-stage-foreign-material.md §10
+//
+// CANON-ALIGNED (2026-06-27 audit). Before alignment, this gate accepted
+// two release signals on softer evidence than canon:
+//   - "Symbolic Return completed" was inferred from `releasedAt != null`
+//     on any foreign file, but save.ts sets that timestamp whenever
+//     `foreignFileReleased` lands — regardless of whether the release
+//     actually settled in the body. Canon §10 names the field exactly:
+//     `somaticRelease: true` must be confirmed for the Symbolic Return
+//     to count.
+//   - "Clean Identity Statement" was accepted on `cleanIdentityStatement`
+//     alone. Canon §10 also requires `bodyConfirmation` — the user's own
+//     words for the felt sense after declaring what stays and what was
+//     released. Without body confirmation the statement is head-only and
+//     canon explicitly does not count it.
+//
+// PR 4 (Bundle B) landed both schema fields (`somaticRelease`,
+// `bodyConfirmation`) but never wired them to the gate. This PR wires
+// them.
 export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
@@ -310,11 +328,25 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   // release by setting releasedAt on the foreign file.
   const anyReleased = state.foreignFiles.some((f) => f.releasedAt != null);
   if (!anyReleased) reasons.push('no_symbolic_return_completed');
+  // Canon §10: somaticRelease: true must be confirmed at least once.
+  // Without this, the release was head-only.
+  const somaticConfirmed = turns.some((t) => t.report.somaticRelease === true);
+  if (!somaticConfirmed) reasons.push('somatic_release_not_confirmed');
   // Clean Identity Statement spoken (any turn captures cleanIdentityStatement)
   const cleanStatementSeen = turns.some(
-    (t) => typeof t.report.cleanIdentityStatement === 'string',
+    (t) =>
+      typeof t.report.cleanIdentityStatement === 'string' &&
+      t.report.cleanIdentityStatement.length > 0,
   );
   if (!cleanStatementSeen) reasons.push('clean_identity_statement_missing');
+  // Canon §10: the statement must be confirmed in the body, captured as
+  // bodyConfirmation in the user's own words.
+  const bodyConfirmed = turns.some(
+    (t) =>
+      typeof t.report.bodyConfirmation === 'string' &&
+      t.report.bodyConfirmation.length > 0,
+  );
+  if (!bodyConfirmed) reasons.push('clean_identity_statement_not_body_confirmed');
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
