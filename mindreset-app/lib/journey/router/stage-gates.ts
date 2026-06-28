@@ -224,6 +224,17 @@ export function checkStage3Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // ---------------------------------------------------------------------------
 // Per docs/journey/04-stage-parts.md §10
 // Largest gate in the method. Seven MII criteria + standard guards.
+//
+// CANON-ALIGNED (2026-06-27 audit). Before alignment, MII-5 fell back to
+// reading `adultSelfQualities` — a Stage 3 capture (the user's words for
+// the Adult Self itself), NOT a reparenting offering to a part. That meant
+// any Stage 4 user who had reached Stage 3 already passed MII-5 by default
+// without ever offering anything to a part. Canon §10 names the field
+// exactly: `adultSelfOfferingToPart: "..."` captured at least once in the
+// user's words. The schema field that carries it is
+// `partSecured.adultSelfOffering` (see schema.ts §72), which save.ts
+// writes into the part's `currentRestingPlace` column. This PR makes the
+// MII-5 fallback read the right report field.
 export function checkStage4Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
@@ -255,11 +266,17 @@ export function checkStage4Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   );
   if (!bridgeOnTwoDays) reasons.push('mii4_compassion_bridge_not_landed_twice');
 
-  // MII-5 — Basic Reparenting Capacity: any active part has a recorded
-  // currentRestingPlace OR any state report carries an "offering" string.
+  // MII-5 — Basic Reparenting Capacity. Canon §10: "adultSelfOfferingToPart
+  // captured at least once in the user's words." The schema carries this as
+  // `partSecured.adultSelfOffering` (save.ts writes it into the part's
+  // currentRestingPlace). Pass if any active part has a recorded resting
+  // place OR any audit turn carried an explicit adultSelfOffering string.
   const reparenting =
     state.parts.some((p) => p.currentRestingPlace) ||
-    turns.some((t) => typeof t.report.adultSelfQualities === 'string');
+    turns.some((t) =>
+      typeof t.report.partSecured?.adultSelfOffering === 'string' &&
+      t.report.partSecured.adultSelfOffering.length > 0,
+    );
   if (!reparenting) reasons.push('mii5_no_reparenting_capacity');
 
   // MII-6 — No Delayed Destabilisation (soft check). If a Deep Layer contact
