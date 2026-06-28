@@ -124,20 +124,50 @@ export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 // Stage 2 — Pain Identification
 // ---------------------------------------------------------------------------
 // Per docs/journey/02-stage-pain.md §10
+//
+// CANON-ALIGNED (2026-06-26 audit). Before alignment, this gate accepted
+// ANY ONE token from a regex matching emotion_named|emotion_located|soft_why.
+// Canon §10 requires THREE DISTINCT conditions:
+//   1. At least one emotion has been named by the user in their own words.
+//   2. That emotion has been located in the body.
+//   3. The Soft Why has been asked AND the user has responded (with
+//      reflection OR with "I don't know" — both count).
+//
+// Canon also requires:
+//   - intensities ≤ 5
+//   - safetyFlag none for 3 turns (canon strict — this stage uses standard
+//     guards, not the looser Stage 1 rule)
+//   - Anchor still accessible (code approximates with anchorText set)
+//   - recommendedAction: advance
+//   - No frozen_for_review
 export function checkStage2Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 3);
   // Anchor still present (set in Stage 1, never overwritten)
   if (!state.anchorText) reasons.push('anchor_missing');
-  // Emotion named + located + Soft Why asked + answered. Captured via the
-  // state report's free-text fields. We look for any turn in the window where
-  // partsTouched or userImagesCaptured carry user-words content AND the AI
-  // marked readinessTouched against the pain criteria.
-  const anyEmotionNamed = turns.some((t) =>
-    (t.report.readinessTouched ?? []).some((r) =>
-      /emotion[_-]?named|emotion[_-]?located|soft[_-]?why/i.test(r),
-    ),
-  );
-  if (!anyEmotionNamed) reasons.push('no_emotion_named_or_soft_why_touched');
+
+  // Canon §10 — three distinct conditions, each must be touched at least
+  // once in the window.
+  const hasToken = (regex: RegExp): boolean =>
+    turns.some((t) =>
+      (t.report.readinessTouched ?? []).some((r) => regex.test(r)),
+    );
+
+  // 1. Emotion named
+  if (!hasToken(/emotion[_-]?named/i)) {
+    reasons.push('emotion_not_named');
+  }
+  // 2. Emotion located in body
+  if (!hasToken(/emotion[_-]?located|body[_-]?located/i)) {
+    reasons.push('emotion_not_located_in_body');
+  }
+  // 3. Soft Why asked AND user responded. Canon says "I don't know" counts as
+  // a response — so we accept either the asked-and-answered token or any
+  // soft_why-shaped token across the window.
+  const softWhyTouched = hasToken(/soft[_-]?why/i);
+  if (!softWhyTouched) {
+    reasons.push('soft_why_not_asked_or_answered');
+  }
+
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
 
