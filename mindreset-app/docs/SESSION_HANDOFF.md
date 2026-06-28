@@ -1,264 +1,216 @@
-# SESSION HANDOFF — 2026-06-04
+# SESSION HANDOFF — 2026-06-28
 
-**Read this BEFORE CLAUDE.md.** This is the most recent operational state.
-Supersedes the earlier handoff (2026-05-22).
+**Read this BEFORE CLAUDE.md.** Most recent operational state.
+Supersedes the prior handoff (2026-06-04, which itself superseded the
+2026-05-22 one — both archived in git).
 
 ---
 
 ## TL;DR — where we are
 
-MindReset is **soft-launch ready**. The full cutover ran today: Stripe Live,
-Clerk Production + custom domain, Resend, Vercel env swap, DNS, smoke tests,
-Google Search Console indexing live, PWA installable. 24 PRs shipped this
-session — see **Today's PRs** below.
+**The Journey 8-stage canon §10 audit is complete.** Eight small, focused
+PRs landed today (#177–#184) — one per stage. Every stage gate in
+`lib/journey/router/stage-gates.ts` now matches the documented method
+in `docs/journey/0X-stage-*.md §10`. All 151 tests pass.
 
-Next chapter: **Block C — the 8 blocks of The Journey + States & Themes
-modules**. This is content + module-delivery infrastructure that was
-deliberately deferred from soft launch. Pricing pages already show
-"available soon" badges for these SKUs. Owner is starting a fresh
-session for Block C work.
+Owner ran two test sessions against the previous (buggy) gates and got
+stuck at Stage 1 across 67 turns / 2 sessions because the code required
+`formulation_confirmed` — a milestone invented in the master prompt's
+`<assessment_phase>` but NOT in canon §10. That whole class of false-
+negative gate is gone, plus seven other stage-specific tightening fixes.
+
+**Next move: owner runs a fresh live test against the aligned gates.**
+SQL to wipe Journey state (kept MiniMind untouched) was provided in chat
+and is repeated under "Wipe SQL" below.
 
 ---
 
-## What is working (verified by owner this session)
+## What is working (verified by tests this session)
 
-- **Stripe Live**: 3 products (Essential, Extended, Top-up) with 5 prices.
-  Live webhook at `mindreset.ai/api/stripe/webhook` subscribed to 6 events.
-  Customer Portal saved in Live mode. £4.99 top-up purchase flow tested
-  end-to-end with `jloya4436@gmail.com`.
-- **Clerk Production**: Pro upgraded. Custom domain `clerk.mindreset.ai` +
-  `accounts.mindreset.ai` + DKIM records verified in Namecheap. Production
-  API keys (`pk_live_`, `sk_live_`) + webhook secret in Vercel Production.
-  Dev keys (`pk_test_`, `sk_test_`) added to Preview + Development so PR
-  previews build.
-- **Resend**: domain verified (DKIM/SPF/DMARC). Inbound webhook reaches
-  `mindreset.ai/api/webhooks/email-inbound` successfully — proven by
-  delivered test email producing a SupportEmail row.
-- **DNS `mindreset.ai` → Vercel**: connected (confirmed by inbound webhook
-  + browser tests). The CLAUDE.md note about apex DNS being pending is
-  stale.
-- **Welcome email**: arrives on real sign-up (verified with
-  `jloya4436@gmail.com`).
-- **Sign-up funnel**: Landing → Screening → Sign-up → Home → MiniMind
-  works end-to-end for fresh accounts.
-- **Admin access**: `loyayulia@gmail.com` signs into `/admin` (overview,
-  support queue, testimonials moderation, marketing, telemetry,
-  subscriptions, promo codes).
-- **PWA installable**: `apple-touch-icon`, `icon-192/512`, `manifest.json`,
-  Apple meta tags, theme-color all wired in `app/[locale]/layout.tsx`.
-- **Google Search Console**: domain verified via DNS TXT. Sitemap at
-  `https://mindreset.ai/sitemap.xml` accepted with 64 URLs discovered.
-  Indexing starts within 24-72 hours.
-- **Sentry**: error monitoring live (client + server + edge).
-- **Testimonials**: 3 approved testimonials (Sarah / Emma / Rachel) live on
-  Landing + Pricing across all 8 locales (display rule changed to global
-  threshold so non-EN locales also show the block).
+- **Stage 1 gate** (`checkStage1Gate`) — canon's 3 readiness tokens
+  (anchor-identified, emotion-or-body-state-named, orientation-present)
+  + looser safety guard (red_flag only blocks, watch passes per owner
+  sign-off Option B).
+- **Stage 2 gate** — three distinct conditions: emotion-named,
+  emotion-located, soft-why-asked. Previous single-regex shortcut gone.
+- **Stage 3 gate** — wired `adultSelfAnchorLinked` and
+  `heldEmotionInAdultSelf` (existed in schema since PR 4, never gated).
+- **Stage 4 gate (MII)** — MII-5 fallback now reads
+  `partSecured.adultSelfOffering` (canon-named) instead of Stage 3's
+  `adultSelfQualities` (wrong field).
+- **Stage 5 gate** — wired `somaticRelease: true` and `bodyConfirmation`
+  requirements. Without these the release / clean-identity statement
+  were head-only and still passed.
+- **Stage 6 gate** — adult self ≥ 70% across last 3 sessions added.
+  Uses two new session helpers (4-hour boundary).
+- **Stage 7 gate** — `safetyReorientation` tightened from "≥ 2 in window"
+  to "present in EACH of last 2 sessions" (canon: every Stage 7
+  session). Adult-self 70% across last 3 sessions added.
+- **Stage 8 gate (Discharge)** — Identity Reinforcement Check-In wired:
+  `adultSelfThisWeek` captured in each of last 4 sessions + "close" or
+  "steady" in ≥ 3 of them.
+- **Stage 8 unreachability bug fixed** — `standardGuards` was forcing
+  `recommendedAction === 'advance'`; Stage 8 emits `'discharge'`. The
+  gate was unreachable. Now `standardGuards` takes an `expectedAction`
+  parameter.
+
+All 151 vitest tests pass:
+`cd mindreset-app && npm test`.
 
 ---
 
 ## What is broken / unverified
 
-- **`loyayulia@gmail.com` as a regular USER**: data state corrupted from
-  today's dev→prod migration testing. Owner deliberately keeps this email
-  as admin-only and uses `jloya4436@gmail.com` for user-side testing. Not
-  a code bug — won't affect real customers.
-- **`STRIPE_PRICE_TOP_UP` legacy env name**: owner kept the underscore-
-  before-UP spelling rather than the canonical `STRIPE_PRICE_TOPUP`. Code
-  accepts both via fallback in `lib/stripe/products.ts:11-17` — no
-  functional impact, just deferred cleanup.
-- **Auto-send Phase 2 for support emails**: code shipped, env-var-gated
-  (`AUTO_SEND_SUPPORT_ENABLED`), cron de-registered from `vercel.json`
-  because Hobby plan caps minute-level crons. Re-enable when on Pro
-  (re-add cron entry + set env var).
-- **`Purchase.userId` missing `onDelete: Cascade`**: schema oversight
-  surfaced when GDPR-deleting users with purchases. Not blocking for soft
-  launch (no real refunded customers yet); needs a small schema PR before
-  any GDPR delete request lands.
-- **Sign-up T&C link uses `target="_blank"`**: on mobile / in-app browsers
-  this can navigate in-place instead of opening a tab, causing the
-  sign-up tab to be lost. Discovered while triaging the screening loop
-  earlier today. Tracked as a known UX foot-gun; non-blocking but worth a
-  small fix.
+- **Live test of the new gates is the next step.** Tests pass; real
+  session behaviour has not been verified yet. Owner about to run.
+- **safetyFlag floor at intensity ≥ 7** — small follow-up identified
+  but not built. The AI can currently emit `intensity: 8` with
+  `safetyFlag: 'none'`. The schema doesn't enforce the obvious
+  invariant. Worth a tiny PR.
+- **`I lost my thread` parse error** — recurring bug across sessions,
+  root cause not identified. Owner's previous test logs likely have
+  reproductions. Investigate when convenient.
+- **Family selection still drifting toward `regulation`** — partial fix
+  in PR 8. Last test session showed 3 distinct families in Part 2; not
+  yet a clean balanced distribution.
+- **Practice ratio still low** — AI selectively emits `practiceRun`;
+  some practices conducted in conversation don't get logged. PR 6
+  emission mandate partially working.
 
 ---
 
-## Today's PRs (chronological)
+## Today's PRs (chronological, all merged)
 
-All merged. Branch deletions handled. `main` is at `f63c762` plus this
-handoff PR.
-
-| PR | Title |
-|---|---|
-| #102 | fix(inbound): defensive body extraction + raw-payload fallback + Sentry telemetry link |
-| #103 | fix(inbound): fetch body via Resend Receiving API (webhook is metadata-only) |
-| #104 | fix(inbound): Resend REST returns email fields flat, not wrapped in `{ data }` |
-| #105 | docs: close open-question #24 (marketing-consent UI) as resolved by PR #89 |
-| #106 | feat(support): Phase 2 narrow auto-send for methodology emails |
-| #107 | fix(screening): break post-signup redirect loop (Clerk webhook race) |
-| #108 | fix(deploy): remove minute-level cron blocking Hobby deploys |
-| #109 | fix(screening): drop the failing transaction (real root cause was FK, not P2025) |
-| #110 | chore(screening): extract linkage helper + Vitest regression test |
-| #111 | fix(launch): clear customer-facing legal placeholders + Stripe env fallback + cutover doc |
-| #112 | fix(minimind): backfill screeningResult from any past ScreeningResponse |
-| #113 | chore(seo): locale-correct canonicals + Product JSON-LD + robots disallow expansion |
-| #114 | feat(admin): testimonials moderation page |
-| #115 | feat(testimonials): show on every locale once 3+ approved globally |
-| #116 | feat(about): founder origin story page (`/about`) |
-| #118 | feat: Footer compliance line + RU translations for About + Footer |
-| #119 | i18n: About page + Footer translations — FR, DE, ES, IT, PL, PT |
-| #120 | feat(landing): 'Why MindReset feels different' + 7 locale translations |
-| #121 | feat(pwa): installable home-screen app + Google Search Console verification hook |
-| #122 | fix(middleware): skip sitemap.xml and robots.txt (Search Console couldn't fetch the sitemap) |
-| #123 | docs(ops): Google promotion runbook for after Block C |
-| (this) | docs: session handoff 2026-06-04 |
-
-Plus: SQL run manually in Supabase for PR #106 schema change
-(`SupportEmail.autoSendAt`) and a manual `DELETE` to clean up the
-owner's dev-era User row.
-
----
-
-## Block C — what next session should know
-
-The 8 blocks of The Journey are named in the About page and Stripe
-products:
-
-1. **Stop**
-2. **Pain**
-3. **Inner Self**
-4. **Parts & Trauma**
-5. **Foreign Parts**
-6. **Support**
-7. **New Model**
-8. **Identity**
-
-States & Themes modules (separate from Journey): 9 modules (anxiety, low
-energy, come back, empty + 5 themes — money, body, family, shame,
-self-realisation), each £59 one-off for non-subscribers, £29 for
-subscribers (subscriber discount = `STRIPE_COUPON_MODULE` already
-created in Stripe Live).
-
-### Stripe state for Block C (already created, unused in code)
-
-Owner created these in Live mode this session — sitting unused:
-
-```
-STRIPE_COUPON_MODULE = YUkaLfPZ
-STRIPE_PRICE_STATE_ANXIETY        = price_1TeVIfEnfIBDDBbc5zaQKwaz
-STRIPE_PRICE_STATE_LOW_ENERGY     = price_1TeVGFEnfIBDDBbcBaRhBift
-STRIPE_PRICE_STATE_COME_BACK      = price_1TeVEMEnfIBDDBbczHg2GyV3
-STRIPE_PRICE_STATE_EMPTY          = price_1TeVCVEnfIBDDBbc12o4Kque
-STRIPE_PRICE_THEME_MONEY          = price_1TeVAYEnfIBDDBbciUdBSXH8
-STRIPE_PRICE_THEME_BODY           = price_1TeV8dEnfIBDDBbcORyoYQOj
-STRIPE_PRICE_THEME_FAMILY         = price_1TeV6YEnfIBDDBbcUjoQnF27
-STRIPE_PRICE_THEME_SHAME          = price_1TeV4FEnfIBDDBbcC1JjGjZi
-STRIPE_PRICE_THEME_SELF_REALISATION = price_1TeV1xEnfIBDDBbcMUaingeZ
-STRIPE_PRICE_JOURNEY_FULL         = price_1TeUxEEnfIBDDBbcYppaQAgg
-STRIPE_PRICE_JOURNEY_WEEKLY       = price_1TeUtYEnfIBDDBbcF5a8QbS5
-```
-
-Not in Vercel env yet. Adding them to Vercel and wiring
-`app/api/checkout/create/route.ts` to recognise them is part of Block C.
-
-### Files to start from for Block C
-
-- `docs/operations/launch-cutover.md` — what's done
-- `docs/operations/google-promotion.md` — defer until after Block C
-- `mindreset-app/architecture.md` — data model overview
-- `lib/stripe/products.ts` — extend with Block C SKUs
-- `app/api/checkout/create/route.ts` — checkout endpoint to extend
-- `app/[locale]/pricing/PricingClient.tsx` — pricing page currently
-  shows S&T + Journey as "available soon" badges; flip those when the
-  flow is live
-- `prisma/schema.prisma` — likely needs new tables for module / Journey
-  progress tracking (currently `ModuleProgress` and `RecodeProgress`
-  exist as stubs)
-
-### Block C dependencies / open product questions
-
-These need owner sign-off before code work starts:
-
-- **Module content format**: text + audio + video? markdown? interactive?
-- **The Journey 8-block delivery**: linear unlock (must finish block N
-  before N+1)? Time-gated (one block per week)? All available from purchase?
-- **Module → subscription discount**: code applies `STRIPE_COUPON_MODULE`
-  to module checkout when the user has an active sub. Need: when does
-  "active sub" mean? Mid-cycle of cancelled sub still counts?
-- **Refund policy** for £599 Journey full programme already locked
-  (non-refundable once first block accessed — see CLAUDE.md). Need same
-  level of clarity for States & Themes modules.
-
----
-
-## Service state snapshot
-
-| Service | Mode | Notes |
+| PR | Stage | Title |
 |---|---|---|
-| Stripe | Live | All 5 launch SKUs + Block C SKUs created. Webhook live. Portal saved. |
-| Clerk | Production | `clerk.mindreset.ai` verified. Production keys + webhook in Vercel. |
-| Resend | Live (single environment) | Domain verified. Inbound webhook live. `RESEND_FROM_SUPPORT_EMAIL` not set — falls back to `hello@mindreset.ai`. |
-| Vercel | Hobby | Hobby caps cron at daily. Block C may push us to Pro. |
-| Sentry | Live | Client + server + edge configs present. Project URL in `/admin/telemetry`. |
-| Google Search Console | Verified + sitemap accepted | Indexing in progress. |
-| Supabase | Postgres live | All migrations applied manually. |
+| #177 | 1 | Stage 1 gate — align with canon §10, remove invented `formulation_confirmed` |
+| #178 | 2 | Stage 2 gate — require all three distinct canon conditions |
+| #179 | 3 | Stage 3 gate — wire `adultSelfAnchorLinked` + `heldEmotionInAdultSelf` |
+| #180 | 4 | Stage 4 MII-5 — read `partSecured.adultSelfOffering`, not Stage 3 `adultSelfQualities` |
+| #181 | 5 | Stage 5 gate — require `somaticRelease` + `bodyConfirmation` |
+| #182 | 6 | Stage 6 gate — require adult self ≥ 70% across last 3 sessions |
+| #183 | 7 | Stage 7 gate — tighten `safetyReorientation` to every recent session + adult-self 70% |
+| #184 | 8 | Stage 8 gate — wire Identity Reinforcement Check-In + fix unreachable gate |
+
+`main` is at `2c91919` after #184.
 
 ---
 
-## Env vars set in Vercel
+## Wipe SQL (owner uses this before fresh test)
 
-**Production scope (live):**
+Run in Supabase SQL editor. Keeps MiniMind chat untouched (it lives on a
+separate data path; The Journey reads `JourneyTurn`, not MiniMind
+conversations).
 
-- `STRIPE_SECRET_KEY` = `sk_live_…`
-- `STRIPE_WEBHOOK_SECRET` = `whsec_…` (live)
-- `STRIPE_PRICE_ESSENTIAL_MONTHLY`, `STRIPE_PRICE_ESSENTIAL_ANNUAL`,
-  `STRIPE_PRICE_EXTENDED_MONTHLY`, `STRIPE_PRICE_EXTENDED_ANNUAL`,
-  `STRIPE_PRICE_TOP_UP` = live price IDs
-- `CLERK_SECRET_KEY` = `sk_live_…`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` = `pk_live_…`
-- `CLERK_WEBHOOK_SECRET` = `whsec_…` (live)
-- `NEXT_PUBLIC_APP_URL` = `https://mindreset.ai`
-- `ADMIN_EMAILS` = `loyayulia@gmail.com`
+```sql
+BEGIN;
+DELETE FROM "JourneyPracticeRun"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "JourneyMessage"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "JourneyTurn"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "JourneyPart"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "JourneyForeignFile"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "JourneySignatureImage" WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+DELETE FROM "RecodeProgress"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
+COMMIT;
+```
 
-**Preview + Development scope (test/dev):**
-
-- `CLERK_SECRET_KEY` = `sk_test_…`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` = `pk_test_…`
-- `CLERK_WEBHOOK_SECRET` = `whsec_…` (dev)
-- `ADMIN_EMAILS` = `loyayulia@gmail.com,jloya4436@gmail.com`
-- `NEXT_PUBLIC_APP_URL` = `https://mindreset.ai`
-
-**Optional / not set (falls back to safe default in code):**
-
-- `RESEND_FROM_SUPPORT_EMAIL` — code falls back to `hello@mindreset.ai`
-- `SEV5_ALERT_EMAIL` — falls back to first `ADMIN_EMAILS` entry
-- `AUTO_SEND_SUPPORT_ENABLED` — keep unset until on Vercel Pro with
-  re-added cron
-- `GOOGLE_SITE_VERIFICATION` — not needed (owner used DNS TXT verification
-  instead of HTML meta tag)
+After this owner is back to Stage 1 with no parts, no foreign material,
+no audit log. `RecodeProgress` is recreated on next Journey turn.
 
 ---
 
-## CLAUDE.md doc drift
+## Deferred canon §10 items (each needs a schema field + emit instruction)
 
-`CLAUDE.md` "Deployment / domain — current state (as of 22 May 2026)"
-section is **stale**. Items to refresh in a future doc PR (not urgent):
+These were noted in the PR descriptions but not built. Each is its own
+small PR — schema add → master prompt emit instruction → save.ts wire →
+gate check → tests.
 
-- "mindreset.ai is NOT connected to Vercel yet" → it IS connected
-- "production = whatever Vercel-provided URL the project is serving" →
-  production is `mindreset.ai`
-- Stripe webhook URL bypass note → now uses clean
-  `https://mindreset.ai/api/stripe/webhook`
-- Add: PWA + Google indexing shipped 2026-06-04
+**Stage 6**
+- `feltLikeMyself: string` — canon §10: "I feel like myself" on ≥ 2
+  different days. No field exists. Currently implicit in
+  `internalConsensus`.
+
+**Stage 7**
+- `identityAnchorRecalled: boolean` — canon §10: identity anchor recalled
+  at least once per Stage 7 session. No field exists.
+
+**Stage 8**
+- `identityAnchorWeeklyUse: boolean` (or count) — canon §10: identity
+  anchor used between sessions ≥ 1×/week. No field exists.
+- `feelLikeMyselfAndKnowHowToLive: string` — canon §10: "I feel like
+  myself, and I know how to live from here" on ≥ 2 different days. No
+  field exists.
+- `foreignMaterialReactivated: boolean` — canon §10: no active foreign
+  material reactivation. No field exists.
+- `partSeparatedInLastFourSessions: boolean` — canon §10: no part
+  flagged as separate / unseen in last 4 sessions. No field exists.
+
+The deferred items are NOT blocking for the live test. Without them the
+gates are looser than canon in these specific ways, but the structural
+"stuck at Stage 1" class of bug is fully fixed.
 
 ---
 
-## Tone reminder for next session
+## What next session should know
 
-- Owner pushes through quickly; minimise back-and-forth
-- Don't pile multiple steps in one message — give one clear next action
-  at a time when walking through dashboard work
-- Verify with code-side audits before patching; today's session burned
-  hours on multiple "wrong fix" patches because of insufficient
-  upfront investigation
-- Owner is the final decision-maker on product copy + UX choices —
-  propose, don't impose
+### What owner most likely wants
+1. **First, ask if she's done the live test** and what happened. The
+   live test is the deliverable — code is ready, behaviour is not yet
+   confirmed.
+2. **If a real bug surfaced**: fix that. Don't propose deferred-item
+   work until the live test is working cleanly.
+3. **If live test is clean**: the safetyFlag-floor-at-7 PR is the next
+   small high-value item. Then optionally the deferred §10 items above.
+
+### Operating norms (load-bearing)
+- Owner = Julia (`jloya4436@gmail.com` for testing,
+  `loyayulia@gmail.com` for admin).
+- GitHub MCP owner param is `Juli2admin` (capital J), repo `mindreset`.
+- Owner says "merge" → agent clicks merge via
+  `mcp__github__merge_pull_request`, squash. Then `git checkout main &&
+  git pull && git branch -D <merged-branch>` and create next branch.
+- **One PR per change**, small and focused. Do NOT bundle multiple
+  stages, schema additions, or features into one PR. Owner explicitly
+  prefers many small PRs over one big one.
+- **No `git add -A`** — always specify files explicitly.
+- **Migrations are manual** — never run `prisma migrate` against any env.
+  If schema changes, propose the SQL in the PR body for owner to run.
+
+### Working directory gotchas
+- `npm test` MUST be run from `/home/user/mindreset/mindreset-app`,
+  not the repo root. From repo root, prefix with `cd mindreset-app &&`.
+- `git` commands run from `/home/user/mindreset` (repo root); file
+  paths in `git add` are then `mindreset-app/lib/journey/...`.
+
+### Key files for The Journey
+- Gates: `mindreset-app/lib/journey/router/stage-gates.ts`
+- Helpers: `mindreset-app/lib/journey/router/history.ts` (added today:
+  `lastNSessionsTurns`, `countSessions`, `groupSessions`)
+- Schema: `mindreset-app/lib/journey/stateReport/schema.ts`
+- Persist: `mindreset-app/lib/journey/state/save.ts`
+- Load: `mindreset-app/lib/journey/state/load.ts`
+- Router: `mindreset-app/lib/journey/router/router.ts`
+- Master prompt: `mindreset-app/docs/journey/runtime/journey-master.md`
+- Canon §10 source of truth: `mindreset-app/docs/journey/0X-stage-*.md`
+
+### Pattern for follow-up alignment PRs
+The 8 PRs today all follow the same shape — repeat it:
+1. Read canon §10 in the stage's doc.
+2. Diff against `checkStageXGate` in `stage-gates.ts`.
+3. Add missing canonical requirement(s) inline. Document the alignment
+   in the function's docstring.
+4. Write `stageX-gate.test.ts` with passing path + regression guard
+   per new check + failure cases for existing checks.
+5. Run `npm test` from `mindreset-app/`. All pass.
+6. Commit + push + PR with the "Why / What changed / Tests / Migration"
+   body.
+7. Wait for owner "merge".
+
+### Tone with this owner
+- Tight. No multi-paragraph explanations. Short user-facing updates only.
+- She's direct and reads diffs herself — don't over-explain code.
+- She has caught me before being biased toward "easy work" and toward
+  patches over solid fixes. If proposing the simpler of two options,
+  call out why it's simpler-on-merits, not simpler-for-me.
+- She will tell you when something is wrong. Take it directly, don't
+  defend.
