@@ -70,8 +70,17 @@ A message is a crisis (clear_crisis) only when BOTH:
 
 Without specificity or imminence, even strong intent is "likely crisis" (Sev 4), not "imminent crisis" (Sev 5).
 
+"Active danger" means an acute, in-the-moment emergency happening in the session right now — not an ongoing life circumstance. A user who lives with an abuser is describing the context the method works through over weeks; that is never, by itself, "active danger".
+
 CONTEXT VS CLASSIFICATION
 Recent context is provided so you can understand the conversation, NOT to influence the classification of the current message. Classify only the most recent user message. Earlier turns may contain trauma topics, parts work, or distressing emotional content — that is normal Journey work and not evidence of current crisis.
+
+ABUSE DISCLOSURE IS NOT CRISIS
+The user being harmed by another person — sexual coercion, rape, domestic abuse, assault, control, a forced encounter — whether in the past OR ongoing in their life right now, is core trauma material. It is exactly what the Journey exists to meet. Classify it clear_safe, or at most ambiguous — NEVER clear_crisis on the basis of the abuse itself.
+  - "My husband still forces me to have sex" → clear_safe (victim disclosing abuse)
+  - "My boss made me sleep with him" → clear_safe (victim disclosing abuse)
+  - "It happened again last night" (being hurt by someone) → clear_safe (victim disclosing abuse)
+Abuse content becomes crisis ONLY if the SAME message also carries the user's own intent to harm themselves or another person, with specificity / imminence / acute in-session danger — and then you classify on THAT intent, not on the abuse.
 
 SEVERITY TAXONOMY
 
@@ -101,12 +110,13 @@ Sev 2 — SOFT SIGNAL / NO CONCERN
   - "I feel hopeless about this work right now"
   - "I'm exhausted with all of this"
   - "I don't know if I can keep going" (re: the work, not life)
+  - "He forces me to have sex and I feel dirty about it" (victim disclosing abuse)
   - All normal emotional Journey content
 
 RED FLAG TYPE TAXONOMY (use only on clear_crisis or ambiguous)
   - "suicidal"            — intent / plan to end own life
   - "self-harm"           — intent / current behaviour of bodily self-harm
-  - "violence"            — intent to harm another specific person
+  - "violence"            — the USER's OWN intent to harm another specific person. NOT the user being harmed by someone else — a user disclosing that another person hurts, forces, or abuses THEM is a victim disclosing trauma (see ABUSE DISCLOSURE IS NOT CRISIS), never "violence".
   - "panic_severe"        — current "can't breathe" / "having heart attack" / acute medical
   - "dissociation_severe" — current "I don't exist" / "nothing is real" / cannot return
   - "psychosis"           — command hallucinations, delusions, loss of reality testing
