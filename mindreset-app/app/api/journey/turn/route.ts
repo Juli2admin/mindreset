@@ -28,7 +28,7 @@ import { loadJourneyState } from '@/lib/journey/state/load';
 import { applyStateReportToProgress } from '@/lib/journey/state/save';
 import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
-import { splitReplyAndReport, parseStateReport, assessReportHealth } from '@/lib/journey/stateReport/parse';
+import { splitReplyAndReport, parseStateReport, assessReportHealth, displayableReply } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
@@ -47,9 +47,6 @@ const MAX_TOKENS = 1500;
 // 30-message history replay (no risk of one user blowing the prompt
 // budget). MiniMind enforces a similar cap.
 const MAX_USER_MESSAGE_CHARS = 4000;
-// Tag pair used by the assembler's output-format instruction; we strip
-// everything from STATE_REPORT_OPEN onward before streaming to the client.
-const STATE_REPORT_OPEN = '<state-report>';
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -203,15 +200,14 @@ export async function POST(request: NextRequest) {
     messages,
   });
 
-  // We stream the human-reply portion to the client; the state report stays
-  // server-side. We strip everything from the first <state-report> tag onward.
-  let buffer = '';
-  let truncatedAtOpen = false;
-  let displayedSoFar = 0;
+  // Report-FIRST contract: the model emits the hidden <state-report> first, then
+  // the warm reply. We stream only the reply (everything after the report) to the
+  // client; displayableReply() resolves the boundary and falls back safely if the
+  // model reverts to report-last or omits the report. See parse.ts.
   let fullText = '';
-  // DIAGNOSTIC (temporary — Root-1 truncation measurement): capture the model's
-  // stop_reason so we can tell whether the state report was cut off by the
-  // token cap (stop_reason === 'max_tokens'). Remove after the measurement.
+  let emitted = 0; // chars of the displayable reply already streamed
+  // DIAGNOSTIC (temporary — Root-1 measurement): capture the model's stop_reason
+  // so we can tell whether the report was cut off by the token cap. Remove later.
   let stopReason: string | null = null;
 
   const encoder = new TextEncoder();
@@ -227,35 +223,26 @@ export async function POST(request: NextRequest) {
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
           ) {
-            const delta = event.delta.text;
-            fullText += delta;
-            if (truncatedAtOpen) continue;
-            buffer += delta;
-            const idx = buffer.indexOf(STATE_REPORT_OPEN);
-            if (idx >= 0) {
-              // Stream up to the tag, then stop displaying.
-              const beforeTag = buffer.slice(0, idx);
-              const newDisplay = beforeTag.length - displayedSoFar;
-              if (newDisplay > 0) {
-                controller.enqueue(encoder.encode(beforeTag.slice(displayedSoFar)));
-                displayedSoFar = beforeTag.length;
-              }
-              truncatedAtOpen = true;
-            } else {
-              // Safe to stream the new delta — but keep the last ~20 chars
-              // buffered so we don't accidentally stream a partial open tag.
-              const safeUpTo = Math.max(0, buffer.length - STATE_REPORT_OPEN.length);
-              const toStream = buffer.slice(displayedSoFar, safeUpTo);
-              if (toStream.length > 0) {
-                controller.enqueue(encoder.encode(toStream));
-                displayedSoFar = safeUpTo;
-              }
+            fullText += event.delta.text;
+            const disp = displayableReply(fullText, false);
+            if (disp !== null && disp.length > emitted) {
+              controller.enqueue(encoder.encode(disp.slice(emitted)));
+              emitted = disp.length;
             }
           }
         }
-        // Stream is complete — if we never hit the open tag, flush the rest.
-        if (!truncatedAtOpen && displayedSoFar < buffer.length) {
-          controller.enqueue(encoder.encode(buffer.slice(displayedSoFar)));
+        // Stream complete — release any held-back tail of the reply.
+        const finalDisp = displayableReply(fullText, true);
+        if (finalDisp !== null && finalDisp.length > emitted) {
+          controller.enqueue(encoder.encode(finalDisp.slice(emitted)));
+          emitted = finalDisp.length;
+        }
+        // Nothing displayable at all (e.g. report-first but the report never
+        // closed, so the reply was truncated away) → soft re-ask, not a blank.
+        if (emitted === 0 && (finalDisp === null || finalDisp.trim().length === 0)) {
+          controller.enqueue(
+            encoder.encode("*(I lost my thread for a moment. Please send again when you're ready.)*"),
+          );
         }
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
