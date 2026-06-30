@@ -73,6 +73,39 @@ export function splitReplyAndReport(fullReply: string): SplitReply {
   return { humanReply: human, rawStateReport: raw };
 }
 
+/**
+ * DIAGNOSTIC (temporary — Root-1 truncation measurement). Classify the health
+ * of the state report in a full model reply, to measure how often it comes
+ * back whole vs missing/truncated/partial. Codes:
+ *   'no_report'          — no <state-report> open tag at all
+ *   'truncated_no_close' — open tag present, no close tag (cut off mid-report)
+ *   'bad_json'           — both tags present but the JSON does not parse
+ *   'missing_fields'     — valid JSON but intensity or recommendedAction absent
+ *   'ok'                 — valid JSON with intensity and recommendedAction present
+ * Remove once the measurement is done.
+ */
+export function assessReportHealth(fullReply: string): string {
+  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
+  if (openIdx < 0) return 'no_report';
+  const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
+  if (closeIdx < 0) return 'truncated_no_close';
+  const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
+  let obj: unknown;
+  try {
+    obj = JSON.parse(raw);
+  } catch {
+    return 'bad_json';
+  }
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'bad_json';
+  const o = obj as Record<string, unknown>;
+  const hasIntensity =
+    typeof o.intensity === 'number' ||
+    (typeof o.intensity === 'string' && Number.isFinite(Number(o.intensity)));
+  const hasAction = typeof o.recommendedAction === 'string';
+  if (!hasIntensity || !hasAction) return 'missing_fields';
+  return 'ok';
+}
+
 // ---------------------------------------------------------------------------
 // Parse + validate the raw JSON into a StateReport, falling back defensively.
 // ---------------------------------------------------------------------------
