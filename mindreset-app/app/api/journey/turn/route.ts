@@ -28,7 +28,7 @@ import { loadJourneyState } from '@/lib/journey/state/load';
 import { applyStateReportToProgress } from '@/lib/journey/state/save';
 import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
-import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
+import { splitReplyAndReport, parseStateReport, assessReportHealth } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
@@ -209,6 +209,10 @@ export async function POST(request: NextRequest) {
   let truncatedAtOpen = false;
   let displayedSoFar = 0;
   let fullText = '';
+  // DIAGNOSTIC (temporary — Root-1 truncation measurement): capture the model's
+  // stop_reason so we can tell whether the state report was cut off by the
+  // token cap (stop_reason === 'max_tokens'). Remove after the measurement.
+  let stopReason: string | null = null;
 
   const encoder = new TextEncoder();
 
@@ -216,6 +220,9 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       try {
         for await (const event of stream) {
+          if (event.type === 'message_delta' && event.delta.stop_reason) {
+            stopReason = event.delta.stop_reason;
+          }
           if (
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
@@ -268,6 +275,7 @@ export async function POST(request: NextRequest) {
             depthAtTurn: state.currentDepth,
             userMessage,
             fullText,
+            stopReason,
             recentForVerifier: decryptedHistory.slice(0, -1),
           }),
         );
@@ -291,10 +299,18 @@ async function finaliseTurn(args: {
   depthAtTurn: string;
   userMessage: string;
   fullText: string;
+  stopReason?: string | null;
   recentForVerifier: { role: 'user' | 'assistant'; content: string }[];
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   const report = parseStateReport(split.rawStateReport);
+
+  // DIAGNOSTIC (temporary — Root-1 truncation measurement). Records whether the
+  // state report came back whole and the model's stop_reason. Read by grepping
+  // Vercel logs for "journey/parse-health". Remove after the measurement.
+  console.warn(
+    `[journey/parse-health] health=${assessReportHealth(args.fullText)} stop=${args.stopReason ?? 'unknown'} stage=${args.stageAtTurn}`,
+  );
 
   // Persist the assistant message (human reply only — the state report is
   // never stored on the message itself; it lives encrypted on the audit log).
