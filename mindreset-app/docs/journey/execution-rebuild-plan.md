@@ -71,10 +71,18 @@ code/gates that enforce) drifted apart; nobody owns the emit↔require contract.
       `stage-gates.ts` change needed (the fix lives in the helpers it calls);
       no schema migration (`_defaulted` rides inside the existing encrypted
       blob). Files: `schema.ts`, `parse.ts`, `history.ts`.
-- [ ] **PR 3 — Close the readiness loop.** Surface each stage's outstanding gate
-      criteria into the state block (read-only gate-reasons mode) + a per-stage
-      "evaluate advancement each turn" instruction. Files: `assemble.ts`,
-      `stage-gates.ts`, `journey-master.md`.
+- [x] **PR 3 — Close the readiness loop.** `outstandingStageCriteria()` in
+      `stage-gates.ts` runs the current stage's gate read-only and maps the
+      failing content reasons to plain clinical milestones (advisory/settledness
+      reasons filtered out). `loadOutstandingCriteria()` in `router.ts` loads the
+      stage window and returns them (`null` fresh user, `[]` all met, else the
+      list). `route.ts` computes them pre-LLM (fail-soft) and passes them to
+      `assembleSystemPromptBlocks`; the state block renders "Toward completing
+      Stage N …" (or the advance nudge when all met). `journey-master.md` now
+      tells the AI to evaluate advancement EVERY turn at EVERY stage against
+      that section, not only in Block 1 — framed as a floor, not a script.
+      Files: `stage-gates.ts`, `router.ts`, `route.ts`, `assemble.ts`,
+      `journey-master.md`.
 - [ ] **PR 4 — Unblock Stage 2.** Add `soft_why` (+ align `emotion_located`) to
       the readinessTouched vocabulary the AI is given + the move-2 emit
       instruction. Files: `journey-master.md` (+ verify `stage-gates.ts` regex).
