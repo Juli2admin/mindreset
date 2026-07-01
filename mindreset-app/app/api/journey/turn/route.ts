@@ -33,7 +33,7 @@ import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
 import { freezeJourney } from '@/lib/journey/safety/freeze';
-import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
+import { decideRoute, applyRouteDecision, loadOutstandingCriteria } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 import { checkJourneyRateLimit } from '@/lib/rateLimit';
 
@@ -174,11 +174,22 @@ export async function POST(request: NextRequest) {
   });
   recent.reverse();
 
+  // Readiness loop (PR 3): compute the current stage's outstanding completion
+  // criteria from the same code gate the router enforces, and surface them in
+  // the state block so the AI can steer toward them and evaluate advancement
+  // each turn. Fail soft — a readiness miss must never break the user's turn.
+  let outstanding: string[] | null = null;
+  try {
+    outstanding = await loadOutstandingCriteria(state);
+  } catch (err) {
+    console.error('[journey/turn] readiness computation error:', err);
+  }
+
   // System prompt is assembled as a block array so Anthropic prompt
   // caching can cache the canon (Shared Core + active stage spec) +
   // master-before-state. Dynamic content (the state block + master tail)
   // sits in uncached blocks at the end. See lib/journey/prompts/assemble.ts.
-  const systemBlocks = assembleSystemPromptBlocks(state);
+  const systemBlocks = assembleSystemPromptBlocks(state, outstanding);
   const model = getModelForStage(state.currentStage, body.modelOverride);
 
   const decryptedHistory: { role: 'user' | 'assistant'; content: string }[] = recent.map(

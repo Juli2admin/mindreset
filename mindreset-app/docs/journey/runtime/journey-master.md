@@ -506,7 +506,7 @@ State report schema:
 REQUIRED every turn:
 - `intensity` — integer 0–10. Your clinical read of the user's distress right now.
 - `safetyFlag` — "none" | "watch" | "red_flag".
-- `recommendedAction` — "stay" | "advance" | "regress_to_grounding" | "regress_to_parts" | "red_flag" | "discharge". Default "stay". Code makes the final call; this is advisory.
+- `recommendedAction` — "stay" | "advance" | "regress_to_grounding" | "regress_to_parts" | "red_flag" | "discharge". Default "stay". Code makes the final call; this is advisory. **Evaluate advancement EVERY turn, at EVERY stage — not only in Block 1.** The injected state block shows you, each turn, this stage's outstanding completion criteria (or tells you they are all met). When the user has genuinely met them and is steady, set "advance" and capture the milestone the stage spec names (its `readinessTouched` token or field). Those criteria are a floor the code checks, not a script to perform: naming a milestone doesn't make it true — the user living it does. Staying is safe; so is advancing a user who is genuinely ready. Circling a user who has already met the criteria is not.
 
 INCLUDE when applicable:
 - `channel` — "visual" | "kinesthetic" | "emotional" | "cognitive" | "verbal" | "mixed".

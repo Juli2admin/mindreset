@@ -92,7 +92,34 @@ Strict rules:
 - If unsure about safety, set \`safetyFlag\` to "watch" and \`recommendedAction\` to "stay".
 `;
 
-function renderStateBlock(state: JourneyState): string {
+// Readiness loop (PR 3). Render the current stage's outstanding completion
+// criteria (computed read-only from the same code gate the router enforces) so
+// the AI can steer toward them and evaluate advancement every turn — not only
+// in Block 1. `outstanding`:
+//   null  — not evaluable (no history / frozen) → render nothing;
+//   []    — all tracked content criteria met → render the advance nudge;
+//   lines — the outstanding milestones in plain clinical language.
+function renderReadinessSection(stage: number, outstanding: string[] | null): string[] {
+  if (outstanding === null) return [];
+  const lines: string[] = [''];
+  if (outstanding.length === 0) {
+    lines.push(
+      `**Stage ${stage} — completion criteria: all tracked criteria are met.** If the user is genuinely steady and ready (not rushed, not performing), you may set \`recommendedAction: "advance"\` this turn. The code makes the final call.`,
+    );
+    return lines;
+  }
+  lines.push(
+    `**Toward completing Stage ${stage} — code-tracked criteria still outstanding:**`,
+  );
+  for (const c of outstanding) lines.push(`- ${c}`);
+  lines.push('');
+  lines.push(
+    'Evaluate these every turn. When the user genuinely reaches one, capture it as you go (the state-report fields / `readinessTouched` tokens the active stage spec names). These are a floor the code checks — not a script: reach them through real work at the user’s pace. Naming a milestone doesn’t make it true; the user living it does. When they are all met and the user is steady, set `recommendedAction: "advance"`.',
+  );
+  return lines;
+}
+
+function renderStateBlock(state: JourneyState, outstanding: string[] | null = null): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
   lines.push('');
@@ -171,6 +198,10 @@ function renderStateBlock(state: JourneyState): string {
     lines.push('');
     lines.push('**Case formulation across sessions (your running model — internal, never recited to user):**');
     lines.push(`> ${state.continuityNote}`);
+  }
+
+  for (const l of renderReadinessSection(state.currentStage, outstanding)) {
+    lines.push(l);
   }
 
   if (state.frozenForReview) {
@@ -258,11 +289,14 @@ export type SystemPromptBlock = {
  * comes last so the most recently-read content for the AI is its 12
  * traps + output format reminder.
  */
-export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlock[] {
+export function assembleSystemPromptBlocks(
+  state: JourneyState,
+  outstanding: string[] | null = null,
+): SystemPromptBlock[] {
   const master = loadMasterJourneyPrompt();
   if (!master) {
     // Fallback: legacy single-block assembly (no caching).
-    return [{ type: 'text', text: assembleSystemPrompt(state) }];
+    return [{ type: 'text', text: assembleSystemPrompt(state, outstanding) }];
   }
 
   // Split master at the STATE_INJECTION_TOKEN so the dynamic state block
@@ -295,10 +329,11 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
       text: MASTER_PROMPT_HEADER + masterBeforeState,
       cache_control: { type: 'ephemeral' },
     },
-    // State block — dynamic per turn (NOT cached).
+    // State block — dynamic per turn (NOT cached). Includes the readiness
+    // loop (outstanding stage-completion criteria) computed for this turn.
     {
       type: 'text',
-      text: renderStateBlock(state),
+      text: renderStateBlock(state, outstanding),
     },
     // Master prompt body after the state injection (not cached because
     // it follows dynamic content; this is the rest of master —
@@ -312,7 +347,10 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
   return blocks;
 }
 
-export function assembleSystemPrompt(state: JourneyState): string {
+export function assembleSystemPrompt(
+  state: JourneyState,
+  outstanding: string[] | null = null,
+): string {
   // Architecture (2026-06-23 refactor):
   //   Layer 1: Master prompt — general AI behavior, character, voice,
   //            12 traps, 8-moves toolkit, worked examples, output format,
@@ -335,7 +373,7 @@ export function assembleSystemPrompt(state: JourneyState): string {
   // String-form fallback: collapse the block array into a single string.
   // Used by callers / tests that don't need the per-block cache_control
   // markers; production code paths should call assembleSystemPromptBlocks.
-  const blocks = assembleSystemPromptBlocks(state);
+  const blocks = assembleSystemPromptBlocks(state, outstanding);
   if (blocks.length > 0) {
     return blocks.map((b) => b.text).join('');
   }
@@ -344,14 +382,14 @@ export function assembleSystemPrompt(state: JourneyState): string {
   // present.
   const engineered = loadEngineeredStagePrompt(state.currentStage);
   if (engineered) {
-    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
+    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state, outstanding));
   }
 
   // Last resort: Shared Core + clinical spec concatenation.
   return [
     sharedCore(),
     loadStageSpec(state.currentStage),
-    renderStateBlock(state),
+    renderStateBlock(state, outstanding),
     STATE_REPORT_FORMAT_INSTRUCTION,
   ].join(DIVIDER);
 }

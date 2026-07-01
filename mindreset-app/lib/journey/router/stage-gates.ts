@@ -649,3 +649,175 @@ export function checkStage8Gate(
 
   return reasons.length === 0 ? pass() : fail(...reasons);
 }
+
+// ---------------------------------------------------------------------------
+// Readiness loop (PR 3) — surface the CURRENT stage's outstanding completion
+// criteria back to the AI, in plain clinical language, so it can steer toward
+// them each turn instead of circling. This runs the same gate the router runs,
+// but read-only: it maps the failing reason codes to human-readable milestones.
+//
+// The code gate stays the sole authority on advancement. This surface is a
+// mirror of it, not a second gate. Two classes of reason are NOT surfaced:
+//   - advisory/procedural (this turn's own recommendedAction; needing more
+//     history/time) — nothing the AI can DO about them this turn;
+//   - settledness (intensity/safety windows) — the AI reads the user's state
+//     directly and shouldn't chase a number.
+// Keep CRITERION_TEXT keys in sync with the reason codes pushed above.
+// ---------------------------------------------------------------------------
+
+const ADVISORY_REASON_CODES = new Set<string>([
+  'frozen_for_review',
+  'insufficient_intensity_history',
+  'recent_intensity_above_5',
+  'red_flag_in_last_3_turns',
+  'ai_did_not_recommend_advance',
+  'ai_did_not_recommend_discharge',
+  'insufficient_history_for_adult_self_stability',
+  'insufficient_history_for_safety_reorientation_check',
+  'insufficient_history_for_identity_reinforcement_check_in',
+  'stage_8_min_6_weeks_not_elapsed',
+]);
+
+// safety_not_clean_for_last_<N>_turns is dynamic (N varies by stage); matched
+// by prefix so every variant is treated as advisory/settledness.
+const SAFETY_WINDOW_PREFIX = 'safety_not_clean_for_last_';
+
+const CRITERION_TEXT: Record<string, string> = {
+  // Stage 1
+  anchor_not_set:
+    'A Personal Anchor is captured — a real, specific safe place or image in the user’s own words.',
+  anchor_identified_token_missing:
+    'The Personal Anchor has actually been identified WITH the user (not just mentioned).',
+  no_emotion_or_body_state_named:
+    'The user has named one emotion, or located one body-state, in their own words.',
+  orientation_not_present:
+    'The user is oriented to what this space is and how it works.',
+  // Stages 2–6 (anchor still accessible)
+  anchor_missing: 'The Personal Anchor is still accessible to the user.',
+  // Stage 2
+  emotion_not_named: 'At least one emotion named by the user in their own words.',
+  emotion_not_located_in_body: 'That emotion located as a felt sense in the body.',
+  soft_why_not_asked_or_answered:
+    'The Soft Why has been asked and the user has responded (“I don’t know” counts).',
+  // Stage 3
+  observer_seat_not_touched:
+    'The user has touched the observer seat — seeing their experience from a small step back.',
+  adult_self_qualities_not_captured:
+    'The user has described the steadier adult presence in their own words.',
+  adult_self_not_reproducible_across_days:
+    'The adult presence has been reachable on at least two different days.',
+  adult_self_not_linked_to_anchor:
+    'The adult presence has been linked to the Personal Anchor at least once.',
+  emotion_not_held_in_adult_self:
+    'The user has held a named emotion inside that adult presence at least once.',
+  // Stage 4 (MII)
+  mii1_adult_self_unstable:
+    'The adult presence is steady — present across most of the recent turns.',
+  mii2_no_parts_recognised: 'At least one inner part has been clearly recognised.',
+  mii3_recent_overwhelm:
+    'Recent deep contact has stayed within the window (no overwhelm).',
+  mii4_compassion_bridge_not_landed_twice:
+    'A compassion bridge to a part has landed on two different days.',
+  mii5_no_reparenting_capacity:
+    'The adult presence has offered something to a part (a soothing word, a resting place).',
+  mii6_destabilised: 'No delayed destabilisation after recent deep contact.',
+  mii7_cohesion_awareness_missing:
+    'The user has sensed inner cohesion on two different days.',
+  // Stage 5
+  no_foreign_material_identified:
+    'At least one piece of foreign material has been identified.',
+  no_symbolic_return_completed: 'A Symbolic Return of the burden has been carried out.',
+  somatic_release_not_confirmed:
+    'The release was confirmed in the body, not only in words.',
+  clean_identity_statement_missing:
+    'A Clean Identity Statement (what is mine / what is not) has been spoken.',
+  clean_identity_statement_not_body_confirmed:
+    'That statement was confirmed as a felt sense in the body.',
+  // Stage 6
+  identity_anchor_not_set: 'A small, portable Identity Anchor has been established.',
+  internal_consensus_not_reached_on_two_days:
+    'Internal consensus reached on two different days.',
+  no_parts_in_landscape_for_cohesion_check:
+    'There are parts in the landscape to check cohesion across.',
+  self_loyalty_statement_missing:
+    'A Self-Loyalty commitment has been spoken in the user’s words.',
+  one_small_action_missing: 'One small, concrete action has been committed to.',
+  adult_self_below_70_percent_across_last_3_sessions:
+    'The adult presence has stayed steady across the last few sessions.',
+  // Stage 7
+  identity_anchor_missing: 'The Identity Anchor is established and accessible.',
+  symbolic_identity_map_missing:
+    'A symbolic map of the new identity has been captured.',
+  fewer_than_three_emerging_qualities:
+    'At least three emerging qualities have surfaced.',
+  qualities_not_captured_across_two_days:
+    'Those qualities have appeared across two different days.',
+  inner_direction_missing:
+    'An inner direction (a felt orientation, not a plan) has been articulated.',
+  urgency_present_in_recent_turns:
+    'No urgency to make big external changes in recent turns.',
+  safety_reorientation_missing_in_at_least_one_recent_session:
+    'Safety Reorientation delivered at the close of every recent session.',
+  // Stage 8
+  cal_sessions_under_six:
+    'At least six CAL practice sessions across different real moments.',
+  cal_layer_2_or_3_under_three:
+    'At least three of those reached redirection (Layer 2–3).',
+  urgency_in_recent_two_weeks:
+    'No urgency to make big external changes recently.',
+  discharge_readiness_not_signalled_twice:
+    'The user has been assessed as genuinely ready for discharge more than once.',
+  identity_reinforcement_check_in_missing_in_recent_session:
+    'The Identity Reinforcement Check-In has opened each recent session.',
+  adult_self_not_close_or_steady_in_three_of_last_four_sessions:
+    'The adult presence has been close / steady in most recent sessions.',
+};
+
+function humaniseReason(code: string): string {
+  const s = code.replace(/_/g, ' ');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/** Run the current stage's gate read-only (no side effects). */
+function readonlyStageGate(
+  stage: number,
+  state: JourneyState,
+  turns: AuditTurn[],
+): GateResult {
+  switch (stage) {
+    case 1: return checkStage1Gate(state, turns);
+    case 2: return checkStage2Gate(state, turns);
+    case 3: return checkStage3Gate(state, turns);
+    case 4: return checkStage4Gate(state, turns);
+    case 5: return checkStage5Gate(state, turns);
+    case 6: return checkStage6Gate(state, turns);
+    case 7: return checkStage7Gate(state, turns);
+    // Stage 8's weeks check needs a start date, but the weeks reason is
+    // advisory (dropped below), so state.startedAt is a safe stand-in here.
+    case 8: return checkStage8Gate(state, turns, state.startedAt);
+    default: return { passed: false, reasons: [] };
+  }
+}
+
+/**
+ * The CURRENT stage's outstanding completion criteria, as plain-language
+ * milestones the AI can work toward, with advisory/settledness reasons
+ * filtered out. Returns [] when every tracked content criterion is met (the
+ * caller renders an "you may recommend advancing if the user is steady"
+ * nudge). Pure — safe to call before the turn's own report exists.
+ */
+export function outstandingStageCriteria(
+  stage: number,
+  state: JourneyState,
+  turns: AuditTurn[],
+): string[] {
+  const gate = readonlyStageGate(stage, state, turns);
+  const out: string[] = [];
+  for (const code of gate.reasons) {
+    if (ADVISORY_REASON_CODES.has(code)) continue;
+    if (code.startsWith(SAFETY_WINDOW_PREFIX)) continue;
+    const text = CRITERION_TEXT[code] ?? humaniseReason(code);
+    if (!out.includes(text)) out.push(text);
+  }
+  return out;
+}

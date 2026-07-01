@@ -19,6 +19,7 @@ import {
   checkStage6Gate,
   checkStage7Gate,
   checkStage8Gate,
+  outstandingStageCriteria,
   type GateResult,
 } from './stage-gates';
 import { loadRecentTurns, type AuditTurn } from './history';
@@ -91,6 +92,31 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
     return { kind: 'advance', from: state.currentStage, to, gateReasons: [] };
   }
   return { kind: 'stay', reasons: gate.reasons };
+}
+
+/**
+ * Readiness loop (PR 3). Compute the CURRENT stage's outstanding completion
+ * criteria for the prompt's state block, BEFORE the turn runs, so the AI can
+ * see what it's still working toward and evaluate advancement each turn.
+ *
+ * Returns:
+ *   - null  — not evaluable yet (no audit history) → the state block renders
+ *             nothing, so a brand-new user isn't handed a checklist;
+ *   - []    — every tracked content criterion is met → the state block renders
+ *             the "you may recommend advancing if the user is steady" nudge;
+ *   - lines — the outstanding milestones, in plain clinical language.
+ *
+ * Uses the same per-stage window the gate uses. Never throws to the caller's
+ * hot path — the route wraps it, but we also fail soft here.
+ */
+export async function loadOutstandingCriteria(
+  state: JourneyState,
+): Promise<string[] | null> {
+  if (state.frozenForReview) return null;
+  const window = TURN_WINDOWS[state.currentStage] ?? 20;
+  const turns = await loadRecentTurns(state.userId, window);
+  if (turns.length === 0) return null;
+  return outstandingStageCriteria(state.currentStage, state, turns);
 }
 
 function checkCurrentStageGate(
