@@ -64,13 +64,51 @@ export function splitReplyAndReport(fullReply: string): SplitReply {
     return { humanReply: fullReply.trim(), rawStateReport: null };
   }
   const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
-  const human = fullReply.slice(0, openIdx).trim();
   if (closeIdx < 0) {
-    // Open tag found but no close — strip from human reply, treat report as missing.
-    return { humanReply: human, rawStateReport: null };
+    // Open tag but no close (truncated report). The reply, if any, is whatever
+    // sits before the report; the report itself is unrecoverable.
+    return { humanReply: fullReply.slice(0, openIdx).trim(), rawStateReport: null };
   }
   const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
-  return { humanReply: human, rawStateReport: raw };
+  // Report-FIRST is the contract (report then reply), so the human reply is the
+  // text AFTER the close tag. Fall back to the text BEFORE the open tag if the
+  // model reverted to report-last (legacy). Whichever side carries the prose.
+  const after = fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length).trim();
+  const before = fullReply.slice(0, openIdx).trim();
+  const humanReply = after.length > 0 ? after : before;
+  return { humanReply, rawStateReport: raw };
+}
+
+/**
+ * Streaming helper for the report-FIRST contract. Given the model output
+ * accumulated so far, return the human-reply text that is currently safe to
+ * display, or null while we're still inside the leading state report (nothing
+ * to show yet). `final` = true once the stream has ended (don't hold back a
+ * partial-tag tail). Pure + monotonic: the returned string only grows across
+ * calls, so the route can stream the delta between successive results.
+ *
+ * Handles three shapes safely:
+ *   - report-first (contract): `<state-report>…</state-report>` then reply →
+ *     returns the reply once the close tag arrives; null before that.
+ *   - legacy report-last: reply then `<state-report>…` → returns the text before
+ *     the open tag (strips the trailing report).
+ *   - no report at all → returns the whole text (holding back one tag-length
+ *     tail until `final`, so a partial open tag can't leak).
+ */
+export function displayableReply(fullReply: string, final: boolean): string | null {
+  const lead = fullReply.replace(/^\s+/, '');
+  // Case A — the output leads with (or is still forming) the state report.
+  if (STATE_REPORT_OPEN.startsWith(lead) || lead.startsWith(STATE_REPORT_OPEN)) {
+    const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE);
+    if (closeIdx < 0) return null; // report still streaming — nothing to show
+    return fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length).replace(/^\s+/, '');
+  }
+  // Case B — does not lead with the report: legacy report-last, or no report.
+  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
+  if (openIdx >= 0) return fullReply.slice(0, openIdx);
+  // No open tag yet. Hold back one tag-length tail so a partial open tag that
+  // is still forming can't be streamed to the user; release it once final.
+  return final ? fullReply : fullReply.slice(0, Math.max(0, fullReply.length - STATE_REPORT_OPEN.length));
 }
 
 /**
