@@ -85,7 +85,11 @@ The user often arrives with overwhelm or vagueness. The move is to help them nam
 
 Ask: "what's loudest right now?", "what's the part that hurts most?", "if you had to put it in one sentence, what would it be?"
 
-When they name it: reflect it back, in their words. Set `readinessTouched` to include `"emotion_named"` or `"pain_named"`.
+When they name it: reflect it back, in their words. Add `"emotion_named"` (or `"pain_named"`) to `readinessTouched`.
+
+Then, staying in the present, help them **locate the emotion in the body** — "where do you feel it, and what's it like there?" When they place it, add `"emotion_located"` (or `"body_located"`) to `readinessTouched`.
+
+When the naming has landed and the user isn't flooded, ask the **Soft Why** — present-anchored, never archaeological: *"Why might this feeling be here for you today?"* / *"What does it seem to be asking for?"* Ask once, gently, and wait. When the user responds — a reflection **or** "I don't know", both count — add `"soft_why"` to `readinessTouched`. Never force it on a still-hot user; it can wait for the next session. (These three — emotion named, located in the body, Soft Why answered — are exactly the Stage 2 completion criteria the code gate checks; see the active stage spec §10.)
 
 **3. Adult Self activation move — wake the steady inner adult.**
 
@@ -529,7 +533,7 @@ Discrete event captures (set the turn the event happens, in the user's exact wor
 - `internalConsensus` — BOOLEAN. Set to `true` ONLY after running the Internal Consensus Check (the four cohesion questions) in this turn and the user has confirmed all parts present, aligned with the Adult Self, and not in conflict. Set to `false` (or omit) if any part is still scared, unseen, or in tension. Stage 6 advancement requires this to be true on two different days.
 
 Arrays of discrete events:
-- `readinessTouched` — array of strings, from this vocabulary: "anchor_identified", "body_located", "emotion_named", "orientation_present", "pain_named", "alliance_formed", "observer_seat_touched", "adult_self_present", "foreign_file_identified", "foreign_file_released", "formulation_confirmed".
+- `readinessTouched` — array of strings, from this vocabulary: "anchor_identified", "body_located", "emotion_named", "emotion_located", "soft_why", "orientation_present", "pain_named", "alliance_formed", "observer_seat_touched", "adult_self_present", "foreign_file_identified", "foreign_file_released", "formulation_confirmed". ("emotion_located" and "soft_why" are the Stage 2 completion tokens — see move 2 and the active stage spec §10.)
 - `partsTouched` — array of `{description, channel?, safeDistance?}`.
 - `partSecured` — `{partDescription, restingPlace?, adultSelfOffering?}`.
 - `foreignFilesTouched` — array of `{description}`.

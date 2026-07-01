@@ -83,9 +83,19 @@ code/gates that enforce) drifted apart; nobody owns the emit↔require contract.
       that section, not only in Block 1 — framed as a floor, not a script.
       Files: `stage-gates.ts`, `router.ts`, `route.ts`, `assemble.ts`,
       `journey-master.md`.
-- [ ] **PR 4 — Unblock Stage 2.** Add `soft_why` (+ align `emotion_located`) to
-      the readinessTouched vocabulary the AI is given + the move-2 emit
-      instruction. Files: `journey-master.md` (+ verify `stage-gates.ts` regex).
+- [x] **PR 4 — Unblock Stage 2.** Added `emotion_located` and `soft_why` to the
+      master's readinessTouched vocabulary (the "omit fields not in the schema"
+      rule had forbidden the AI from ever emitting them → Stage 2's Soft Why
+      condition was impassable). Move 2 now instructs emitting all three Stage 2
+      completion tokens at the right clinical moment (emotion named → located in
+      body → Soft Why answered). Gate regex verified (already accepts
+      `soft[_-]?why` / `emotion[_-]?located|body[_-]?located`; `stage2-gate.test`
+      covers it). Added `stage2-vocab-contract.test.ts` pinning the emit↔require
+      link so the vocabulary can't drift from the gate again. Files:
+      `journey-master.md`, `stage2-vocab-contract.test.ts`.
+
+**Milestone 1 complete.** Owner re-tests after these deploy and checks the
+`journey/parse-health` logs + whether a user now advances 1→2→3.
 
 ### Milestone 2 — whole ladder passable + practices fire
 - [ ] **PR 5–10 — Per-stage prompt↔gate re-sync + practice firing**, one PR per
