@@ -92,34 +92,7 @@ Strict rules:
 - If unsure about safety, set \`safetyFlag\` to "watch" and \`recommendedAction\` to "stay".
 `;
 
-// Readiness loop (PR 3). Render the current stage's outstanding completion
-// criteria (computed read-only from the same code gate the router enforces) so
-// the AI can steer toward them and evaluate advancement every turn — not only
-// in Block 1. `outstanding`:
-//   null  — not evaluable (no history / frozen) → render nothing;
-//   []    — all tracked content criteria met → render the advance nudge;
-//   lines — the outstanding milestones in plain clinical language.
-function renderReadinessSection(stage: number, outstanding: string[] | null): string[] {
-  if (outstanding === null) return [];
-  const lines: string[] = [''];
-  if (outstanding.length === 0) {
-    lines.push(
-      `**Stage ${stage} — completion criteria: all tracked criteria are met.** If the user is genuinely steady and ready (not rushed, not performing), you may set \`recommendedAction: "advance"\` this turn. The code makes the final call.`,
-    );
-    return lines;
-  }
-  lines.push(
-    `**Toward completing Stage ${stage} — code-tracked criteria still outstanding:**`,
-  );
-  for (const c of outstanding) lines.push(`- ${c}`);
-  lines.push('');
-  lines.push(
-    'Evaluate these every turn. When the user genuinely reaches one, capture it as you go (the state-report fields / `readinessTouched` tokens the active stage spec names). These are a floor the code checks — not a script: reach them through real work at the user’s pace. Naming a milestone doesn’t make it true; the user living it does. When they are all met and the user is steady, set `recommendedAction: "advance"`.',
-  );
-  return lines;
-}
-
-function renderStateBlock(state: JourneyState, outstanding: string[] | null = null): string {
+function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
   lines.push('');
@@ -200,10 +173,6 @@ function renderStateBlock(state: JourneyState, outstanding: string[] | null = nu
     lines.push(`> ${state.continuityNote}`);
   }
 
-  for (const l of renderReadinessSection(state.currentStage, outstanding)) {
-    lines.push(l);
-  }
-
   if (state.frozenForReview) {
     lines.push('');
     lines.push('**This user is currently frozen-for-review. Deliver the verbatim crisis response from Shared Core §7 and do not engage method work.**');
@@ -228,7 +197,7 @@ const CANON_PROMPT_HEADER = `# CLINICAL METHOD SOURCE (canon)
 Two documents follow, then your operational behavior layer.
 
 **1. Shared Core** — your clinical constitution. Applies every turn, every stage.
-**2. Active stage spec** — the full clinical playbook for the user's current stage. You may always reach **back** to an earlier stage's moves when the user needs steadying — anchor, regulation, grounding, orientation are available at every stage, and returning to them is good clinical work. You do **not** reach **forward**: do not run a later stage's practices before the user has reached that stage. Specifically, **parts / inner-child work, foreign-material release, and integration work require the Adult Self established (Stage 3) and the user stabilised** — at Stage 1 you may *name* a part or a pattern in conversation, but you do not run a parts or inner-child practice, and you do not take depth past surface. Stages mark what is unlocked, not just a progress label.
+**2. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
 
 This canon is the authoritative reference for the method you are delivering. Where it overlaps with the general behavior layer (master prompt) that follows, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the master prompt takes precedence on voice, character, and operational format.
 
@@ -289,14 +258,11 @@ export type SystemPromptBlock = {
  * comes last so the most recently-read content for the AI is its 12
  * traps + output format reminder.
  */
-export function assembleSystemPromptBlocks(
-  state: JourneyState,
-  outstanding: string[] | null = null,
-): SystemPromptBlock[] {
+export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlock[] {
   const master = loadMasterJourneyPrompt();
   if (!master) {
     // Fallback: legacy single-block assembly (no caching).
-    return [{ type: 'text', text: assembleSystemPrompt(state, outstanding) }];
+    return [{ type: 'text', text: assembleSystemPrompt(state) }];
   }
 
   // Split master at the STATE_INJECTION_TOKEN so the dynamic state block
@@ -329,11 +295,10 @@ export function assembleSystemPromptBlocks(
       text: MASTER_PROMPT_HEADER + masterBeforeState,
       cache_control: { type: 'ephemeral' },
     },
-    // State block — dynamic per turn (NOT cached). Includes the readiness
-    // loop (outstanding stage-completion criteria) computed for this turn.
+    // State block — dynamic per turn (NOT cached).
     {
       type: 'text',
-      text: renderStateBlock(state, outstanding),
+      text: renderStateBlock(state),
     },
     // Master prompt body after the state injection (not cached because
     // it follows dynamic content; this is the rest of master —
@@ -347,10 +312,7 @@ export function assembleSystemPromptBlocks(
   return blocks;
 }
 
-export function assembleSystemPrompt(
-  state: JourneyState,
-  outstanding: string[] | null = null,
-): string {
+export function assembleSystemPrompt(state: JourneyState): string {
   // Architecture (2026-06-23 refactor):
   //   Layer 1: Master prompt — general AI behavior, character, voice,
   //            12 traps, 8-moves toolkit, worked examples, output format,
@@ -373,7 +335,7 @@ export function assembleSystemPrompt(
   // String-form fallback: collapse the block array into a single string.
   // Used by callers / tests that don't need the per-block cache_control
   // markers; production code paths should call assembleSystemPromptBlocks.
-  const blocks = assembleSystemPromptBlocks(state, outstanding);
+  const blocks = assembleSystemPromptBlocks(state);
   if (blocks.length > 0) {
     return blocks.map((b) => b.text).join('');
   }
@@ -382,14 +344,14 @@ export function assembleSystemPrompt(
   // present.
   const engineered = loadEngineeredStagePrompt(state.currentStage);
   if (engineered) {
-    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state, outstanding));
+    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
   }
 
   // Last resort: Shared Core + clinical spec concatenation.
   return [
     sharedCore(),
     loadStageSpec(state.currentStage),
-    renderStateBlock(state, outstanding),
+    renderStateBlock(state),
     STATE_REPORT_FORMAT_INSTRUCTION,
   ].join(DIVIDER);
 }
