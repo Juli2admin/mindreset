@@ -1,7 +1,10 @@
 // Parse the hidden JSON state report from the AI's reply.
 // Fail-safe: any parse failure returns a defensive default (intensity 5,
 // safetyFlag 'watch', recommendedAction 'stay') so the system errs on
-// gentleness rather than advancement.
+// gentleness rather than advancement. That default is also marked
+// `_defaulted: true` — the single source of truth for "this turn carried no
+// real state report" — so the gate windows can exclude it (see history.ts)
+// instead of treating a fabricated 'watch' as a real safety read.
 
 import type {
   StateReport,
@@ -24,6 +27,7 @@ const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
   safetyFlag: 'watch',
   recommendedAction: 'stay',
+  _defaulted: true,
 };
 
 // Allowed enums — anything else is dropped to a safer default.
@@ -331,6 +335,14 @@ export function parseStateReport(raw: string | null): StateReport {
     }
   }
   copyStringField(obj, 'continuityNote', report);
+
+  // Carry the defaulted marker across the persist→reload cycle. A turn that was
+  // defaulted at emit time is stored (audit/log.ts) as JSON that still includes
+  // `_defaulted: true`; when a gate reloads and re-parses that blob here the
+  // JSON is valid, so without this the turn would look like a real read and
+  // re-poison the gate window. A genuine (non-default) report never carries the
+  // marker, so this only ever re-marks true defaults.
+  if (obj._defaulted === true) report._defaulted = true;
 
   return report;
 }

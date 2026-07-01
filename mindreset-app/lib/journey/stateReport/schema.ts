@@ -195,6 +195,15 @@ export type StateReport = {
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
 
+  // Set true when this report is the fail-safe default — the AI emitted no
+  // parseable state report this turn — rather than a real clinical read. The
+  // gate windows (lastTwoIntensities / safetyNoneForLast) exclude such turns
+  // so a fabricated {intensity 5, watch, stay} cannot silently block (or mask)
+  // a real advance decision on later turns. Preserved across the audit
+  // persist→reload cycle; day/session counting still includes the turn because
+  // it really happened.
+  _defaulted?: boolean;
+
   // Raw shape if parse partially failed
   _raw?: string;
 };
