@@ -55,13 +55,22 @@ code/gates that enforce) drifted apart; nobody owns the emit↔require contract.
 ## PR sequence (status)
 
 ### Milestone 1 — get a user advancing 1→2→3
-- [ ] **PR 1 — Report-first.** State report emitted before the reply; mandatory;
+- [x] **PR 1 — Report-first.** State report emitted before the reply; mandatory;
       streaming skips the front block; parse + examples updated. Removes the
       omit→`stay` default. Files: `route.ts`, `parse.ts`, `journey-master.md`
       (`<output_format>` + all examples), `assemble.ts` fallback instruction.
-- [ ] **PR 2 — Stop default poisoning.** Single default source; mark/exclude
-      missing-report turns from the gate window. Files: `parse.ts`, `history.ts`,
-      `stage-gates.ts`.
+      _Merged #192._
+- [x] **PR 2 — Stop default poisoning.** Single default source
+      (`parseStateReport(null)`; the second literal in `history.ts` is gone);
+      the fail-safe default is marked `_defaulted: true` and preserved across
+      the audit persist→reload cycle; the intensity/safety gate windows
+      (`lastTwoIntensities`, `safetyNoneForLast`) exclude defaulted (no-signal)
+      turns so a fabricated `{5, watch, stay}` can no longer block a real
+      advance. A real `watch`, and a verifier-set `red_flag` on a defaulted
+      turn, still block; day/session counting still includes the turn. No
+      `stage-gates.ts` change needed (the fix lives in the helpers it calls);
+      no schema migration (`_defaulted` rides inside the existing encrypted
+      blob). Files: `schema.ts`, `parse.ts`, `history.ts`.
 - [ ] **PR 3 — Close the readiness loop.** Surface each stage's outstanding gate
       criteria into the state block (read-only gate-reasons mode) + a per-stage
       "evaluate advancement each turn" instruction. Files: `assemble.ts`,
