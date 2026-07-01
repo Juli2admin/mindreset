@@ -24,10 +24,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { decrypt } from '@/lib/encrypt';
 import { checkJourneyReviewRateLimit } from '@/lib/rateLimit';
 import { sendJourneyReviewRequest } from '@/lib/email/sendJourneyReviewRequest';
+import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
+import { clearFreezeForReview } from '@/lib/journey/safety/freeze';
+import { evaluateAutoUnfreeze, extractSource, type VerifierOutcome } from '@/lib/journey/safety/auto-unfreeze';
 
 export const dynamic = 'force-dynamic';
+
+// How much recent context to hand the verifier on re-check — same shape as
+// the live turn path uses (verifier.ts:RECENT_CONTEXT_LIMIT).
+const RECHECK_CONTEXT_MESSAGES = 6;
 
 export async function POST(_request: NextRequest) {
   const { userId } = await auth();
@@ -62,6 +70,38 @@ export async function POST(_request: NextRequest) {
     return NextResponse.json({ error: 'Not frozen' }, { status: 400 });
   }
 
+  // Auto-unfreeze path — only for freeze sources we consider recoverable
+  // (keyword_scan and state_report). The verifier is re-run on the user's
+  // most recent message; only `clear_safe` lifts the freeze. See
+  // lib/journey/safety/auto-unfreeze.ts for the safety-decision rationale.
+  const source = extractSource(progress.frozenReason);
+  if (source === 'keyword_scan' || source === 'state_report') {
+    const outcome = await recheckWithVerifier(userId);
+    const decision = evaluateAutoUnfreeze(progress.frozenReason, outcome);
+    if (decision.action === 'auto_unfreeze') {
+      const cleared = await clearFreezeForReview(userId);
+      console.warn('[journey/request-review] auto-unfrozen', {
+        userId,
+        source,
+        verifierOutcome: outcome,
+        cleared,
+      });
+      if (cleared) {
+        return NextResponse.json({ ok: true, unfrozen: true });
+      }
+      // Race condition: freeze already cleared between the checks. Treat as
+      // idempotent success.
+      return NextResponse.json({ ok: true, unfrozen: true });
+    }
+    console.warn('[journey/request-review] auto-unfreeze declined; falling through to human review', {
+      userId,
+      source,
+      verifierOutcome: outcome,
+      declineReason: decision.reason,
+    });
+    // Fall through to the existing email flow below.
+  }
+
   // Pull the user's email from Clerk — same pattern as the account
   // deletion flow. Falls through to null if Clerk can't provide one;
   // the email still sends with userId so the owner can look the user
@@ -88,5 +128,40 @@ export async function POST(_request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, unfrozen: false });
+}
+
+// Fetch the user's most recent message + a short recent-context window,
+// decrypt both, and ask the Haiku verifier to re-classify. Returns the
+// verifier verdict, or 'unavailable' on any failure (missing message,
+// decrypt error, verifier timeout). Fail-closed by design — a re-check that
+// can't be completed reliably must NOT unfreeze.
+async function recheckWithVerifier(userId: string): Promise<VerifierOutcome> {
+  try {
+    const messages = await prisma.journeyMessage.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: RECHECK_CONTEXT_MESSAGES + 1,
+      select: { role: true, contentEncrypted: true, createdAt: true },
+    });
+    // Find the most recent USER message — that's the one that likely
+    // triggered the freeze. Skip trailing assistant / canned-crisis rows.
+    const latestUserIdx = messages.findIndex((m) => m.role === 'user');
+    if (latestUserIdx < 0) return 'unavailable';
+    const trigger = messages[latestUserIdx];
+    // Context = the messages BEFORE the trigger, oldest-first.
+    const contextRows = messages.slice(latestUserIdx + 1).reverse();
+
+    const triggerText = decrypt(trigger.contentEncrypted);
+    const contextDecoded = contextRows.map((m) => ({
+      role: m.role === 'assistant' ? ('assistant' as const) : ('user' as const),
+      content: decrypt(m.contentEncrypted),
+    }));
+
+    const result = await runJourneyVerifier(triggerText, contextDecoded);
+    return result.verdict;
+  } catch (err) {
+    console.error('[journey/request-review] verifier re-check failed', err);
+    return 'unavailable';
+  }
 }
