@@ -22,6 +22,20 @@ import type {
 
 const STATE_REPORT_OPEN = '<state-report>';
 const STATE_REPORT_CLOSE = '</state-report>';
+const THINK_OPEN = '<thinking>';
+const THINK_CLOSE = '</thinking>';
+
+// The model sometimes externalises its reasoning in a <thinking> block. That is
+// internal — it must NEVER reach the user (it exposes stage numbers, advance
+// decisions, and the whole method) and, unbounded, it can eat the token budget
+// so no reply is left. Strip completed <thinking> blocks and drop any trailing
+// unclosed one. Case-insensitive; handles multiple blocks.
+function stripThinking(text: string): string {
+  let t = text.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '');
+  const open = t.indexOf(THINK_OPEN);
+  if (open >= 0) t = t.slice(0, open); // trailing unclosed reasoning
+  return t.trim();
+}
 
 const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
@@ -65,20 +79,22 @@ export type SplitReply = {
 export function splitReplyAndReport(fullReply: string): SplitReply {
   const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
   if (openIdx < 0) {
-    return { humanReply: fullReply.trim(), rawStateReport: null };
+    // No report — strip any reasoning so a <thinking> block can't be shown/stored.
+    return { humanReply: stripThinking(fullReply), rawStateReport: null };
   }
   const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
   if (closeIdx < 0) {
     // Open tag but no close (truncated report). The reply, if any, is whatever
     // sits before the report; the report itself is unrecoverable.
-    return { humanReply: fullReply.slice(0, openIdx).trim(), rawStateReport: null };
+    return { humanReply: stripThinking(fullReply.slice(0, openIdx)), rawStateReport: null };
   }
   const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
   // Report-FIRST is the contract (report then reply), so the human reply is the
   // text AFTER the close tag. Fall back to the text BEFORE the open tag if the
-  // model reverted to report-last (legacy). Whichever side carries the prose.
-  const after = fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length).trim();
-  const before = fullReply.slice(0, openIdx).trim();
+  // model reverted to report-last (legacy). Whichever side carries the prose —
+  // with any <thinking> block stripped off either side.
+  const after = stripThinking(fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length));
+  const before = stripThinking(fullReply.slice(0, openIdx));
   const humanReply = after.length > 0 ? after : before;
   return { humanReply, rawStateReport: raw };
 }
@@ -100,19 +116,38 @@ export function splitReplyAndReport(fullReply: string): SplitReply {
  *     tail until `final`, so a partial open tag can't leak).
  */
 export function displayableReply(fullReply: string, final: boolean): string | null {
-  const lead = fullReply.replace(/^\s+/, '');
+  // Reasoning must never stream to the user. Remove completed <thinking> blocks
+  // first; if the stream is currently inside (or forming) an unclosed <thinking>
+  // block, only whatever real reply preceded it is safe — nothing after.
+  const stripped = fullReply.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '');
+  const leadT = stripped.replace(/^\s+/, '');
+  // The whole output so far is a forming <thinking> open tag → show nothing yet.
+  if (leadT.length > 0 && THINK_OPEN.startsWith(leadT)) return null;
+  const openThink = stripped.indexOf(THINK_OPEN);
+  if (openThink >= 0) {
+    // Unclosed reasoning (completed ones already removed). Treat as final for the
+    // text before it — no more displayable text can follow safely this turn.
+    return reportAwareDisplay(stripped.slice(0, openThink), true);
+  }
+  return reportAwareDisplay(stripped, final);
+}
+
+// The report-order half of displayableReply (unchanged behaviour), split out so
+// it runs on <thinking>-stripped text.
+function reportAwareDisplay(text: string, final: boolean): string | null {
+  const lead = text.replace(/^\s+/, '');
   // Case A — the output leads with (or is still forming) the state report.
   if (STATE_REPORT_OPEN.startsWith(lead) || lead.startsWith(STATE_REPORT_OPEN)) {
-    const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE);
+    const closeIdx = text.indexOf(STATE_REPORT_CLOSE);
     if (closeIdx < 0) return null; // report still streaming — nothing to show
-    return fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length).replace(/^\s+/, '');
+    return text.slice(closeIdx + STATE_REPORT_CLOSE.length).replace(/^\s+/, '');
   }
   // Case B — does not lead with the report: legacy report-last, or no report.
-  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
-  if (openIdx >= 0) return fullReply.slice(0, openIdx);
+  const openIdx = text.indexOf(STATE_REPORT_OPEN);
+  if (openIdx >= 0) return text.slice(0, openIdx);
   // No open tag yet. Hold back one tag-length tail so a partial open tag that
   // is still forming can't be streamed to the user; release it once final.
-  return final ? fullReply : fullReply.slice(0, Math.max(0, fullReply.length - STATE_REPORT_OPEN.length));
+  return final ? text : text.slice(0, Math.max(0, text.length - STATE_REPORT_OPEN.length));
 }
 
 /**

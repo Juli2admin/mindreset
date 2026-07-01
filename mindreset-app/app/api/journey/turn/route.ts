@@ -41,7 +41,12 @@ export const dynamic = 'force-dynamic';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const HISTORY_LIMIT = 30;
-const MAX_TOKENS = 1500;
+// Headroom for the hidden state report + the warm reply in one generation. Was
+// 1500; raised after a live test where a rich turn (a stage transition, with a
+// full continuityNote) ran the report long and left nothing for the reply —
+// the user got the soft re-ask instead of an answer. 2000 comfortably holds a
+// bounded report plus a full reply.
+const MAX_TOKENS = 2000;
 // Max characters in a single user message. ~4000 chars ≈ 1000 tokens —
 // keeps any one turn within reasonable bounds for cost AND for the
 // 30-message history replay (no risk of one user blowing the prompt
