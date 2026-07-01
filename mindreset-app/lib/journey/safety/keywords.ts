@@ -41,7 +41,14 @@ const SUICIDAL_PATTERNS: RegExp[] = [
   /\b(i\s+am)\s+(holding|with)\s+(the\s+)?(pills|rope|gun|knife|blade)\b/i,
   // Single-clause classic markers (caught by the verifier too — covered here for speed)
   /\bi\s+want\s+to\s+die\b/i,
-  /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+live\b/i,
+  // "I don't want to live" only when the phrase is terminated (end of message,
+  // punctuation) or followed by an intensifier (anymore / any longer). Bare
+  // "\b" after "live" matched abuse disclosures like "I don't want to live
+  // with him" as suicidal and instantly froze the user; borderline / ambiguous
+  // forms now fall through to the async verifier (verifier.ts §"ABUSE
+  // DISCLOSURE IS NOT CRISIS"), which is the design's safety net for exactly
+  // this shape.
+  /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+live(\s*$|\s*[.!?,;]|\s+any\s?more\b|\s+any\s+longer\b)/i,
   /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+be\s+(here|alive)\b/i,
   /\bend\s+(my\s+)?life\b/i,
   /\bsuicid(e|al)\s+(plan|note|thoughts?\s+(with|and)\s+(plan|method))\b/i,
