@@ -84,6 +84,41 @@ describe('scanForJourneyRedFlag — "I don\'t want to live WITH" (abuse disclosu
   });
 });
 
+describe('scanForJourneyRedFlag — "I don\'t want to be here" (suicidal, same fix shape)', () => {
+  // Sibling of the line-44 bug. The old pattern `\bi\s+...\s+want\s+to\s+be\s+(here|alive)\b`
+  // matched "I don't want to be here with him" as suicidal. Same narrowing
+  // applied to the "here" branch; "alive" stays as-is (unambiguous).
+
+  it('MATCHES the bare phrase (end of message)', () => {
+    expect(scanForJourneyRedFlag("I don't want to be here").matched).toBe(true);
+  });
+
+  it('MATCHES with punctuation / intensifiers', () => {
+    expect(scanForJourneyRedFlag("I don't want to be here.").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I don't want to be here anymore").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I don't want to be here any longer.").matched).toBe(true);
+  });
+
+  it('classifies as "suicidal" red-flag type', () => {
+    const hit = scanForJourneyRedFlag("I don't want to be here.");
+    expect(hit.matched).toBe(true);
+    expect(hit.flagType).toBe('suicidal');
+  });
+
+  it('does NOT match "I don\'t want to be here WITH him" (abuse / life-circumstance)', () => {
+    expect(scanForJourneyRedFlag("I don't want to be here with him").matched).toBe(false);
+    expect(scanForJourneyRedFlag("I don't want to be here with him.").matched).toBe(false);
+    expect(scanForJourneyRedFlag("I don't want to be here with my mother").matched).toBe(false);
+    expect(scanForJourneyRedFlag("I don't want to be here in this house").matched).toBe(false);
+    expect(scanForJourneyRedFlag("I don't want to be here around them").matched).toBe(false);
+  });
+
+  it('still matches "I don\'t want to be alive" (unambiguous, kept as-is)', () => {
+    expect(scanForJourneyRedFlag("I don't want to be alive").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I don't want to be alive anymore").matched).toBe(true);
+  });
+});
+
 describe('scanForJourneyRedFlag — the sibling patterns still work', () => {
   // Confidence check: the neighbouring suicidal patterns on lines 43, 45–48 of
   // the source are unaffected by this change.

@@ -49,7 +49,13 @@ const SUICIDAL_PATTERNS: RegExp[] = [
   // DISCLOSURE IS NOT CRISIS"), which is the design's safety net for exactly
   // this shape.
   /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+live(\s*$|\s*[.!?,;]|\s+any\s?more\b|\s+any\s+longer\b)/i,
-  /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+be\s+(here|alive)\b/i,
+  // Same shape of fix for "I don't want to be here". "alive" is unambiguous
+  // — nothing after it flips the meaning — so it keeps its bare word boundary.
+  // "here", though, previously matched "I don't want to be here with him" as
+  // suicidal (identical class to the "live" bug above). Narrow "here" to the
+  // same terminated / intensified alternation; leave "alive" as-is.
+  /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+be\s+here(\s*$|\s*[.!?,;]|\s+any\s?more\b|\s+any\s+longer\b)/i,
+  /\bi\s+(do\s*not|don'?t)\s+want\s+to\s+be\s+alive\b/i,
   /\bend\s+(my\s+)?life\b/i,
   /\bsuicid(e|al)\s+(plan|note|thoughts?\s+(with|and)\s+(plan|method))\b/i,
   /\bkill\s+myself\b/i,
