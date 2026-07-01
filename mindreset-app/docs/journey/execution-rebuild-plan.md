@@ -97,6 +97,30 @@ code/gates that enforce) drifted apart; nobody owns the emit↔require contract.
 **Milestone 1 complete.** Owner re-tests after these deploy and checks the
 `journey/parse-health` logs + whether a user now advances 1→2→3.
 
+### Milestone 1 — live test findings (2026-07-01) + hotfix
+First live test after PRs 1–4: **conversation quality transformed** — the AI
+stayed concrete, followed the real material (not the coping mechanism), captured
+the anchor, and drove Stage 1→2 (emotion named → located in body → Soft Why
+answered). The leaked reasoning even showed the readiness loop working (the model
+correctly read "Stage 2 criteria all met" and moved to advance). But two plumbing
+bugs surfaced:
+1. **Reasoning leak** — the model externalised its reasoning in a `<thinking>`
+   block that streamed verbatim to the user (exposing stage numbers, advance
+   decisions, the method).
+2. **Silence** — that reasoning ran to the token cap, leaving no reply → the
+   user got the soft re-ask ("I lost my thread") repeatedly.
+- [x] **Hotfix (this).** Strip `<thinking>` from the displayed + persisted reply
+      (`parse.ts`, never streams a forming/unclosed block); forbid reasoning
+      preambles in `journey-master.md` (reasoning lives only in a ≤2-sentence
+      `clinicalRead`); raise `MAX_TOKENS` 1500→2000. Files: `parse.ts`,
+      `journey-master.md`, `route.ts`, `thinking-strip.test.ts`.
+- **Residual risk / escalation:** report-first can't tell leaked *untagged*
+  reasoning (before the report) from a report-last reply. If the next test shows
+  untagged leaks or more silence, escalate to **reply-first ordering** (the reply
+  streams first, always delivered — now safe because PR 2 made report-misses
+  non-poisoning and PR 3 re-evaluates advancement every turn) or a **two-call
+  decouple** (reply-only stream + background report call).
+
 ### Milestone 2 — whole ladder passable + practices fire
 - [ ] **PR 5–10 — Per-stage prompt↔gate re-sync + practice firing**, one PR per
       stage 3→8 (the never-shipped "Bundle A"): drive the gate-required fields,
