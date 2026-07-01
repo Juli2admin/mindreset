@@ -47,17 +47,13 @@ export async function loadRecentTurns(
   });
   const reversed = rows.slice().reverse();
   return reversed.map((r) => {
-    // Single default source: parseStateReport(null) returns the same marked
-    // (`_defaulted: true`) fail-safe used everywhere else, so a turn with no
-    // blob or an undecryptable blob is treated as "no signal" and excluded
-    // from the gate windows below — not as a fabricated 'watch' that blocks.
-    let report: StateReport = parseStateReport(null);
+    let report: StateReport = { intensity: 5, safetyFlag: 'watch', recommendedAction: 'stay' };
     if (r.stateReportEncrypted) {
       try {
         const json = decrypt(r.stateReportEncrypted);
         report = parseStateReport(json);
       } catch {
-        // fall through with defensive (marked) default
+        // fall through with defensive default
       }
     }
     return {
@@ -94,28 +90,10 @@ export function heldOnDistinctDays(
   return distinctDays(turns.filter(predicate)) >= n;
 }
 
-/**
- * A turn is a "fabricated watch" when its state report was defaulted (the AI
- * emitted nothing parseable this turn) so the fail-safe stamped safetyFlag
- * 'watch' without any real read. Only these are excused from the safety
- * windows; a REAL 'watch', or a verifier-set 'red_flag' on an otherwise
- * defaulted turn, keeps its non-'watch' flag and is never excused.
- */
-function isFabricatedWatch(t: AuditTurn): boolean {
-  return t.report._defaulted === true && t.safetyFlag === 'watch';
-}
-
-/**
- * The most recent two intensity readings, ignoring nulls and defaulted
- * (no-signal) turns — a defaulted turn's stored intensity is the fabricated
- * fail-safe 5, not a real read, and must not occupy an intensity slot or mask
- * a real recent reading (audit Root A: "the default is biased to never
- * advance").
- */
+/** The most recent two intensity readings, ignoring nulls. */
 export function lastTwoIntensities(turns: AuditTurn[]): number[] {
   const out: number[] = [];
   for (let i = turns.length - 1; i >= 0 && out.length < 2; i--) {
-    if (turns[i].report._defaulted === true) continue;
     if (typeof turns[i].intensityReported === 'number') {
       out.push(turns[i].intensityReported!);
     }
@@ -123,16 +101,9 @@ export function lastTwoIntensities(turns: AuditTurn[]): number[] {
   return out;
 }
 
-/**
- * Whether the safety flag has been 'none' for at least the last N turns.
- * Fabricated-watch turns (missing report → default 'watch') are skipped: a
- * missing report must not masquerade as a real 'watch' and block advancement
- * for N turns (audit Root A). A real 'watch' still blocks, and a
- * verifier-upgraded 'red_flag' on a defaulted turn still blocks (it is not a
- * fabricated 'watch'). Requires N real (non-fabricated) turns to exist.
- */
+/** Whether the safety flag has been 'none' for at least the last N turns. */
 export function safetyNoneForLast(turns: AuditTurn[], n: number): boolean {
-  const tail = turns.filter((t) => !isFabricatedWatch(t)).slice(-n);
+  const tail = turns.slice(-n);
   if (tail.length < n) return false;
   return tail.every((t) => t.safetyFlag === 'none');
 }
@@ -146,12 +117,6 @@ export function safetyNoneForLast(turns: AuditTurn[], n: number): boolean {
  *
  * Unlike safetyNoneForLast, this does NOT require N turns to exist —
  * shorter histories pass as long as nothing in them is red_flag.
- *
- * Intentionally does NOT skip defaulted turns: a fabricated 'watch' never
- * trips this check anyway (only 'red_flag' does), and a defaulted turn whose
- * verifier upgraded it to 'red_flag' MUST still block here — filtering
- * defaulted turns out would hide that real red flag. So the raw window is
- * correct as-is.
  */
 export function noRedFlagInLast(turns: AuditTurn[], n: number): boolean {
   const tail = turns.slice(-n);

@@ -1,10 +1,7 @@
 // Parse the hidden JSON state report from the AI's reply.
 // Fail-safe: any parse failure returns a defensive default (intensity 5,
 // safetyFlag 'watch', recommendedAction 'stay') so the system errs on
-// gentleness rather than advancement. That default is also marked
-// `_defaulted: true` — the single source of truth for "this turn carried no
-// real state report" — so the gate windows can exclude it (see history.ts)
-// instead of treating a fabricated 'watch' as a real safety read.
+// gentleness rather than advancement.
 
 import type {
   StateReport,
@@ -22,26 +19,11 @@ import type {
 
 const STATE_REPORT_OPEN = '<state-report>';
 const STATE_REPORT_CLOSE = '</state-report>';
-const THINK_OPEN = '<thinking>';
-const THINK_CLOSE = '</thinking>';
-
-// The model sometimes externalises its reasoning in a <thinking> block. That is
-// internal — it must NEVER reach the user (it exposes stage numbers, advance
-// decisions, and the whole method) and, unbounded, it can eat the token budget
-// so no reply is left. Strip completed <thinking> blocks and drop any trailing
-// unclosed one. Case-insensitive; handles multiple blocks.
-function stripThinking(text: string): string {
-  let t = text.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '');
-  const open = t.indexOf(THINK_OPEN);
-  if (open >= 0) t = t.slice(0, open); // trailing unclosed reasoning
-  return t.trim();
-}
 
 const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
   safetyFlag: 'watch',
   recommendedAction: 'stay',
-  _defaulted: true,
 };
 
 // Allowed enums — anything else is dropped to a safer default.
@@ -79,108 +61,16 @@ export type SplitReply = {
 export function splitReplyAndReport(fullReply: string): SplitReply {
   const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
   if (openIdx < 0) {
-    // No report — strip any reasoning so a <thinking> block can't be shown/stored.
-    return { humanReply: stripThinking(fullReply), rawStateReport: null };
+    return { humanReply: fullReply.trim(), rawStateReport: null };
   }
   const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
+  const human = fullReply.slice(0, openIdx).trim();
   if (closeIdx < 0) {
-    // Open tag but no close (truncated report). The reply, if any, is whatever
-    // sits before the report; the report itself is unrecoverable.
-    return { humanReply: stripThinking(fullReply.slice(0, openIdx)), rawStateReport: null };
+    // Open tag found but no close — strip from human reply, treat report as missing.
+    return { humanReply: human, rawStateReport: null };
   }
   const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
-  // Report-FIRST is the contract (report then reply), so the human reply is the
-  // text AFTER the close tag. Fall back to the text BEFORE the open tag if the
-  // model reverted to report-last (legacy). Whichever side carries the prose —
-  // with any <thinking> block stripped off either side.
-  const after = stripThinking(fullReply.slice(closeIdx + STATE_REPORT_CLOSE.length));
-  const before = stripThinking(fullReply.slice(0, openIdx));
-  const humanReply = after.length > 0 ? after : before;
-  return { humanReply, rawStateReport: raw };
-}
-
-/**
- * Streaming helper for the report-FIRST contract. Given the model output
- * accumulated so far, return the human-reply text that is currently safe to
- * display, or null while we're still inside the leading state report (nothing
- * to show yet). `final` = true once the stream has ended (don't hold back a
- * partial-tag tail). Pure + monotonic: the returned string only grows across
- * calls, so the route can stream the delta between successive results.
- *
- * Handles three shapes safely:
- *   - report-first (contract): `<state-report>…</state-report>` then reply →
- *     returns the reply once the close tag arrives; null before that.
- *   - legacy report-last: reply then `<state-report>…` → returns the text before
- *     the open tag (strips the trailing report).
- *   - no report at all → returns the whole text (holding back one tag-length
- *     tail until `final`, so a partial open tag can't leak).
- */
-export function displayableReply(fullReply: string, final: boolean): string | null {
-  // Reasoning must never stream to the user. Remove completed <thinking> blocks
-  // first; if the stream is currently inside (or forming) an unclosed <thinking>
-  // block, only whatever real reply preceded it is safe — nothing after.
-  const stripped = fullReply.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '');
-  const leadT = stripped.replace(/^\s+/, '');
-  // The whole output so far is a forming <thinking> open tag → show nothing yet.
-  if (leadT.length > 0 && THINK_OPEN.startsWith(leadT)) return null;
-  const openThink = stripped.indexOf(THINK_OPEN);
-  if (openThink >= 0) {
-    // Unclosed reasoning (completed ones already removed). Treat as final for the
-    // text before it — no more displayable text can follow safely this turn.
-    return reportAwareDisplay(stripped.slice(0, openThink), true);
-  }
-  return reportAwareDisplay(stripped, final);
-}
-
-// The report-order half of displayableReply (unchanged behaviour), split out so
-// it runs on <thinking>-stripped text.
-function reportAwareDisplay(text: string, final: boolean): string | null {
-  const lead = text.replace(/^\s+/, '');
-  // Case A — the output leads with (or is still forming) the state report.
-  if (STATE_REPORT_OPEN.startsWith(lead) || lead.startsWith(STATE_REPORT_OPEN)) {
-    const closeIdx = text.indexOf(STATE_REPORT_CLOSE);
-    if (closeIdx < 0) return null; // report still streaming — nothing to show
-    return text.slice(closeIdx + STATE_REPORT_CLOSE.length).replace(/^\s+/, '');
-  }
-  // Case B — does not lead with the report: legacy report-last, or no report.
-  const openIdx = text.indexOf(STATE_REPORT_OPEN);
-  if (openIdx >= 0) return text.slice(0, openIdx);
-  // No open tag yet. Hold back one tag-length tail so a partial open tag that
-  // is still forming can't be streamed to the user; release it once final.
-  return final ? text : text.slice(0, Math.max(0, text.length - STATE_REPORT_OPEN.length));
-}
-
-/**
- * DIAGNOSTIC (temporary — Root-1 truncation measurement). Classify the health
- * of the state report in a full model reply, to measure how often it comes
- * back whole vs missing/truncated/partial. Codes:
- *   'no_report'          — no <state-report> open tag at all
- *   'truncated_no_close' — open tag present, no close tag (cut off mid-report)
- *   'bad_json'           — both tags present but the JSON does not parse
- *   'missing_fields'     — valid JSON but intensity or recommendedAction absent
- *   'ok'                 — valid JSON with intensity and recommendedAction present
- * Remove once the measurement is done.
- */
-export function assessReportHealth(fullReply: string): string {
-  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
-  if (openIdx < 0) return 'no_report';
-  const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
-  if (closeIdx < 0) return 'truncated_no_close';
-  const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
-  let obj: unknown;
-  try {
-    obj = JSON.parse(raw);
-  } catch {
-    return 'bad_json';
-  }
-  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return 'bad_json';
-  const o = obj as Record<string, unknown>;
-  const hasIntensity =
-    typeof o.intensity === 'number' ||
-    (typeof o.intensity === 'string' && Number.isFinite(Number(o.intensity)));
-  const hasAction = typeof o.recommendedAction === 'string';
-  if (!hasIntensity || !hasAction) return 'missing_fields';
-  return 'ok';
+  return { humanReply: human, rawStateReport: raw };
 }
 
 // ---------------------------------------------------------------------------
@@ -370,14 +260,6 @@ export function parseStateReport(raw: string | null): StateReport {
     }
   }
   copyStringField(obj, 'continuityNote', report);
-
-  // Carry the defaulted marker across the persist→reload cycle. A turn that was
-  // defaulted at emit time is stored (audit/log.ts) as JSON that still includes
-  // `_defaulted: true`; when a gate reloads and re-parses that blob here the
-  // JSON is valid, so without this the turn would look like a real read and
-  // re-poison the gate window. A genuine (non-default) report never carries the
-  // marker, so this only ever re-marks true defaults.
-  if (obj._defaulted === true) report._defaulted = true;
 
   return report;
 }

@@ -147,18 +147,6 @@ This is the one named, audit-logged signature practice of Stage 1. It is load-be
 
 ---
 
-## 8a. Practice scope at this stage
-
-**Unlocked families:** Regulation; Somatic Awareness; Self-Compassion; and Guided Inner Landscape **at surface only** — a safe place or comforting image, never transformation.
-
-**Locked until later stages:** Narrative Rewriting; and all Adult-Self, parts / inner-child, foreign-material, integration and identity work.
-
-**Depth ceiling — surface.** No middle- or deep-depth practice runs at Stage 1; middle requires the Adult Self, established at Stage 3. If the user brings deep material — a charged image, a part, a memory, a request to "go into it" — the AI witnesses it and holds it warmly, names that it will be worked properly when the ground is built, and offers surface stabilisation. It does not run a practice into it.
-
-**Named practice for this stage:** Personal Anchor Identification (§8).
-
----
-
 ## 9. Watch-For Markers (signs to slow, signs to abort)
 
 **Signs to slow (the AI eases off, returns to the simplest grounding):**

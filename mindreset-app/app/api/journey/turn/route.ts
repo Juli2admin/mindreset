@@ -28,12 +28,12 @@ import { loadJourneyState } from '@/lib/journey/state/load';
 import { applyStateReportToProgress } from '@/lib/journey/state/save';
 import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
-import { splitReplyAndReport, parseStateReport, assessReportHealth, displayableReply } from '@/lib/journey/stateReport/parse';
+import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
 import { freezeJourney } from '@/lib/journey/safety/freeze';
-import { decideRoute, applyRouteDecision, loadOutstandingCriteria } from '@/lib/journey/router/router';
+import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 import { checkJourneyRateLimit } from '@/lib/rateLimit';
 
@@ -41,17 +41,15 @@ export const dynamic = 'force-dynamic';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const HISTORY_LIMIT = 30;
-// Headroom for the hidden state report + the warm reply in one generation. Was
-// 1500; raised after a live test where a rich turn (a stage transition, with a
-// full continuityNote) ran the report long and left nothing for the reply —
-// the user got the soft re-ask instead of an answer. 2000 comfortably holds a
-// bounded report plus a full reply.
-const MAX_TOKENS = 2000;
+const MAX_TOKENS = 1500;
 // Max characters in a single user message. ~4000 chars ≈ 1000 tokens —
 // keeps any one turn within reasonable bounds for cost AND for the
 // 30-message history replay (no risk of one user blowing the prompt
 // budget). MiniMind enforces a similar cap.
 const MAX_USER_MESSAGE_CHARS = 4000;
+// Tag pair used by the assembler's output-format instruction; we strip
+// everything from STATE_REPORT_OPEN onward before streaming to the client.
+const STATE_REPORT_OPEN = '<state-report>';
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -179,22 +177,11 @@ export async function POST(request: NextRequest) {
   });
   recent.reverse();
 
-  // Readiness loop (PR 3): compute the current stage's outstanding completion
-  // criteria from the same code gate the router enforces, and surface them in
-  // the state block so the AI can steer toward them and evaluate advancement
-  // each turn. Fail soft — a readiness miss must never break the user's turn.
-  let outstanding: string[] | null = null;
-  try {
-    outstanding = await loadOutstandingCriteria(state);
-  } catch (err) {
-    console.error('[journey/turn] readiness computation error:', err);
-  }
-
   // System prompt is assembled as a block array so Anthropic prompt
   // caching can cache the canon (Shared Core + active stage spec) +
   // master-before-state. Dynamic content (the state block + master tail)
   // sits in uncached blocks at the end. See lib/journey/prompts/assemble.ts.
-  const systemBlocks = assembleSystemPromptBlocks(state, outstanding);
+  const systemBlocks = assembleSystemPromptBlocks(state);
   const model = getModelForStage(state.currentStage, body.modelOverride);
 
   const decryptedHistory: { role: 'user' | 'assistant'; content: string }[] = recent.map(
@@ -216,15 +203,12 @@ export async function POST(request: NextRequest) {
     messages,
   });
 
-  // Report-FIRST contract: the model emits the hidden <state-report> first, then
-  // the warm reply. We stream only the reply (everything after the report) to the
-  // client; displayableReply() resolves the boundary and falls back safely if the
-  // model reverts to report-last or omits the report. See parse.ts.
+  // We stream the human-reply portion to the client; the state report stays
+  // server-side. We strip everything from the first <state-report> tag onward.
+  let buffer = '';
+  let truncatedAtOpen = false;
+  let displayedSoFar = 0;
   let fullText = '';
-  let emitted = 0; // chars of the displayable reply already streamed
-  // DIAGNOSTIC (temporary — Root-1 measurement): capture the model's stop_reason
-  // so we can tell whether the report was cut off by the token cap. Remove later.
-  let stopReason: string | null = null;
 
   const encoder = new TextEncoder();
 
@@ -232,33 +216,39 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       try {
         for await (const event of stream) {
-          if (event.type === 'message_delta' && event.delta.stop_reason) {
-            stopReason = event.delta.stop_reason;
-          }
           if (
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
           ) {
-            fullText += event.delta.text;
-            const disp = displayableReply(fullText, false);
-            if (disp !== null && disp.length > emitted) {
-              controller.enqueue(encoder.encode(disp.slice(emitted)));
-              emitted = disp.length;
+            const delta = event.delta.text;
+            fullText += delta;
+            if (truncatedAtOpen) continue;
+            buffer += delta;
+            const idx = buffer.indexOf(STATE_REPORT_OPEN);
+            if (idx >= 0) {
+              // Stream up to the tag, then stop displaying.
+              const beforeTag = buffer.slice(0, idx);
+              const newDisplay = beforeTag.length - displayedSoFar;
+              if (newDisplay > 0) {
+                controller.enqueue(encoder.encode(beforeTag.slice(displayedSoFar)));
+                displayedSoFar = beforeTag.length;
+              }
+              truncatedAtOpen = true;
+            } else {
+              // Safe to stream the new delta — but keep the last ~20 chars
+              // buffered so we don't accidentally stream a partial open tag.
+              const safeUpTo = Math.max(0, buffer.length - STATE_REPORT_OPEN.length);
+              const toStream = buffer.slice(displayedSoFar, safeUpTo);
+              if (toStream.length > 0) {
+                controller.enqueue(encoder.encode(toStream));
+                displayedSoFar = safeUpTo;
+              }
             }
           }
         }
-        // Stream complete — release any held-back tail of the reply.
-        const finalDisp = displayableReply(fullText, true);
-        if (finalDisp !== null && finalDisp.length > emitted) {
-          controller.enqueue(encoder.encode(finalDisp.slice(emitted)));
-          emitted = finalDisp.length;
-        }
-        // Nothing displayable at all (e.g. report-first but the report never
-        // closed, so the reply was truncated away) → soft re-ask, not a blank.
-        if (emitted === 0 && (finalDisp === null || finalDisp.trim().length === 0)) {
-          controller.enqueue(
-            encoder.encode("*(I lost my thread for a moment. Please send again when you're ready.)*"),
-          );
+        // Stream is complete — if we never hit the open tag, flush the rest.
+        if (!truncatedAtOpen && displayedSoFar < buffer.length) {
+          controller.enqueue(encoder.encode(buffer.slice(displayedSoFar)));
         }
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
@@ -278,7 +268,6 @@ export async function POST(request: NextRequest) {
             depthAtTurn: state.currentDepth,
             userMessage,
             fullText,
-            stopReason,
             recentForVerifier: decryptedHistory.slice(0, -1),
           }),
         );
@@ -302,18 +291,10 @@ async function finaliseTurn(args: {
   depthAtTurn: string;
   userMessage: string;
   fullText: string;
-  stopReason?: string | null;
   recentForVerifier: { role: 'user' | 'assistant'; content: string }[];
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   const report = parseStateReport(split.rawStateReport);
-
-  // DIAGNOSTIC (temporary — Root-1 truncation measurement). Records whether the
-  // state report came back whole and the model's stop_reason. Read by grepping
-  // Vercel logs for "journey/parse-health". Remove after the measurement.
-  console.warn(
-    `[journey/parse-health] health=${assessReportHealth(args.fullText)} stop=${args.stopReason ?? 'unknown'} stage=${args.stageAtTurn}`,
-  );
 
   // Persist the assistant message (human reply only — the state report is
   // never stored on the message itself; it lives encrypted on the audit log).
