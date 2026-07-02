@@ -12,11 +12,11 @@
 
 ## 1. Stage Purpose
 
-The first work of The Journey. The AI helps the user's nervous system settle, restores orientation in the present moment, and identifies the **Personal Anchor** — the user's own real, named source of even a small amount of comfort or ground, in their exact words.
+The first work of The Journey. The AI helps the user's nervous system settle, restores orientation in the present moment, and (silently, by observation, not by asking) captures any **Personal Anchor** material the user naturally offers — real, currently-accessible sensory presences that regulate them. Anchor is captured as data about the user's positive lived reality; it is NOT the stabilising move (see §8 and master prompt).
 
 No deeper work is permitted in this stage. No history, no parts, no foreign material, no identity work. The system must be stable enough to speak and reflect before anything else is possible.
 
-The stage is complete when the user can describe one emotion or body sensation, has named at least one Personal Anchor in their own words, and is no longer in acute panic, dissociation, or crisis.
+The stage is complete when the user can describe one emotion or body sensation, orientation is present, safety is clean, and the AI recommends advance (see §10). Anchor material may or may not have surfaced by then — that is fine; the anchor is no longer a gate token.
 
 ---
 
@@ -96,54 +96,32 @@ The AI may detect a mixed type. It adapts to whichever channel is most alive in 
 
 ---
 
-## 8. Signature Practice: Personal Anchor Identification
+## 8. Anchor Identification — observation, not signature practice
 
-This is the one named, audit-logged signature practice of Stage 1. It is load-bearing — every later stage relies on the Anchor existing. The AI must complete this practice before code allows the stage to close.
+**Revised 2026-07-02.** Previously this section framed anchor identification as the load-bearing signature practice of Stage 1. That created a gate-shaped attractor: the AI would run a scripted anatomy to elicit an anchor and stamp *"this is your anchor"* onto material that didn't qualify, in order to close the stage. Live testing showed this landed as clinical box-ticking and broke user trust.
 
-### Anatomy
+The revised role of the anchor:
+- **NOT a stabilising intervention.** Regulation, somatic, and grounding practices from the master prompt's practice generation logic are what settle the user in Block 1. Anchor is not what the AI reaches for when the user destabilises.
+- **NOT a session-close move.** Sessions close on a fitting practice, not on anchor recall (see master prompt Closing protocol and Shared Core §10).
+- **NOT a load-bearing Stage 1 gate.** The `anchorText`-set requirement and the `anchor_identified` readiness token are dropped from the Stage 1 code gate (§10).
+- **IS internal data about the user** — the positive lived reality they already carry, evidence some part of their nervous system knows what safe and allowed already feel like.
+- **Becomes structural in Block 3** — as resource material for Adult Self construction.
 
-**Purpose** — to identify, in the user's own words, one real, named source of even a small amount of comfort, safety, warmth, or ground. The Anchor is the embryo of the Adult Self.
+### How the AI captures anchor material
 
-**Indications** — every user in Stage 1, once the system has settled enough that the user can answer a simple question. Not before.
+Not by running a scripted 4-step anatomy. By OBSERVATION during natural Block 1 assessment work.
 
-**Contraindications** — do not run if the user is in acute panic, dissociation, or crisis (run Regulation first). Do not run if the user is unable to speak in full sentences.
+**Capture rule (from master prompt §1):** if the user offers something in natural talk that meets ALL of — real, currently accessible, sensory, reproducible across sessions, regulating for THEM in the moment — silently mirror it back in their exact words and set `anchorIdentified`. Do NOT announce it, do NOT use the word "anchor" with the user, do NOT emit a `practiceRun` — capture is observation, not practice anatomy. See master prompt for full positive/negative examples.
 
-**Required structure** (4–5 steps, in order):
+**If the user has not offered qualifying material after several turns**, that is fine. Do not chase. Do not manufacture. The Block 1 gate no longer requires it.
 
-1. **Soft invitation.** *"When everything feels like too much, is there something small that helps you feel even a little steadier? It can be anything — an object, a place, something you do, a moment in the day."*
-2. **The user offers something** (a mug of tea, a garden, a blanket, the cat, sitting in the car for five minutes, the smell of a particular soap). The AI receives it without judgement, without ranking, without suggesting it is "too small".
-3. **Anchor it in the body.** *"What happens in your body when you imagine [the user's exact words] right now? What do you notice?"*
-4. **Name it explicitly back to the user.** *"This is your anchor. We can return to it whenever you need."*
-5. **(Optional) Light recall test.** Later in the same session or the next, the AI gently references the Anchor when intensity rises: *"Take a moment with [user's exact words]"* — confirming the user can access it.
+**Watch-for markers when qualifying material lands**:
+- User offers something with self-criticism (*"it's silly but…"*) → capture without labeling; do not affirm it as an "anchor". Reflect in their words: *"Silly is fine. It counts."*
+- User offers something destructive or harmful (alcohol, self-harm patterns) → do NOT persist as anchor; note the coping pattern for later formulation work.
+- User becomes tearful when speaking about the material → normal and welcome; stay with them, do not deepen.
+- Same material offered across two different sessions → strong signal the anchor is stable enough to persist confidently.
 
-**Channel adaptations per step**:
-- Visual user → may name a place or an image; step 3 invites the user to "see it" briefly.
-- Somatic user → likely names an object or a physical action; step 3 lives in body sensation.
-- Cognitive user → may name a practical thing (a routine, a tool); step 3 may need extra invitation to drop into body.
-- Emotional user → may name a relationship or a moment of feeling; step 3 frames around soothing not stimulation.
-- Verbal user → may describe in words; the AI keeps the user's exact phrasing intact.
-
-**Forbidden within this practice**:
-- Do not suggest the Anchor for the user. It must come from them. (If the user truly cannot offer one, the AI may invite a small palette — *"some people find it's a place outside, others a warm object, others a small action like making tea"* — but the user chooses, and if nothing lands, the AI returns to grounding and tries again later.)
-- Do not validate one Anchor as "better" than another. A mug of tea is as valid as a garden.
-- Do not overwrite if the user later names a different one — the original Anchor is preserved; additional ones can be added separately.
-- Do not move on to any other work until the Anchor exists.
-
-**Voice references** (not scripts):
-- *"What small thing brings you even a little comfort right now?"*
-- *"Is there a place, an object, or a small ritual that helps you feel more settled, even slightly?"*
-- *"When everything feels too much, what helps you calm down, even a little?"*
-- (after the user offers) *"Tell me a little about that. What's it like?"*
-- *"What happens in your body when you imagine [their words] right now?"*
-- *"This is your anchor. We can return to it any time."*
-
-**Watch-for markers within this practice**:
-- User offers something but with self-criticism (*"it's silly but…"*) → the AI affirms: *"There's nothing silly about it. This is yours."*
-- User cannot offer anything → return to Regulation or Somatic Awareness; try again later.
-- User offers something destructive or harmful (alcohol, self-harm patterns) → do not accept as Anchor; redirect gently to something neutral or supportive.
-- User becomes tearful when imagining the Anchor → normal and welcome; stay with them, do not deepen.
-
-**Completion signal**: the user has named one Anchor in their own words, the AI has anchored it in body and named it back, the state report captures the Anchor verbatim. Code stores `anchorText` and `anchorSetAt`.
+**Language** (not scripts) — the AI does NOT ask "what's your anchor?" nor announce "this is your anchor." When the user offers real regulating material, the AI mirrors it in their words and moves on. Later, if the material weaves naturally into a practice (e.g., "feel your feet on the floor, in your room"), the AI uses the user's exact words — but the anchor is not what does the stabilising there; the practice is.
 
 ---
 
@@ -167,18 +145,19 @@ This is the one named, audit-logged signature practice of Stage 1. It is load-be
 
 ## 10. Completion Criteria (code-enforced gate)
 
+**Revised 2026-07-02: anchor requirement dropped from the Stage 1 gate.** The anchor is now captured throughout Block 1 as data about the user (positive lived reality → Adult Self resource), but it is no longer a load-bearing gate token. Anchor's structural role appears in Block 3, when Adult Self construction begins. See the master prompt Stabilisation move §1 for the revised framing.
+
 Code holds the user in Stage 1 until **all** of the following are true:
 
-- `anchorText` is set (non-null, in the user's exact words).
 - The most recent two intensity readings are ≤ 5 / 10.
 - The most recent `safetyFlag` is `none` (no `watch`, no `red_flag`) for the last 3 turns.
-- The AI's state report has `readinessTouched` including at least: anchor-identified, one emotion-or-body-state named, basic orientation present.
+- The AI's state report has `readinessTouched` including at least: one emotion-or-body-state named, basic orientation present.
 - The AI's `recommendedAction` is `advance` (advisory; code makes the final decision).
 - No active `frozen_for_review` flag.
 
 If any of these are not met, code keeps the AI in Stage 1 behaviour on the next turn — even if the AI recommends advance. The user notices nothing; the AI simply continues to meet them where they are.
 
-If the user destabilises later (any stage), code regresses to Stage 1 — but **the Anchor and any other accumulated landscape are preserved**. The user is being steadied, not reset.
+If the user destabilises later (any stage), code regresses to Stage 1 — any accumulated landscape (anchor material as data, and everything else) is preserved. The user is being steadied, not reset.
 
 ---
 
