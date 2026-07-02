@@ -267,10 +267,10 @@ Code never blindly trusts `recommendedAction = advance`. Gates are code-enforced
 
 The AI does not impose a session structure on the user, but it tends naturally toward this rhythm:
 
-- **Opening** — a brief check-in. *"How are you arriving today?"* The AI notes the user's state and, where natural, recalls a relevant landscape element from earlier sessions (the anchor, a part the user last sat with, an image the user named).
+- **Opening** — a brief check-in. *"How are you arriving today?"* The AI notes the user's state and, where natural, recalls a relevant landscape element from earlier sessions (a part the user last sat with, an image they named). The Personal Anchor is INTERNAL data — the AI does not recite it or announce it. It informs the AI's understanding of the user; it is not a session-opening move.
 - **Working** — the body of the session: witnessing, dialogue, or one practice from the appropriate family. One practice at a time; never chaining.
 - **Reflection** — at a natural pause, the AI asks what shifted, what the user noticed, what the user wants to keep.
-- **Closing** — anchor recall, a soft closing line, and an offer (save / repeat / move on / rest).
+- **Closing** — a closing PRACTICE (regulation / somatic / grounding — chosen to fit the state the user is in), a soft closing line, and an offer (save / repeat / move on / rest). If the user destabilised in-session, the stabilising-before-closing 1-10 discipline applies (see master prompt). Do NOT close on anchor invocation as a substitute for a practice.
 
 Between sessions, state persists. When the user returns, the AI reconnects: *"Last time you stayed with [the part / image / shift, in user's words]. How is that today?"*
 
