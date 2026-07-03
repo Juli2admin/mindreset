@@ -14,6 +14,9 @@ const PRICE_ENV_VARS = {
   extendedMonthly:  ['STRIPE_PRICE_EXTENDED_MONTHLY'],
   extendedAnnual:   ['STRIPE_PRICE_EXTENDED_ANNUAL'],
   topUp:            ['STRIPE_PRICE_TOPUP', 'STRIPE_PRICE_TOP_UP'],
+  // The Journey — one-off £599, 1 year of access from first-block-accessed.
+  // Payment mode (mode: 'payment'), non-refundable once first block accessed.
+  journeyFull:      ['STRIPE_PRICE_JOURNEY_FULL'],
 } as const;
 
 export type StripePriceKey = keyof typeof PRICE_ENV_VARS;

@@ -222,12 +222,62 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Payment mode = topup. Atomic Purchase row + credit grant. The two
-  // writes used to run sequentially — a crash between them left a
-  // Purchase row with no granted credit, and Stripe retry would dedupe
-  // the Purchase write and never reach the credit grant. $transaction
-  // ensures both succeed or both roll back.
+  // Payment mode covers two products distinguished by session.metadata.priceKey:
+  //   - 'topUp': +200 message credits (£4.99)
+  //   - 'journeyFull': The Journey one-off (£599). Grants access to /journey
+  //     by creating a Purchase row with productType 'recode' — the
+  //     /journey page and /api/journey/* routes gate on
+  //     (productType: 'recode', status: 'completed').
+  //
+  // Default (no priceKey / unknown priceKey): treat as topUp to preserve
+  // pre-Journey behaviour and never silently drop a paid checkout. Logs a
+  // warning so real misconfiguration is visible in Sentry.
   if (session.mode === 'payment') {
+    const priceKey = (session.metadata?.priceKey ?? 'topUp') as string;
+
+    if (priceKey === 'journeyFull') {
+      // The Journey one-off. Non-refundable per T&Cs; access begins when
+      // the user opens the first block (tracked separately). This row is
+      // the access-gate check the /journey page reads. Idempotent on
+      // stripeSessionId.
+      try {
+        await prisma.purchase.create({
+          data: {
+            userId: user.id,
+            productType: 'recode',
+            amount: session.amount_total ?? 59900,
+            currency: (session.currency ?? 'gbp').toUpperCase(),
+            stripeSessionId: session.id,
+            status: 'completed',
+            completedAt: new Date(),
+          },
+        });
+      } catch (err) {
+        if (isP2002(err)) {
+          console.log('[webhook] journey one-off already recorded:', session.id);
+          return;
+        }
+        throw err;
+      }
+      return;
+    }
+
+    if (priceKey !== 'topUp') {
+      // Unknown payment-mode priceKey — treat defensively as topUp so the
+      // paid checkout isn't silently dropped, but log so it's visible in
+      // Sentry telemetry. This branch should never fire in prod.
+      console.warn(
+        '[webhook] unknown payment-mode priceKey, falling back to topUp:',
+        priceKey,
+        session.id,
+      );
+    }
+
+    // Payment mode = topup. Atomic Purchase row + credit grant. The two
+    // writes used to run sequentially — a crash between them left a
+    // Purchase row with no granted credit, and Stripe retry would dedupe
+    // the Purchase write and never reach the credit grant. $transaction
+    // ensures both succeed or both roll back.
     try {
       await prisma.$transaction([
         prisma.purchase.create({
