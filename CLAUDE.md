@@ -100,7 +100,7 @@ companion for daily reflection.
 See `mindreset-app/docs/product/philosophy.md` for the full list and
 rationale.
 
-## Pricing — locked (Block B, spec v2 — 2026-05-21)
+## Pricing — locked (Block B, spec v3 — 2026-07-03)
 
 ### MiniMind
 - **Free taster** — **50 messages lifetime** (per email, one shot), no card
@@ -114,8 +114,14 @@ rationale.
 - **S&T All Access subscription — DROPPED.** Does not exist. Do not create in Stripe.
 
 ### The Journey (Block B — billing wired, content delivery Block C)
-- **One-off** — £599, non-refundable once first block accessed
-- **Installment** — 12 × £55/week, NOT a subscription; can stop, no refund on paid weeks
+- **One-off** — £599 for **1 year of access**, non-refundable once first block accessed
+- **Installment** — **12 × £55/month = £660** over 12 months, matches the 1-year access period.
+  NOT a subscription in Stripe terms — user can stop payments, no refund on paid months,
+  access ends at the last paid month.
+- **Access model**: 1 year from first-block-accessed timestamp. Matches the typical user
+  completion window per owner's method. Decision v3 (2026-07-03): kept 1-year access
+  rather than moving to lifetime or 6-month, per deep-research finding that £599 pricing
+  works cleanly at the current 1-year window without needing structural change.
 
 Full spec: `mindreset-app/docs/implementation/block-b-stripe-plan.md`
 
