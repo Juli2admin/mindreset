@@ -330,7 +330,12 @@ model SafetyEvent {
 // =============================================================================
 model Purchase {
   id              String    @id @default(cuid())
-  user            User      @relation(fields: [userId], references: [id])
+  // Cascade on user delete: prior default (Restrict) blocked
+  // prisma.user.delete for any paying user, taking down the Clerk
+  // user.deleted webhook and the GDPR retention cron. Restored to
+  // Cascade to match the rest of the Journey model graph and let
+  // right-to-erasure actually work.
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
 
   productType     String    // minimind_sub | module | recode
@@ -345,7 +350,25 @@ model Purchase {
   createdAt       DateTime  @default(now())
   completedAt     DateTime?
 
+  // The Journey (productType = 'recode') — access window and abuse cap.
+  //
+  // firstAccessedAt: stamped on the first successful /api/journey/turn
+  // for this Purchase. From that moment, access lasts 365 days.
+  // Journey-only fields; null on module / minimind_sub / one-off top-up rows.
+  //
+  // journeyMessagesUsed: incremented per accepted turn. Enforces a hard
+  // anti-abuse ceiling (Julia decided 2026-07-03: no product-level msg cap,
+  // but a stolen-session / bot floor at 5,000 msgs/year — 12× a heavy
+  // engager's realistic use of the 8-stage arc).
+  firstAccessedAt      DateTime?
+  journeyMessagesUsed  Int       @default(0)
+
   @@index([userId])
+  // Fast lookup for the Journey access gate — most queries filter by
+  // (userId, productType, status) already; this composite index means the
+  // 1-year-expiry gate can be answered without scanning the user's other
+  // purchase rows.
+  @@index([userId, productType, status])
 }
 
 // =============================================================================
