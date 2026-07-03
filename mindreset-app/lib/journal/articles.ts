@@ -16,16 +16,16 @@
 // newest-first by publishedAt and the [slug] route generates static
 // pages for each entry via generateStaticParams.
 //
-// PHASE C STATUS (2026-06-22):
-// Three articles published; Phase C article-writing PAUSED. Articles
-// 4–10 from the SEO commercial plan are DEFERRED (not cancelled).
-// 2-per-month cadence will resume later. When we resume, the
-// candidate next topics are:
-//   - "Burnout vs exhaustion: which do you actually have?" (preferred
-//     — ladders off Article 2 "Why Am I So Tired All the Time?")
-//   - "Why nothing feels meaningful anymore"
+// PHASE C STATUS (2026-07-03):
+// Four articles published. Article 4 "Burnout or Exhaustion? What
+// Your Body Is Actually Telling You" published today, ladders off
+// Article 2 "Why Am I So Tired All the Time?" — and is the first
+// article whose closing paragraph mentions both MiniMind AND The
+// Journey, warming up demand for The Journey ahead of full launch.
+// Article-writing resumes at 1-2 per month cadence from here. Next
+// candidate topic: "Why nothing feels meaningful anymore".
 // "When therapy didn't help" is ON HOLD pending careful ASA-safe
-// review before it's written. The three live articles below must
+// review before it's written. The four live articles below must
 // stay exactly as published — do not edit.
 
 export type AdviceParagraph = {
@@ -345,6 +345,97 @@ export const ARTICLES: Article[] = [
     ],
     closing: [
       "If you want company in that noticing, that's what MiniMind is for — a daily companion you can think out loud with, that helps you catch those small moments of self-abandonment as they happen and slowly find your own signal again. The first 50 messages are free, no card needed. Not therapy. Not a quick fix. Just a quiet place to start the slower work — when you're ready, and at your own pace.",
+    ],
+  },
+  {
+    slug: 'burnout-or-exhaustion-what-your-body-is-telling-you',
+    title: 'Burnout or Exhaustion? What Your Body Is Actually Telling You',
+    metaTitle:
+      'Burnout or Exhaustion? What Your Body Is Actually Telling You · MindReset',
+    metaDescription:
+      "There's a difference between burnout and the deeper exhaustion of living a life that isn't yours. For women in midlife, learning the difference can change everything.",
+    author: { name: 'Julia Loya', url: '/about' },
+    publishedAt: '2026-07-03',
+    intro: [
+      'Everyone talks about burnout. It has become the word we reach for when we are tired in a way that sleep does not fix, when we cannot face another morning, when the life we built feels like something we are dragging ourselves through rather than living.',
+      'But there is something underneath burnout that does not have a clean name. Something older and deeper. And for a lot of women in midlife, that is the thing that is actually happening.',
+      'This is about the difference. And about what your body does when it has been trying to tell you something for a very long time and you have not been listening.',
+    ],
+    sections: [
+      {
+        heading: 'What burnout actually is',
+        paragraphs: [
+          'Burnout is real. It is a state of chronic stress that leads to physical and emotional exhaustion, cynicism, and a feeling of ineffectiveness. It is most commonly associated with work — with giving too much for too long in a specific context, until you have nothing left for that context.',
+          'The important word is context. Burnout, in its clinical sense, is usually situational. Change the job, reduce the workload, take a real break — and burnout can recover. It is serious, and it should not be minimised. But it has a shape, a cause, and in many cases a relatively identifiable solution.',
+          'What many women in midlife are experiencing is not quite that.',
+        ],
+      },
+      {
+        heading: 'The exhaustion that goes deeper',
+        paragraphs: [
+          'There is a kind of exhaustion that is not about your job, your workload, or how many hours you slept. It is the exhaustion of living a life that is not yours.',
+          "Of spending years — sometimes decades — managing everyone else's needs, moods, comfort and demands before your own. Of being the one who holds everything together. Of saying yes when you mean no, of showing up when you are empty, of performing competence and capability long after the real you has quietly left the building.",
+          'This exhaustion does not come from doing too much in one area. It comes from abandoning yourself in every area, every day, so consistently and for so long that you have forgotten there was ever another way to be.',
+          'It does not respond to a holiday. It does not lift after a good night’s sleep. It sits in your bones. And your body, eventually, stops cooperating.',
+        ],
+      },
+      {
+        heading: 'When the body says enough',
+        paragraphs: [
+          'My own body stopped cooperating completely.',
+          'I could not get out of bed. Not because I was lazy, not because I was depressed in a way anyone could name — but because my body had simply run out of road. Everything I had been carrying, for everyone else, for years, had taken its toll in a way I had not seen coming because I had been too busy carrying it to look.',
+          'I had to cancel everything. Work. Family obligations. Friends. Commitments. Everything. Not because I chose to — because I had no choice. My body made the decision my mind had been refusing to make for years.',
+          'And here is what I discovered in that stillness, when I had nothing left to give anyone:',
+          'For the first time in as long as I could remember — I was only responsible for myself.',
+          'Not because I had learned to set boundaries. Not because I had read the right book or understood the right concept. But because I was so empty that serving anyone else had become physically impossible. The people-pleasing, the organising, the managing, the constant low-level service to everyone around me — it stopped. Not gradually. All at once. Because my body ended it.',
+          'And in that space — slowly, quietly — I began to hear myself again.',
+        ],
+      },
+      {
+        heading: 'What the body knows before the mind admits it',
+        paragraphs: [
+          'If you are exhausted in a way that does not match your workload. If you sleep and wake up tired. If your body keeps finding reasons to stop — illness, fatigue, pain that has no clear cause — it may not be burnout.',
+          'It may be your body trying to end a pattern your mind has been protecting for years.',
+          'The body keeps score in ways the mind refuses to. It knows when you are living against yourself. It knows when the gap between who you are and how you are living has become too wide to sustain. And at some point, for some women, it simply stops cooperating with the life that is exhausting it.',
+          'This is not weakness. This is the most honest thing your body will ever do for you.',
+        ],
+      },
+      {
+        heading: 'The difference that matters',
+        paragraphs: [
+          'Burnout says: I have been doing too much. I need to rest and reduce.',
+          'This deeper exhaustion says: I have been living as someone I am not. I need to stop — and then I need to find my way back to who I actually am.',
+          'One is about output. The other is about identity.',
+          'One recovers with rest. The other requires something more — a real look at the patterns underneath, the survival strategies you have been running on, the parts of yourself you left behind somewhere along the way.',
+        ],
+      },
+      {
+        heading: 'Before anything else — check the physical',
+        paragraphs: [
+          'If your body has been sending these signals, the first step is not self-reflection. It is a doctor. Rule out the physical causes — there are real medical reasons for fatigue in midlife, and they deserve proper attention. Iron, thyroid, perimenopause, sleep disorders. Get checked. That matters.',
+          'But if the tests come back clear. If they tell you you are fine and you know you are not. If something underneath is still not right even after the rest, even after the medical all-clear — then the exhaustion you are carrying is not in your blood. It is in the life you have been living. And that is a different kind of work entirely.',
+        ],
+      },
+      {
+        heading: 'Where it begins',
+        paragraphs: [
+          'It begins, as strange as this sounds, with stopping.',
+          'Not the productive kind of stopping. Not a planned rest or a scheduled recovery. The real kind — the kind where you let go of the managing, the organising, the serving, the performing. Where you say, for the first time perhaps in years: I have nothing left for anyone right now. Only for myself.',
+          'That is not selfishness. That is the beginning of return.',
+          'The body that collapsed on me was not failing me. It was saving me. It ended the pattern I could not end myself, and gave me the only conditions in which I could finally hear what I actually needed.',
+          'If your body is saying enough — listen before it has to shout.',
+        ],
+      },
+    ],
+    closing: [
+      'If you want to understand the patterns underneath your exhaustion, that is the work MindReset is built for. MiniMind is the daily companion where you begin — noticing what you are carrying, starting to set it down, hearing yourself again. The first 50 messages are free, no card needed. And when you are ready for the deeper work — the structured journey back through the patterns that brought you here — The Journey is where that happens. Eight stages, paced for safety, built for exactly this. Not therapy. Not a quick fix. The real work, at your own pace.',
+    ],
+    // Both product mentions route to the homepage while The Journey is
+    // still in phased rollout and not yet purchasable — soft "when you're
+    // ready" framing preserved.
+    productLinks: [
+      { token: 'MiniMind', href: '/' },
+      { token: 'The Journey', href: '/' },
     ],
   },
 ];
