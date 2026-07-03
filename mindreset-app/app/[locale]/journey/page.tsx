@@ -21,6 +21,7 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
+import { checkJourneyAccess } from '@/lib/journey/access';
 import JourneyClient from './JourneyClient';
 
 export const dynamic = 'force-dynamic';
@@ -52,13 +53,11 @@ export default async function JourneyPage() {
     );
   }
 
-  // Access gate: must have a completed Journey purchase.
-  const purchase = await prisma.purchase.findFirst({
-    where: { userId, productType: 'recode', status: 'completed' },
-    select: { id: true },
-  });
-  if (!purchase) {
-    return <NoAccessView />;
+  // Access gate: completed Journey purchase + within 1-year window + under
+  // the anti-abuse ceiling. See lib/journey/access.ts.
+  const access = await checkJourneyAccess(userId);
+  if (access.allowed !== true) {
+    return <NoAccessView reason={access.reason} />;
   }
 
   // Auto-start the Journey on first visit. upsert is race-safe for the
@@ -103,19 +102,27 @@ export default async function JourneyPage() {
   );
 }
 
-function NoAccessView() {
-  return <NoAccessClientShell />;
+type NoAccessReason = 'no_purchase' | 'expired' | 'cap_reached';
+
+function NoAccessView({ reason }: { reason: NoAccessReason }) {
+  return <NoAccessInner reason={reason} />;
 }
 
 // Tiny server-rendered "no access" view. Kept in this file so we don't add
 // another component file for a single-purpose surface.
-function NoAccessClientShell() {
-  return <NoAccessInner />;
-}
-
-function NoAccessInner() {
-  // Locale-aware copy via next-intl.
+function NoAccessInner({ reason }: { reason: NoAccessReason }) {
+  // Locale-aware copy via next-intl. Three distinct reasons, three distinct
+  // messages — a user whose year has ended shouldn't be told "not open for
+  // you yet". Falls back to the general "no purchase" copy.
   const t = useTranslations('Journey');
+  const titleKey =
+    reason === 'expired' ? 'expiredTitle' :
+    reason === 'cap_reached' ? 'capReachedTitle' :
+    'noAccessTitle';
+  const bodyKey =
+    reason === 'expired' ? 'expiredBody' :
+    reason === 'cap_reached' ? 'capReachedBody' :
+    'noAccessBody';
   return (
     <div
       className="min-h-screen flex items-center justify-center px-6"
@@ -126,10 +133,10 @@ function NoAccessInner() {
           className="mb-4 text-2xl"
           style={{ fontFamily: TOKENS.serif }}
         >
-          {t('noAccessTitle')}
+          {t(titleKey)}
         </h1>
         <p className="mb-6 text-base leading-relaxed" style={{ color: '#6A6A6A' }}>
-          {t('noAccessBody')}
+          {t(bodyKey)}
         </p>
         <Link
           href="/pricing"

@@ -356,6 +356,10 @@
     "streamErrorSuffix": " *(I lost my thread for a moment. Please send again when you're ready.)*",
     "noAccessTitle": "The Journey isn't open for you yet.",
     "noAccessBody": "When you're ready, you can begin from the pricing page.",
+    "expiredTitle": "Your year with The Journey has come to a close.",
+    "expiredBody": "The time you had here has passed. If you'd like to continue, you can begin again.",
+    "capReachedTitle": "Something isn't quite right with your account.",
+    "capReachedBody": "There's been unusual activity here. Please email support@mindreset.ai and we'll help sort it out.",
     "seePricing": "See pricing →",
     "voice": {
       "startAria": "Start voice input",

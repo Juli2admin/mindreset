@@ -36,6 +36,7 @@ import { freezeJourney } from '@/lib/journey/safety/freeze';
 import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 import { checkJourneyRateLimit } from '@/lib/rateLimit';
+import { checkJourneyAccess, markFirstAccessAndIncrement } from '@/lib/journey/access';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,12 +96,16 @@ export async function POST(request: NextRequest) {
   // silently fail to deliver SOME canned response in a Red Flag situation.
   const crisisResponse = getCrisisResponseForLocale(body.locale ?? null);
 
-  // Access check.
-  const purchase = await prisma.purchase.findFirst({
-    where: { userId, productType: 'recode', status: 'completed' },
-    select: { id: true },
-  });
-  if (!purchase) return NextResponse.json({ error: 'No Journey access' }, { status: 403 });
+  // Access check — completed Purchase + within 1-year access window + under
+  // anti-abuse ceiling. See lib/journey/access.ts.
+  const access = await checkJourneyAccess(userId);
+  if (access.allowed !== true) {
+    return NextResponse.json(
+      { error: 'No Journey access', reason: access.reason },
+      { status: 403 },
+    );
+  }
+  const purchase = access.purchase;
 
   const state = await loadJourneyState(userId);
   if (!state) return NextResponse.json({ error: 'Journey not started' }, { status: 409 });
@@ -113,6 +118,7 @@ export async function POST(request: NextRequest) {
   // loses the signal they need to triage.
   if (state.frozenForReview) {
     await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
+    await markFirstAccessAndIncrement(purchase.id);
     const flag = scanForJourneyRedFlag(userMessage);
     if (flag.matched) {
       await writeAuditTurn({
@@ -136,6 +142,7 @@ export async function POST(request: NextRequest) {
   if (flag.matched) {
     // Persist messages, freeze, audit, return canned crisis response — no LLM.
     await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
+    await markFirstAccessAndIncrement(purchase.id);
     await freezeJourney({
       userId,
       source: 'keyword_scan',
@@ -270,6 +277,15 @@ export async function POST(request: NextRequest) {
             fullText,
             recentForVerifier: decryptedHistory.slice(0, -1),
           }),
+        );
+        // Bump the Journey access meter (firstAccessedAt on first turn,
+        // journeyMessagesUsed +1 always). Runs in the background so it
+        // doesn't add first-byte latency. Independent of finaliseTurn so
+        // one failing doesn't block the other.
+        waitUntil(
+          markFirstAccessAndIncrement(purchase.id).catch((err) =>
+            console.error('[journey/turn] failed to bump access meter:', err),
+          ),
         );
       }
     },
