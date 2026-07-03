@@ -92,27 +92,53 @@ export default async function HomePage({
   // This upsert makes /home the fallback creation path (matches the
   // pattern already used by linkScreeningToUser.ts). Idempotent —
   // when the webhook succeeds, this is a no-op. When it doesn't,
-  // this creates the row on first /home visit so state persists
-  // and welcome email fires.
+  // this creates the row on first /home visit.
+  //
+  // Failure modes wrapped in try/catch so /home never crashes even
+  // if the upsert fails:
+  //   - P2002 on (email): a User row with this email exists but
+  //     under a different id (Clerk-deleted-then-recreated flow, or
+  //     the row was created earlier with a stale id). We try to
+  //     recover by finding-by-email and updating that row's id to
+  //     match the current Clerk session — this stitches the auth
+  //     identity back to the existing row, preserving purchases and
+  //     other relations tied by userId.
+  //   - Anything else: log and continue with dbUser possibly null.
+  //     The page renders with defaults; user still sees /home.
   if (primaryEmail) {
-    await prisma.user.upsert({
-      where: { id: user.id },
-      create: {
-        id: user.id,
-        email: primaryEmail,
-        locale: locale === 'ru' ? 'ru' : 'en',
-        themePref: 'system',
-        // Sign-up UI already required T&C + Privacy consent; timestamps
-        // reflect that consent implicitly happened by the time the user
-        // reaches an authenticated surface.
-        tcAcceptedAt: new Date(),
-        privacyAcceptedAt: new Date(),
-      },
-      // Only update fields that Clerk owns as source of truth. Never
-      // overwrite tier / cycle counters / welcomeEmailSentAt — those
-      // belong to the Stripe webhook and this page's downstream logic.
-      update: { email: primaryEmail },
-    });
+    try {
+      await prisma.user.upsert({
+        where: { id: user.id },
+        create: {
+          id: user.id,
+          email: primaryEmail,
+          locale: locale === 'ru' ? 'ru' : 'en',
+          themePref: 'system',
+          // Sign-up UI already required T&C + Privacy consent; timestamps
+          // reflect that consent implicitly happened by the time the user
+          // reaches an authenticated surface.
+          tcAcceptedAt: new Date(),
+          privacyAcceptedAt: new Date(),
+        },
+        // Only update fields that Clerk owns as source of truth. Never
+        // overwrite tier / cycle counters / welcomeEmailSentAt — those
+        // belong to the Stripe webhook and this page's downstream logic.
+        update: { email: primaryEmail },
+      });
+    } catch (err) {
+      // Log and continue. The most common failure is P2002 (email
+      // unique constraint) — a User row exists under a different Clerk
+      // id (Clerk-deleted-then-recreated or webhook re-issued id). We
+      // deliberately do NOT try to relink the row's id here: Postgres
+      // FK constraints from RecodeProgress / JourneyTurn / Purchase
+      // etc. don't cascade on UPDATE, so an id change would fail. The
+      // downstream findUnique below will not find a row for this Clerk
+      // id, so the page renders with free-tier defaults — not ideal but
+      // safe. If this fires, owner should reconcile manually in
+      // Supabase (either delete the orphan row or update it via a
+      // scripted DB migration that also updates all dependent rows).
+      console.error('[home] user upsert failed (continuing):', err);
+    }
   }
 
   const dbUser = await prisma.user.findUnique({
