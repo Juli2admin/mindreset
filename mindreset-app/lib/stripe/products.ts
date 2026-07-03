@@ -17,6 +17,13 @@ const PRICE_ENV_VARS = {
   // The Journey — one-off £599, 1 year of access from first-block-accessed.
   // Payment mode (mode: 'payment'), non-refundable once first block accessed.
   journeyFull:      ['STRIPE_PRICE_JOURNEY_FULL'],
+  // The Journey — installment plan: 12 × £55/month = £660 over 12 months.
+  // Subscription mode with subscription_data.cancel_at set to +12 months
+  // so Stripe auto-cancels after the twelfth cycle. Access granted on the
+  // first successful payment. Legacy env var STRIPE_PRICE_JOURNEY_WEEKLY
+  // is kept as a fallback while owner migrates from the old weekly cadence
+  // to the new monthly cadence (Journey pricing v3, PR #204).
+  journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
 } as const;
 
 export type StripePriceKey = keyof typeof PRICE_ENV_VARS;

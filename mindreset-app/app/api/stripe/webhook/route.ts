@@ -43,6 +43,27 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
   const cid = extractCustomerId(sub.customer);
   if (!cid) return;
   const priceId = sub.items.data[0]?.price.id;
+
+  // Journey installment subscriptions run through the same webhook events
+  // as MiniMind tier subscriptions, but they must NOT touch the User's
+  // MiniMind tier or cycleResetAt. Detect Journey by priceKey metadata
+  // (set at checkout-create time) OR by matching the Journey installment
+  // price ID directly (belt-and-braces for events without metadata).
+  const metaPriceKey = sub.metadata?.priceKey;
+  const journeyInstallmentPriceIds = [
+    process.env.STRIPE_PRICE_JOURNEY_INSTALLMENT,
+    process.env.STRIPE_PRICE_JOURNEY_WEEKLY,
+  ].filter(Boolean);
+  const isJourneySubscription =
+    metaPriceKey === 'journeyInstallment' ||
+    (priceId != null && journeyInstallmentPriceIds.includes(priceId));
+  if (isJourneySubscription) {
+    // No MiniMind tier / cycleResetAt / stripeSubscriptionId changes for
+    // Journey. The recode Purchase row (created in handleCheckoutCompleted)
+    // is what grants /journey access; nothing on the User row changes.
+    return;
+  }
+
   const tier = priceId ? priceToTier(priceId) : null;
   const active = sub.status === 'active' || sub.status === 'trialing';
   const periodEnd = getPeriodEnd(sub);
@@ -105,6 +126,26 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
 async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   const cid = extractCustomerId(sub.customer);
   if (!cid) return;
+
+  // Same Journey guard as handleSubscriptionUpsert: don't demote MiniMind
+  // tier when a Journey installment subscription ends (12 cycles complete
+  // or user cancelled early). Access to /journey is granted by the
+  // Purchase row, not by the User row; we intentionally do NOT revoke
+  // access on subscription end for launch (per owner spec: "access ends
+  // at the last paid month"). Access revocation is a follow-up feature.
+  const priceId = sub.items.data[0]?.price.id;
+  const metaPriceKey = sub.metadata?.priceKey;
+  const journeyInstallmentPriceIds = [
+    process.env.STRIPE_PRICE_JOURNEY_INSTALLMENT,
+    process.env.STRIPE_PRICE_JOURNEY_WEEKLY,
+  ].filter(Boolean);
+  const isJourneySubscription =
+    metaPriceKey === 'journeyInstallment' ||
+    (priceId != null && journeyInstallmentPriceIds.includes(priceId));
+  if (isJourneySubscription) {
+    return;
+  }
+
   // Counter is intentionally NOT reset here. If the user later re-subscribes,
   // handleSubscriptionUpsert reads currentTier === 'free' (set below) and
   // performs the first-cycle reset at that point. Preserving the counter on
@@ -195,16 +236,22 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Subscription mode: write a Purchase row for the initial subscription
-  // payment so refund audits and the data-export bundle see it. Tier
-  // changes themselves are owned by handleSubscriptionUpsert; this row
-  // is purely an audit-trail record. Idempotent on stripeSessionId.
+  // Subscription mode covers two products distinguished by priceKey:
+  //   - MiniMind Essential/Extended: audit-trail Purchase row (tier is
+  //     owned by handleSubscriptionUpsert, not this record)
+  //   - Journey installment: 12 × £55/month, auto-cancels at 12 months
+  //     via subscription_data.cancel_at. Creates the recode Purchase row
+  //     that gates access at /journey. No MiniMind tier changes.
+  // Idempotent on stripeSessionId.
   if (session.mode === 'subscription') {
+    const subPriceKey = (session.metadata?.priceKey ?? 'minimind_sub') as string;
+    const isJourneyInstallment = subPriceKey === 'journeyInstallment';
+
     try {
       await prisma.purchase.create({
         data: {
           userId: user.id,
-          productType: 'minimind_sub',
+          productType: isJourneyInstallment ? 'recode' : 'minimind_sub',
           amount: session.amount_total ?? 0,
           currency: (session.currency ?? 'gbp').toUpperCase(),
           stripeSessionId: session.id,
@@ -214,7 +261,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       });
     } catch (err) {
       if (isP2002(err)) {
-        console.log('[webhook] subscription purchase already recorded:', session.id);
+        console.log(
+          isJourneyInstallment
+            ? '[webhook] journey installment purchase already recorded:'
+            : '[webhook] subscription purchase already recorded:',
+          session.id,
+        );
         return;
       }
       throw err;
