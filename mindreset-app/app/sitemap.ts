@@ -22,7 +22,7 @@
 
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
-import { SITE_URL } from '@/lib/seo/alternates';
+import { SITE_URL, NATIVE_CONTENT_LOCALES } from '@/lib/seo/alternates';
 import { ARTICLES } from '@/lib/journal/articles';
 import { COMPARISONS } from '@/lib/competitors';
 
@@ -49,10 +49,18 @@ const ARTICLE_PATHS = ARTICLES.map((a) => `/journal/${a.slug}`);
 // /vs/{competitor} comparison paths — same registry-driven pattern.
 const VS_PATHS = COMPARISONS.map((c) => `/vs/${c.slug}`);
 
+// Only native-content locales are advertised. Placeholder locales serve
+// byte-identical English and are noindex'd site-wide (see
+// [locale]/layout.tsx), so listing them here would only waste crawl budget
+// and generate duplicate-content warnings in Search Console. When a locale
+// gets hand-curated content, add it to NATIVE_CONTENT_LOCALES and it
+// appears here + in pageAlternates automatically.
+const NATIVE_LOCALES = routing.locales.filter((l) => NATIVE_CONTENT_LOCALES.has(l));
+
 function buildAlternates(path: string): Record<string, string> {
   const trimmed = path === '/' ? '' : path;
   const languages: Record<string, string> = {};
-  for (const locale of routing.locales) {
+  for (const locale of NATIVE_LOCALES) {
     const localePath = locale === routing.defaultLocale ? trimmed : `/${locale}${trimmed}`;
     languages[locale] = `${SITE_URL}${localePath || '/'}`;
   }
@@ -64,12 +72,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const allPaths = [...STATIC_PATHS, ...ARTICLE_PATHS, ...VS_PATHS];
 
-  // One sitemap entry per (path × locale) pairing so each variant has
-  // its own crawl URL. hreflang alternates are attached to each entry.
+  // One sitemap entry per (path × native-locale) pairing so each variant
+  // has its own crawl URL. hreflang alternates are attached to each entry.
   return allPaths.flatMap((path) => {
     const trimmed = path === '/' ? '' : path;
     const languages = buildAlternates(path);
-    return routing.locales.map((locale) => {
+    return NATIVE_LOCALES.map((locale) => {
       const url =
         locale === routing.defaultLocale
           ? `${SITE_URL}${trimmed || '/'}`
