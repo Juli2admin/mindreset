@@ -18,13 +18,23 @@ const PRICE_ENV_VARS = {
   // Payment mode (mode: 'payment'), non-refundable once first block accessed.
   journeyFull:      ['STRIPE_PRICE_JOURNEY_FULL'],
   // The Journey — installment plan: 12 × £55/month = £660 over 12 months.
-  // Subscription mode with subscription_data.cancel_at set to +12 months
-  // so Stripe auto-cancels after the twelfth cycle. Access granted on the
-  // first successful payment. Legacy env var STRIPE_PRICE_JOURNEY_WEEKLY
-  // is kept as a fallback while owner migrates from the old weekly cadence
-  // to the new monthly cadence (Journey pricing v3, PR #204).
+  // Subscription mode. Access granted on the first successful payment.
+  // Auto-cancel after 12 cycles is set on the Subscription via
+  // stripe.subscriptions.update in the webhook handler (cancel_at is NOT
+  // a valid field on checkout.sessions.create's subscription_data).
+  // Legacy env var STRIPE_PRICE_JOURNEY_WEEKLY is kept as a fallback
+  // while owner migrates from the old weekly cadence to the new monthly
+  // cadence (Journey pricing v3, PR #204).
   journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
 } as const;
+
+/**
+ * How long the Journey installment subscription runs before auto-cancel.
+ * Applied via stripe.subscriptions.update({cancel_at}) in the webhook
+ * after the subscription is created. 365 days = 12 monthly cycles,
+ * matches the 1-year access period.
+ */
+export const JOURNEY_INSTALLMENT_DURATION_SECONDS = 365 * 24 * 60 * 60;
 
 export type StripePriceKey = keyof typeof PRICE_ENV_VARS;
 

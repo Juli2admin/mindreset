@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { stripe } from '@/lib/stripe/client';
 import { getPriceId, type StripePriceKey } from '@/lib/stripe/products';
+// JOURNEY_INSTALLMENT_DURATION_SECONDS now lives in lib/stripe/products
+// and is applied via stripe.subscriptions.update in the webhook, not here.
 import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -27,12 +29,6 @@ const VALID_KEYS = new Set<string>([
   'journeyInstallment', // 12 × £55/month, subscription mode with cancel_at
 ]);
 
-// The Journey installment plan is 12 monthly cycles then auto-cancel.
-// Stripe honours subscription_data.cancel_at (Unix seconds) to schedule
-// the cancellation at checkout-session-creation time. 12 × 30 days ≈ 365
-// days; we use 365 exactly so a month with fewer than 30 days doesn't
-// cut the plan short.
-const JOURNEY_INSTALLMENT_DURATION_SECONDS = 365 * 24 * 60 * 60;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -82,16 +78,18 @@ export async function POST(request: NextRequest) {
     const typedKey = priceKey as StripePriceKey;
     const isSubscription = SUBSCRIPTION_KEYS.has(typedKey);
 
-    // Journey installment: schedule auto-cancel after 12 monthly cycles.
-    // Any other subscription: run indefinitely until user cancels.
-    const isJourneyInstallment = typedKey === 'journeyInstallment';
+    // Journey installment auto-cancel after 12 cycles is set on the
+    // Subscription via stripe.subscriptions.update in the webhook handler
+    // AFTER the subscription is created — cancel_at is NOT a valid field
+    // on checkout.sessions.create's subscription_data (this was the bug
+    // that returned 500 for the £55 button on 2026-07-03; verified against
+    // Stripe SDK types at node_modules/stripe/types/Checkout/
+    // SessionsResource.d.ts SubscriptionData interface).
+    //
+    // See handleCheckoutCompleted in the Stripe webhook route for the
+    // cancel_at wiring.
     const subscriptionData = isSubscription
-      ? {
-          metadata: { clerkId: userId, priceKey },
-          ...(isJourneyInstallment && {
-            cancel_at: Math.floor(Date.now() / 1000) + JOURNEY_INSTALLMENT_DURATION_SECONDS,
-          }),
-        }
+      ? { metadata: { clerkId: userId, priceKey } }
       : undefined;
 
     const session = await stripe.checkout.sessions.create({

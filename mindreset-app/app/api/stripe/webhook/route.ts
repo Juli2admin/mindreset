@@ -3,6 +3,7 @@ import type Stripe from 'stripe';
 import { waitUntil } from '@vercel/functions';
 import { stripe } from '@/lib/stripe/client';
 import prisma from '@/lib/prisma';
+import { JOURNEY_INSTALLMENT_DURATION_SECONDS } from '@/lib/stripe/products';
 import {
   sendSubscriptionConfirmed,
   sendSubscriptionCancelled,
@@ -239,9 +240,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   // Subscription mode covers two products distinguished by priceKey:
   //   - MiniMind Essential/Extended: audit-trail Purchase row (tier is
   //     owned by handleSubscriptionUpsert, not this record)
-  //   - Journey installment: 12 × £55/month, auto-cancels at 12 months
-  //     via subscription_data.cancel_at. Creates the recode Purchase row
-  //     that gates access at /journey. No MiniMind tier changes.
+  //   - Journey installment: 12 × £55/month. Creates the recode Purchase
+  //     row that gates access at /journey. No MiniMind tier changes.
+  //     Auto-cancel at 12 months is applied here via
+  //     stripe.subscriptions.update({cancel_at}) — subscription_data
+  //     .cancel_at is NOT a valid checkout.sessions.create parameter
+  //     (returned 500 on 2026-07-03; verified against SDK types).
   // Idempotent on stripeSessionId.
   if (session.mode === 'subscription') {
     const subPriceKey = (session.metadata?.priceKey ?? 'minimind_sub') as string;
@@ -270,6 +274,32 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         return;
       }
       throw err;
+    }
+
+    // Journey installment only: schedule Stripe to auto-cancel the
+    // subscription after 12 monthly cycles. session.subscription is the
+    // subscription ID Stripe just created for this checkout. Wrap in
+    // try/catch so a failure here doesn't reject the whole webhook
+    // (Purchase row is already committed → access is granted → worst
+    // case owner cancels manually via Stripe dashboard).
+    if (isJourneyInstallment && session.subscription) {
+      const subId =
+        typeof session.subscription === 'string'
+          ? session.subscription
+          : session.subscription.id;
+      try {
+        await stripe.subscriptions.update(subId, {
+          cancel_at:
+            Math.floor(Date.now() / 1000) +
+            JOURNEY_INSTALLMENT_DURATION_SECONDS,
+        });
+      } catch (err) {
+        console.error(
+          '[webhook] failed to set cancel_at on journey installment sub:',
+          subId,
+          err,
+        );
+      }
     }
     return;
   }
