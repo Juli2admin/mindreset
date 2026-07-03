@@ -474,7 +474,11 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
           </div>
         </div>
 
-        {/* Your Journey — single card, two purchase options. */}
+        {/* Your Journey — single card, two purchase options. Journey is
+            live and buyable now; kept visually inside the "Coming soon"
+            block during phased rollout to match the soft-launch framing
+            in the Journal articles ("when you're ready"). The "Available
+            soon" badge has been removed and the two Buy CTAs added. */}
         <div className="mb-2">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
@@ -495,32 +499,53 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
               border: `1px solid ${PALETTE.border}`,
             }}
           >
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <h3
-                className="text-[20px]"
-                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-              >
-                {tHome('journey.title')}
-              </h3>
-              <span
-                className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                style={{
-                  background: PALETTE.bgSubtle,
-                  color: PALETTE.textHint,
-                  border: `1px solid ${PALETTE.border}`,
-                  fontFamily: SANS,
-                  fontWeight: 500,
-                }}
-              >
-                {tHome('availableSoon')}
-              </span>
-            </div>
+            <h3
+              className="text-[20px] mb-2"
+              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+            >
+              {tHome('journey.title')}
+            </h3>
             <p
-              className="text-[13px]"
+              className="text-[13px] mb-5"
               style={{ color: PALETTE.textMuted, fontFamily: SANS }}
             >
               {tHome('journey.priceFormat')}
             </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => handleCheckout('journeyFull')}
+                disabled={loading !== null}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: PALETTE.accent,
+                  color: PALETTE.accentText,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  opacity: loading !== null ? 0.5 : 1,
+                }}
+              >
+                {loading === 'journeyFull'
+                  ? t('cta.processing')
+                  : tHome('journey.buyOneOffCta')}
+              </button>
+              <button
+                onClick={() => handleCheckout('journeyInstallment')}
+                disabled={loading !== null}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: 'transparent',
+                  color: PALETTE.text,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  border: `1px solid ${PALETTE.border}`,
+                  opacity: loading !== null ? 0.5 : 1,
+                }}
+              >
+                {loading === 'journeyInstallment'
+                  ? t('cta.processing')
+                  : tHome('journey.buyInstallmentCta')}
+              </button>
+            </div>
           </div>
         </div>
         </div>{/* /Coming soon wrapper */}

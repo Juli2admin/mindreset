@@ -163,8 +163,10 @@
       "kicker": "YOUR JOURNEY",
       "intro": "The complete programme. Eight stages, from stabilising your nervous system to a renewed sense of who you are — paced for safety and depth.",
       "title": "The Journey",
-      "priceFormat": "One-off £599 · 12 × £55/week",
-      "buyButton": "Start the Journey →"
+      "priceFormat": "£599 one-off · 1 year of access. Or 12 × £55/month.",
+      "buyButton": "Start the Journey →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Available soon",
     "marketingConsent": {

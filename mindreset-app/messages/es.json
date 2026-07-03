@@ -164,7 +164,9 @@
       "intro": "El programa completo. Ocho etapas, desde la estabilización de tu sistema nervioso hasta el regreso a ti mismo — diseñado cuidadosamente para sostener seguridad y profundidad en el proceso.",
       "title": "El Camino hacia ti",
       "priceFormat": "Pago único £599 · 12 × £55/semana",
-      "buyButton": "Empezar el Camino →"
+      "buyButton": "Empezar el Camino →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Próximamente",
     "marketingConsent": {

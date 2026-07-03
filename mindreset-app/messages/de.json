@@ -164,7 +164,9 @@
       "intro": "Das vollständige Programm. Acht aufeinander aufbauende Schritte — von der Stabilisierung deines Nervensystems bis hin zur Rückkehr zu dir selbst. Behutsam aufgebaut, mit Fokus auf Sicherheit und Tiefe.",
       "title": "Der Weg zu dir",
       "priceFormat": "Einmalzahlung £599 · 12 × £55/Woche",
-      "buyButton": "Den Weg beginnen →"
+      "buyButton": "Den Weg beginnen →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Bald verfügbar",
     "marketingConsent": {
