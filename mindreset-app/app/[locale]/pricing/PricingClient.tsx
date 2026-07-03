@@ -342,8 +342,84 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
           })}
         </div>
 
-        {/* Coming soon — wrapper around the three in-development sections
-            (States, Themes, Journey). Visually understated to keep the
+        {/* Your Journey — moved OUT of the "Coming soon" wrapper on
+            2026-07-03 to make it visually clear that The Journey is
+            open for purchase. States & Themes remain inside the wrapper
+            below because their content delivery is still Block C. */}
+        <div className="mt-16 mb-2">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {tHome('journey.kicker')}
+          </div>
+          <p
+            className="text-[14px] leading-[1.65] mb-6"
+            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+          >
+            {tHome('journey.intro')}
+          </p>
+          <div
+            className="rounded-lg p-6"
+            style={{
+              background: PALETTE.bgCard,
+              border: `1px solid ${PALETTE.border}`,
+            }}
+          >
+            <h3
+              className="text-[20px] mb-2"
+              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+            >
+              {tHome('journey.title')}
+            </h3>
+            <p
+              className="text-[13px] mb-5"
+              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+            >
+              {tHome('journey.priceFormat')}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => handleCheckout('journeyFull')}
+                disabled={loading !== null}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: PALETTE.accent,
+                  color: PALETTE.accentText,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  opacity: loading !== null ? 0.5 : 1,
+                }}
+              >
+                {loading === 'journeyFull'
+                  ? t('cta.processing')
+                  : tHome('journey.buyOneOffCta')}
+              </button>
+              <button
+                onClick={() => handleCheckout('journeyInstallment')}
+                disabled={loading !== null}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: 'transparent',
+                  color: PALETTE.text,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  border: `1px solid ${PALETTE.border}`,
+                  opacity: loading !== null ? 0.5 : 1,
+                }}
+              >
+                {loading === 'journeyInstallment'
+                  ? t('cta.processing')
+                  : tHome('journey.buyInstallmentCta')}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Coming soon — wrapper around States & Themes, in-development
+            sections whose content delivery is Block C. The Journey used
+            to sit here too but was moved above this wrapper on 2026-07-03
+            because it is buyable now. Visually understated to keep the
             actively-buyable tiers above the fold and signal these are not
             yet open without making the page look unfinished. */}
         <div
@@ -474,80 +550,6 @@ export default function PricingClient({ currentTier, footerSlot, testimonialsSlo
           </div>
         </div>
 
-        {/* Your Journey — single card, two purchase options. Journey is
-            live and buyable now; kept visually inside the "Coming soon"
-            block during phased rollout to match the soft-launch framing
-            in the Journal articles ("when you're ready"). The "Available
-            soon" badge has been removed and the two Buy CTAs added. */}
-        <div className="mb-2">
-          <div
-            className="text-[11px] uppercase tracking-[0.22em] mb-3"
-            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
-          >
-            {tHome('journey.kicker')}
-          </div>
-          <p
-            className="text-[14px] leading-[1.65] mb-6"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-          >
-            {tHome('journey.intro')}
-          </p>
-          <div
-            className="rounded-lg p-6"
-            style={{
-              background: PALETTE.bgCard,
-              border: `1px solid ${PALETTE.border}`,
-            }}
-          >
-            <h3
-              className="text-[20px] mb-2"
-              style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-            >
-              {tHome('journey.title')}
-            </h3>
-            <p
-              className="text-[13px] mb-5"
-              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-            >
-              {tHome('journey.priceFormat')}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => handleCheckout('journeyFull')}
-                disabled={loading !== null}
-                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
-                style={{
-                  background: PALETTE.accent,
-                  color: PALETTE.accentText,
-                  fontFamily: SANS,
-                  fontWeight: 500,
-                  opacity: loading !== null ? 0.5 : 1,
-                }}
-              >
-                {loading === 'journeyFull'
-                  ? t('cta.processing')
-                  : tHome('journey.buyOneOffCta')}
-              </button>
-              <button
-                onClick={() => handleCheckout('journeyInstallment')}
-                disabled={loading !== null}
-                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
-                style={{
-                  background: 'transparent',
-                  color: PALETTE.text,
-                  fontFamily: SANS,
-                  fontWeight: 500,
-                  border: `1px solid ${PALETTE.border}`,
-                  opacity: loading !== null ? 0.5 : 1,
-                }}
-              >
-                {loading === 'journeyInstallment'
-                  ? t('cta.processing')
-                  : tHome('journey.buyInstallmentCta')}
-              </button>
-            </div>
-          </div>
-        </div>
         </div>{/* /Coming soon wrapper */}
 
         {checkoutError && (
