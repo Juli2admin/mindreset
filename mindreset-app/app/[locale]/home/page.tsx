@@ -79,6 +79,42 @@ export default async function HomePage({
 
   const firstName = user.firstName ?? (primaryEmail ? primaryEmail.split('@')[0] : null);
 
+  // Defensive User row upsert (2026-07-03). The Clerk webhook at
+  // /api/webhooks/clerk is the canonical path that creates the User
+  // row on user.created. But that webhook can fail silently for
+  // reasons outside the app code — Vercel Deployment Protection
+  // rejecting Clerk with 401, signing-secret mismatch, network hiccups
+  // — and when it does, the downstream flow breaks in confusing ways:
+  // no welcome email, tier defaults to free even for subscribers on
+  // page reload, purchase-gate checks fail. Owner reported exactly
+  // this failure mode 2026-07-03 with test user yulia12022@gmail.com.
+  //
+  // This upsert makes /home the fallback creation path (matches the
+  // pattern already used by linkScreeningToUser.ts). Idempotent —
+  // when the webhook succeeds, this is a no-op. When it doesn't,
+  // this creates the row on first /home visit so state persists
+  // and welcome email fires.
+  if (primaryEmail) {
+    await prisma.user.upsert({
+      where: { id: user.id },
+      create: {
+        id: user.id,
+        email: primaryEmail,
+        locale: locale === 'ru' ? 'ru' : 'en',
+        themePref: 'system',
+        // Sign-up UI already required T&C + Privacy consent; timestamps
+        // reflect that consent implicitly happened by the time the user
+        // reaches an authenticated surface.
+        tcAcceptedAt: new Date(),
+        privacyAcceptedAt: new Date(),
+      },
+      // Only update fields that Clerk owns as source of truth. Never
+      // overwrite tier / cycle counters / welcomeEmailSentAt — those
+      // belong to the Stripe webhook and this page's downstream logic.
+      update: { email: primaryEmail },
+    });
+  }
+
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     select: {
