@@ -40,25 +40,51 @@ function getPeriodEnd(sub: Stripe.Subscription): number | null {
   return item?.current_period_end ?? sub.current_period_end ?? null;
 }
 
+// Journey installment subscriptions run through the same subscription /
+// invoice webhook events as MiniMind tier subscriptions but must NOT
+// touch the User's MiniMind tier, cycleResetAt, messagesUsedThisCycle,
+// or topUpMessagesRemaining. Detect Journey by priceKey metadata (set at
+// checkout-create time on subscription_data.metadata) OR by matching the
+// Journey installment price ID directly (belt-and-braces for events
+// missing metadata, e.g. Stripe replay of pre-metadata subs).
+function isJourneyInstallmentPriceId(priceId: string | null | undefined): boolean {
+  if (!priceId) return false;
+  const journeyIds = [
+    process.env.STRIPE_PRICE_JOURNEY_INSTALLMENT,
+    process.env.STRIPE_PRICE_JOURNEY_WEEKLY,
+  ].filter(Boolean);
+  return journeyIds.includes(priceId);
+}
+
+function isJourneyInstallmentSubscription(sub: Stripe.Subscription): boolean {
+  const priceId = sub.items.data[0]?.price.id;
+  const metaPriceKey = sub.metadata?.priceKey;
+  return metaPriceKey === 'journeyInstallment' || isJourneyInstallmentPriceId(priceId);
+}
+
+// Invoices carry a `subscription` reference and line items whose `price.id`
+// matches the subscription's active price. Metadata is not always present on
+// the invoice itself; check both the invoice-line price id and (if we can
+// see it cheaply) the subscription's metadata via the line's parent details.
+function isJourneyInstallmentInvoice(invoice: Stripe.Invoice): boolean {
+  // API 2024-06-20+ shape: invoice.lines.data[i].price.id
+  const linePriceId = invoice.lines?.data?.[0]?.price?.id ?? null;
+  if (isJourneyInstallmentPriceId(linePriceId)) return true;
+  // Newer API also exposes subscription_details.metadata on invoice lines.
+  const line = invoice.lines?.data?.[0] as
+    | (Stripe.InvoiceLineItem & { subscription_details?: { metadata?: Record<string, string> } })
+    | undefined;
+  const lineMetaPriceKey = line?.subscription_details?.metadata?.priceKey;
+  if (lineMetaPriceKey === 'journeyInstallment') return true;
+  return false;
+}
+
 async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
   const cid = extractCustomerId(sub.customer);
   if (!cid) return;
   const priceId = sub.items.data[0]?.price.id;
 
-  // Journey installment subscriptions run through the same webhook events
-  // as MiniMind tier subscriptions, but they must NOT touch the User's
-  // MiniMind tier or cycleResetAt. Detect Journey by priceKey metadata
-  // (set at checkout-create time) OR by matching the Journey installment
-  // price ID directly (belt-and-braces for events without metadata).
-  const metaPriceKey = sub.metadata?.priceKey;
-  const journeyInstallmentPriceIds = [
-    process.env.STRIPE_PRICE_JOURNEY_INSTALLMENT,
-    process.env.STRIPE_PRICE_JOURNEY_WEEKLY,
-  ].filter(Boolean);
-  const isJourneySubscription =
-    metaPriceKey === 'journeyInstallment' ||
-    (priceId != null && journeyInstallmentPriceIds.includes(priceId));
-  if (isJourneySubscription) {
+  if (isJourneyInstallmentSubscription(sub)) {
     // No MiniMind tier / cycleResetAt / stripeSubscriptionId changes for
     // Journey. The recode Purchase row (created in handleCheckoutCompleted)
     // is what grants /journey access; nothing on the User row changes.
@@ -134,16 +160,7 @@ async function handleSubscriptionDeleted(sub: Stripe.Subscription) {
   // Purchase row, not by the User row; we intentionally do NOT revoke
   // access on subscription end for launch (per owner spec: "access ends
   // at the last paid month"). Access revocation is a follow-up feature.
-  const priceId = sub.items.data[0]?.price.id;
-  const metaPriceKey = sub.metadata?.priceKey;
-  const journeyInstallmentPriceIds = [
-    process.env.STRIPE_PRICE_JOURNEY_INSTALLMENT,
-    process.env.STRIPE_PRICE_JOURNEY_WEEKLY,
-  ].filter(Boolean);
-  const isJourneySubscription =
-    metaPriceKey === 'journeyInstallment' ||
-    (priceId != null && journeyInstallmentPriceIds.includes(priceId));
-  if (isJourneySubscription) {
+  if (isJourneyInstallmentSubscription(sub)) {
     return;
   }
 
@@ -190,6 +207,22 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const cid = extractCustomerId(invoice.customer);
   if (!cid) return;
 
+  // Cross-contamination guard (audit finding A, 2026-07-03): the earlier
+  // version filtered on stripeCustomerId only, so a failed £55 Journey
+  // installment charge on a user who ALSO had MiniMind Essential/Extended
+  // flipped their MiniMind tier to 'free' and sent a MiniMind-flavoured
+  // "payment failed" email — even though the MiniMind card charged fine.
+  // Same class of bug that #214 fixed for handleSubscriptionDeleted; the
+  // invoice handlers were missed.
+  //
+  // For Journey installment invoices we intentionally do NOTHING here.
+  // Journey access is granted by the Purchase row and (per owner spec)
+  // is not revoked on payment failure — access ends at the last paid
+  // month, which naturally follows when Stripe eventually cancels the
+  // subscription. When a proper revocation flow lands (PR 3), it will
+  // read the Purchase row's firstAccessedAt + duration, not the User row.
+  if (isJourneyInstallmentInvoice(invoice)) return;
+
   await prisma.user.updateMany({
     where: { stripeCustomerId: cid, currentTier: { not: 'free' } },
     data: { currentTier: 'free', cycleResetAt: null },
@@ -213,6 +246,17 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   if (invoice.billing_reason !== 'subscription_cycle') return;
   const cid = extractCustomerId(invoice.customer);
   if (!cid) return;
+  // Cross-contamination guard (audit finding A, 2026-07-03): the earlier
+  // version filtered on stripeCustomerId only, so every Journey installment
+  // £55 subscription_cycle invoice ZEROED messagesUsedThisCycle AND
+  // destroyed unused topUpMessagesRemaining on a user who ALSO had a
+  // MiniMind subscription. A user with both was getting their MiniMind
+  // cycle counter reset mid-cycle 12 extra times a year and losing paid
+  // top-up credits.
+  //
+  // MiniMind cycle reset must only fire on MiniMind subscription_cycle
+  // invoices. For Journey installment invoices this handler is a no-op.
+  if (isJourneyInstallmentInvoice(invoice)) return;
   // Top-ups expire at billing-period reset per spec.
   await prisma.user.updateMany({
     where: { stripeCustomerId: cid },
