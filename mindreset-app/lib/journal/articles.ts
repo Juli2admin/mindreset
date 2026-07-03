@@ -17,16 +17,19 @@
 // pages for each entry via generateStaticParams.
 //
 // PHASE C STATUS (2026-07-03):
-// Four articles published. Article 4 "Burnout or Exhaustion? What
-// Your Body Is Actually Telling You" published today, ladders off
-// Article 2 "Why Am I So Tired All the Time?" — and is the first
-// article whose closing paragraph mentions both MiniMind AND The
-// Journey, warming up demand for The Journey ahead of full launch.
-// Article-writing resumes at 1-2 per month cadence from here. Next
-// candidate topic: "Why nothing feels meaningful anymore".
-// "When therapy didn't help" is ON HOLD pending careful ASA-safe
-// review before it's written. The four live articles below must
-// stay exactly as published — do not edit.
+// Five articles published. Articles 4 and 5 both published today —
+// article 4 "Burnout or Exhaustion? What Your Body Is Actually
+// Telling You" (fatigue ladder) and article 5 "Why Nothing Feels
+// Meaningful Anymore — And What It's Actually Telling You"
+// (meaninglessness / anhedonia). Both close with the dual MiniMind
+// + Journey mention to warm demand for The Journey ahead of full
+// launch. Next candidate topics for the 1-2/month cadence:
+//   - "When you don't recognise yourself anymore" (identity)
+//   - "How to stop performing your own life" (authenticity)
+//   - "The rage underneath the tiredness" (anger + exhaustion)
+// "When therapy didn't help" remains ON HOLD pending careful
+// ASA-safe review before it's written. The five live articles below
+// must stay exactly as published — do not edit.
 
 export type AdviceParagraph = {
   /** Bold lead-in phrase (e.g. "Catch the moment, not the lifetime."). */
@@ -433,6 +436,93 @@ export const ARTICLES: Article[] = [
     // Both product mentions route to the homepage while The Journey is
     // still in phased rollout and not yet purchasable — soft "when you're
     // ready" framing preserved.
+    productLinks: [
+      { token: 'MiniMind', href: '/' },
+      { token: 'The Journey', href: '/' },
+    ],
+  },
+  {
+    slug: 'why-nothing-feels-meaningful-anymore',
+    title:
+      "Why Nothing Feels Meaningful Anymore — And What It's Actually Telling You",
+    metaTitle:
+      "Why Nothing Feels Meaningful Anymore — And What It's Actually Telling You · MindReset",
+    metaDescription:
+      "Why nothing feels meaningful anymore isn't always depression. For women in midlife, the emptiness is often the beginning of finding yourself again.",
+    author: { name: 'Julia Loya', url: '/about' },
+    publishedAt: '2026-07-04',
+    intro: [
+      'There is a particular kind of emptiness that arrives not at the worst moment of your life, but just after it.',
+      'You have made it through. The exhaustion, the collapse, the point where something finally gave way and you stopped — stopped serving, stopped managing, stopped running on empty for everyone around you. And you expected that when the weight lifted, you would find yourself underneath it.',
+      'Instead you find — nothing. Or not nothing exactly. A quiet. A blankness. A strange inability to answer questions that should be simple.',
+      'This is not a relapse. This is not failure. This is one of the most important moments in the whole journey — and almost nobody talks about it honestly.',
+    ],
+    sections: [
+      {
+        heading: 'The café moment',
+        paragraphs: [
+          'I remember sitting in a café, looking at a menu, and realising I could not decide what I wanted.',
+          'Not in an overwhelmed, too-many-choices way. In a deeper way. I genuinely did not know. Did I want coffee or tea? Did I want chicken or fish? The question felt unanswerable — not because the options were complicated, but because I had no clear signal from inside myself about what I preferred.',
+          'I had spent so many years knowing exactly what everyone around me wanted — their preferences, their moods, their needs, what would make them comfortable, what would keep the peace — that my own signal had gone almost completely quiet. I knew everything about the people in my life. I knew almost nothing about myself.',
+          'That moment in the café was awkward and strange and, underneath the strangeness, one of the most important discoveries of my life.',
+          'I did not know myself.',
+        ],
+      },
+      {
+        heading: 'What meaninglessness is actually made of',
+        paragraphs: [
+          'When women describe feeling like nothing is meaningful anymore, the assumption — theirs and everyone else’s — is usually that something is wrong. Depression. Burnout. A midlife crisis. Something to fix or treat or push through.',
+          'Sometimes that is true, and it matters to take it seriously. If you are struggling with persistent low mood, please speak to a doctor.',
+          'But there is another version of this emptiness that is not a disorder. It is the natural result of spending years — sometimes decades — so oriented toward other people that your own inner life has been left unattended. Your preferences, your feelings, your sense of what matters to you — they did not disappear. They went quiet. They learned that they were not the priority. And now, in the unfamiliar silence of a life that is finally yours to fill, you do not know what to put in it.',
+          'This emptiness is not the problem. It is the first honest moment you have had in years.',
+        ],
+      },
+      {
+        heading: 'Frozen feelings',
+        paragraphs: [
+          'What I discovered in the weeks and months after I stopped — really stopped — was that my feelings had frozen.',
+          'Not dramatically. Not in a way that showed. I could function. I could speak. I could make decisions about practical things. But when I tried to locate what I actually felt — not what I thought I should feel, not what the situation called for, but what I genuinely felt — there was a strange blankness where the answer should have been.',
+          'I had been so busy managing everyone else’s emotional world that I had stopped inhabiting my own. My feelings had learned to wait. Then they had learned to be quiet. Then, somewhere along the way, I had lost fluent access to them entirely.',
+          'This is more common than anyone admits. Women who have spent years in service to others — as mothers, as partners, as the responsible one, the capable one, the one who holds it all together — often find, when the holding finally stops, that they have lost the habit of feeling their own feelings. They can read other people’s emotions with extraordinary precision. Their own have gone underground.',
+        ],
+      },
+      {
+        heading: 'Learning yourself like a child',
+        paragraphs: [
+          'What I had to do — and it felt strange and slow and sometimes embarrassing — was learn myself the way a child learns things. From the beginning.',
+          'What do I actually like? Not what is easiest, not what is least likely to cause conflict, not what I have always chosen by default — what do I actually prefer?',
+          'Coffee or tea. Window seat or aisle. Morning or evening. Quiet or company. These are not trivial questions. They are the vocabulary of a self. And when you have spent years not asking them — not being allowed to make yourself the relevant person in any decision — you have to relearn the language.',
+          'I started small. Noticing, in the smallest moments, what I was drawn toward and what I was not. What felt like yes in my body and what felt like no. Not thinking my way to the answer — thinking was what I had always done, and thinking bypasses the signal entirely. Feeling my way. Slowly. Imperfectly.',
+          'Some days I still could not tell. Some days the signal was still too faint. But I kept asking. Because I had realised something that changed everything: the feelings were not gone. They were frozen. And frozen things, given the right conditions, slowly thaw.',
+        ],
+      },
+      {
+        heading: 'Why this is the beginning, not the end',
+        paragraphs: [
+          'The emptiness that arrives when you stop living for everyone else is not a sign that you have lost yourself permanently. It is a sign that you have finally stopped long enough to notice how far you drifted.',
+          'You cannot miss what you never stopped to look for. The fact that you can feel the emptiness means something in you is already looking.',
+          'The meaninglessness — the flatness, the I-don’t-know-what-I-want, the strange inability to locate your own preferences — is not the destination. It is the starting point. It is the first honest question your life has asked you in years:',
+          'Who are you, when you are not being useful to someone?',
+          'That question is not a crisis. It is an invitation.',
+          'And the answer — your answer, the real one — is waiting in exactly the places you have not looked yet. In the feelings you froze because there was no space for them. In the preferences you set aside so many times you forgot they existed. In the version of you that was there before you learned to make yourself so useful, so available, so endlessly oriented toward everyone else.',
+          'She did not leave. She went quiet.',
+          'And she is still there, waiting to be asked what she wants for lunch.',
+        ],
+      },
+      {
+        heading: 'Where to begin',
+        paragraphs: [
+          'Begin by asking the small questions. Not the big ones — who am I, what is my purpose, what does my life mean. Those come later.',
+          'Start with: coffee or tea? Window or aisle? Walk or stay? Morning or evening?',
+          'Notice what your body says before your mind edits it. The signal is faint at first. It gets stronger every time you listen to it.',
+        ],
+      },
+    ],
+    closing: [
+      'If you want company in that process — something outside your own head to think out loud with as you slowly find your way back to yourself — that is what MindReset is built for. MiniMind is the daily companion where you begin: noticing, listening, finding the signal underneath the quiet. The first 50 messages are free, no card needed. And when you are ready for the deeper work — the structured journey back through the patterns and the frozen parts and the versions of yourself you left behind — The Journey is where that happens. Eight stages, paced for safety, built for exactly this. Not therapy. Not a quick fix. The real work, when you are ready, at your own pace.',
+    ],
+    // Both product mentions route to homepage while The Journey is in
+    // phased rollout — matches article 4's pattern.
     productLinks: [
       { token: 'MiniMind', href: '/' },
       { token: 'The Journey', href: '/' },
