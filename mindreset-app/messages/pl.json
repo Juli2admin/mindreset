@@ -164,7 +164,9 @@
       "intro": "Pełny program. Osiem etapów — od stabilizacji układu nerwowego po powrót do siebie. Proces ułożony z troską o bezpieczeństwo i głębię doświadczenia.",
       "title": "Droga do siebie",
       "priceFormat": "Jednorazowo £599 · 12 × £55/tydzień",
-      "buyButton": "Rozpocznij Drogę →"
+      "buyButton": "Rozpocznij Drogę →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Wkrótce",
     "marketingConsent": {

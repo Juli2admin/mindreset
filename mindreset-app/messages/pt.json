@@ -164,7 +164,9 @@
       "intro": "O programa completo. Oito etapas, da estabilização do teu sistema nervoso ao regresso a ti mesmo — construído cuidadosamente para apoiar segurança interior e profundidade ao longo do processo.",
       "title": "O Regresso a Ti",
       "priceFormat": "Pagamento único £599 · 12 × £55/semana",
-      "buyButton": "Começar o Caminho →"
+      "buyButton": "Começar o Caminho →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Em breve",
     "marketingConsent": {

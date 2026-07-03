@@ -164,7 +164,9 @@
       "intro": "Il programma completo. Otto tappe, dalla stabilizzazione del sistema nervoso fino al ritorno a te stesso — costruito con attenzione per sostenere sicurezza e profondità lungo il percorso.",
       "title": "Il ritorno a sé",
       "priceFormat": "Pagamento unico £599 · 12 × £55/settimana",
-      "buyButton": "Inizia il Cammino →"
+      "buyButton": "Inizia il Cammino →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Prossimamente",
     "marketingConsent": {

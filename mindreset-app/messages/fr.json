@@ -164,7 +164,9 @@
       "intro": "Le programme complet. Huit étapes, de la stabilisation de ton système nerveux jusqu’au retour à toi-même — conçues avec attention pour soutenir sécurité intérieure et profondeur du processus.",
       "title": "Le Chemin vers soi",
       "priceFormat": "Paiement unique £599 · 12 × £55/semaine",
-      "buyButton": "Commencer le Chemin →"
+      "buyButton": "Commencer le Chemin →",
+      "buyOneOffCta": "Buy — £599",
+      "buyInstallmentCta": "Pay monthly — £55"
     },
     "availableSoon": "Bientôt disponible",
     "marketingConsent": {
