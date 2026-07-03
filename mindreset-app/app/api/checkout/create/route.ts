@@ -61,6 +61,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Guard against double-purchasing The Journey. Both journeyFull
+    // (£599 one-off) and journeyInstallment (12 × £55/month) grant
+    // the same access via a completed Purchase(productType: 'recode').
+    // A user with an existing recode Purchase gains nothing by buying
+    // again — /journey uses findFirst as the access gate — but a
+    // second checkout charges them again (double subscription =
+    // £110/month instead of £55). Refuse with 409 Conflict.
+    //
+    // Load-bearing: the /pricing page also hides these buttons
+    // client-side for owners, but a stale client or direct POST could
+    // still hit this endpoint. Server refusal is the true guarantee.
+    if (priceKey === 'journeyFull' || priceKey === 'journeyInstallment') {
+      const existing = await prisma.purchase.findFirst({
+        where: {
+          userId: user.id,
+          productType: 'recode',
+          status: 'completed',
+        },
+        select: { id: true },
+      });
+      if (existing) {
+        return NextResponse.json(
+          { error: 'The Journey has already been purchased on this account' },
+          { status: 409 },
+        );
+      }
+    }
+
     // Retrieve existing Stripe Customer or create one
     let customerId = user.stripeCustomerId;
     if (!customerId) {
