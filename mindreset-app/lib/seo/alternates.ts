@@ -26,6 +26,26 @@ import { routing } from '@/i18n/routing';
 // real launch domain, not the preview URL).
 export const SITE_URL = 'https://mindreset.ai';
 
+// Locales with hand-curated native content. Every other locale in
+// routing.ts serves byte-identical English (via i18n-tools/sync-
+// placeholders.mjs) and is treated as a placeholder locale — hidden
+// from search engines and excluded from hreflang / sitemap until real
+// translations ship.
+//
+// Duplicated with intent in two other places (search these before
+// editing):
+//   - components/LanguagePicker.tsx     — controls which languages
+//     appear in the picker UI
+//   - i18n-tools/sync-placeholders.mjs  — controls which bundles get
+//     overwritten by the sync
+// Add a locale to all three the same day you add hand-curated content.
+export const NATIVE_CONTENT_LOCALES: ReadonlySet<string> = new Set(['en', 'ru']);
+
+export function isPlaceholderLocale(locale: string): boolean {
+  return routing.locales.includes(locale as (typeof routing.locales)[number])
+    && !NATIVE_CONTENT_LOCALES.has(locale);
+}
+
 type Alternates = {
   canonical: string;
   languages: Record<string, string>;
@@ -37,8 +57,17 @@ export function pageAlternates(path: string, currentLocale?: string): Alternates
   }
   const trimmed = path === '/' ? '' : path;
 
+  // hreflang alternates are limited to NATIVE_CONTENT_LOCALES. Placeholder
+  // locales serve English content and are noindex'd site-wide — advertising
+  // them here would tell Google "this is the French version" while the page
+  // itself says "don't index this", a contradiction Google resolves by
+  // picking a different canonical (Search Console flags these as
+  // "Duplicate, Google chose different canonical"). When real translations
+  // ship for a locale, add it to NATIVE_CONTENT_LOCALES and it appears here
+  // and in the sitemap automatically.
   const languages: Record<string, string> = {};
   for (const locale of routing.locales) {
+    if (!NATIVE_CONTENT_LOCALES.has(locale)) continue;
     // English (default) serves unprefixed under `as-needed`.
     const localePath = locale === routing.defaultLocale ? trimmed : `/${locale}${trimmed}`;
     languages[locale] = `${SITE_URL}${localePath || '/'}`;

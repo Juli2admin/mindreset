@@ -20,7 +20,7 @@ import { routing } from '@/i18n/routing';
 import { getPathname } from '@/i18n/navigation';
 import { ThemeProvider } from '@/lib/theme/ThemeProvider';
 import { THEME_COOKIE_NAME, isValidTheme } from '@/lib/theme/cookie';
-import { SITE_URL, pageAlternates } from '@/lib/seo/alternates';
+import { SITE_URL, pageAlternates, isPlaceholderLocale } from '@/lib/seo/alternates';
 
 // Clerk widget translation — maps our app locale codes to the localisation
 // objects shipped by @clerk/localizations. Used on the SignIn / SignUp
@@ -94,6 +94,17 @@ export async function generateMetadata({
 }: {
   params: { locale: string };
 }): Promise<Metadata> {
+  // Placeholder locales serve byte-identical English content (per
+  // i18n-tools/sync-placeholders.mjs) so we noindex every page under
+  // /fr, /de, /es, /it, /pl, /pt until real translations ship. `follow`
+  // stays true so link equity out of these pages still flows through
+  // the site graph. Google Search Console (2026-07-03) was flagging
+  // ~14 "Duplicate, Google chose different canonical" warnings that all
+  // trace to this — Google saw /fr/pricing == /pricing content and
+  // picked /pricing as the real canonical anyway. Pre-empting the
+  // duplicate signal frees crawl budget for the pages we actually
+  // want indexed.
+  const placeholder = isPlaceholderLocale(params.locale);
   return {
     metadataBase: new URL(SITE_URL),
     title: {
@@ -103,6 +114,7 @@ export async function generateMetadata({
     description: DEFAULT_DESCRIPTION,
     applicationName: 'MindReset.ai',
     alternates: pageAlternates('/', params.locale),
+    ...(placeholder && { robots: { index: false, follow: true } }),
     manifest: '/manifest.json',
     appleWebApp: {
       capable: true,
