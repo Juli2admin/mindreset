@@ -465,8 +465,15 @@ export default function HomeClient({
               </div>
             </Link>
           ) : (
-            <div
-              className="rounded-lg p-6"
+            // Not-yet-purchased state. Journey is buyable now (2026-07-03
+            // launch push, PRs #207/#208/#209) — flip this card from the
+            // old "Available soon" badge to a Link into /pricing with the
+            // canonical Buy CTA. Buying happens on /pricing, not here, to
+            // keep the /home dashboard focused on ongoing use rather than
+            // acquisition.
+            <Link
+              href="/pricing"
+              className="block rounded-lg p-6 transition-colors hover:bg-[color:var(--journey-hover-bg)]"
               style={{
                 background: PALETTE.bgCard,
                 border: `1px solid ${PALETTE.border}`,
@@ -480,16 +487,14 @@ export default function HomeClient({
                   {t('journey.title')}
                 </h3>
                 <span
-                  className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
+                  className="text-[12px] inline-flex items-center whitespace-nowrap shrink-0"
                   style={{
-                    background: PALETTE.bgSubtle,
-                    color: PALETTE.textHint,
-                    border: `1px solid ${PALETTE.border}`,
+                    color: PALETTE.accent,
                     fontFamily: SANS,
                     fontWeight: 500,
                   }}
                 >
-                  {t('availableSoon')}
+                  {t('journey.buyButton')}
                 </span>
               </div>
               <p
@@ -498,7 +503,7 @@ export default function HomeClient({
               >
                 {t('journey.priceFormat')}
               </p>
-            </div>
+            </Link>
           )}
         </div>
 
