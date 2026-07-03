@@ -19,6 +19,10 @@ const VALID_KEYS = new Set<string>([
   'extendedMonthly',
   'extendedAnnual',
   'topUp',
+  // The Journey — one-off £599. Payment mode, single line item. The
+  // installment plan (12 × £55/month subscription) is separate and lands
+  // in a follow-up PR.
+  'journeyFull',
 ]);
 
 export async function POST(request: NextRequest) {
