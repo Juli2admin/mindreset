@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, stripeCustomerId: true },
+      select: { id: true, email: true, stripeCustomerId: true, currentTier: true },
     });
 
     if (!user) {
@@ -87,6 +87,38 @@ export async function POST(request: NextRequest) {
           { status: 409 },
         );
       }
+    }
+
+    // Same class of guard for MiniMind tier subscriptions (audit
+    // finding F, 2026-07-03). If the user already has an active
+    // MiniMind subscription and direct-POSTs another MiniMind price
+    // key, Stripe creates a second subscription — but User.stripeSub-
+    // scriptionId is a scalar column, so handleSubscriptionUpsert
+    // overwrites it with the new sub's id, orphaning the first.
+    // Stripe then bills the original sub monthly forever with no
+    // Prisma link to cancel it. Rejecting the checkout up-front is
+    // the true guarantee; the /pricing page also hides the buttons
+    // (client-side "Active" badge already exists).
+    //
+    // Portal upgrade/downgrade is not blocked: users change tier
+    // via /api/stripe/portal, not by creating a second checkout.
+    if (
+      (priceKey === 'essentialMonthly' || priceKey === 'essentialAnnual') &&
+      user.currentTier === 'essential'
+    ) {
+      return NextResponse.json(
+        { error: 'You already have MiniMind Essential. Use Manage subscription to switch cadence.' },
+        { status: 409 },
+      );
+    }
+    if (
+      (priceKey === 'extendedMonthly' || priceKey === 'extendedAnnual') &&
+      user.currentTier === 'extended'
+    ) {
+      return NextResponse.json(
+        { error: 'You already have MiniMind Extended. Use Manage subscription to switch cadence.' },
+        { status: 409 },
+      );
     }
 
     // Retrieve existing Stripe Customer or create one
