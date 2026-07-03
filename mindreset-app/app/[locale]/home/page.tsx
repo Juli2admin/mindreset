@@ -5,6 +5,7 @@ import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
 import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
+import { stripe } from '@/lib/stripe/client';
 import { TIER_CAPS } from '@/lib/billing/limits';
 import HomeClient from './HomeClient';
 import Footer from '@/components/Footer';
@@ -153,6 +154,7 @@ export default async function HomePage({
       deletionScheduledAt: true,
       marketingConsent: true,
       marketingConsentPromptedAt: true,
+      stripeCustomerId: true,
     },
   });
 
@@ -191,6 +193,30 @@ export default async function HomePage({
   });
   const journeyPurchased = journeyPurchase != null;
 
+  // Whether the user has any active Stripe subscription (MiniMind
+  // Essential/Extended OR Journey installment). Feeds the "Manage
+  // subscription" button in SettingsSection — Journey installment
+  // subscribers keep currentTier === 'free' by design, so tier-based
+  // gating misses them. Owner reported 2026-07-03: subscribed to
+  // Journey installment as a fresh test user (no MiniMind), had no
+  // way to cancel from the app UI.
+  //
+  // Non-blocking on failure: if Stripe API is slow / errors, we
+  // assume no subscription and skip the button. Page renders normally.
+  let hasActiveSubscription = false;
+  if (dbUser?.stripeCustomerId) {
+    try {
+      const subs = await stripe.subscriptions.list({
+        customer: dbUser.stripeCustomerId,
+        status: 'active',
+        limit: 1,
+      });
+      hasActiveSubscription = subs.data.length > 0;
+    } catch (err) {
+      console.error('[home] stripe subscriptions list failed:', err);
+    }
+  }
+
   return (
     <HomeClient
       firstName={firstName}
@@ -203,6 +229,7 @@ export default async function HomePage({
       marketingConsent={dbUser?.marketingConsent ?? false}
       marketingPrompted={dbUser?.marketingConsentPromptedAt != null}
       journeyPurchased={journeyPurchased}
+      hasActiveSubscription={hasActiveSubscription}
       footerSlot={<Footer />}
     />
   );

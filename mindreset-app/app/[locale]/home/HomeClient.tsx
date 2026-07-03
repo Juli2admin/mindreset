@@ -30,6 +30,7 @@ type Props = {
   marketingConsent: boolean;
   marketingPrompted: boolean;
   journeyPurchased: boolean;
+  hasActiveSubscription: boolean;
   footerSlot: ReactNode;
 };
 
@@ -44,6 +45,7 @@ export default function HomeClient({
   marketingConsent,
   marketingPrompted,
   journeyPurchased,
+  hasActiveSubscription,
   footerSlot,
 }: Props) {
   const t = useTranslations('Home');
@@ -305,8 +307,10 @@ export default function HomeClient({
         {!deletionScheduledAt && (
           <SettingsSection
             t={tDel}
+            tHome={t}
             locale={locale}
             marketingConsent={marketingConsent}
+            hasActiveSubscription={hasActiveSubscription}
           />
         )}
 
@@ -521,17 +525,44 @@ type TFn = (key: string, vars?: Record<string, string | number | Date>) => strin
 
 function SettingsSection({
   t,
+  tHome,
   locale,
   marketingConsent,
+  hasActiveSubscription,
 }: {
   t: TFn;
+  tHome: TFn;
   locale: string;
   marketingConsent: boolean;
+  hasActiveSubscription: boolean;
 }) {
   const { palette: PALETTE } = useTheme();
   const [exportLoading, setExportLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [deleteState, setDeleteState] = useState<'idle' | 'confirming' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  async function handleManageSubscription() {
+    setPortalLoading(true);
+    setErrorMsg(null);
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locale }),
+      });
+      const data: { url?: string; error?: string; detail?: string } = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setErrorMsg(data.detail ?? data.error ?? 'Could not open portal');
+        setPortalLoading(false);
+      }
+    } catch {
+      setErrorMsg('Network error — please try again');
+      setPortalLoading(false);
+    }
+  }
 
   async function handleExport() {
     setExportLoading(true);
@@ -594,6 +625,49 @@ function SettingsSection({
             not the prompt banner was shown above) — lets the user change
             their mind any time. */}
         <MarketingConsentToggle initialConsent={marketingConsent} />
+
+        {/* Manage subscription — shown for any user with an active
+            Stripe subscription (MiniMind Essential/Extended OR Journey
+            installment). MiniMind subscribers ALSO see a "Manage plan"
+            button on their MiniMind card, so this is somewhat
+            redundant for them but harmless. Journey installment
+            subscribers need this — their currentTier stays 'free' by
+            design, so the tier-based gating on the MiniMind card
+            never renders anything for them. */}
+        {hasActiveSubscription && (
+          <>
+            <hr style={{ border: 'none', borderTop: `1px solid ${PALETTE.border}`, margin: '20px 0' }} />
+            <div className="mb-6">
+              <p
+                className="text-[16px] mb-1"
+                style={{ fontFamily: SERIF, color: PALETTE.text }}
+              >
+                {tHome('yourMiniMind.managePlan')}
+              </p>
+              <p
+                className="text-[13px] mb-3"
+                style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
+              >
+                Open Stripe&apos;s customer portal to view invoices, update your payment method, or cancel a subscription.
+              </p>
+              <button
+                onClick={handleManageSubscription}
+                disabled={portalLoading}
+                className="px-5 py-2 rounded-full text-[13px] transition-opacity"
+                style={{
+                  background: 'transparent',
+                  color: PALETTE.text,
+                  fontFamily: SANS,
+                  fontWeight: 500,
+                  border: `1px solid ${PALETTE.border}`,
+                  opacity: portalLoading ? 0.5 : 1,
+                }}
+              >
+                {portalLoading ? '…' : tHome('yourMiniMind.managePlan')}
+              </button>
+            </div>
+          </>
+        )}
 
         <hr style={{ border: 'none', borderTop: `1px solid ${PALETTE.border}`, margin: '20px 0' }} />
 
