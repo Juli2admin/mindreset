@@ -11,6 +11,10 @@ const SUBSCRIPTION_KEYS = new Set<StripePriceKey>([
   'essentialAnnual',
   'extendedMonthly',
   'extendedAnnual',
+  // The Journey installment plan: 12 × £55/month, auto-cancels via
+  // subscription_data.cancel_at after the twelfth cycle. Subscription
+  // mode but NOT a MiniMind tier — webhook distinguishes by priceKey.
+  'journeyInstallment',
 ]);
 
 const VALID_KEYS = new Set<string>([
@@ -19,11 +23,16 @@ const VALID_KEYS = new Set<string>([
   'extendedMonthly',
   'extendedAnnual',
   'topUp',
-  // The Journey — one-off £599. Payment mode, single line item. The
-  // installment plan (12 × £55/month subscription) is separate and lands
-  // in a follow-up PR.
-  'journeyFull',
+  'journeyFull',        // one-off £599, payment mode
+  'journeyInstallment', // 12 × £55/month, subscription mode with cancel_at
 ]);
+
+// The Journey installment plan is 12 monthly cycles then auto-cancel.
+// Stripe honours subscription_data.cancel_at (Unix seconds) to schedule
+// the cancellation at checkout-session-creation time. 12 × 30 days ≈ 365
+// days; we use 365 exactly so a month with fewer than 30 days doesn't
+// cut the plan short.
+const JOURNEY_INSTALLMENT_DURATION_SECONDS = 365 * 24 * 60 * 60;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -73,6 +82,18 @@ export async function POST(request: NextRequest) {
     const typedKey = priceKey as StripePriceKey;
     const isSubscription = SUBSCRIPTION_KEYS.has(typedKey);
 
+    // Journey installment: schedule auto-cancel after 12 monthly cycles.
+    // Any other subscription: run indefinitely until user cancels.
+    const isJourneyInstallment = typedKey === 'journeyInstallment';
+    const subscriptionData = isSubscription
+      ? {
+          metadata: { clerkId: userId, priceKey },
+          ...(isJourneyInstallment && {
+            cancel_at: Math.floor(Date.now() / 1000) + JOURNEY_INSTALLMENT_DURATION_SECONDS,
+          }),
+        }
+      : undefined;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: isSubscription ? 'subscription' : 'payment',
@@ -83,9 +104,7 @@ export async function POST(request: NextRequest) {
       automatic_tax: { enabled: false },
       allow_promotion_codes: true,
       metadata: { clerkId: userId, priceKey },
-      ...(isSubscription && {
-        subscription_data: { metadata: { clerkId: userId, priceKey } },
-      }),
+      ...(subscriptionData && { subscription_data: subscriptionData }),
     });
 
     return NextResponse.json({ url: session.url });
