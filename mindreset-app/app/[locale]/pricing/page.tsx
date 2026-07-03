@@ -134,12 +134,24 @@ export default async function PricingPage({ params }: { params: { locale: string
   const user = await currentUser();
 
   let currentTier: string | null = null;
+  let journeyPurchased = false;
   if (user) {
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { currentTier: true },
     });
     currentTier = dbUser?.currentTier ?? null;
+    // Prevent double-purchase: if this user has already completed a
+    // Journey purchase (one-off OR installment first payment — both
+    // land as productType: 'recode'), hide the Buy buttons in
+    // PricingClient. The server API at /api/checkout/create also
+    // refuses with 409; this is the client-side complement so the
+    // buttons never appear in the first place.
+    const p = await prisma.purchase.findFirst({
+      where: { userId: user.id, productType: 'recode', status: 'completed' },
+      select: { id: true },
+    });
+    journeyPurchased = p != null;
   }
 
   const testimonials = await getApprovedTestimonials(params.locale);
@@ -155,6 +167,7 @@ export default async function PricingPage({ params }: { params: { locale: string
       />
       <PricingClient
         currentTier={currentTier}
+        journeyPurchased={journeyPurchased}
         footerSlot={<Footer />}
         testimonialsSlot={<TestimonialsSection testimonials={testimonials} />}
       />
