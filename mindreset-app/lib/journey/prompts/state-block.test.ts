@@ -230,6 +230,7 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
             lastConfirmedAt: new Date('2026-07-04'),
             active: true,
             context: null,
+            daysSinceLastConfirmed: 0,
           },
           {
             id: 'p2',
@@ -239,6 +240,7 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
             lastConfirmedAt: new Date('2026-07-04'),
             active: true,
             context: null,
+            daysSinceLastConfirmed: 0,
           },
         ],
       }),
@@ -265,6 +267,7 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
             lastConfirmedAt: new Date('2026-07-04'),
             active: true,
             context: { ageTag: 9 },
+            daysSinceLastConfirmed: 0,
           },
         ],
       }),
@@ -283,6 +286,7 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
       lastConfirmedAt: new Date('2026-07-04'),
       active: true,
       context: null,
+      daysSinceLastConfirmed: 0,
     }));
     const blocks = assembleSystemPromptBlocks(makeState({ patterns: many }));
     const stateText = blocks[STATE_BLOCK_INDEX].text;
@@ -290,5 +294,127 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
     expect(stateText).toContain('`pattern_9`');
     expect(stateText).not.toContain('`pattern_10`');
     expect(stateText).not.toContain('`pattern_14`');
+  });
+});
+
+describe('renderStateBlock — pattern staleness (Journey polish PR 6)', () => {
+  function pattern(overrides: {
+    category: string;
+    daysSinceLastConfirmed: number;
+  }) {
+    return {
+      id: `p_${overrides.category}`,
+      category: overrides.category,
+      userDescription: `words for ${overrides.category}`,
+      firstObservedAt: new Date('2026-06-01'),
+      lastConfirmedAt: new Date('2026-07-04'),
+      active: true,
+      context: null,
+      daysSinceLastConfirmed: overrides.daysSinceLastConfirmed,
+    };
+  }
+
+  it('omits the "last seen N days ago" tail when a pattern is under 7 days old', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        patterns: [pattern({ category: 'fresh_pattern', daysSinceLastConfirmed: 3 })],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('`fresh_pattern`');
+    expect(stateText).not.toContain('last seen');
+    expect(stateText).not.toContain('haven\'t shown up recently');
+  });
+
+  it('adds the "last seen N days ago" tail from 7 days onward', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        patterns: [
+          pattern({ category: 'week_old', daysSinceLastConfirmed: 7 }),
+          pattern({ category: 'ten_days', daysSinceLastConfirmed: 10 }),
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('`week_old` — "words for week_old" — last seen 7 days ago');
+    expect(stateText).toContain('`ten_days` — "words for ten_days" — last seen 10 days ago');
+  });
+
+  it('does NOT add the reconfirmation directive when it is not a resumed session, even with stale patterns', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        isSessionResume: false,
+        patterns: [
+          pattern({ category: 'old_pattern', daysSinceLastConfirmed: 30 }),
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('`old_pattern`');
+    expect(stateText).toContain('last seen 30 days ago');
+    expect(stateText).not.toContain("haven't shown up recently");
+    expect(stateText).not.toContain('gently check with the user');
+  });
+
+  it('does NOT add the reconfirmation directive on a resumed session when all patterns are under 14 days', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        isSessionResume: true,
+        hoursSinceLastTurn: 24 * 3,
+        patterns: [
+          pattern({ category: 'fresh', daysSinceLastConfirmed: 2 }),
+          pattern({ category: 'still_active', daysSinceLastConfirmed: 13 }),
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain("haven't shown up recently");
+  });
+
+  it('adds the reconfirmation directive on a resumed session when any pattern is >= 14 days stale', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        isSessionResume: true,
+        hoursSinceLastTurn: 24 * 15,
+        patterns: [
+          pattern({ category: 'still_alive', daysSinceLastConfirmed: 2 }),
+          pattern({ category: 'gone_quiet', daysSinceLastConfirmed: 18 }),
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain("Some patterns below haven't shown up recently");
+    expect(stateText).toContain('gently check with the user in their own words');
+    expect(stateText).toContain('never name the category label');
+    expect(stateText).toContain('never lead');
+    expect(stateText).toContain('`gone_quiet` — "words for gone_quiet" — last seen 18 days ago');
+    // Fresh pattern still rendered but without the days-ago tail
+    expect(stateText).toContain('`still_alive` — "words for still_alive"');
+    expect(stateText).not.toContain('still_alive` — "words for still_alive" — last seen');
+  });
+
+  it('renders context, days-ago, and reconfirmation together correctly', () => {
+    const p = {
+      id: 'p1',
+      category: 'inner_child_wound',
+      userDescription: 'the nine year old',
+      firstObservedAt: new Date('2026-06-01'),
+      lastConfirmedAt: new Date('2026-06-10'),
+      active: true,
+      context: { ageTag: 9 },
+      daysSinceLastConfirmed: 24,
+    };
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        isSessionResume: true,
+        hoursSinceLastTurn: 24 * 24,
+        patterns: [p],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain("haven't shown up recently");
+    expect(stateText).toContain(
+      '`inner_child_wound` — "the nine year old" — context: ageTag: 9 — last seen 24 days ago',
+    );
   });
 });
