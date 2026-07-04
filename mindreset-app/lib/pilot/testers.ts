@@ -22,7 +22,7 @@
 // discipline.
 
 export const PILOT_TESTER_EMAILS: ReadonlySet<string> = new Set<string>([
-  // add tester emails here, lowercase
+  'svetlana.morozova@inbox.lv',
 ]);
 
 export function isPilotTester(email: string | null | undefined): boolean {
