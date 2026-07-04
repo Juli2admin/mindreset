@@ -8,6 +8,12 @@ import type {
   PracticeRun,
   PracticeFamily,
   PracticeRunStatus,
+  CanonicalMove,
+} from './schema';
+import {
+  CANONICAL_MOVES_SET,
+  MOVE_NONE,
+  MAX_MOVES_PER_TURN,
 } from './schema';
 import type {
   JourneyChannel,
@@ -259,6 +265,12 @@ export function parseStateReport(raw: string | null): StateReport {
       report.stabilityCheck = check;
     }
   }
+  // Journey polish PR 4a — clinical-move naming for data collection.
+  // Array of 1..3 canonical move IDs, primary first. Router does NOT
+  // consume this yet.
+  const moves = parseMoveJustPerformed(obj.moveJustPerformed);
+  if (moves) report.moveJustPerformed = moves;
+
   copyStringField(obj, 'continuityNote', report);
 
   return report;
@@ -329,6 +341,47 @@ function parsePracticeRun(v: unknown): PracticeRun | undefined {
     };
   }
   return run;
+}
+
+// Journey polish PR 4a. Parse and normalise the LLM's clinical-move
+// naming for this turn.
+//
+// Owner rules (2026-07-04):
+//   - 1..3 IDs per turn, primary first. Cap at 3 by slicing tail off.
+//   - Unknown IDs are silently dropped (fail-soft; the router doesn't
+//     read this yet).
+//   - universal.none is used ONLY when the turn had no clinical move.
+//     It MUST NOT combine with other IDs. If the LLM emits it alongside
+//     real moves, the real moves win — that's the honest read of the
+//     turn (something clinical happened, so "none" was wrong).
+//   - Duplicates are collapsed, preserving primary-first order.
+//   - Return undefined if the array is missing, not an array, empty, or
+//     contains no known IDs — the field is optional and absent means
+//     "AI didn't emit it this turn."
+export function parseMoveJustPerformed(v: unknown): CanonicalMove[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const knownInOrder: CanonicalMove[] = [];
+  for (const item of v) {
+    if (typeof item === 'string' && CANONICAL_MOVES_SET.has(item)) {
+      knownInOrder.push(item as CanonicalMove);
+    }
+  }
+  if (knownInOrder.length === 0) return undefined;
+  // Dedup preserving order (primary first stays first).
+  const seen = new Set<CanonicalMove>();
+  const deduped: CanonicalMove[] = [];
+  for (const m of knownInOrder) {
+    if (!seen.has(m)) {
+      seen.add(m);
+      deduped.push(m);
+    }
+  }
+  // universal.none exclusivity: if any real move is present, drop none.
+  // If ONLY none is present, keep it — that's the "no clinical move"
+  // signal the schema wants.
+  const nonNone = deduped.filter((m) => m !== MOVE_NONE);
+  const normalised = nonNone.length > 0 ? nonNone : [MOVE_NONE];
+  return normalised.slice(0, MAX_MOVES_PER_TURN);
 }
 
 function parsePartTouched(v: unknown): Array<{

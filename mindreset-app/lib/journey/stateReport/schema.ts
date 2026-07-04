@@ -10,6 +10,83 @@ import type {
   CompassionBridgeQuality,
 } from '../state/types';
 
+// Journey polish PR 4a (2026-07-04). Canonical clinical-move vocabulary
+// extracted from the 8 stage docs + Shared Core + PRACTICE_GENERATION_ALGORITHM.md
+// and the master prompt. Each ID names a discrete clinical move the AI can
+// perform in a turn. The LLM emits `moveJustPerformed` in the state report
+// as an array of 1-3 of these IDs (primary first). The router does NOT
+// consume this field yet — this is the data-collection phase. PR 4b will
+// hook the histogram of moves-by-stage into stage advancement once the
+// vocabulary usage has been validated on real turns.
+//
+// Rules the LLM must follow (enforced or normalised by the parser):
+//   - 1..3 IDs per turn, primary first (slice caps at 3).
+//   - universal.none is used ONLY when the turn contained no clinical
+//     move (pure witness, small talk, conversation) — and it MUST NOT be
+//     combined with other IDs. Parser strips other IDs if none is present.
+//   - Unknown IDs are silently dropped (fail-soft; the router doesn't
+//     read this yet so a mistake here is a data-collection nit, not a
+//     clinical error).
+//
+// Vocabulary chosen with owner sign-off 2026-07-04:
+//   16 universal moves (any stage) + 22 stage-scoped moves = 38 total.
+//   safety_reorientation and post_deep_check_in promoted from stage-scoped
+//   to universal because they cross ≥2 stages in the docs.
+export const CANONICAL_MOVES = [
+  // Universal — apply at any stage
+  'universal.none',
+  'universal.session_open',
+  'universal.witness_and_reflect',
+  'universal.anchor_recall',
+  'universal.practice_regulation',
+  'universal.practice_somatic',
+  'universal.practice_landscape',
+  'universal.practice_narrative',
+  'universal.practice_compassion',
+  'universal.stability_check',
+  'universal.modality_switch',
+  'universal.safety_reorientation',
+  'universal.post_deep_check_in',
+  'universal.session_close',
+  'universal.red_flag_response',
+  'universal.rupture_receive',
+  // Stage 1 — Stabilisation
+  'stage_1.assessment_gather',
+  'stage_1.anchor_capture',
+  'stage_1.formulation_share_back',
+  // Stage 2 — Pain
+  'stage_2.affect_labelling_and_somatic_mapping',
+  'stage_2.soft_why_inquiry',
+  // Stage 3 — Adult Self
+  'stage_3.observer_seat',
+  'stage_3.adult_self_cocreation',
+  // Stage 4 — Parts
+  'stage_4.first_contact',
+  'stage_4.compassion_bridge',
+  'stage_4.reparenting_offering',
+  'stage_4.securing_the_part',
+  // Stage 5 — Foreign Material
+  'stage_5.origin_voice_mapping',
+  'stage_5.symbolic_return',
+  'stage_5.clean_identity_statement',
+  // Stage 6 — Integration
+  'stage_6.internal_consensus_check',
+  'stage_6.identity_anchoring_ritual',
+  'stage_6.self_loyalty_commitment',
+  // Stage 7 — New Identity
+  'stage_7.qualities_inventory',
+  'stage_7.symbolic_identity_map',
+  // Stage 8 — Embodiment
+  'stage_8.cal_run',
+  'stage_8.identity_reinforcement_check_in',
+  'stage_8.discharge_protocol',
+] as const;
+
+export type CanonicalMove = (typeof CANONICAL_MOVES)[number];
+export const CANONICAL_MOVES_SET: ReadonlySet<string> = new Set(CANONICAL_MOVES);
+export const MOVE_NONE: CanonicalMove = 'universal.none';
+export const MAX_MOVES_PER_TURN = 3;
+
 export type PracticeFamily =
   | 'regulation'
   | 'somatic'
@@ -191,6 +268,11 @@ export type StateReport = {
      */
     contextNote?: string;
   };
+
+  // Journey polish PR 4a (data collection). Array of 1..3 canonical
+  // clinical-move IDs the AI performed this turn, primary first. See
+  // CANONICAL_MOVES for the vocabulary. Router does NOT read this yet.
+  moveJustPerformed?: CanonicalMove[];
 
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
