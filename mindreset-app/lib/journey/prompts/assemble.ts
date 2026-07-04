@@ -109,6 +109,21 @@ Strict rules:
 // prompt says regulation practices override channel preference. The
 // state block already surfaces intensity and safety; the AI reads both
 // and applies the override on its own.
+// Journey polish PR 6 (2026-07-04) — pattern staleness thresholds. The
+// AI sees these signals in the state block; users never see them.
+//
+// PATTERN_DAYS_AGO_THRESHOLD (7 days): from here, each pattern's bullet
+// gets a "— last seen N days ago" tail. Under 7 days is treated as
+// still-alive and left unmarked to avoid clutter.
+//
+// PATTERN_RECONFIRM_THRESHOLD (14 days): from here, when this is a
+// resumed session (isSessionResume === true), a soft directive is
+// injected above the pattern list inviting the AI to gently reconfirm
+// whether the pattern is still active. Gated to session-resume so it
+// doesn't fire mid-conversation.
+const PATTERN_DAYS_AGO_THRESHOLD = 7;
+const PATTERN_RECONFIRM_THRESHOLD = 14;
+
 const CHANNEL_FAMILY_GUIDANCE: Record<string, string> = {
   visual:
     'Prefer landscape-family practices (inner room, path, garden, safe place — user describes what appears; never tell them what is there). Reach for regulation only if safety needs grounding.',
@@ -216,12 +231,33 @@ function renderStateBlock(state: JourneyState): string {
   // sessions. Free-string snake_case category + user's own words. Cap the
   // render at 10 entries so a long-term user's state block stays lean;
   // load already tops out at 20, ordered by most-recently-confirmed.
+  //
+  // Journey polish PR 6 (2026-07-04) — staleness signals:
+  //   • Any pattern ≥ PATTERN_DAYS_AGO_THRESHOLD (7) days gets a
+  //     "— last seen N days ago" suffix on its bullet.
+  //   • When this is a resumed session AND at least one rendered
+  //     pattern is ≥ PATTERN_RECONFIRM_THRESHOLD (14) days stale, add
+  //     a soft directive above the list inviting the AI to gently
+  //     reconfirm without leading. The user-facing wording is entirely
+  //     the AI's choice — this is a state-block instruction, never
+  //     recited verbatim to the user.
   if (state.patterns.length > 0) {
+    const renderedPatterns = state.patterns.slice(0, 10);
+    const hasReconfirmSignal =
+      state.isSessionResume &&
+      renderedPatterns.some(
+        (p) => p.daysSinceLastConfirmed >= PATTERN_RECONFIRM_THRESHOLD,
+      );
     lines.push('');
     lines.push(
       "**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**",
     );
-    for (const p of state.patterns.slice(0, 10)) {
+    if (hasReconfirmSignal) {
+      lines.push(
+        `_Some patterns below haven't shown up recently. They may have softened, or they may still be alive under a new shape. If the moment fits, gently check with the user in their own words — never name the category label; never lead. Otherwise carry on._`,
+      );
+    }
+    for (const p of renderedPatterns) {
       const bits: string[] = [`- \`${p.category}\` — "${p.userDescription}"`];
       if (p.context && Object.keys(p.context).length > 0) {
         // Compact key: value pairs — helps the AI recognise, e.g., an
@@ -230,6 +266,9 @@ function renderStateBlock(state: JourneyState): string {
           .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
           .join(', ');
         bits.push(`context: ${ctx}`);
+      }
+      if (p.daysSinceLastConfirmed >= PATTERN_DAYS_AGO_THRESHOLD) {
+        bits.push(`last seen ${p.daysSinceLastConfirmed} days ago`);
       }
       lines.push(bits.join(' — '));
     }

@@ -100,6 +100,12 @@ export type JourneySignatureImage = {
 // userDescription is the user's exact words about the pattern (decrypted
 // at read time). lastConfirmedAt bumps every time the pattern surfaces
 // in a state report — PR 6 uses it to flag staleness.
+//
+// daysSinceLastConfirmed (Journey polish PR 6, 2026-07-04) is derived
+// in load.ts from `now - lastConfirmedAt`. The state block renders a
+// "— last seen N days ago" tail from 7 days onward, and a soft
+// reconfirmation directive from 14 days onward when the session is
+// resuming (see assemble.ts).
 export type JourneyPattern = {
   id: string;
   category: string;
@@ -108,6 +114,7 @@ export type JourneyPattern = {
   lastConfirmedAt: Date;
   active: boolean;
   context: Record<string, unknown> | null;
+  daysSinceLastConfirmed: number;
 };
 
 export type JourneyState = {

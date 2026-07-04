@@ -205,18 +205,30 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     createdAt: s.createdAt,
   }));
 
-  const patterns: JourneyPattern[] = patternsRows.map((p) => ({
-    id: p.id,
-    category: p.category,
-    userDescription: decrypt(p.userDescriptionEncrypted),
-    firstObservedAt: p.firstObservedAt,
-    lastConfirmedAt: p.lastConfirmedAt,
-    active: p.active,
-    context:
-      p.context && typeof p.context === 'object' && !Array.isArray(p.context)
-        ? (p.context as Record<string, unknown>)
-        : null,
-  }));
+  const nowMs = Date.now();
+  const patterns: JourneyPattern[] = patternsRows.map((p) => {
+    // Journey polish PR 6 — derive the days-since counter for the state
+    // block. Math.max(0, ...) guards against clock skew (a lastConfirmedAt
+    // in the "future" from the server's perspective would otherwise
+    // yield a negative and read as freshly confirmed).
+    const daysSinceLastConfirmed = Math.max(
+      0,
+      Math.floor((nowMs - p.lastConfirmedAt.getTime()) / DAY_MS),
+    );
+    return {
+      id: p.id,
+      category: p.category,
+      userDescription: decrypt(p.userDescriptionEncrypted),
+      firstObservedAt: p.firstObservedAt,
+      lastConfirmedAt: p.lastConfirmedAt,
+      active: p.active,
+      context:
+        p.context && typeof p.context === 'object' && !Array.isArray(p.context)
+          ? (p.context as Record<string, unknown>)
+          : null,
+      daysSinceLastConfirmed,
+    };
+  });
 
   const continuity = deriveContinuitySignals(progress.currentStage, recentTurns);
 
