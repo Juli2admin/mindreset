@@ -68,6 +68,8 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     daysEngaged: 0,
     thisSessionMessageCount: 0,
     stageJustAdvanced: false,
+    hoursSinceLastTurn: null,
+    isSessionResume: false,
     ...overrides,
   };
 }

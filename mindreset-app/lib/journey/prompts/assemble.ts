@@ -11,6 +11,7 @@ import {
   loadMasterJourneyPrompt,
 } from './load-spec';
 import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
+import { formatTimeSinceLastTurnBucket } from '../state/load';
 import type { JourneyState } from '../state/types';
 
 // Token in the engineered prompt files where the runtime state block is
@@ -113,6 +114,23 @@ function renderStateBlock(state: JourneyState): string {
   lines.push(
     `- Sessions so far: ${state.sessionCount} · distinct days engaged: ${state.daysEngaged} · this session: message ${state.thisSessionMessageCount + 1} (the user message you're about to read)`,
   );
+  // Journey polish PR 1 — time awareness. Previously the AI could only
+  // see the sessionCount tick (which needed a >4h gap) and had no way to
+  // distinguish "2 hours since last turn" from "2 months since last turn".
+  // Result: the AI would fabricate "yesterday" / "last week" phrasing.
+  // formatTimeSinceLastTurnBucket returns a coarse AI-facing string; the
+  // model paraphrases it naturally in its human reply. First-ever turns
+  // render nothing (bucket is null) to avoid awkward "no prior turn"
+  // scaffolding — the model already knows it's the opening.
+  const timeBucket = formatTimeSinceLastTurnBucket(state.hoursSinceLastTurn);
+  if (timeBucket) {
+    lines.push(`- Last user turn: ${timeBucket}.`);
+  }
+  if (state.isSessionResume) {
+    lines.push(
+      `- This is a resumed session. Gently re-anchor before continuing into deeper work — check in with the user about what has moved since last time, and let them lead the depth of this session.`,
+    );
+  }
   if (state.stageJustAdvanced) {
     lines.push('');
     lines.push(
