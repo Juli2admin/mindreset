@@ -35,6 +35,18 @@ export function loadSpec(filename: string): string {
 
 // Convenience accessors for the clinical specs.
 export const sharedCore = (): string => loadSpec('00-shared-core.md');
+// The Practice Generation Algorithm — authoritative spec for how the AI
+// generates practices at runtime. Stage-agnostic canon that describes the
+// 5 practice families (regulation, somatic awareness, guided inner
+// landscape, narrative rewriting, self-compassion) and the composition
+// rules (user's own words + images, channel awareness, safety-first
+// depth). Journey polish PR 2 (2026-07-04): the AI was over-emitting
+// stabilisation practices — feet on floor, hand on chest, breathing —
+// because the deeper generation method was scattered in stage docs and
+// not loaded verbatim into the prompt. This loader brings the canonical
+// algorithm into the always-hot prefix so it's read every turn.
+export const practiceGenerationAlgorithm = (): string =>
+  loadSpec('PRACTICE_GENERATION_ALGORITHM.md');
 export const stage01 = (): string => loadSpec('01-stage-stabilisation.md');
 export const stage02 = (): string => loadSpec('02-stage-pain.md');
 export const stage03 = (): string => loadSpec('03-stage-adult-self.md');

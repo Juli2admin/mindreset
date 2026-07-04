@@ -6,6 +6,7 @@
 
 import {
   sharedCore,
+  practiceGenerationAlgorithm,
   loadStageSpec,
   loadEngineeredStagePrompt,
   loadMasterJourneyPrompt,
@@ -212,16 +213,34 @@ const DIVIDER = '\n\n---\n\n';
 // Shared Core.
 const CANON_PROMPT_HEADER = `# CLINICAL METHOD SOURCE (canon)
 
-Two documents follow, then your operational behavior layer.
+Three documents follow, then your operational behavior layer.
 
 **1. Shared Core** — your clinical constitution. Applies every turn, every stage.
-**2. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
+**2. Practice Generation Algorithm** — how you compose practices at runtime from the five practice families (regulation, somatic awareness, guided inner landscape, narrative rewriting, self-compassion). The system does NOT ship a fixed library of scripts; you generate practices dynamically from this algorithm against the user's live state, exact words, body signals, and safety layer. Reach into all five families, not only stabilisation.
+**3. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
 
 This canon is the authoritative reference for the method you are delivering. Where it overlaps with the general behavior layer (master prompt) that follows, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the master prompt takes precedence on voice, character, and operational format.
 
 ---
 
 ## SHARED CORE
+
+`;
+
+// Journey polish PR 2 (2026-07-04): the Practice Generation Algorithm
+// lives at docs/journey/PRACTICE_GENERATION_ALGORITHM.md and is now
+// injected into Block 1 (always-hot cache prefix) verbatim so the AI
+// reads it every turn. Prior to this PR, the algorithm was only
+// referenced by scattered examples in stage specs — the model
+// systematically under-generated practices outside the regulation
+// family (feet on floor, hand on chest, breathing) because the deeper
+// families' composition rules were not surfaced. This header divides
+// Shared Core from the algorithm doc.
+const CANON_PRACTICE_HEADER = `
+
+---
+
+## PRACTICE GENERATION ALGORITHM
 
 `;
 
@@ -292,11 +311,20 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
     idx >= 0 ? master.slice(idx + STATE_INJECTION_TOKEN.length) : '';
 
   const blocks: SystemPromptBlock[] = [
-    // Canon header + Shared Core (cached). The header introduces the
-    // clinical-method-source framing and the canon-precedence rule.
+    // Canon header + Shared Core + Practice Generation Algorithm (cached).
+    // Journey polish PR 2 (2026-07-04): the practice algorithm joined
+    // this block — same cache prefix as Shared Core because both are
+    // stage-agnostic canon, and this way no new cache breakpoint is
+    // added (cache breakpoint budget is limited on the Anthropic API,
+    // so we compose rather than fragment).
     {
       type: 'text',
-      text: CANON_PROMPT_HEADER + sharedCore() + CANON_STAGE_HEADER,
+      text:
+        CANON_PROMPT_HEADER +
+        sharedCore() +
+        CANON_PRACTICE_HEADER +
+        practiceGenerationAlgorithm() +
+        CANON_STAGE_HEADER,
     },
     // Active stage spec (cached). Cache breakpoint here — turns that
     // stay in the same stage hit the cache; advancing to a new stage

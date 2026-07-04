@@ -155,6 +155,40 @@ describe('assembleSystemPromptBlocks — Anthropic prompt caching', () => {
     expect(blocks[0].text).toContain('Practice Generation Algorithm');
   });
 
+  it('shared core block includes the full Practice Generation Algorithm doc (Journey polish PR 2)', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(1));
+    // Divider header added by the assembler between Shared Core and the
+    // algorithm doc.
+    expect(blocks[0].text).toContain('## PRACTICE GENERATION ALGORITHM');
+    // H1 title unique to PRACTICE_GENERATION_ALGORITHM.md — proves the
+    // whole doc is loaded, not just referenced.
+    expect(blocks[0].text).toContain('# MindReset Practice Generation Algorithm');
+    // Section header names for each of the five practice families — the
+    // AI must see these to reach beyond regulation-family practices.
+    expect(blocks[0].text).toContain('Regulation Practices');
+    expect(blocks[0].text).toContain('Somatic Awareness');
+    expect(blocks[0].text).toContain('Guided Inner Landscape');
+    expect(blocks[0].text).toContain('Narrative Rewriting');
+    expect(blocks[0].text).toContain('Self-Compassion');
+    // Canon-precedence header updated from "Two documents" to "Three
+    // documents" — confirms the assembler introduces the algorithm doc
+    // in the correct layer ordering.
+    expect(blocks[0].text).toContain('Three documents follow');
+  });
+
+  it('shared core block layers docs in the correct order (canon header → shared core → algorithm → stage spec header)', () => {
+    const blocks = assembleSystemPromptBlocks(makeState(2));
+    const text = blocks[0].text;
+    const canonHeaderIdx = text.indexOf('# CLINICAL METHOD SOURCE');
+    const sharedCoreIdx = text.indexOf('## SHARED CORE');
+    const practiceAlgoIdx = text.indexOf('## PRACTICE GENERATION ALGORITHM');
+    const stageSpecHeaderIdx = text.indexOf('## ACTIVE STAGE SPEC');
+    expect(canonHeaderIdx).toBeGreaterThanOrEqual(0);
+    expect(sharedCoreIdx).toBeGreaterThan(canonHeaderIdx);
+    expect(practiceAlgoIdx).toBeGreaterThan(sharedCoreIdx);
+    expect(stageSpecHeaderIdx).toBeGreaterThan(practiceAlgoIdx);
+  });
+
   it('stage spec block contains the active stage', () => {
     const blocks4 = assembleSystemPromptBlocks(makeState(4));
     expect(blocks4[1].text).toContain('Compassion Bridge');
