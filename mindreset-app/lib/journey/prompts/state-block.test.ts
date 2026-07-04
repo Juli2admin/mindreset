@@ -132,3 +132,78 @@ describe('renderStateBlock — time awareness (Journey polish PR 1)', () => {
     expect(stateText).toContain('This is a resumed session');
   });
 });
+
+describe('renderStateBlock — channel-family guidance (Journey polish PR 3)', () => {
+  it('omits the guidance line when processingChannel is null', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: null }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain('Processing channel detected');
+    expect(stateText).not.toContain('Prefer landscape');
+    expect(stateText).not.toContain('Prefer somatic');
+    expect(stateText).not.toContain('Prefer compassion');
+    expect(stateText).not.toContain('Prefer narrative');
+  });
+
+  it('renders landscape-family preference for a visual channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'visual' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: visual');
+    expect(stateText).toContain('Prefer landscape-family practices');
+    expect(stateText).toContain('inner room');
+    expect(stateText).toContain('Reach for regulation only if safety needs grounding');
+  });
+
+  it('renders somatic-family preference for a kinesthetic channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'kinesthetic' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: kinesthetic');
+    expect(stateText).toContain('Prefer somatic-family practices');
+    expect(stateText).toContain('body scan');
+  });
+
+  it('renders compassion-family preference for an emotional channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'emotional' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: emotional');
+    expect(stateText).toContain('Prefer compassion-family practices');
+    expect(stateText).toContain('affect labelling');
+  });
+
+  it('renders narrative-family + body-location invitation for a cognitive channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'cognitive' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: cognitive');
+    expect(stateText).toContain('Prefer narrative-family practices');
+    expect(stateText).toContain('invite body location');
+  });
+
+  it('renders narrative-family preference for a verbal channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'verbal' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: verbal');
+    expect(stateText).toContain('Prefer narrative-family practices');
+    expect(stateText).toContain('user is working through words');
+  });
+
+  it('renders a two-family weave hint for a mixed channel', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ processingChannel: 'mixed' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Processing channel detected: mixed');
+    expect(stateText).toContain('Weave two families');
+    expect(stateText).toContain('do not default to regulation');
+  });
+});
