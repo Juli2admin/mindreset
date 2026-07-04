@@ -94,6 +94,36 @@ Strict rules:
 - If unsure about safety, set \`safetyFlag\` to "watch" and \`recommendedAction\` to "stay".
 `;
 
+// Journey polish PR 3 (2026-07-04). Map the detected processing channel
+// to the practice family the master prompt canonically prefers for that
+// channel (docs/journey/runtime/journey-master.md L260-265). The mapping
+// already lives in the master prompt's operational layer, but that layer
+// sits AFTER the state block in the layer ordering — so the model reads
+// the channel value first, then reads the mapping much later. Rendering
+// this line proximate to the "Processing channel detected: X" line means
+// the LLM doesn't have to hold the channel in working memory while it
+// hunts for the mapping. Directly mirrors the master prompt's phrasing
+// so nothing drifts.
+//
+// Safety qualifier is baked in: when the user is destabilised, the master
+// prompt says regulation practices override channel preference. The
+// state block already surfaces intensity and safety; the AI reads both
+// and applies the override on its own.
+const CHANNEL_FAMILY_GUIDANCE: Record<string, string> = {
+  visual:
+    'Prefer landscape-family practices (inner room, path, garden, safe place — user describes what appears; never tell them what is there). Reach for regulation only if safety needs grounding.',
+  kinesthetic:
+    'Prefer somatic-family practices (body scan, hand-on-body, locating sensation, micro-movement). Reach for regulation only if safety needs grounding.',
+  emotional:
+    'Prefer compassion-family practices (self-hug, warm phrase, "I am with you") or affect labelling. Reach for regulation only if safety needs grounding.',
+  cognitive:
+    'Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.',
+  verbal:
+    'Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — user is working through words.',
+  mixed:
+    'Weave two families that match what the user is actually showing you this turn — do not default to regulation.',
+};
+
 function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
@@ -102,6 +132,10 @@ function renderStateBlock(state: JourneyState): string {
   lines.push(`- Current depth: ${state.currentDepth}`);
   if (state.processingChannel) {
     lines.push(`- Processing channel detected: ${state.processingChannel}`);
+    const guidance = CHANNEL_FAMILY_GUIDANCE[state.processingChannel];
+    if (guidance) {
+      lines.push(`  ${guidance}`);
+    }
   }
   if (typeof state.lastIntensity === 'number') {
     lines.push(`- Last intensity reading: ${state.lastIntensity}/10`);
