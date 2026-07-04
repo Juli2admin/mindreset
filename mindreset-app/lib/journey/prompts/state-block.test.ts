@@ -33,6 +33,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     parts: [],
     foreignFiles: [],
     signatureImages: [],
+    patterns: [],
     sessionCount: 1,
     daysEngaged: 1,
     thisSessionMessageCount: 0,
@@ -205,5 +206,89 @@ describe('renderStateBlock — channel-family guidance (Journey polish PR 3)', (
     expect(stateText).toContain('Processing channel detected: mixed');
     expect(stateText).toContain('Weave two families');
     expect(stateText).toContain('do not default to regulation');
+  });
+});
+
+describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () => {
+  it('omits the patterns section entirely when patterns is empty', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ patterns: [] }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain('Unresolved patterns');
+  });
+
+  it('renders each pattern with category + user-words description', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        patterns: [
+          {
+            id: 'p1',
+            category: 'fear_of_visibility',
+            userDescription: 'I hide when people watch',
+            firstObservedAt: new Date('2026-06-01'),
+            lastConfirmedAt: new Date('2026-07-04'),
+            active: true,
+            context: null,
+          },
+          {
+            id: 'p2',
+            category: 'mother_voice',
+            userDescription: 'you should have asked me first',
+            firstObservedAt: new Date('2026-06-15'),
+            lastConfirmedAt: new Date('2026-07-04'),
+            active: true,
+            context: null,
+          },
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Unresolved patterns');
+    expect(stateText).toContain('`fear_of_visibility`');
+    expect(stateText).toContain('I hide when people watch');
+    expect(stateText).toContain('`mother_voice`');
+    expect(stateText).toContain('you should have asked me first');
+    expect(stateText).toContain('working notes');
+    expect(stateText).toContain('not diagnosis');
+  });
+
+  it('renders context inline when set', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        patterns: [
+          {
+            id: 'p1',
+            category: 'inner_child_wound',
+            userDescription: 'the nine year old with hands together',
+            firstObservedAt: new Date('2026-06-01'),
+            lastConfirmedAt: new Date('2026-07-04'),
+            active: true,
+            context: { ageTag: 9 },
+          },
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('`inner_child_wound`');
+    expect(stateText).toContain('context: ageTag: 9');
+  });
+
+  it('caps the render at 10 patterns even when more exist', () => {
+    const many = Array.from({ length: 15 }, (_, i) => ({
+      id: `p${i}`,
+      category: `pattern_${i}`,
+      userDescription: `words ${i}`,
+      firstObservedAt: new Date('2026-06-01'),
+      lastConfirmedAt: new Date('2026-07-04'),
+      active: true,
+      context: null,
+    }));
+    const blocks = assembleSystemPromptBlocks(makeState({ patterns: many }));
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('`pattern_0`');
+    expect(stateText).toContain('`pattern_9`');
+    expect(stateText).not.toContain('`pattern_10`');
+    expect(stateText).not.toContain('`pattern_14`');
   });
 });

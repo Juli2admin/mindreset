@@ -138,6 +138,11 @@ export function parseStateReport(raw: string | null): StateReport {
     });
   }
 
+  // Journey polish PR 5. patternsTouched — array of structural pattern
+  // observations. Validated + normalised in a dedicated helper.
+  const patterns = parsePatternsTouched(obj.patternsTouched);
+  if (patterns) report.patternsTouched = patterns;
+
   // Stage 4 MII-5 — Adult Self offering to part / part secured at resting place
   const ps = obj.partSecured;
   if (ps && typeof ps === 'object') {
@@ -382,6 +387,64 @@ export function parseMoveJustPerformed(v: unknown): CanonicalMove[] | undefined 
   const nonNone = deduped.filter((m) => m !== MOVE_NONE);
   const normalised = nonNone.length > 0 ? nonNone : [MOVE_NONE];
   return normalised.slice(0, MAX_MOVES_PER_TURN);
+}
+
+// Journey polish PR 5. Parse and normalise patternsTouched — the AI's
+// structural notes on unresolved psychological patterns.
+//
+// Rules (owner-approved 2026-07-04):
+//   - `category` must be snake_case: [a-z][a-z0-9_]*. Anything else is
+//     silently dropped — the taxonomy is free-string but we still enforce
+//     shape so downstream code can rely on it as a stable key.
+//   - `description` must be a non-empty string.
+//   - `context` must be a plain non-array object; anything else is
+//     dropped and the entry is kept without context.
+//   - Category is truncated to 60 chars, description to 200 chars.
+//   - Deduplicated by category — later entries win (keeps the most
+//     recent description if the AI names the same pattern twice in one
+//     turn).
+//   - Cap array length at 10 entries per turn (defensive — the AI
+//     should never need more).
+//   - Return undefined if input isn't an array, is empty, or yields
+//     zero valid entries.
+const PATTERN_CATEGORY_RE = /^[a-z][a-z0-9_]{0,59}$/;
+const MAX_PATTERNS_PER_TURN = 10;
+const MAX_PATTERN_DESCRIPTION = 200;
+
+export function parsePatternsTouched(
+  v: unknown,
+): Array<{ category: string; description: string; context?: Record<string, unknown> }> | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const byCategory = new Map<
+    string,
+    { category: string; description: string; context?: Record<string, unknown> }
+  >();
+  for (const item of v) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const obj = item as Record<string, unknown>;
+    const category = typeof obj.category === 'string' ? obj.category.trim() : '';
+    const description = typeof obj.description === 'string' ? obj.description.trim() : '';
+    if (!PATTERN_CATEGORY_RE.test(category)) continue;
+    if (description.length === 0) continue;
+    const entry: {
+      category: string;
+      description: string;
+      context?: Record<string, unknown>;
+    } = {
+      category,
+      description: description.slice(0, MAX_PATTERN_DESCRIPTION),
+    };
+    if (
+      obj.context &&
+      typeof obj.context === 'object' &&
+      !Array.isArray(obj.context)
+    ) {
+      entry.context = obj.context as Record<string, unknown>;
+    }
+    byCategory.set(category, entry);
+  }
+  if (byCategory.size === 0) return undefined;
+  return Array.from(byCategory.values()).slice(0, MAX_PATTERNS_PER_TURN);
 }
 
 function parsePartTouched(v: unknown): Array<{

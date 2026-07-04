@@ -107,6 +107,7 @@ model User {
   journeyParts           JourneyPart[]
   journeyForeignFiles    JourneyForeignFile[]
   journeySignatureImages JourneySignatureImage[]
+  journeyPatterns        JourneyPattern[]
   journeyMessages        JourneyMessage[]
 }
 
@@ -710,6 +711,51 @@ model JourneySignatureImage {
   context                         String?        // brief operational tag (no user content)
 
   @@index([userId])
+}
+
+// =============================================================================
+// JOURNEY PATTERNS — unresolved psychological patterns the AI has noticed
+// =============================================================================
+// Journey polish PR 5 (2026-07-04). Structural storage for the working
+// notes the AI otherwise dumps into the free-text continuityNote blob:
+// "fear_of_visibility", "mother_voice", "money_shame", "body_shame",
+// "self_abandonment", "not_allowed_to_want", etc.
+//
+// Design decisions locked with owner 2026-07-04:
+//   - `category` is a free-string snake_case identifier the LLM emits.
+//     NOT an enum — "working notes, not diagnosis." Taxonomy emerges from
+//     real usage; can be normalised later once a shape is visible.
+//   - `userDescription` (encrypted) captures the user's own words about
+//     the pattern — never the AI's paraphrase.
+//   - `firstObservedAt` never changes after row creation.
+//   - `lastConfirmedAt` bumps every turn the pattern surfaces in the
+//     state report's patternsTouched. PR 6 uses this to flag staleness
+//     ("this pattern hasn't shown up in N days — reconfirm?").
+//   - `active` defaults true. Monotonic write-once-true for now (matches
+//     JourneyPart semantics). PR 6 or later may add a "resolved" flow.
+//   - `context` is optional JSON for structured extras — e.g.
+//     `{ ageTag: 9 }` for inner-child variants. Kept generic so the
+//     shape can grow without another migration.
+model JourneyPattern {
+  id                              String         @id @default(cuid())
+  user                            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                          String
+  createdAt                       DateTime       @default(now())
+  updatedAt                       DateTime       @updatedAt
+
+  category                        String         // snake_case, e.g. "fear_of_visibility"
+  userDescriptionEncrypted        String         // user's exact words (encrypted)
+  firstObservedAt                 DateTime       @default(now())
+  lastConfirmedAt                 DateTime       @default(now())
+  active                          Boolean        @default(true)
+  context                         Json?          // optional structured extras — e.g. { ageTag: 9 }
+
+  // One row per (user, category) — dedup on category, not description.
+  // Description evolves as the user's words about the pattern deepen; the
+  // category label stays stable.
+  @@unique([userId, category])
+  @@index([userId])
+  @@index([userId, active, lastConfirmedAt])
 }
 
 // =============================================================================

@@ -3,6 +3,7 @@
 // Anchor is set-once and never overwritten (Shared Core §6).
 
 import prisma from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import type { JourneyChannel, MiiState } from './types';
 import type { StateReport } from '../stateReport/schema';
@@ -282,6 +283,64 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
             : null,
         },
       });
+    }
+  }
+
+  // Journey polish PR 5. patternsTouched → JourneyPattern upsert.
+  // One row per (userId, category); description evolves as the user's
+  // words deepen; lastConfirmedAt bumps every time the AI names the same
+  // pattern. New rows also stamp firstObservedAt (defaults to now).
+  //
+  // Encryption note: category is a plain snake_case identifier (not user
+  // words) — stored as plaintext, safe to index and query. Description
+  // is the user's exact words and IS encrypted at rest.
+  //
+  // Context is merged shallowly onto whatever's already there — a later
+  // observation adding { ageTag: 9 } does not clobber a prior
+  // { channel: 'visual' }. If the AI omits context, existing context is
+  // preserved untouched.
+  if (report.patternsTouched && report.patternsTouched.length > 0) {
+    for (const p of report.patternsTouched) {
+      if (!p.category || !p.description) continue;
+      const now = new Date();
+      const existing = await prisma.journeyPattern.findUnique({
+        where: { userId_category: { userId, category: p.category } },
+        select: { id: true, context: true },
+      });
+      if (existing) {
+        // Merge context if new keys arrived.
+        let mergedContext: Prisma.InputJsonValue | undefined;
+        if (p.context && Object.keys(p.context).length > 0) {
+          const prior =
+            existing.context && typeof existing.context === 'object' && !Array.isArray(existing.context)
+              ? (existing.context as Record<string, unknown>)
+              : {};
+          mergedContext = { ...prior, ...p.context } as Prisma.InputJsonValue;
+        }
+        await prisma.journeyPattern.update({
+          where: { id: existing.id },
+          data: {
+            userDescriptionEncrypted: encrypt(p.description),
+            lastConfirmedAt: now,
+            ...(mergedContext !== undefined ? { context: mergedContext } : {}),
+          },
+        });
+      } else {
+        const newContext: Prisma.InputJsonValue | undefined =
+          p.context && Object.keys(p.context).length > 0
+            ? (p.context as Prisma.InputJsonValue)
+            : undefined;
+        await prisma.journeyPattern.create({
+          data: {
+            userId,
+            category: p.category,
+            userDescriptionEncrypted: encrypt(p.description),
+            firstObservedAt: now,
+            lastConfirmedAt: now,
+            ...(newContext !== undefined ? { context: newContext } : {}),
+          },
+        });
+      }
     }
   }
 

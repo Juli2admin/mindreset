@@ -609,6 +609,7 @@ Arrays of discrete events:
 - `foreignFilesTouched` — array of `{description}`.
 - `foreignFileReleased` — `{description, returnedTo?, honouringPhrase?, whatStaysAsMine?}`.
 - `userImagesCaptured` — array of strings (user's words for images).
+- `patternsTouched` — array of `{category, description, context?}`. Structural note for an unresolved psychological pattern the user has surfaced or shown again this turn. **Working notes, not diagnosis.** `category` is a snake_case identifier YOU invent from what the user is showing you — examples: "fear_of_visibility", "mother_voice", "father_voice", "money_shame", "body_shame", "self_abandonment", "not_allowed_to_want", "inner_child_wound", "perfectionism_shield". Reuse the same category next time the same pattern surfaces — the DB dedups on `(user, category)` and updates `lastConfirmedAt` so we can see how recently each pattern has been alive. `description` is the user's exact words about the pattern (not your paraphrase). `context` is an optional plain object for structured extras — e.g. `{ ageTag: 9 }` for an inner-child variant. Cap: 10 entries per turn, categories under 60 chars, description under 200 chars. Do NOT emit when the user is only naming a feeling — that's `emotion_named`, not a pattern. Emit when the user surfaces a recurring belief / voice / shape / stuck place that has an old life to it.
 - `emergingQualities` — array of strings (user's words).
 - `feltAligned` — array of strings (user's words).
 - `feltOld` — array of strings (user's words).
