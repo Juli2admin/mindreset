@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import prisma from '@/lib/prisma';
+import { ensurePilotGrants } from '@/lib/pilot/grants';
 
 export const dynamic = 'force-dynamic';
 
@@ -81,6 +82,16 @@ export async function POST(request: NextRequest) {
           },
           update: { email },
         });
+        // Journey pilot allowlist grants (2026-07-04). If the tester's
+        // email is in lib/pilot/testers.ts, they get Journey Purchase +
+        // MiniMind Extended tier idempotently. If this webhook path
+        // succeeds, grants are in place before the tester ever hits
+        // /home — first render already shows the paid state.
+        try {
+          await ensurePilotGrants(data.id, email);
+        } catch (err) {
+          console.error('[clerk-webhook] pilot grants failed (continuing):', err);
+        }
         return NextResponse.json({ ok: true, action: event.type });
       }
       case 'user.deleted': {

@@ -6,6 +6,7 @@ import prisma from '@/lib/prisma';
 import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import { TIER_CAPS } from '@/lib/billing/limits';
+import { ensurePilotGrants } from '@/lib/pilot/grants';
 import HomeClient from './HomeClient';
 import Footer from '@/components/Footer';
 // Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
@@ -138,6 +139,18 @@ export default async function HomePage({
       // Supabase (either delete the orphan row or update it via a
       // scripted DB migration that also updates all dependent rows).
       console.error('[home] user upsert failed (continuing):', err);
+    }
+
+    // Journey pilot allowlist grants (2026-07-04). If the tester's email
+    // is in lib/pilot/testers.ts, they get Journey Purchase + MiniMind
+    // Extended tier idempotently. Awaited so the same-render dbUser
+    // findUnique below sees the granted state — otherwise the first
+    // /home visit would render with free-tier defaults and the tester
+    // would think the pilot didn't work.
+    try {
+      await ensurePilotGrants(user.id, primaryEmail);
+    } catch (err) {
+      console.error('[home] pilot grants failed (continuing):', err);
     }
   }
 
