@@ -139,6 +139,22 @@ export type StateReport = {
   }>;
   foreignFilesTouched?: Array<{ description: string }>;
 
+  // Journey polish PR 5 (2026-07-04). Structural storage for unresolved
+  // psychological patterns — "working notes, not diagnosis." The AI emits
+  // one entry per pattern it noticed this turn; the save layer upserts
+  // to JourneyPattern rows keyed by (userId, category). category is a
+  // snake_case identifier the AI invents (fear_of_visibility, mother_voice,
+  // money_shame, body_shame, self_abandonment, not_allowed_to_want, etc.);
+  // owner decision was to keep it free-string for now and let the taxonomy
+  // emerge from real usage. description is the user's exact words. context
+  // is an optional structured JSON blob (e.g. { ageTag: 9 } for inner-child
+  // variants); parser normalises to a plain object.
+  patternsTouched?: Array<{
+    category: string;
+    description: string;
+    context?: Record<string, unknown>;
+  }>;
+
   // Landscape updates (mutate existing rows rather than insert new ones)
   // Stage 4 MII-5 — the Adult Self's offering / part's resting place. The AI
   // emits this when the Adult Self has given something to a known part

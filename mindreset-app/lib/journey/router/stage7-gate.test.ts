@@ -47,6 +47,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     parts: [],
     foreignFiles: [],
     signatureImages: [],
+    patterns: [],
     sessionCount: 12,
     daysEngaged: 24,
     thisSessionMessageCount: 5,

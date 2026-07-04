@@ -94,6 +94,22 @@ export type JourneySignatureImage = {
   createdAt: Date;
 };
 
+// Journey polish PR 5 (2026-07-04). Structural note the AI keeps on an
+// unresolved psychological pattern — "fear_of_visibility", "mother_voice",
+// "money_shame", etc. category is snake_case plaintext (safe to key on);
+// userDescription is the user's exact words about the pattern (decrypted
+// at read time). lastConfirmedAt bumps every time the pattern surfaces
+// in a state report — PR 6 uses it to flag staleness.
+export type JourneyPattern = {
+  id: string;
+  category: string;
+  userDescription: string; // decrypted
+  firstObservedAt: Date;
+  lastConfirmedAt: Date;
+  active: boolean;
+  context: Record<string, unknown> | null;
+};
+
 export type JourneyState = {
   userId: string;
   // Stage + depth
@@ -128,6 +144,9 @@ export type JourneyState = {
   parts: JourneyPart[];
   foreignFiles: JourneyForeignFile[];
   signatureImages: JourneySignatureImage[];
+  // Journey polish PR 5 — active unresolved patterns the AI has noticed.
+  // Rendered in the state block so the AI recognises them next session.
+  patterns: JourneyPattern[];
   // Continuity signals (PR 5, Bundle C) — temporal context the AI needs
   // to honour the canon's "two different days" requirements and to know
   // when a stage has just advanced. All four are derived per-turn in

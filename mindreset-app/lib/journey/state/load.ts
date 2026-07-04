@@ -10,6 +10,7 @@ import type {
   JourneyPart,
   JourneyForeignFile,
   JourneySignatureImage,
+  JourneyPattern,
   CompassionBridgeQuality,
   MiiState,
 } from './types';
@@ -150,11 +151,20 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
   const progress = await prisma.recodeProgress.findUnique({ where: { userId } });
   if (!progress) return null;
 
-  const [partsRows, foreignFilesRows, signatureImagesRows, recentTurns] =
+  const [partsRows, foreignFilesRows, signatureImagesRows, patternsRows, recentTurns] =
     await Promise.all([
       prisma.journeyPart.findMany({ where: { userId, active: true } }),
       prisma.journeyForeignFile.findMany({ where: { userId } }),
       prisma.journeySignatureImage.findMany({ where: { userId } }),
+      // Journey polish PR 5 — active unresolved patterns, most-recently
+      // confirmed first. Cap load to the top 20 so a long-term user with
+      // many patterns doesn't bloat the state block. State rendering
+      // caps further based on the prompt's token budget.
+      prisma.journeyPattern.findMany({
+        where: { userId, active: true },
+        orderBy: { lastConfirmedAt: 'desc' },
+        take: 20,
+      }),
       // Pull all turn timestamps for this user — needed for sessionCount
       // and daysEngaged. Plain int column queries are cheap; this is the
       // simplest correct approach.
@@ -195,6 +205,19 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     createdAt: s.createdAt,
   }));
 
+  const patterns: JourneyPattern[] = patternsRows.map((p) => ({
+    id: p.id,
+    category: p.category,
+    userDescription: decrypt(p.userDescriptionEncrypted),
+    firstObservedAt: p.firstObservedAt,
+    lastConfirmedAt: p.lastConfirmedAt,
+    active: p.active,
+    context:
+      p.context && typeof p.context === 'object' && !Array.isArray(p.context)
+        ? (p.context as Record<string, unknown>)
+        : null,
+  }));
+
   const continuity = deriveContinuitySignals(progress.currentStage, recentTurns);
 
   return {
@@ -222,6 +245,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     parts,
     foreignFiles,
     signatureImages,
+    patterns,
     sessionCount: continuity.sessionCount,
     daysEngaged: continuity.daysEngaged,
     thisSessionMessageCount: continuity.thisSessionMessageCount,

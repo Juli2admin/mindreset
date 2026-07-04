@@ -45,6 +45,7 @@ function makeState(stage: number): JourneyState {
     parts: [],
     foreignFiles: [],
     signatureImages: [],
+    patterns: [],
     sessionCount: 0,
     daysEngaged: 0,
     thisSessionMessageCount: 0,

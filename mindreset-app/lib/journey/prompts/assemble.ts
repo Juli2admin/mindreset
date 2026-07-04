@@ -212,6 +212,29 @@ function renderStateBlock(state: JourneyState): string {
     }
   }
 
+  // Journey polish PR 5 — unresolved patterns the AI has noticed across
+  // sessions. Free-string snake_case category + user's own words. Cap the
+  // render at 10 entries so a long-term user's state block stays lean;
+  // load already tops out at 20, ordered by most-recently-confirmed.
+  if (state.patterns.length > 0) {
+    lines.push('');
+    lines.push(
+      "**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**",
+    );
+    for (const p of state.patterns.slice(0, 10)) {
+      const bits: string[] = [`- \`${p.category}\` — "${p.userDescription}"`];
+      if (p.context && Object.keys(p.context).length > 0) {
+        // Compact key: value pairs — helps the AI recognise, e.g., an
+        // ageTag for an inner-child pattern.
+        const ctx = Object.entries(p.context)
+          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+          .join(', ');
+        bits.push(`context: ${ctx}`);
+      }
+      lines.push(bits.join(' — '));
+    }
+  }
+
   if (state.signatureImages.length > 0) {
     lines.push('');
     lines.push('**Signature images the user has discovered (in their words):**');
