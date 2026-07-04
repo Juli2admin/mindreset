@@ -148,4 +148,19 @@ export type JourneyState = {
   daysEngaged: number;
   thisSessionMessageCount: number;
   stageJustAdvanced: boolean;
+  // Time-awareness signals (Journey polish PR 1). The prior audit-log
+  // continuity fields tell the AI HOW MANY sessions / days there have
+  // been; these tell it HOW MUCH TIME has passed since the last turn.
+  //
+  // hoursSinceLastTurn: fractional hours since the most recent
+  //   JourneyTurn. null on a first-ever turn. Rendered as a coarse
+  //   bucket string (see formatTimeSinceLastTurnBucket) so the model
+  //   can distinguish "you came back in 2 hours" from "in 2 months"
+  //   instead of fabricating.
+  // isSessionResume: true when the gap exceeds SESSION_BOUNDARY_MS
+  //   AND there is at least one prior turn. Gates session-open
+  //   behaviours (re-anchor before deeper work). False on a first-ever
+  //   turn — that's a start, not a resume.
+  hoursSinceLastTurn: number | null;
+  isSessionResume: boolean;
 };

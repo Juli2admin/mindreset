@@ -37,6 +37,8 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     daysEngaged: 1,
     thisSessionMessageCount: 0,
     stageJustAdvanced: false,
+    hoursSinceLastTurn: null,
+    isSessionResume: false,
     ...overrides,
   };
 }
@@ -71,5 +73,62 @@ describe('renderStateBlock — continuity signals (PR 5, Bundle C)', () => {
     expect(stateText).toContain('Stage just advanced to 8');
     expect(stateText).toContain('FIRST turn at the new stage');
     expect(stateText).toContain('session-open ritual');
+  });
+});
+
+describe('renderStateBlock — time awareness (Journey polish PR 1)', () => {
+  it('renders no "last user turn" line when there is no prior turn (first-ever turn)', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: null, isSessionResume: false }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain('Last user turn');
+    expect(stateText).not.toContain('resumed session');
+  });
+
+  it('renders "just now" for a fresh turn within 30 minutes', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 0.1, isSessionResume: false }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Last user turn: just now.');
+    expect(stateText).not.toContain('resumed session');
+  });
+
+  it('renders "today" and no session-resume for a 2-hour gap', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 2, isSessionResume: false }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Last user turn: today.');
+    expect(stateText).not.toContain('resumed session');
+  });
+
+  it('renders "yesterday" and adds session-resume note for a >4h gap', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 20, isSessionResume: true }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Last user turn: yesterday.');
+    expect(stateText).toContain('This is a resumed session');
+    expect(stateText).toContain('Gently re-anchor');
+  });
+
+  it('renders "a couple weeks ago" and session-resume for a 15-day gap', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 24 * 15, isSessionResume: true }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Last user turn: a couple weeks ago.');
+    expect(stateText).toContain('This is a resumed session');
+  });
+
+  it('renders "months ago" for a very long gap', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 24 * 120, isSessionResume: true }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Last user turn: months ago.');
+    expect(stateText).toContain('This is a resumed session');
   });
 });

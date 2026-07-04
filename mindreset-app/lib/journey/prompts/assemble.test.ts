@@ -49,6 +49,8 @@ function makeState(stage: number): JourneyState {
     daysEngaged: 0,
     thisSessionMessageCount: 0,
     stageJustAdvanced: false,
+    hoursSinceLastTurn: null,
+    isSessionResume: false,
   };
 }
 
