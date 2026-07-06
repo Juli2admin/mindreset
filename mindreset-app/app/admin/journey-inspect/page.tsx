@@ -326,6 +326,19 @@ function StateSummary({ sr }: { sr: StateReport }) {
   const stability = sr.stabilityCheck as
     | { score?: number; contextNote?: string }
     | undefined;
+  // Journey polish PR 4a + PR 5 fields. Both are dedicated inspector rows
+  // so we can see at a glance whether the LLM adopted the vocabulary on
+  // a given turn — the "not emitted" state is the diagnostic answer.
+  const moveJustPerformed = Array.isArray(sr.moveJustPerformed)
+    ? (sr.moveJustPerformed as string[])
+    : [];
+  const patternsTouched = Array.isArray(sr.patternsTouched)
+    ? (sr.patternsTouched as Array<{
+        category: string;
+        description: string;
+        context?: Record<string, unknown>;
+      }>)
+    : [];
 
   const setCaptures = CAPTURE_FIELDS.filter((k) => {
     const v = sr[k];
@@ -373,6 +386,69 @@ function StateSummary({ sr }: { sr: StateReport }) {
             {practice.triggeredBy ? ` · triggeredBy: ${practice.triggeredBy}` : ''}
             {practice.userImages ? ` · userImages: ${truncate(practice.userImages)}` : ''}
           </span>
+        )}
+      </div>
+
+      {/* Journey polish PR 4a — canonical clinical-move naming. Rendered
+          on its own row (not folded into the captures list) so we can
+          see at a glance which turns did emit and which did not. That's
+          exactly the diagnostic question during the pilot: is the LLM
+          adopting the vocabulary?  */}
+      <div>
+        <span className="inline-block w-40 text-neutral-500 text-[11px] uppercase tracking-[0.12em] align-top">
+          moveJustPerformed
+        </span>
+        {moveJustPerformed.length === 0 ? (
+          <span className="font-mono text-neutral-500">- (not emitted)</span>
+        ) : (
+          <span className="inline-flex flex-wrap gap-1">
+            {moveJustPerformed.map((m, i) => (
+              <span
+                key={`${m}-${i}`}
+                className={`px-2 py-0.5 rounded font-mono text-[12px] border ${
+                  i === 0
+                    ? 'bg-sky-100 border-sky-300 text-sky-900 font-semibold'
+                    : 'bg-sky-50 border-sky-200 text-sky-800'
+                }`}
+                title={i === 0 ? 'primary move' : `secondary move #${i + 1}`}
+              >
+                {m}
+              </span>
+            ))}
+          </span>
+        )}
+      </div>
+
+      {/* Journey polish PR 5 — structural pattern notes. Rendered on its
+          own row for the same diagnostic reason. Shows category as chip
+          + user's words + context inline. Empty state ("not emitted")
+          tells us the LLM didn't reach for the vocabulary this turn. */}
+      <div>
+        <span className="inline-block w-40 text-neutral-500 text-[11px] uppercase tracking-[0.12em] align-top">
+          patternsTouched
+        </span>
+        {patternsTouched.length === 0 ? (
+          <span className="font-mono text-neutral-500">- (not emitted)</span>
+        ) : (
+          <div className="inline-block space-y-1">
+            {patternsTouched.map((p, i) => (
+              <div key={`${p.category}-${i}`} className="font-mono text-[12px]">
+                <span className="px-2 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900">
+                  {p.category}
+                </span>
+                <span className="ml-2 text-neutral-800">
+                  &quot;{truncate(p.description, 140)}&quot;
+                </span>
+                {p.context && Object.keys(p.context).length > 0 && (
+                  <span className="ml-2 text-neutral-500">
+                    {Object.entries(p.context)
+                      .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+                      .join(', ')}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
