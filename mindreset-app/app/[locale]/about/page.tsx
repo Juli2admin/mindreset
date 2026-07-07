@@ -24,17 +24,15 @@ export async function generateMetadata({
   };
 }
 
-// /about — founder origin story + method overview. Trauma-informed,
-// experience-language only (no therapeutic outcome claims), women-focused
-// brand voice. Visual style matches Terms / Privacy: serif headings on
-// the brand bg, sans body, italic pull quotes with accent rule. Renders
-// in all 8 locales via the same translation namespace.
+// /about — founder-voice essay: why The Journey exists. Structure follows
+// the FINAL About-page spec: hero (opening stanzas) → search → methodology
+// → technology → what it is → what people discover → welcome CTA.
+// Typography helpers preserved from the previous About design so the visual
+// language stays consistent with Terms / Privacy.
 export default async function AboutPage() {
   const t = await getTranslations('About');
   const PALETTE = getServerPalette();
 
-  // Typography helpers — same pattern as terms/page.tsx and privacy/page.tsx
-  // so the brand voice reads consistently across all long-form pages.
   function H2({ children }: { children: ReactNode }) {
     return (
       <h2
@@ -45,21 +43,11 @@ export default async function AboutPage() {
       </h2>
     );
   }
-  function SectionLabel({ children }: { children: ReactNode }) {
-    return (
-      <div
-        className="text-[11px] uppercase tracking-[0.22em] mb-6"
-        style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
-      >
-        {children}
-      </div>
-    );
-  }
   function P({ children }: { children: ReactNode }) {
     return (
       <p
         className="text-[16px] leading-[1.9] mb-6"
-        style={{ fontFamily: SANS, color: PALETTE.text }}
+        style={{ fontFamily: SANS, color: PALETTE.text, whiteSpace: 'pre-line' }}
       >
         {children}
       </p>
@@ -89,6 +77,22 @@ export default async function AboutPage() {
       />
     );
   }
+  function BlockParagraphs({ paragraphs }: { paragraphs: string[] }) {
+    return (
+      <>
+        {paragraphs.map((paragraph, i) => (
+          <P key={i}>{paragraph}</P>
+        ))}
+      </>
+    );
+  }
+
+  const openingStanzas = t.raw('hero.opening') as string[];
+  const searchParagraphs = t.raw('search.paragraphs') as string[];
+  const methodologyParagraphs = t.raw('methodology.paragraphs') as string[];
+  const technologyParagraphs = t.raw('technology.paragraphs') as string[];
+  const whatItIsParagraphs = t.raw('whatItIs.paragraphs') as string[];
+  const discoverParagraphs = t.raw('discover.paragraphs') as string[];
 
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
@@ -96,7 +100,7 @@ export default async function AboutPage() {
         <TopBar />
       </div>
 
-      {/* Hero */}
+      {/* Hero — label + serif title + opening stanzas */}
       <section className="px-6 pt-12 pb-16 sm:pt-20 sm:pb-24 text-center">
         <div
           className="text-[11px] uppercase tracking-[0.32em] mb-6"
@@ -105,7 +109,7 @@ export default async function AboutPage() {
           {t('hero.label')}
         </div>
         <h1
-          className="text-[44px] sm:text-[60px] leading-[1.05] max-w-2xl mx-auto mb-6"
+          className="text-[44px] sm:text-[60px] leading-[1.05] max-w-2xl mx-auto mb-10"
           style={{
             fontFamily: SERIF,
             fontWeight: 300,
@@ -115,80 +119,77 @@ export default async function AboutPage() {
         >
           {t('hero.title')}
         </h1>
-        <p
-          className="text-[15px] max-w-md mx-auto"
-          style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
-        >
-          {t('hero.subtitle')}
-        </p>
-      </section>
-
-      {/* Story */}
-      <article className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
-        <SectionLabel>{t('howItBegan.label')}</SectionLabel>
-        <P>{t('howItBegan.p1')}</P>
-        <PullQuote>{t('howItBegan.pullQuote')}</PullQuote>
-        <P>{t('howItBegan.p2')}</P>
-        <P>{t('howItBegan.p3')}</P>
-
-        <Divider />
-
-        <SectionLabel>{t('whyItWorks.label')}</SectionLabel>
-        <P>{t('whyItWorks.p1')}</P>
-        <P>{t('whyItWorks.p2')}</P>
-        <PullQuote>{t('whyItWorks.pullQuote')}</PullQuote>
-        <P>{t('whyItWorks.p3')}</P>
-        <P>{t('whyItWorks.p4')}</P>
-      </article>
-
-      {/* Results — what women describe */}
-      <section
-        className="px-6 py-16 sm:py-20"
-        style={{ background: PALETTE.bgSubtle }}
-      >
-        <div className="max-w-3xl mx-auto text-center">
-          <H2>{t('results.title')}</H2>
-          <p
-            className="text-[14px] mb-12 max-w-md mx-auto"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
-          >
-            {t('results.subtitle')}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left">
-            {(['card1', 'card2', 'card3', 'card4'] as const).map((key) => (
-              <div
-                key={key}
-                className="rounded-2xl p-6"
-                style={{ background: PALETTE.bgCard, border: `1px solid ${PALETTE.border}` }}
-              >
-                <p
-                  className="text-[15px] leading-[1.6]"
-                  style={{ color: PALETTE.text, fontFamily: SANS }}
-                >
-                  {t(`results.${key}`)}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div className="max-w-xl mx-auto space-y-6">
+          {openingStanzas.map((stanza, i) => (
+            <p
+              key={i}
+              className="text-[16px] sm:text-[17px]"
+              style={{
+                color: PALETTE.textMuted,
+                fontFamily: SANS,
+                lineHeight: 1.75,
+                whiteSpace: 'pre-line',
+              }}
+            >
+              {stanza}
+            </p>
+          ))}
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Article — 5 prose blocks with dividers */}
+      <article className="max-w-2xl mx-auto px-6 pb-4 sm:pb-8">
+        {/* Block 1 — The search (no heading) */}
+        <BlockParagraphs paragraphs={searchParagraphs} />
+
+        <Divider />
+
+        {/* Block 2 — A methodology built on established knowledge */}
+        <H2>{t('methodology.heading')}</H2>
+        <BlockParagraphs paragraphs={methodologyParagraphs} />
+        <PullQuote>{t('methodology.pullQuote')}</PullQuote>
+
+        <Divider />
+
+        {/* Block 3 — Why technology became part of the method */}
+        <H2>{t('technology.heading')}</H2>
+        <BlockParagraphs paragraphs={technologyParagraphs} />
+        <PullQuote>{t('technology.pullQuote')}</PullQuote>
+
+        <Divider />
+
+        {/* Block 4 — What The Journey is */}
+        <H2>{t('whatItIs.heading')}</H2>
+        <BlockParagraphs paragraphs={whatItIsParagraphs} />
+
+        <Divider />
+
+        {/* Block 5 — What I hope people discover */}
+        <H2>{t('discover.heading')}</H2>
+        <BlockParagraphs paragraphs={discoverParagraphs} />
+      </article>
+
+      {/* Block 6 — Welcome (dark CTA panel, existing design) */}
       <section
         className="px-6 py-20 sm:py-24 text-center"
         style={{ background: PALETTE.text, color: PALETTE.bg }}
       >
         <h2
-          className="text-[36px] sm:text-[48px] leading-[1.1] max-w-xl mx-auto mb-4"
+          className="text-[36px] sm:text-[48px] leading-[1.1] max-w-xl mx-auto mb-6"
           style={{ fontFamily: SERIF, fontWeight: 300, fontStyle: 'italic' }}
         >
-          {t('cta.title')}
+          {t('welcome.heading')}
         </h2>
         <p
-          className="text-[14px] max-w-md mx-auto mb-10"
-          style={{ color: PALETTE.textHint, fontFamily: SANS, lineHeight: 1.6 }}
+          className="text-[15px] max-w-lg mx-auto mb-10"
+          style={{
+            color: PALETTE.textHint,
+            fontFamily: SANS,
+            lineHeight: 1.75,
+            whiteSpace: 'pre-line',
+          }}
         >
-          {t('cta.body')}
+          {t('welcome.body')}
         </p>
         <Link
           href="/sign-up"
@@ -200,7 +201,7 @@ export default async function AboutPage() {
             fontWeight: 500,
           }}
         >
-          {t('cta.button')}
+          {t('welcome.button')}
         </Link>
       </section>
 

@@ -1029,40 +1029,67 @@
     "wordmarkAria": "MindReset главная"
   },
   "About": {
-    "metaTitle": "О MindReset",
-    "metaDescription": "История метода. В основе метода - личная трансформация.",
+    "metaTitle": "About — MindReset",
+    "metaDescription": "Why The Journey exists. A structured self-help and wellbeing methodology built on established psychological concepts.",
     "hero": {
-      "label": "О MindReset",
-      "title": "Как метод появился",
-      "subtitle": "Методология, родившаяся из собственного пути возвращения к себе."
+      "label": "About",
+      "title": "Why The Journey exists",
+      "opening": [
+        "Every meaningful piece of work begins with a question.\nMine was simple.",
+        "Why do intelligent, capable people keep repeating emotional reactions they no longer want?\nWhy do we stay in relationships that hurt us?\nWhy does saying \"no\" feel so difficult?\nWhy do we recognise our patterns, yet still find ourselves living them?",
+        "Over time, one thing became impossible to ignore.\nMany approaches helped me understand what I was experiencing.\nFar fewer helped me understand why I kept responding the same way.\nThat question became the beginning of The Journey."
+      ]
     },
-    "howItBegan": {
-      "label": "С чего всё началось",
-      "p1": "MindReset.AI появился не в переговорной комнате и не в университетской лаборатории. Он родился из глубоко личного опыта — момента, когда основательница посмотрела на свою жизнь и поняла, что где-то по пути полностью потеряла связь с самой собой.",
-      "pullQuote": "Я пробовала терапию. Читала книги по саморазвитию. Но ничто не приносило долгосрочных изменений. Тогда я создала свой собственный путь пересборки своей идентичности и вернулась обратно к себе.",
-      "p2": "После многих лет непростых жизненных испытаний — токсичных отношений, серьёзных жизненных перемен и глубокого ощущения утраты собственной идентичности — она достигла переломного момента. Методы личностного роста, которые она использовала, приносили временное облегчение, но не давали тех глубоких изменений, которых ей действительно хотелось.",
-      "p3": "Будучи профессиональным методологом и педагогом, она поступила так, как умела лучше всего: превратила этот путь в систему. С честностью исследовала свой внутренний мир, использовала искусственный интеллект как инструмент для рефлексии и ведения дневника, а затем, опираясь на свои профессиональные знания, создала структурированный метод возвращения к внутренней целостности."
+    "search": {
+      "paragraphs": [
+        "It didn't begin as a product.\nIt began as a search for understanding.",
+        "Like many people, I explored different ways of working on myself.\nSome gave me language.\nSome brought moments of clarity.\nSome offered comfort.\nAll of them taught me something.",
+        "But one question never left me.\nWhy did I still find myself returning to the same emotional reactions?\nI could explain my patterns.\nYet I was still living them.",
+        "That was the moment everything changed.\nI stopped searching for another technique.\nInstead, I began studying the process itself.",
+        "My background in methodology taught me to look for structure rather than quick answers. I began mapping what was happening beneath the surface — how emotional responses formed, why they repeated themselves, and what helped create space for something different.",
+        "Slowly, a framework began to emerge.\nNot for becoming someone else.\nBut for understanding myself differently."
+      ]
     },
-    "whyItWorks": {
-      "label": "Почему этот метод работает",
-      "p1": "«Путь» — это метод из восьми последовательных этапов, который помогает женщине пройти путь от первого момента осознания — остановки — до глубокого восстановления собственной идентичности. Его цель — не стать кем-то другим, а вновь обрести ту себя, которой Вы были всегда, ещё до того, как обстоятельства заставили Вас соответствовать чужим ожиданиям.",
-      "p2": "Метод полностью самостоятельный, имеет чёткую структуру и сопровождается искусственным интеллектом. Он доступен каждой женщине — в любой точке мира и в любое время суток. Всё, что требуется для начала, — честность перед собой, смелость и готовность сделать первый шаг.",
-      "pullQuote": "Она всегда была рядом. Просто было нужно, чтобы кто-то помог вернуться к ней.",
-      "p3": "Женщины, прошедшие этот путь, рассказывают, что начинают легче справляться с непростыми моментами, по-новому видеть привычные жизненные сценарии и чувствовать более глубокую уверенность в том, кто они есть на самом деле.",
-      "p4": "Потому что каждая женщина заслуживает возможности узнать себя по-настоящему — свободно, глубоко и на собственных условиях."
+    "methodology": {
+      "heading": "A methodology built on established knowledge",
+      "paragraphs": [
+        "The Journey wasn't built around a single technique.\nIt brings together well-established ideas from psychology, emotional learning and evidence-informed approaches to self-reflection into one structured methodology.",
+        "The principles behind the method are not new.\nMany have been explored, studied and used for years across psychology, psychotherapy and behavioural science.",
+        "I didn't invent psychology.\nI didn't invent emotional learning.\nI didn't invent the science behind how people learn, adapt or develop emotional responses.",
+        "What I did was something different.\nAs a methodologist, I brought together established ideas from different disciplines and organised them into one clear, structured methodology that people can follow independently.",
+        "I wanted to create a practical framework that helps people move beyond simply understanding their patterns intellectually and begin exploring the emotional responses that continue to shape everyday life."
+      ],
+      "pullQuote": "Because understanding creates choice. And choice is where meaningful change begins."
     },
-    "results": {
-      "title": "Что отмечают женщины",
-      "subtitle": "Изменения, о которых рассказывают участницы после прохождения метода.",
-      "card1": "Больше внутреннего пространства и спокойствия даже в сложные моменты.",
-      "card2": "Возможность увидеть и переосмыслить привычные жизненные сценарии.",
-      "card3": "Более ясное понимание своих истинных ценностей и приоритетов.",
-      "card4": "Больше уверенности в собственных решениях и ощущение внутренней опоры."
+    "technology": {
+      "heading": "Why technology became part of the method",
+      "paragraphs": [
+        "The Journey is not about AI.\nTechnology simply makes this work more accessible.\nIt allows a structured methodology to become a guided conversation — available whenever people need it.",
+        "Instead of facing a blank journal or wondering where to begin, people are guided through thoughtful questions, structured reflection and a clear process that helps them keep moving forward."
+      ],
+      "pullQuote": "The method comes first. Technology supports the method. Never the other way around."
     },
-    "cta": {
-      "title": "Ваш путь к себе начинается здесь.",
-      "body": "Познакомьтесь с MiniMind — Вашим AI-проводником, доступным 24/7 и обученным методологии MindReset. Начните бесплатно с пробного доступа на 50 сообщений.",
-      "button": "Начать бесплатно"
+    "whatItIs": {
+      "heading": "What The Journey is",
+      "paragraphs": [
+        "The Journey is a structured self-help and wellbeing methodology.\nIt combines guided reflection, emotional exploration and a clear step-by-step process designed to help people better understand the emotional responses behind their reactions.\nIt is built on established psychological concepts and organised into a practical framework for independent self-work.",
+        "It is not therapy.\nIt is not a medical device.\nIt does not diagnose or treat mental health conditions.",
+        "It offers something different.\nA place to pause.\nTo reflect.\nTo become curious.\nTo understand yourself with greater clarity and compassion."
+      ]
+    },
+    "discover": {
+      "heading": "What I hope people discover",
+      "paragraphs": [
+        "I didn't create The Journey because I believed people needed fixing.\nI created it because I believe people deserve understanding.",
+        "When we understand ourselves more deeply, we stop fighting our own reactions.\nWe become less reactive.\nMore intentional.\nMore compassionate towards ourselves.",
+        "Not because we forced ourselves to change.\nBut because we finally understood what had been shaping our responses all along.",
+        "Change doesn't begin with becoming someone else.\nIt begins with understanding yourself differently.\nThat is the work of The Journey."
+      ]
+    },
+    "welcome": {
+      "heading": "Welcome",
+      "body": "Whether you're beginning with a single conversation, exploring a specific challenge, or starting The Journey itself, you don't need to have everything figured out.\nYou only need one thing.\nA willingness to become curious about yourself.\nBecause every meaningful journey begins with curiosity.",
+      "button": "Start free"
     }
   },
   "Faq": {

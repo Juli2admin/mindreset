@@ -1034,35 +1034,62 @@
     "hero": {
       "label": "Sobre el método",
       "title": "La historia detrás del método",
-      "subtitle": "La metodología que nació de su propio camino de regreso a sí misma."
+      "opening": [
+        "Every meaningful piece of work begins with a question.\nMine was simple.",
+        "Why do intelligent, capable people keep repeating emotional reactions they no longer want?\nWhy do we stay in relationships that hurt us?\nWhy does saying \"no\" feel so difficult?\nWhy do we recognise our patterns, yet still find ourselves living them?",
+        "Over time, one thing became impossible to ignore.\nMany approaches helped me understand what I was experiencing.\nFar fewer helped me understand why I kept responding the same way.\nThat question became the beginning of The Journey."
+      ]
     },
-    "howItBegan": {
-      "label": "Cómo comenzó todo",
-      "p1": "MindReset.AI no nació en una sala de juntas ni en un laboratorio universitario. Nació de una experiencia profundamente personal: el momento en que su fundadora observó su propia vida y comprendió que, en algún punto del camino, se había perdido por completo.",
-      "pullQuote": "Probé la terapia. Leí libros de desarrollo personal. Nada me ofrecía un cambio duradero. Así que construí mi propio camino de regreso a mí misma.",
-      "p2": "Tras años de experiencias difíciles —incluyendo relaciones tóxicas, grandes cambios vitales y una profunda sensación de desconexión de su propia identidad— llegó a un punto de inflexión. Los enfoques de crecimiento personal que había probado le ofrecían cierto alivio, pero no la transformación que estaba buscando.",
-      "p3": "Como metodóloga y educadora de formación, hizo lo que le resultaba más natural: convirtió el proceso en un método. Estudió su propio mundo interior con una honestidad rigurosa, utilizó la AI como herramienta de reflexión y autoobservación, y se apoyó en su experiencia profesional para diseñar un camino estructurado de regreso a la plenitud."
+    "search": {
+      "paragraphs": [
+        "It didn't begin as a product.\nIt began as a search for understanding.",
+        "Like many people, I explored different ways of working on myself.\nSome gave me language.\nSome brought moments of clarity.\nSome offered comfort.\nAll of them taught me something.",
+        "But one question never left me.\nWhy did I still find myself returning to the same emotional reactions?\nI could explain my patterns.\nYet I was still living them.",
+        "That was the moment everything changed.\nI stopped searching for another technique.\nInstead, I began studying the process itself.",
+        "My background in methodology taught me to look for structure rather than quick answers. I began mapping what was happening beneath the surface — how emotional responses formed, why they repeated themselves, and what helped create space for something different.",
+        "Slowly, a framework began to emerge.\nNot for becoming someone else.\nBut for understanding myself differently."
+      ]
     },
-    "whyItWorks": {
-      "label": "Por qué funciona",
-      "p1": "The Journey es un método de ocho bloques que acompaña a una mujer desde su primer momento de consciencia —el Stop— hasta recuperar plenamente el sentido de quién es. No se trata de convertirse en alguien diferente. Se trata de volver a quien siempre has sido, antes de que la vida te pidiera ser otra persona.",
-      "p2": "The Journey es un proceso guiado por una misma, estructurado y apoyado por AI, disponible para cualquier mujer, en cualquier lugar y a cualquier hora. Solo requiere honestidad, valentía y la disposición de dar el primer paso.",
-      "pullQuote": "Siempre estuvo ahí. Solo necesitaba que alguien regresara por ella.",
-      "p3": "Las mujeres que recorren este camino describen una mayor capacidad para respirar en medio de las dificultades, más espacio para cuestionar patrones que habían cargado durante años y una sensación más estable de quiénes son realmente.",
-      "p4": "Porque toda mujer merece conocerse plenamente, con libertad y en sus propios términos."
+    "methodology": {
+      "heading": "A methodology built on established knowledge",
+      "paragraphs": [
+        "The Journey wasn't built around a single technique.\nIt brings together well-established ideas from psychology, emotional learning and evidence-informed approaches to self-reflection into one structured methodology.",
+        "The principles behind the method are not new.\nMany have been explored, studied and used for years across psychology, psychotherapy and behavioural science.",
+        "I didn't invent psychology.\nI didn't invent emotional learning.\nI didn't invent the science behind how people learn, adapt or develop emotional responses.",
+        "What I did was something different.\nAs a methodologist, I brought together established ideas from different disciplines and organised them into one clear, structured methodology that people can follow independently.",
+        "I wanted to create a practical framework that helps people move beyond simply understanding their patterns intellectually and begin exploring the emotional responses that continue to shape everyday life."
+      ],
+      "pullQuote": "Because understanding creates choice. And choice is where meaningful change begins."
     },
-    "results": {
-      "title": "Lo que experimentan las mujeres",
-      "subtitle": "Lo que las mujeres describen después de trabajar con el método.",
-      "card1": "Más espacio para respirar en los momentos difíciles.",
-      "card2": "La oportunidad de examinar patrones que llevan años acompañándolas.",
-      "card3": "Una comprensión más clara de lo que realmente es importante para ellas.",
-      "card4": "Mayor firmeza y confianza en sus propias decisiones."
+    "technology": {
+      "heading": "Why technology became part of the method",
+      "paragraphs": [
+        "The Journey is not about AI.\nTechnology simply makes this work more accessible.\nIt allows a structured methodology to become a guided conversation — available whenever people need it.",
+        "Instead of facing a blank journal or wondering where to begin, people are guided through thoughtful questions, structured reflection and a clear process that helps them keep moving forward."
+      ],
+      "pullQuote": "The method comes first. Technology supports the method. Never the other way around."
     },
-    "cta": {
-      "title": "Tu camino de regreso comienza aquí.",
-      "body": "Conoce MiniMind: tu compañera AI, disponible 24/7 y formada en el método MindReset. Empieza con una prueba gratuita de 50 mensajes.",
-      "button": "Empezar gratis"
+    "whatItIs": {
+      "heading": "What The Journey is",
+      "paragraphs": [
+        "The Journey is a structured self-help and wellbeing methodology.\nIt combines guided reflection, emotional exploration and a clear step-by-step process designed to help people better understand the emotional responses behind their reactions.\nIt is built on established psychological concepts and organised into a practical framework for independent self-work.",
+        "It is not therapy.\nIt is not a medical device.\nIt does not diagnose or treat mental health conditions.",
+        "It offers something different.\nA place to pause.\nTo reflect.\nTo become curious.\nTo understand yourself with greater clarity and compassion."
+      ]
+    },
+    "discover": {
+      "heading": "What I hope people discover",
+      "paragraphs": [
+        "I didn't create The Journey because I believed people needed fixing.\nI created it because I believe people deserve understanding.",
+        "When we understand ourselves more deeply, we stop fighting our own reactions.\nWe become less reactive.\nMore intentional.\nMore compassionate towards ourselves.",
+        "Not because we forced ourselves to change.\nBut because we finally understood what had been shaping our responses all along.",
+        "Change doesn't begin with becoming someone else.\nIt begins with understanding yourself differently.\nThat is the work of The Journey."
+      ]
+    },
+    "welcome": {
+      "heading": "Welcome",
+      "body": "Whether you're beginning with a single conversation, exploring a specific challenge, or starting The Journey itself, you don't need to have everything figured out.\nYou only need one thing.\nA willingness to become curious about yourself.\nBecause every meaningful journey begins with curiosity.",
+      "button": "Start free"
     }
   },
   "Faq": {
