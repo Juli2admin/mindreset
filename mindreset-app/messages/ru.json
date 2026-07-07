@@ -220,8 +220,7 @@
     "heroSubtitle": "Путь к себе.",
     "heroBody": [
       "Вы — та, кто всё замечает. Та, кто держит семью, работу и дом. Вы справляетесь. Вы сильная. Но Вы устали так, что сон уже не помогает восстановиться.",
-      "Вы читали книги. Возможно, пробовали терапию. Вели дневник, размышляли, работали над собой — но что-то внутри всё равно не сдвинулось с места. Или вернулось обратно.",
-      "Для этого и создан MindReset. Ежедневная поддержка, когда нужно почувствовать опору. Фокусные модули, когда всплывает что-то конкретное. И более долгий, медленный метод, когда Вы готовы по-настоящему это пройти."
+      "Вы читали книги. Возможно, пробовали терапию. Вели дневник, размышляли, работали над собой — но что-то внутри всё равно не сдвинулось с места. Или вернулось обратно."
     ],
     "heroCta": "Попробовать MiniMind бесплатно — 50 сообщений, без карты",
     "heroNote": "Начинается с 5-минутного тестирования.",
@@ -280,7 +279,8 @@
     "methodBody": [
       "Путь к себе — это структурированная перезагрузка на несколько месяцев. В темпе, который Вы можете выдержать. Последовательный путь внутренней работы, созданный женщиной - методологом на основе того, через что она прошла сама.",
       "Мы начинаем с того, чтобы помочь Вам найти опору. Затем мягко смотрим на то, что причиняло боль, ничего не форсируя. Мы укрепляем ту часть Вас, которая способна удерживать более маленькие, раненые части — и встречать их с безопасной дистанцией, с любопытством. Мы отделяем то, что действительно Ваше, от того, что было в Вас чужеродно вложено. И постепенно выстраиваем более ясное ощущение того, кто Вы сейчас, — чтобы это проявилось не только внутри, но и в том, как Вы живёте.",
-      "Без диагнозов. Без ярлыков. Без давления чувствовать что-то определённое. Метод удерживает структуру, чтобы Вы могли делать работу."
+      "Без диагнозов. Без ярлыков. Без давления чувствовать что-то определённое. Метод удерживает структуру, чтобы Вы могли делать работу.",
+      "There is no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
     "differentKicker": "Почему MindReset ощущается иначе",
     "differentTitle": "Создан для глубинной, самостоятельной внутренней работы.",
@@ -296,6 +296,10 @@
       {
         "headline": "Терапия бесценна — но не всегда доступна и удобна.",
         "body": "Приложения для медитации приглушают шум. Чат-боты проводят через упражнения. MindReset — это инструмент самопомощи, созданный для женщин среднего возраста: MiniMind как Ваш ежедневный спутник и Путь к себе, как более глубокая структурированная работа, когда Вы готовы. Не замена терапии с психологом. Саморефлексия под наблюдением запрограмированного ИИ специалиста."
+      },
+      {
+        "headline": "Most tools answer your questions.",
+        "body": "This platform moves you through them — with structure, sequence and emotional safety."
       }
     ],
     "differentClose": "Большинство ИИ-инструментов отвечают на вопросы.\nMindReset проводит Вас через них.",
@@ -314,7 +318,15 @@
       "submit": "Получать обновления",
       "success": "Спасибо. Мы свяжемся с Вами, когда будет чем поделиться.",
       "error": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз."
-    }
+    },
+    "whatBody": [
+      "This is not another place for generic advice. It is a structured self-help wellbeing platform designed to help you understand why certain reactions keep repeating — even when you already know better.",
+      "The work begins with emotional responses: the guilt, fear, shutdown, overthinking, pleasing, avoidance or pressure that appears before logic has time to speak. Instead of asking you to force a new behaviour, the method helps you explore what may be driving the old one."
+    ],
+    "whatShortLine": "Structure, not advice.",
+    "safetyLine": "A self-help wellbeing tool. Not therapy, not diagnosis, not a crisis service.",
+    "pathsIntro": "You do not have to know where to start. Begin with a daily check-in, a specific challenge, or the complete Journey. Each path is designed to meet you where you are.",
+    "methodClose": "Understanding comes first. Everything else follows from there."
   },
   "MiniMind": {
     "opener": "Здравствуйте. Хорошо, что вы здесь. Как вы себя чувствуете сегодня?",

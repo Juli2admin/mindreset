@@ -215,106 +215,118 @@
   "Landing": {
     "signIn": "Sign in",
     "account": "Account",
-    "heroKicker": "For women in midlife",
-    "heroTitle": "You held it together.\nNow you can put it down.",
-    "heroSubtitle": "A way back to yourself.",
+    "heroKicker": "A modern wellbeing platform for emotional self-understanding",
+    "heroTitle": "Why do you keep reacting in ways you no longer want to?",
+    "heroSubtitle": "You already know what you should do.",
     "heroBody": [
-      "You're the one who notices everything. The one who keeps the family running, the work moving, the house standing. You're functioning. You're capable. You're tired in a way sleep doesn't quite fix.",
-      "You've read the books. Maybe you've tried therapy. You've journalled, reflected, worked on yourself — and something underneath still hasn't moved.",
-      "This is what MindReset is for. Daily support when you need to land. Focused modules when something specific surfaces. And a longer, slower method when you're ready to actually put it down."
+      "Yet the same reactions keep showing up — in your relationships, your decisions, your confidence and the way you treat yourself.",
+      "This platform helps you explore the emotional responses behind those patterns through a structured method grounded in established psychological principles and supported by modern technology."
     ],
-    "heroCta": "Try MiniMind free — 50 messages, no card",
-    "heroNote": "Begins with a 5-minute check-in.",
+    "heroCta": "Start with a free 5-minute check-in",
+    "heroNote": "Or try MiniMind free — 50 messages, no card",
     "whatKicker": "What this is",
-    "whatTitle": "Structure, not advice.",
+    "whatTitle": "A different way to work with yourself.",
     "whatNot": [
       "therapy",
-      "coaching",
+      "diagnosis",
       "a crisis service"
     ],
     "notWord": "Not",
-    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
-    "whoKicker": "Who it is for",
-    "whoTitle": "This is for the women who…",
+    "whatClose": "Where insight isn't enough — and crisis isn't where you are.",
+    "whoKicker": "Who this is for",
+    "whoTitle": "If this feels familiar.",
     "whoScenarios": [
-      "… have read every book, journaled, tried therapy — and still feel something underneath hasn't moved.",
-      "… wake up tired no matter how many hours they sleep.",
-      "… hold everything together for everyone, and can't remember the last time they chose what they wanted.",
-      "… have spent years putting other people first and don't recognise themselves anymore.",
-      "… already know what's wrong intellectually, but knowing hasn't been enough to change anything."
+      "You have read the books, journalled, reflected or worked on yourself — and still feel something underneath has not moved.",
+      "You understand your patterns intellectually, but still find yourself repeating them.",
+      "You keep putting other people first and struggle to choose yourself without guilt.",
+      "You know what you should do, but your emotional reaction gets there first.",
+      "You are functioning, capable and getting through life — but tired in a way rest does not quite fix."
     ],
-    "whoClose": "Not in crisis.\nJust ready to do the slower work.",
+    "whoClose": "You are not in crisis.\nYou are ready to understand yourself differently.",
     "safetyKicker": "Safety",
     "safetyTitle": "You stay in control.",
-    "safetyLead": "MindReset is built with emotional safety at its core.",
+    "safetyLead": "This platform is built with emotional safety at its core.",
     "safetyItems": [
       "No diagnoses. No labels. No pressure.",
-      "No deep trauma work unless you choose it.",
+      "No deep work unless you choose it.",
       "You can pause, slow down, or stop at any moment.",
       "If your responses suggest distress or instability, the system pauses gently and points you to professional support."
     ],
     "pathsKicker": "What is inside",
-    "pathsTitle": "Three paths,\nthree depths.",
+    "pathsTitle": "Three ways to begin.",
     "paths": [
       {
         "name": "MiniMind",
-        "kind": "Daily companion",
-        "body": "A warm chat companion you can return to anytime. Daily check-ins, short grounding practices, a place to land when something is heavy. It learns your patterns gently, and suggests deeper work when it would help.",
+        "kind": "Your daily emotional companion",
+        "body": "A warm place to pause, reflect and think out loud. Use MiniMind for daily check-ins, emotional support, grounding prompts and the moments when something feels heavy but you do not know where to begin. It is the lightest way into the platform — and you can start free.",
         "price": "From £14.99 / month"
       },
       {
-        "name": "States & Themes",
-        "kind": "Focused modules",
-        "body": "Short structured journeys for specific moments. States for the present: anxiety, disconnection, inner emptiness, numbness. Themes for the patterns underneath: money and self-worth, family, the body, shame, self-realisation.",
-        "price": "£29–£59 per module"
+        "name": "Choose your starting point",
+        "kind": "Focused entry points",
+        "body": "Begin with what is on your mind today. Money. Relationships. People-pleasing. Confidence. Anxiety. Self-worth. Family. The body. Shame. Each topic opens the same structured method from a door that fits where you are right now.",
+        "price": "Coming soon"
       },
       {
         "name": "The Journey",
-        "kind": "Eight-stage reset",
-        "body": "A slow, sequential journey from stabilisation to a new sense of who you are. Months of work, paced by what your system can hold. Built to release beliefs that were never yours, restore your boundaries, and remember yourself.",
-        "price": "From £55/month · or £599 for 1-year access"
+        "kind": "The complete method",
+        "body": "The deepest level of the work. A structured, sequential process designed to help you understand the emotional responses behind the patterns you keep repeating. Eight stages, paced by what you can hold — from finding ground to a clearer sense of who you are now.",
+        "price": "From £55 / month · or £599 for 1-year access"
       }
     ],
     "methodKicker": "Inside The Journey",
-    "methodTitle": "Inside the slower work.",
+    "methodTitle": "Inside the deeper work.",
     "methodBody": [
-      "The Journey is a months-long structured reset. Paced by what you can hold. A sequenced path through inner work, designed by a woman who built it from what she lived.",
-      "We start by helping you find ground. We look at what's been hurting, gently, without forcing anything. We strengthen the part of you that can hold the smaller, hurt parts — and meet them with safe distance, with curiosity. We separate what's actually yours from what was placed in you. And we build a clearer sense of who you are now — letting it land in the way you actually live.",
-      "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
+      "The Journey is the core method behind MindReset.",
+      "It is a structured, sequenced path for people who are ready to explore why certain emotional responses keep returning — and what may have shaped them in the first place.",
+      "We begin by helping you find ground. Then we look at what has been hurting, gently, without forcing anything. The process helps you meet difficult emotions with distance, curiosity and structure. It gives space to notice what belongs to you now, what may have been learned over time, and what no longer needs to lead.",
+      "There is no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
-    "differentKicker": "Why MindReset feels different",
-    "differentTitle": "Built for the work, not the noise.",
+    "differentKicker": "Why this feels different",
+    "differentTitle": "Built for the work underneath the reaction.",
     "differentRows": [
       {
-        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
-        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+        "headline": "Meditation can quiet the noise.",
+        "body": "This method helps you understand what the noise was."
       },
       {
-        "headline": "CBT scripts don't reach the pattern.",
-        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+        "headline": "Journalling can help you express what you feel.",
+        "body": "This method helps you follow the feeling back to the response underneath."
       },
       {
-        "headline": "Therapy is precious — and not always accessible.",
-        "body": "The meditation apps quiet the noise. The chatbots run through exercises. MindReset is self-help wellbeing built for women in midlife — MiniMind as your daily companion, and The Journey as the deeper, structured work when you're ready. Not a replacement for therapy. A different shape of work."
+        "headline": "Advice tells you what to do.",
+        "body": "This method helps you understand why it has been so hard to do it."
+      },
+      {
+        "headline": "Most tools answer your questions.",
+        "body": "This platform moves you through them — with structure, sequence and emotional safety."
       }
     ],
-    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
+    "differentClose": "",
     "closingKicker": "Whenever you are ready",
     "closingTitle": "Begin.",
-    "closingBody": "You do not need to be in pieces to start. You do not need to know what you want. The check-in tells us — gently — whether this is right for you in this moment.",
+    "closingBody": "You do not need to be in pieces to start. You do not need to know exactly what you want. The first check-in helps you find the right place to begin — gently, safely, and at your own pace.",
     "closingCta": "Start the check-in",
     "stickyTryFree": "Try MiniMind free — 50 messages, no card",
-    "heroChip": "Free taster · 50 messages · no card needed",
+    "heroChip": "Free taster · 50 messages · no card",
     "newsletter": {
       "kicker": "STAY IN TOUCH",
       "title": "Not ready yet?",
-      "body": "We send occasional updates — new modules, gentle prompts, the occasional reflection. No pressure.",
+      "body": "We send occasional updates — new modules, gentle prompts and reflections on emotional self-work. No pressure. No noise.",
       "emailPlaceholder": "your@email.com",
       "consent": "I agree to receive occasional emails. Unsubscribe anytime.",
       "submit": "Get updates",
       "success": "Thanks. We'll be in touch when there's something to share.",
       "error": "Something went wrong. Please try again."
-    }
+    },
+    "whatBody": [
+      "This is not another place for generic advice. It is a structured self-help wellbeing platform designed to help you understand why certain reactions keep repeating — even when you already know better.",
+      "The work begins with emotional responses: the guilt, fear, shutdown, overthinking, pleasing, avoidance or pressure that appears before logic has time to speak. Instead of asking you to force a new behaviour, the method helps you explore what may be driving the old one."
+    ],
+    "whatShortLine": "Structure, not advice.",
+    "safetyLine": "A self-help wellbeing tool. Not therapy, not diagnosis, not a crisis service.",
+    "pathsIntro": "You do not have to know where to start. Begin with a daily check-in, a specific challenge, or the complete Journey. Each path is designed to meet you where you are.",
+    "methodClose": "Understanding comes first. Everything else follows from there."
   },
   "MiniMind": {
     "opener": "Hello. Good to have you here. How are you doing today?",

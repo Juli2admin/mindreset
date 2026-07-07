@@ -178,19 +178,35 @@ function WhatIs() {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const whatNot = t.raw('whatNot');
+  const whatBody = t.raw('whatBody');
   return (
     <section className="py-20" style={{ borderTop: `1px solid ${c.border}` }}>
       <SectionKicker text={t('whatKicker')} color={c.accent} />
       <SectionTitle text={t('whatTitle')} />
 
-      {/* Phase A · Section 4 rewrite — Section dropped its
-          platform-description paragraph and four "It helps you" bullets
-          (both redundant after the Hero ¶3 rewrite and the new
-          MethodSection downstream). What remains is the locked
-          legal/positioning lockup plus a single closing line in the new
-          voice register. */}
+      {/* Body paragraphs (rebrand — replaces the prior legal-lockup-only
+          treatment). Reads as introductory prose above the safety
+          lockup and closing line. */}
+      <div className="mt-8 mb-8 space-y-5 max-w-[36rem]">
+        {whatBody.map((para, i) => (
+          <p
+            key={i}
+            className="text-[16px] leading-[1.65]"
+            style={{ ...sansStyle, color: c.text }}
+          >
+            {para}
+          </p>
+        ))}
+      </div>
 
-      {/* "Not therapy. Not coaching. Not a crisis service." — locked. */}
+      <p
+        className="text-[15px] italic mb-6"
+        style={{ ...serifStyle, color: c.accent, fontWeight: 400 }}
+      >
+        {t('whatShortLine')}
+      </p>
+
+      {/* "Not therapy. Not diagnosis. Not a crisis service." — locked lockup. */}
       <div className="space-y-3 mt-8 mb-10">
         {whatNot.map((word, i) => (
           <div
@@ -276,6 +292,14 @@ function Safety() {
           </li>
         ))}
       </ul>
+
+      {/* Locked safety line — uses "wellbeing tool" wording per spec. */}
+      <p
+        className="mt-10 text-[14px] italic max-w-[34rem]"
+        style={{ ...sansStyle, color: c.textMuted }}
+      >
+        {t('safetyLine')}
+      </p>
     </section>
   );
 }
@@ -289,6 +313,12 @@ function PathsSection() {
       <div className="mb-16">
         <SectionKicker text={t('pathsKicker')} color={c.accentSage} />
         <SectionTitle text={t('pathsTitle')} />
+        <p
+          className="mt-6 text-[16px] leading-[1.65] max-w-[34rem]"
+          style={{ ...sansStyle, color: c.textMuted }}
+        >
+          {t('pathsIntro')}
+        </p>
       </div>
 
       {/* Per-path block reverts to the border-divider prose pattern (no
@@ -350,7 +380,7 @@ function MethodSection() {
       <SectionKicker text={t('methodKicker')} color={c.accent} />
       <SectionTitle text={t('methodTitle')} />
 
-      <div className="mt-10 mb-2 space-y-6 max-w-[36rem]">
+      <div className="mt-10 mb-8 space-y-6 max-w-[36rem]">
         {body.map((para, i) => (
           <p
             key={i}
@@ -361,6 +391,15 @@ function MethodSection() {
           </p>
         ))}
       </div>
+
+      {/* Closing punchline in the italic-serif register — mirrors the
+          treatment used on Different's punchline. */}
+      <p
+        className="text-[20px] sm:text-[22px] italic leading-[1.5] max-w-[34rem]"
+        style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
+      >
+        {t('methodClose')}
+      </p>
     </section>
   );
 }
@@ -406,12 +445,14 @@ function Different() {
         ))}
       </div>
 
-      <p
-        className="mt-10 text-[20px] sm:text-[22px] italic leading-[1.5] whitespace-pre-line max-w-[34rem]"
-        style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
-      >
-        {t('differentClose')}
-      </p>
+      {t('differentClose') && (
+        <p
+          className="mt-10 text-[20px] sm:text-[22px] italic leading-[1.5] whitespace-pre-line max-w-[34rem]"
+          style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
+        >
+          {t('differentClose')}
+        </p>
+      )}
     </section>
   );
 }
@@ -571,8 +612,8 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
         <PathsSection />
         <MethodSection />
         <Different />
-        <NewsletterSignup />
         {testimonialsSlot}
+        <NewsletterSignup />
         <ClosingCTA onBegin={onBegin} sectionRef={closingCtaRef} />
         {/* Phase 1d.2 — Landing-only crisis-resource block + safety
             disclaimer, rendered above the shared Footer. Footer arrives
