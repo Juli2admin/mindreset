@@ -422,22 +422,23 @@ function Different() {
       <SectionKicker text={t('differentKicker')} color={c.accent} />
       <SectionTitle text={t('differentTitle')} />
 
-      <div className="mt-12 max-w-[36rem]">
+      {/* Rebrand — the branding statement (body) is the emphasis, not the
+          setup line. Setup reads as a short muted intro; body is the
+          italic-serif accent punchline, same treatment as methodClose /
+          the other punchlines. No dividers — matches the rest of the
+          page which uses whitespace, not lines. */}
+      <div className="mt-12 space-y-12 max-w-[36rem]">
         {rows.map((row, i) => (
-          <div
-            key={i}
-            className="py-8"
-            style={{ borderTop: `1px solid ${c.border}` }}
-          >
-            <h3
-              className="text-[20px] sm:text-[22px] leading-[1.35] -tracking-[0.01em] mb-3"
-              style={{ ...serifStyle, color: c.text, fontWeight: 400 }}
+          <div key={i}>
+            <p
+              className="text-[16px] leading-[1.55] mb-3"
+              style={{ ...sansStyle, color: c.text, fontWeight: 400 }}
             >
               {row.headline}
-            </h3>
+            </p>
             <p
-              className="text-[16px] leading-[1.65]"
-              style={{ ...sansStyle, color: c.textMuted }}
+              className="text-[22px] sm:text-[24px] leading-[1.4] italic -tracking-[0.005em]"
+              style={{ ...serifStyle, color: c.accent, fontWeight: 300 }}
             >
               {row.body}
             </p>
