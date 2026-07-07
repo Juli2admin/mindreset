@@ -22,6 +22,7 @@ import {
   type GateResult,
 } from './stage-gates';
 import { loadRecentTurns, type AuditTurn } from './history';
+import { checkMoveBasedAdvance } from './move-based-advance';
 
 // How many recent audit turns each gate inspects. Stage 4 looks at the most;
 // Stage 8 looks back further still (for week-count windowing).
@@ -36,9 +37,15 @@ const TURN_WINDOWS: Record<number, number> = {
   8: 120,
 };
 
+// The 'advance' decision now carries a `lane` discriminator so
+// applyRouteDecision can log which path fired (classic per-stage gate vs
+// move-based lane added in PR 4b, 2026-07-07). Purely observational —
+// downstream behaviour is identical for both.
+export type AdvancementLane = 'classic_gate' | 'move_based';
+
 export type RouteDecision =
   | { kind: 'stay'; reasons: string[] }
-  | { kind: 'advance'; from: number; to: number; gateReasons: string[] }
+  | { kind: 'advance'; from: number; to: number; lane: AdvancementLane; gateReasons: string[] }
   | { kind: 'regress'; from: number; to: number; reason: string }
   | { kind: 'discharge'; from: 8; gateReasons: string[] }
   | { kind: 'frozen'; reason: string };
@@ -84,13 +91,40 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
     return { kind: 'stay', reasons: gate.reasons };
   }
 
-  // Advancement check
+  // Advancement check — classic per-stage gate first.
   const gate = checkCurrentStageGate(state.currentStage, state, turns);
   if (gate.passed) {
     const to = state.currentStage + 1;
-    return { kind: 'advance', from: state.currentStage, to, gateReasons: [] };
+    return {
+      kind: 'advance',
+      from: state.currentStage,
+      to,
+      lane: 'classic_gate',
+      gateReasons: [],
+    };
   }
-  return { kind: 'stay', reasons: gate.reasons };
+
+  // Move-based advancement lane — PR 4b (2026-07-07). Parallel path that
+  // reads the moveJustPerformed histogram over the same recent-turn
+  // window and advances when sustained higher-stage work is observed.
+  // Regulation guards match the classic gate's rigor (intensity ≤ 5,
+  // safety === 'none', adultSelfPresent ≥ 50% of qualifying turns).
+  // Does not require the LLM's `recommendedAction === 'advance'` — that
+  // is the deliberate divergence and the whole reason this lane exists.
+  // See lib/journey/router/move-based-advance.ts for the rule.
+  const moveResult = checkMoveBasedAdvance(state.currentStage, turns);
+  if (moveResult.canAdvance) {
+    const to = state.currentStage + 1;
+    return {
+      kind: 'advance',
+      from: state.currentStage,
+      to,
+      lane: 'move_based',
+      gateReasons: [moveResult.reason],
+    };
+  }
+
+  return { kind: 'stay', reasons: [...gate.reasons, moveResult.reason] };
 }
 
 function checkCurrentStageGate(
@@ -137,8 +171,27 @@ export async function applyRouteDecision(
     case 'frozen':
       return;
     case 'advance':
-      await prisma.recodeProgress.update({
-        where: { userId },
+      // PR 4b observability — structured log matches the style used by
+      // lib/journey/safety/freeze.ts. Shows which lane fired so we can
+      // watch adoption of the move-based path over the first weeks
+      // after ship.
+      console.log('[journey/router] advance', {
+        userId,
+        from: decision.from,
+        to: decision.to,
+        lane: decision.lane,
+        reasons: decision.gateReasons,
+      });
+      // Optimistic-concurrency guard on `currentStage: decision.from`
+      // (PR 4b review nit, 2026-07-07). Cheap belt-and-braces: if two
+      // router passes race and one has already advanced the user, the
+      // second pass's updateMany matches zero rows — safer than the
+      // no-op-because-same-result reliance we had before. Uses
+      // updateMany so a zero-row match is a silent no-op rather than
+      // an exception. Any surviving race is observable in the log
+      // (two advance lines, one succeeded, one silent).
+      await prisma.recodeProgress.updateMany({
+        where: { userId, currentStage: decision.from },
         data: {
           currentStage: decision.to,
           currentDepth: 'surface', // every new stage starts at Surface
