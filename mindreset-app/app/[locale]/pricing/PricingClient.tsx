@@ -131,7 +131,7 @@ export default function PricingClient({
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar right={isSignedIn ? <UserButton /> : null} />
+        <TopBar showMarketingNav right={isSignedIn ? <UserButton /> : null} />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         {/* Phase B item 4 — Pricing H1 + subtitle. The page previously

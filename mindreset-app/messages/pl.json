@@ -1026,7 +1026,8 @@
     }
   },
   "TopBar": {
-    "wordmarkAria": "Strona główna MindReset"
+    "wordmarkAria": "Strona główna MindReset",
+    "primaryNavAria": "Primary navigation"
   },
   "About": {
     "metaTitle": "O metodzie — MindReset",

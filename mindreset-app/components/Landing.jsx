@@ -69,6 +69,7 @@ function Header() {
   return (
     <TopBar
       showTreeMark
+      showMarketingNav
       right={
         <Link
           href={signedIn ? '/home' : '/sign-in'}

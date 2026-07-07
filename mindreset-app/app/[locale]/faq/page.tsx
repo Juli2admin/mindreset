@@ -113,7 +113,7 @@ export default async function FaqPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
       <div className="max-w-3xl mx-auto px-6 py-4">
-        <TopBar />
+        <TopBar showMarketingNav />
       </div>
       <div className="max-w-3xl mx-auto px-6 pb-12 sm:pb-16">
         <article className="mb-8">

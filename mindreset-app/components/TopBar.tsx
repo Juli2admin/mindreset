@@ -41,12 +41,17 @@ type Props = {
   /** Show the brand icon (tree logo) before the wordmark text. Landing +
    *  Screening pass true; other pages keep the wordmark text-only. */
   showTreeMark?: boolean;
+  /** Show the 3-link marketing nav (About / Pricing / FAQ) beside the
+   *  wordmark. Enabled on marketing surfaces so users can cross-navigate
+   *  without scrolling to the footer. Ignored when align='centered'. */
+  showMarketingNav?: boolean;
 };
 
 export default function TopBar({
   right,
   align = 'default',
   showTreeMark = false,
+  showMarketingNav = false,
 }: Props) {
   const t = useTranslations('TopBar');
   const tFooter = useTranslations('Footer');
@@ -97,9 +102,37 @@ export default function TopBar({
     );
   }
 
+  // Marketing nav — About / Pricing / FAQ. Sits next to the wordmark so
+  // users mid-scroll on a long page can jump between marketing surfaces
+  // without hunting the footer. Labels reuse Footer.about / .pricing /
+  // .faq so they stay translated across all 8 locales.
+  const marketingNav = showMarketingNav ? (
+    <nav
+      className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] tracking-wide"
+      style={{ color: PALETTE.textMuted, fontFamily: TOKENS.sans }}
+      aria-label={t('primaryNavAria')}
+    >
+      <Link href="/about" className="py-2 hover:underline underline-offset-2 transition-colors">
+        {tFooter('about')}
+      </Link>
+      <Link href="/pricing" className="py-2 hover:underline underline-offset-2 transition-colors">
+        {tFooter('pricing')}
+      </Link>
+      <Link href="/faq" className="py-2 hover:underline underline-offset-2 transition-colors">
+        {tFooter('faq')}
+      </Link>
+    </nav>
+  ) : null;
+
   return (
-    <header className="flex items-center justify-between py-6">
-      <div className="flex items-center">{wordmark}</div>
+    // flex-wrap + gap-y-3 lets the left group (wordmark + nav) wrap under
+    // the right group on narrow phones cleanly, rather than crushing
+    // into one line.
+    <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-6">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+        {wordmark}
+        {marketingNav}
+      </div>
       <div className="flex items-center gap-3">
         {right}
         <ThemeToggle />

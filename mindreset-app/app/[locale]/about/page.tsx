@@ -97,7 +97,7 @@ export default async function AboutPage() {
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-3xl mx-auto px-6 py-4">
-        <TopBar />
+        <TopBar showMarketingNav />
       </div>
 
       {/* Hero — label + serif title + opening stanzas */}

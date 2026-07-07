@@ -1026,7 +1026,8 @@
     }
   },
   "TopBar": {
-    "wordmarkAria": "MindReset главная"
+    "wordmarkAria": "MindReset главная",
+    "primaryNavAria": "Основная навигация"
   },
   "About": {
     "metaTitle": "About — MindReset",

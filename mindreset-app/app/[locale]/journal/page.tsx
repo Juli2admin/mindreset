@@ -41,7 +41,7 @@ export default async function JournalIndexPage({
   return (
     <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar />
+        <TopBar showMarketingNav />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         {/* Kicker */}

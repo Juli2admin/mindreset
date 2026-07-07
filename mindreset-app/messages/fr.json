@@ -1026,7 +1026,8 @@
     }
   },
   "TopBar": {
-    "wordmarkAria": "Accueil MindReset"
+    "wordmarkAria": "Accueil MindReset",
+    "primaryNavAria": "Primary navigation"
   },
   "About": {
     "metaTitle": "À propos — MindReset",
