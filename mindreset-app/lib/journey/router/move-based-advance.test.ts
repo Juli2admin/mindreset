@@ -125,11 +125,14 @@ describe('getStageFromTurnMoves', () => {
 describe('checkMoveBasedAdvance — regulation guards match classic-gate rigor', () => {
   const stageOverTarget = ['stage_7.qualities_inventory'] as CanonicalMove[];
 
-  it('does not advance when there are zero qualifying turns', () => {
+  it('does not advance when the window is empty', () => {
+    // Post-review change: the empty-window case is now caught by the
+    // current-turn regulation guard first (see move-based-advance.ts
+    // "no turns in window" branch), before the qualifying-count check.
     const r = checkMoveBasedAdvance(1, []);
     expect(r.canAdvance).toBe(false);
     expect(r.qualifyingTurnCount).toBe(0);
-    expect(r.reason).toMatch(/only 0\/3 qualifying/);
+    expect(r.reason).toMatch(/no turns in window/);
   });
 
   it('does not advance when only universal moves have been emitted', () => {
@@ -318,6 +321,101 @@ describe('checkMoveBasedAdvance — stage boundary guards', () => {
     const r = checkMoveBasedAdvance(7, turns);
     expect(r.canAdvance).toBe(true);
     expect(r.reason).toContain('advancing 7 → 8');
+  });
+});
+
+// Regression tests for the current-turn regulation guard added on the
+// code-review pass. Without this guard, historical qualifying evidence
+// could survive a later dysregulated turn and advance the user at the
+// exact moment they are least regulated — the reviewer's blocking
+// finding.
+describe('checkMoveBasedAdvance — current-turn regulation guard', () => {
+  const stageOverTarget = ['stage_7.qualities_inventory'] as CanonicalMove[];
+
+  it('refuses to advance when the current turn has safety=watch, even with 3 clean qualifying turns earlier', () => {
+    // Reviewer's exact failure scenario. Sunday has 3 clean stage_7
+    // turns; Monday morning presents a watch-flagged, dysregulated
+    // current turn. Historical evidence must not override current
+    // regulation.
+    const turns = [
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 0, safetyFlag: 'watch', intensity: 5 }),
+    ];
+    const r = checkMoveBasedAdvance(1, turns);
+    expect(r.canAdvance).toBe(false);
+    expect(r.reason).toMatch(/current turn safety=watch/);
+  });
+
+  it('refuses to advance when the current turn has intensity=9, even with 3 clean qualifying turns earlier', () => {
+    const turns = [
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 0, intensity: 9, safetyFlag: 'none' }),
+    ];
+    const r = checkMoveBasedAdvance(1, turns);
+    expect(r.canAdvance).toBe(false);
+    expect(r.reason).toMatch(/current turn intensity=9/);
+  });
+
+  it('refuses to advance when the current turn has safety=red_flag', () => {
+    const turns = [
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 0, safetyFlag: 'red_flag', intensity: 5 }),
+    ];
+    const r = checkMoveBasedAdvance(1, turns);
+    expect(r.canAdvance).toBe(false);
+    expect(r.reason).toMatch(/current turn safety=red_flag/);
+  });
+
+  it('refuses to advance when the current turn has null intensity (uncertainty → refuse)', () => {
+    const turns = [
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      // Build a turn with null intensity manually (the parser can
+      // produce this when the LLM omits the field entirely and the
+      // audit row's intensityReported column ends up null).
+      {
+        id: 'turn_current_null_int',
+        createdAt: new Date('2026-07-07T08:00:00Z'),
+        stageAtTurn: 1,
+        depthAtTurn: 'surface',
+        intensityReported: null,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        report: {
+          intensity: 5,
+          safetyFlag: 'none' as const,
+          recommendedAction: 'stay' as const,
+        },
+      },
+    ];
+    const r = checkMoveBasedAdvance(1, turns);
+    expect(r.canAdvance).toBe(false);
+    expect(r.reason).toMatch(/current turn intensity null/);
+  });
+
+  it('advances when the current turn IS a qualifying turn (single-file suffix case)', () => {
+    const turns = [
+      makeTurn({ _daysAgo: 2, moveJustPerformed: stageOverTarget }),
+      makeTurn({ _daysAgo: 1, moveJustPerformed: stageOverTarget }),
+      // Current turn also qualifies — regulated + higher-stage move.
+      makeTurn({ _daysAgo: 0, moveJustPerformed: stageOverTarget }),
+    ];
+    const r = checkMoveBasedAdvance(1, turns);
+    expect(r.canAdvance).toBe(true);
+    expect(r.qualifyingTurnCount).toBe(3);
+  });
+
+  it('refuses on empty turns array (defensive)', () => {
+    const r = checkMoveBasedAdvance(1, []);
+    expect(r.canAdvance).toBe(false);
+    expect(r.reason).toMatch(/no turns in window|only 0\/3/);
   });
 });
 

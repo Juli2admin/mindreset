@@ -40,12 +40,13 @@
 // already loaded via loadRecentTurns.
 
 import type { AuditTurn } from './history';
+import type { SafetyFlag } from '../state/types';
 
 // Sustained-work thresholds, tuned to prefer safety over speed (owner
 // decision 2026-07-07: strict > responsive on the first cut).
 const REQUIRED_QUALIFYING_TURNS = 3;
 const MAX_INTENSITY = 5;
-const REQUIRED_SAFETY: string = 'none';
+const REQUIRED_SAFETY: SafetyFlag = 'none';
 const REQUIRED_ADULT_SELF_PRESENT_RATIO = 0.5;
 const MOVE_ID_STAGE_RE = /^stage_(\d)\./;
 
@@ -116,6 +117,45 @@ export function checkMoveBasedAdvance(
     return {
       canAdvance: false,
       reason: 'move_lane: stage_out_of_range',
+      qualifyingTurnCount: 0,
+    };
+  }
+
+  // Current-turn regulation gate (PR 4b review fix, 2026-07-07). The
+  // classic gate's rigor is recency-anchored — `lastTwoIntensities`
+  // reads the SUFFIX (most recent) not the WHOLE window. Without this
+  // check, a user could have 3 clean stage_7 turns Sunday, then present
+  // a dysregulated turn Monday (intensity=9, safety=watch) and the
+  // lane would still advance them at the exact moment they are least
+  // regulated. This closes that gap: refuse advancement whenever the
+  // most recent turn itself would fail the regulation guards. A null
+  // intensity on the current turn is treated as uncertainty → refuse.
+  if (turns.length === 0) {
+    return {
+      canAdvance: false,
+      reason: 'move_lane: no turns in window',
+      qualifyingTurnCount: 0,
+    };
+  }
+  const currentTurn = turns[turns.length - 1];
+  if (currentTurn.safetyFlag !== REQUIRED_SAFETY) {
+    return {
+      canAdvance: false,
+      reason: `move_lane: current turn safety=${currentTurn.safetyFlag} (require ${REQUIRED_SAFETY})`,
+      qualifyingTurnCount: 0,
+    };
+  }
+  if (currentTurn.intensityReported === null) {
+    return {
+      canAdvance: false,
+      reason: 'move_lane: current turn intensity null',
+      qualifyingTurnCount: 0,
+    };
+  }
+  if (currentTurn.intensityReported > MAX_INTENSITY) {
+    return {
+      canAdvance: false,
+      reason: `move_lane: current turn intensity=${currentTurn.intensityReported} (require ≤ ${MAX_INTENSITY})`,
       qualifyingTurnCount: 0,
     };
   }

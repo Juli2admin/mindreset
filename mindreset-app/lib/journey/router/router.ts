@@ -171,16 +171,27 @@ export async function applyRouteDecision(
     case 'frozen':
       return;
     case 'advance':
-      // PR 4b observability — grep-friendly one-liner shows which lane
-      // fired the advancement so we can watch adoption of the move-based
-      // path over the first weeks after ship. Reason is included when
-      // the move-based lane fired.
-      console.log(
-        `[journey/router] advance user=${userId} from=${decision.from} to=${decision.to} lane=${decision.lane}` +
-          (decision.gateReasons.length > 0 ? ` reasons=${decision.gateReasons.join('; ')}` : ''),
-      );
-      await prisma.recodeProgress.update({
-        where: { userId },
+      // PR 4b observability — structured log matches the style used by
+      // lib/journey/safety/freeze.ts. Shows which lane fired so we can
+      // watch adoption of the move-based path over the first weeks
+      // after ship.
+      console.log('[journey/router] advance', {
+        userId,
+        from: decision.from,
+        to: decision.to,
+        lane: decision.lane,
+        reasons: decision.gateReasons,
+      });
+      // Optimistic-concurrency guard on `currentStage: decision.from`
+      // (PR 4b review nit, 2026-07-07). Cheap belt-and-braces: if two
+      // router passes race and one has already advanced the user, the
+      // second pass's updateMany matches zero rows — safer than the
+      // no-op-because-same-result reliance we had before. Uses
+      // updateMany so a zero-row match is a silent no-op rather than
+      // an exception. Any surviving race is observable in the log
+      // (two advance lines, one succeeded, one silent).
+      await prisma.recodeProgress.updateMany({
+        where: { userId, currentStage: decision.from },
         data: {
           currentStage: decision.to,
           currentDepth: 'surface', // every new stage starts at Surface
