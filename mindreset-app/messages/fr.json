@@ -220,8 +220,7 @@
     "heroSubtitle": "A way back to yourself.",
     "heroBody": [
       "Vous le sentez, n'est-ce pas ? Cette impression discrète que quelque chose, à l'intérieur, est désaligné.",
-      "Vous fonctionnez. Vous êtes capable. Mais en dessous — il y a une confusion, un épuisement, ou un vide que vous n'arrivez pas tout à fait à nommer.",
-      "C'est ici que vous vous arrêtez. Et que vous recommencez."
+      "Vous fonctionnez. Vous êtes capable. Mais en dessous — il y a une confusion, un épuisement, ou un vide que vous n'arrivez pas tout à fait à nommer."
     ],
     "heroCta": "Commencer",
     "heroNote": "Commence par un bilan de cinq minutes.",
@@ -280,7 +279,8 @@
     "methodBody": [
       "The Journey is a months-long structured reset. Paced by what you can hold. A sequenced path through inner work, designed by a woman who built it from what she lived.",
       "We start by helping you find ground. We look at what's been hurting, gently, without forcing anything. We strengthen the part of you that can hold the smaller, hurt parts — and meet them with safe distance, with curiosity. We separate what's actually yours from what was placed in you. And we build a clearer sense of who you are now — letting it land in the way you actually live.",
-      "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
+      "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work.",
+      "There is no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
     ],
     "differentKicker": "Pourquoi MindReset est différent",
     "differentTitle": "Built for the work, not the noise.",
@@ -296,6 +296,10 @@
       {
         "headline": "Therapy is precious — and not always accessible.",
         "body": "The meditation apps quiet the noise. The chatbots run through exercises. MindReset is self-help wellbeing built for women in midlife — MiniMind as your daily companion, and The Journey as the deeper, structured work when you're ready. Not a replacement for therapy. A different shape of work."
+      },
+      {
+        "headline": "Most tools answer your questions.",
+        "body": "This platform moves you through them — with structure, sequence and emotional safety."
       }
     ],
     "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
@@ -314,7 +318,15 @@
       "submit": "Recevoir les mises à jour",
       "success": "Merci. On reviendra vers toi quand on aura quelque chose à partager.",
       "error": "Une erreur est survenue. Réessaie."
-    }
+    },
+    "whatBody": [
+      "This is not another place for generic advice. It is a structured self-help wellbeing platform designed to help you understand why certain reactions keep repeating — even when you already know better.",
+      "The work begins with emotional responses: the guilt, fear, shutdown, overthinking, pleasing, avoidance or pressure that appears before logic has time to speak. Instead of asking you to force a new behaviour, the method helps you explore what may be driving the old one."
+    ],
+    "whatShortLine": "Structure, not advice.",
+    "safetyLine": "A self-help wellbeing tool. Not therapy, not diagnosis, not a crisis service.",
+    "pathsIntro": "You do not have to know where to start. Begin with a daily check-in, a specific challenge, or the complete Journey. Each path is designed to meet you where you are.",
+    "methodClose": "Understanding comes first. Everything else follows from there."
   },
   "MiniMind": {
     "opener": "Bonjour. Heureux que vous soyez là. Comment vous sentez-vous aujourd’hui ?",
