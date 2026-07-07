@@ -187,7 +187,7 @@ export default async function ArticlePage({
       />
 
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar />
+        <TopBar showMarketingNav />
       </div>
 
       <article className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
