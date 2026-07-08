@@ -215,118 +215,118 @@
   "Landing": {
     "signIn": "Anmelden",
     "account": "Konto",
-    "heroKicker": "Ein Wendepunkt. Eine Methode.",
-    "heroTitle": "Ein Weg zurück\nzu sich selbst.",
-    "heroSubtitle": "A way back to yourself.",
+    "heroKicker": "Eine moderne Plattform für Wohlbefinden und emotionales Selbstverstehen",
+    "heroTitle": "Warum reagierst du immer wieder so, wie du es eigentlich nicht mehr willst?",
+    "heroSubtitle": "Du weißt bereits, was du tun solltest.",
     "heroBody": [
-      "Sie spüren es, nicht wahr? Dieses leise Gefühl, dass etwas im Inneren nicht stimmig ist.",
-      "Sie funktionieren. Sie sind fähig. Doch darunter — liegt eine Verwirrung, eine Erschöpfung oder eine Leere, die sich nicht ganz erklären lässt."
+      "Und doch tauchen dieselben Reaktionen immer wieder auf — in deinen Beziehungen, deinen Entscheidungen, deinem Selbstvertrauen und in der Art, wie du mit dir selbst umgehst.",
+      "Diese Plattform hilft dir, die emotionalen Reaktionen hinter diesen Mustern zu erkunden — durch eine strukturierte Methode, die auf etablierten psychologischen Prinzipien beruht und von moderner Technologie unterstützt wird."
     ],
-    "heroCta": "Beginnen",
-    "heroNote": "Beginnt mit einem fünfminütigen Check-in.",
-    "whatKicker": "Was es ist",
-    "whatTitle": "Struktur, keine Ratschläge.",
+    "heroCta": "Starte mit einem kostenlosen 5-Minuten-Check-in",
+    "heroNote": "Oder probiere MiniMind kostenlos — 50 Nachrichten, keine Karte nötig",
+    "whatKicker": "Was das ist",
+    "whatTitle": "Ein anderer Weg, mit dir selbst zu arbeiten.",
     "whatNot": [
       "Therapie",
-      "Coaching",
-      "ein Krisendienst"
+      "Diagnose",
+      "Krisendienst"
     ],
     "notWord": "Nicht",
-    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
-    "whoKicker": "Für wen es gedacht ist",
-    "whoTitle": "Innerlich orientierungslos,\nnach außen funktional.",
+    "whatClose": "Dort, wo Einsicht nicht mehr reicht — und Krise nicht das ist, wo du gerade bist.",
+    "whoKicker": "Für wen das ist",
+    "whoTitle": "Wenn dir das bekannt vorkommt.",
     "whoScenarios": [
-      "Sich verloren oder abgekoppelt fühlen, obwohl von außen alles richtig läuft",
-      "Emotionaler Erschöpfungszustand nach Jahren der Verantwortung oder Fürsorge",
-      "Identitätskrise nach Trennung, Umzug, Älterwerden oder einer großen Lebensumwälzung",
-      "Chronische Selbstvernachlässigung, Gefallen-Wollen, andere stets zuerst",
-      "Sich sagen: „Ich habe Therapie, Bücher und Selbstarbeit probiert — und doch fehlt etwas“"
+      "Du hast die Bücher gelesen, Tagebuch geführt, reflektiert oder an dir gearbeitet — und spürst trotzdem, dass sich etwas darunter nicht bewegt hat.",
+      "Du verstehst deine Muster intellektuell und ertappst dich trotzdem immer wieder dabei, sie zu wiederholen.",
+      "Du stellst andere immer wieder an die erste Stelle und tust dich schwer damit, dich für dich selbst zu entscheiden, ohne Schuldgefühle.",
+      "Du weißt, was du tun solltest, aber deine emotionale Reaktion ist immer schneller.",
+      "Du funktionierst, bist leistungsfähig und kommst durchs Leben — und bist müde auf eine Weise, die auch Ruhe nicht ganz auflöst."
     ],
-    "whoClose": "Es ist für jene, die emotional stabil, aber innerlich orientierungslos sind.",
+    "whoClose": "Du bist nicht in einer Krise.\nDu bist bereit, dich selbst anders zu verstehen.",
     "safetyKicker": "Sicherheit",
-    "safetyTitle": "Sie behalten die Kontrolle.",
-    "safetyLead": "MindReset ist mit emotionaler Sicherheit im Kern gebaut.",
+    "safetyTitle": "Du behältst die Kontrolle.",
+    "safetyLead": "Diese Plattform ist mit emotionaler Sicherheit im Kern gebaut.",
     "safetyItems": [
       "Keine Diagnosen. Keine Etiketten. Kein Druck.",
-      "Keine Traumaarbeit in der Tiefe, ohne dass Sie sie wählen.",
-      "Sie können jederzeit pausieren, verlangsamen oder aufhören.",
-      "Wenn Ihre Antworten auf Belastung oder Instabilität hindeuten, hält das System sanft inne und verweist auf professionelle Unterstützung."
+      "Keine tiefe Arbeit, es sei denn, du entscheidest dich dafür.",
+      "Du kannst jederzeit pausieren, langsamer machen oder aufhören.",
+      "Wenn deine Antworten auf Belastung oder Instabilität hindeuten, pausiert das System sanft und weist dich auf professionelle Unterstützung hin."
     ],
-    "pathsKicker": "Was es enthält",
-    "pathsTitle": "Drei Wege,\ndrei Tiefen.",
+    "pathsKicker": "Was dich hier erwartet",
+    "pathsTitle": "Drei Wege, zu beginnen.",
     "paths": [
       {
         "name": "MiniMind",
-        "kind": "Tägliche Begleitung",
-        "body": "Eine warme Begleitung im Gespräch, jederzeit erreichbar. Tägliche Check-ins, kurze Erdungsübungen, ein Ort zum Ankommen, wenn etwas schwer wiegt. Sie nimmt Ihre Muster behutsam wahr und schlägt tiefere Arbeit vor, wenn es hilfreich wäre.",
+        "kind": "Dein täglicher emotionaler Begleiter",
+        "body": "Ein warmer Ort, um innezuhalten, zu reflektieren und laut zu denken. Nutze MiniMind für tägliche Check-ins, emotionale Unterstützung, erdende Impulse und Momente, in denen etwas schwer wirkt, du aber nicht weißt, wo du anfangen sollst. Es ist der leichteste Weg in die Plattform hinein — und du kannst kostenlos starten.",
         "price": "Ab £14.99 / Monat"
       },
       {
-        "name": "Zustände & Themen",
-        "kind": "Fokussierte Module",
-        "body": "Kurze strukturierte Wege für bestimmte Momente. Zustände für die Gegenwart: Angst, Abgetrenntheit, innere Leere, Taubheit. Themen für die Muster darunter: Geld und Selbstwert, Familie, Körper, Scham, Selbstverwirklichung.",
-        "price": "£29–£59 pro Modul"
+        "name": "Wähle deinen Ausgangspunkt",
+        "kind": "Fokussierte Einstiegspunkte",
+        "body": "Beginne mit dem, was dich heute beschäftigt. Geld. Beziehungen. Es-anderen-recht-machen. Selbstvertrauen. Angst. Selbstwert. Familie. Der Körper. Scham. Jedes Thema öffnet dieselbe strukturierte Methode — durch eine Tür, die zu dem passt, wo du gerade bist.",
+        "price": "Bald verfügbar"
       },
       {
-        "name": "Der Weg",
-        "kind": "Ein achtstufiger Neuanfang",
-        "body": "Ein langsamer, schrittweiser Weg von der Stabilisierung bis zu einem neuen Gefühl dafür, wer Sie sind. Monate an Arbeit, im Tempo dessen, was Ihr System tragen kann. Gebaut, um Überzeugungen loszulassen, die nie Ihre waren, Ihre Grenzen wiederherzustellen und sich an sich selbst zu erinnern.",
-        "price": "From £55/month · or £599 for 1-year access"
+        "name": "Die Reise",
+        "kind": "Die vollständige Methode",
+        "body": "Die tiefste Ebene der Arbeit. Ein strukturierter, aufeinander aufbauender Prozess, der dir helfen soll, die emotionalen Reaktionen hinter den Mustern zu verstehen, die du immer wieder wiederholst. Acht Etappen, im Tempo dessen, was du tragen kannst — vom Finden des Bodens bis zu einem klareren Gefühl dafür, wer du jetzt bist.",
+        "price": "Ab £55 / Monat · oder £599 für 1 Jahr Zugang"
       }
     ],
-    "methodKicker": "Inside The Journey",
-    "methodTitle": "Inside the slower work.",
+    "methodKicker": "Im Inneren von „Die Reise“",
+    "methodTitle": "In der tieferen Arbeit.",
     "methodBody": [
-      "The Journey is a months-long structured reset. Paced by what you can hold. A sequenced path through inner work, designed by a woman who built it from what she lived.",
-      "We start by helping you find ground. We look at what's been hurting, gently, without forcing anything. We strengthen the part of you that can hold the smaller, hurt parts — and meet them with safe distance, with curiosity. We separate what's actually yours from what was placed in you. And we build a clearer sense of who you are now — letting it land in the way you actually live.",
-      "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work.",
-      "There is no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
+      "„Die Reise“ ist die Kernmethode hinter MindReset.",
+      "Sie ist ein strukturierter, aufeinander aufbauender Weg für Menschen, die bereit sind zu erkunden, warum bestimmte emotionale Reaktionen immer wiederkehren — und was sie ursprünglich geprägt haben könnte.",
+      "Wir beginnen damit, dir zu helfen, Boden zu finden. Dann schauen wir uns an, was wehgetan hat — sanft, ohne etwas zu erzwingen. Der Prozess hilft dir, schwierigen Emotionen mit Abstand, Neugier und Struktur zu begegnen. Er schafft Raum, um zu bemerken, was jetzt zu dir gehört, was mit der Zeit gelernt worden sein könnte und was nicht länger führen muss.",
+      "Keine Diagnose. Keine Etiketten. Kein Druck, etwas Bestimmtes zu fühlen. Die Methode hält den Rahmen, damit du die Arbeit tun kannst."
     ],
-    "differentKicker": "Warum MindReset anders wirkt",
-    "differentTitle": "Built for the work, not the noise.",
+    "differentKicker": "Warum sich das anders anfühlt",
+    "differentTitle": "Gemacht für die Arbeit unter der Reaktion.",
     "differentRows": [
       {
-        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
-        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+        "headline": "Meditation kann das Rauschen leiser machen.",
+        "body": "Hier verstehst du, was das Rauschen war."
       },
       {
-        "headline": "CBT scripts don't reach the pattern.",
-        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+        "headline": "Tagebuchschreiben kann dir helfen, auszudrücken, was du fühlst.",
+        "body": "Die Methode folgt dem Gefühl zurück zu der Reaktion darunter."
       },
       {
-        "headline": "Therapy is precious — and not always accessible.",
-        "body": "The meditation apps quiet the noise. The chatbots run through exercises. MindReset is self-help wellbeing built for women in midlife — MiniMind as your daily companion, and The Journey as the deeper, structured work when you're ready. Not a replacement for therapy. A different shape of work."
+        "headline": "Ratschläge sagen dir, was zu tun ist.",
+        "body": "Diese Plattform hilft dir zu verstehen, warum es bisher so schwer war, es zu tun."
       },
       {
-        "headline": "Most tools answer your questions.",
-        "body": "This platform moves you through them — with structure, sequence and emotional safety."
+        "headline": "Die meisten Werkzeuge beantworten deine Fragen.",
+        "body": "Unser Ansatz führt dich durch sie hindurch — mit Struktur, Sequenz und emotionaler Sicherheit."
       }
     ],
-    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
-    "closingKicker": "Wann immer es soweit ist",
-    "closingTitle": "Beginnen.",
-    "closingBody": "Sie müssen nicht in Stücken sein, um zu beginnen. Sie müssen nicht wissen, was Sie wollen. Der Check-in zeigt Ihnen — sanft — ob das im Moment für Sie stimmig ist.",
-    "closingCta": "Den Check-in beginnen",
-    "stickyTryFree": "Try MiniMind free — 50 messages, no card",
-    "heroChip": "Kostenlose Probe · 50 Nachrichten · keine Karte nötig",
+    "differentClose": "",
+    "closingKicker": "Wann immer du bereit bist",
+    "closingTitle": "Beginne.",
+    "closingBody": "Du musst nicht am Boden zerstört sein, um zu beginnen. Du musst nicht genau wissen, was du willst. Der erste Check-in hilft dir, den richtigen Ort zum Beginnen zu finden — sanft, sicher und in deinem eigenen Tempo.",
+    "closingCta": "Check-in starten",
+    "stickyTryFree": "Probiere MiniMind kostenlos — 50 Nachrichten, keine Karte nötig",
+    "heroChip": "Kostenlose Probe · 50 Nachrichten · keine Karte",
     "newsletter": {
-      "kicker": "BLEIB IN KONTAKT",
+      "kicker": "IN VERBINDUNG BLEIBEN",
       "title": "Noch nicht bereit?",
-      "body": "Wir verschicken selten E-Mails — neue Module, sanfte Impulse, gelegentlich eine kleine Reflexion. Kein Druck.",
-      "emailPlaceholder": "deine@email.com",
-      "consent": "Ich willige ein, gelegentliche E-Mails zu erhalten. Ich kann mich jederzeit abmelden.",
+      "body": "Wir senden gelegentlich Updates — neue Module, sanfte Impulse und Reflexionen zur emotionalen Arbeit an sich selbst. Kein Druck. Kein Rauschen.",
+      "emailPlaceholder": "your@email.com",
+      "consent": "Ich stimme zu, gelegentliche E-Mails zu erhalten. Jederzeit abbestellbar.",
       "submit": "Updates erhalten",
       "success": "Danke. Wir melden uns, wenn es etwas zu teilen gibt.",
-      "error": "Etwas ist schiefgegangen. Versuch es bitte nochmal."
+      "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
     },
     "whatBody": [
-      "This is not another place for generic advice. It is a structured self-help wellbeing platform designed to help you understand why certain reactions keep repeating — even when you already know better.",
-      "The work begins with emotional responses: the guilt, fear, shutdown, overthinking, pleasing, avoidance or pressure that appears before logic has time to speak. Instead of asking you to force a new behaviour, the method helps you explore what may be driving the old one."
+      "Das ist nicht noch ein Ort für allgemeine Ratschläge. Es ist eine strukturierte Selbsthilfe- und Wohlbefindens-Plattform, die dir helfen soll zu verstehen, warum sich bestimmte Reaktionen immer wieder wiederholen — auch dann, wenn du es eigentlich schon besser weißt.",
+      "Die Arbeit beginnt bei den emotionalen Reaktionen: bei der Schuld, der Angst, dem Rückzug, dem Grübeln, dem Anderen-gefallen-Wollen, dem Vermeiden oder dem inneren Druck, der da ist, bevor die Logik zu Wort kommt. Statt dich zu einem neuen Verhalten zu zwingen, hilft dir die Methode zu erkunden, was das alte antreiben könnte."
     ],
-    "whatShortLine": "Structure, not advice.",
-    "safetyLine": "A self-help wellbeing tool. Not therapy, not diagnosis, not a crisis service.",
-    "pathsIntro": "You do not have to know where to start. Begin with a daily check-in, a specific challenge, or the complete Journey. Each path is designed to meet you where you are.",
-    "methodClose": "Understanding comes first. Everything else follows from there."
+    "whatShortLine": "Struktur, keine Ratschläge.",
+    "safetyLine": "Ein Selbsthilfe-Werkzeug für Wohlbefinden. Keine Therapie, keine Diagnose, kein Krisendienst.",
+    "pathsIntro": "Du musst nicht wissen, wo du anfangen sollst. Beginne mit einem täglichen Check-in, einer konkreten Herausforderung oder mit „Die Reise“ in ganzer Tiefe. Jeder Weg ist so gestaltet, dass er dich dort abholt, wo du gerade bist.",
+    "methodClose": "Verstehen kommt zuerst. Alles andere folgt daraus."
   },
   "MiniMind": {
     "opener": "Hallo. Schön, dass Sie hier sind. Wie geht es Ihnen heute?",
@@ -1030,67 +1030,67 @@
     "primaryNavAria": "Primary navigation"
   },
   "About": {
-    "metaTitle": "Über die Methode — MindReset",
-    "metaDescription": "Die Geschichte hinter der Methode. Wie ein persönlicher Weg zurück zu sich selbst zu MindReset wurde.",
+    "metaTitle": "Über uns — MindReset",
+    "metaDescription": "Warum „Die Reise“ existiert. Eine strukturierte Selbsthilfe- und Wohlbefindens-Methodologie, die auf etablierten psychologischen Konzepten aufbaut.",
     "hero": {
-      "label": "Über die Methode",
-      "title": "Die Geschichte hinter der Methode",
+      "label": "Über uns",
+      "title": "Warum „Die Reise“ existiert",
       "opening": [
-        "Every meaningful piece of work begins with a question.\nMine was simple.",
-        "Why do intelligent, capable people keep repeating emotional reactions they no longer want?\nWhy do we stay in relationships that hurt us?\nWhy does saying \"no\" feel so difficult?\nWhy do we recognise our patterns, yet still find ourselves living them?",
-        "Over time, one thing became impossible to ignore.\nMany approaches helped me understand what I was experiencing.\nFar fewer helped me understand why I kept responding the same way.\nThat question became the beginning of The Journey."
+        "Jede bedeutsame Arbeit beginnt mit einer Frage.\nMeine war einfach.",
+        "Warum wiederholen kluge, fähige Menschen immer wieder emotionale Reaktionen, die sie nicht mehr wollen?\nWarum bleiben wir in Beziehungen, die uns verletzen?\nWarum fällt es so schwer, „nein“ zu sagen?\nWarum erkennen wir unsere Muster und leben sie trotzdem weiter?",
+        "Mit der Zeit wurde eines unmöglich zu ignorieren.\nViele Ansätze halfen mir zu verstehen, was ich erlebte.\nWeit weniger halfen mir zu verstehen, warum ich immer wieder gleich reagierte.\nDiese Frage wurde zum Anfang von „Die Reise“."
       ]
     },
     "search": {
       "paragraphs": [
-        "It didn't begin as a product.\nIt began as a search for understanding.",
-        "Like many people, I explored different ways of working on myself.\nSome gave me language.\nSome brought moments of clarity.\nSome offered comfort.\nAll of them taught me something.",
-        "But one question never left me.\nWhy did I still find myself returning to the same emotional reactions?\nI could explain my patterns.\nYet I was still living them.",
-        "That was the moment everything changed.\nI stopped searching for another technique.\nInstead, I began studying the process itself.",
-        "My background in methodology taught me to look for structure rather than quick answers. I began mapping what was happening beneath the surface — how emotional responses formed, why they repeated themselves, and what helped create space for something different.",
-        "Slowly, a framework began to emerge.\nNot for becoming someone else.\nBut for understanding myself differently."
+        "Es begann nicht als Produkt.\nEs begann als Suche nach Verständnis.",
+        "Wie viele Menschen habe auch ich verschiedene Wege ausprobiert, an mir zu arbeiten.\nEinige gaben mir Sprache.\nEinige brachten Momente der Klarheit.\nEinige brachten Trost.\nJeder hat mich etwas gelehrt.",
+        "Aber eine Frage ließ mich nicht los.\nWarum ertappte ich mich immer noch dabei, zu denselben emotionalen Reaktionen zurückzukehren?\nIch konnte meine Muster erklären.\nUnd lebte sie trotzdem.",
+        "Das war der Moment, in dem sich alles änderte.\nIch hörte auf, nach einer weiteren Technik zu suchen.\nStattdessen begann ich, den Prozess selbst zu untersuchen.",
+        "Mein Hintergrund in Methodologie brachte mir bei, nach Struktur zu suchen statt nach schnellen Antworten. Ich begann zu kartieren, was unter der Oberfläche geschah — wie sich emotionale Reaktionen bildeten, warum sie sich wiederholten und was half, Raum für etwas anderes zu schaffen.",
+        "Langsam begann ein Rahmenwerk Gestalt anzunehmen.\nNicht dafür, jemand anderes zu werden.\nSondern dafür, mich selbst anders zu verstehen."
       ]
     },
     "methodology": {
-      "heading": "A methodology built on established knowledge",
+      "heading": "Eine Methodologie, die auf etabliertem Wissen aufbaut",
       "paragraphs": [
-        "The Journey wasn't built around a single technique.\nIt brings together well-established ideas from psychology, emotional learning and evidence-informed approaches to self-reflection into one structured methodology.",
-        "The principles behind the method are not new.\nMany have been explored, studied and used for years across psychology, psychotherapy and behavioural science.",
-        "I didn't invent psychology.\nI didn't invent emotional learning.\nI didn't invent the science behind how people learn, adapt or develop emotional responses.",
-        "What I did was something different.\nAs a methodologist, I brought together established ideas from different disciplines and organised them into one clear, structured methodology that people can follow independently.",
-        "I wanted to create a practical framework that helps people move beyond simply understanding their patterns intellectually and begin exploring the emotional responses that continue to shape everyday life."
+        "„Die Reise“ wurde nicht um eine einzige Technik herum gebaut.\nSie führt gut etablierte Ideen aus Psychologie, emotionalem Lernen und evidenzinformierten Ansätzen zur Selbstreflexion in einer strukturierten Methodologie zusammen.",
+        "Die Prinzipien hinter der Methode sind nicht neu.\nViele davon werden seit Jahren in Psychologie, Psychotherapie und Verhaltenswissenschaft erforscht, studiert und angewendet.",
+        "Ich habe die Psychologie nicht erfunden.\nIch habe das emotionale Lernen nicht erfunden.\nIch habe nicht die Wissenschaft dahinter erfunden, wie Menschen lernen, sich anpassen oder emotionale Reaktionen entwickeln.",
+        "Was ich getan habe, war etwas anderes.\nAls Methodologin habe ich etablierte Ideen aus verschiedenen Disziplinen zusammengeführt und in einer klaren, strukturierten Methodologie organisiert, der Menschen eigenständig folgen können.",
+        "Ich wollte einen praktischen Rahmen erschaffen, der Menschen hilft, über das bloße intellektuelle Verstehen ihrer Muster hinauszugehen und die emotionalen Reaktionen zu erkunden, die den Alltag weiter prägen."
       ],
-      "pullQuote": "Because understanding creates choice. And choice is where meaningful change begins."
+      "pullQuote": "Denn Verstehen schafft Wahl. Und Wahl ist der Ort, an dem bedeutsame Veränderung beginnt."
     },
     "technology": {
-      "heading": "Why technology became part of the method",
+      "heading": "Warum Technologie Teil der Methode wurde",
       "paragraphs": [
-        "The Journey is not about AI.\nTechnology simply makes this work more accessible.\nIt allows a structured methodology to become a guided conversation — available whenever people need it.",
-        "Instead of facing a blank journal or wondering where to begin, people are guided through thoughtful questions, structured reflection and a clear process that helps them keep moving forward."
+        "„Die Reise“ dreht sich nicht um KI.\nTechnologie macht diese Arbeit einfach zugänglicher.\nSie erlaubt einer strukturierten Methodologie, zu einem geführten Gespräch zu werden — verfügbar dann, wann Menschen es brauchen.",
+        "Statt vor einem leeren Tagebuch zu sitzen oder sich zu fragen, wo man beginnen soll, werden Menschen durch durchdachte Fragen, strukturierte Reflexion und einen klaren Prozess geführt, der ihnen hilft, in Bewegung zu bleiben."
       ],
-      "pullQuote": "The method comes first. Technology supports the method. Never the other way around."
+      "pullQuote": "Die Methode kommt zuerst. Technologie unterstützt die Methode. Nie umgekehrt."
     },
     "whatItIs": {
-      "heading": "What The Journey is",
+      "heading": "Was „Die Reise“ ist",
       "paragraphs": [
-        "The Journey is a structured self-help and wellbeing methodology.\nIt combines guided reflection, emotional exploration and a clear step-by-step process designed to help people better understand the emotional responses behind their reactions.\nIt is built on established psychological concepts and organised into a practical framework for independent self-work.",
-        "It is not therapy.\nIt is not a medical device.\nIt does not diagnose or treat mental health conditions.",
-        "It offers something different.\nA place to pause.\nTo reflect.\nTo become curious.\nTo understand yourself with greater clarity and compassion."
+        "„Die Reise“ ist eine strukturierte Selbsthilfe- und Wohlbefindens-Methodologie.\nSie verbindet geführte Reflexion, emotionale Erkundung und einen klaren Schritt-für-Schritt-Prozess, der Menschen helfen soll, die emotionalen Reaktionen hinter ihren Verhaltensweisen besser zu verstehen.\nSie baut auf etablierten psychologischen Konzepten auf und ist in einen praktischen Rahmen für eigenständige Arbeit an sich selbst organisiert.",
+        "Sie ist keine Therapie.\nSie ist kein Medizinprodukt.\nSie diagnostiziert oder behandelt keine psychischen Erkrankungen.",
+        "Sie bietet etwas anderes.\nEinen Ort, um innezuhalten.\nUm zu reflektieren.\nUm neugierig zu werden.\nUm dich selbst mit größerer Klarheit und größerem Mitgefühl zu verstehen."
       ]
     },
     "discover": {
-      "heading": "What I hope people discover",
+      "heading": "Was ich hoffe, dass Menschen entdecken",
       "paragraphs": [
-        "I didn't create The Journey because I believed people needed fixing.\nI created it because I believe people deserve understanding.",
-        "When we understand ourselves more deeply, we stop fighting our own reactions.\nWe become less reactive.\nMore intentional.\nMore compassionate towards ourselves.",
-        "Not because we forced ourselves to change.\nBut because we finally understood what had been shaping our responses all along.",
-        "Change doesn't begin with becoming someone else.\nIt begins with understanding yourself differently.\nThat is the work of The Journey."
+        "Ich habe „Die Reise“ nicht erschaffen, weil ich glaubte, Menschen müssten repariert werden.\nIch habe sie erschaffen, weil ich glaube, dass Menschen Verständnis verdienen.",
+        "Wenn wir uns selbst tiefer verstehen, hören wir auf, gegen unsere eigenen Reaktionen zu kämpfen.\nWir werden weniger reaktiv.\nBewusster.\nMitfühlender mit uns selbst.",
+        "Nicht, weil wir uns zur Veränderung gezwungen haben.\nSondern weil wir endlich verstanden haben, was unsere Reaktionen die ganze Zeit geprägt hat.",
+        "Veränderung beginnt nicht damit, jemand anderes zu werden.\nSie beginnt damit, sich selbst anders zu verstehen.\nDas ist die Arbeit von „Die Reise“."
       ]
     },
     "welcome": {
-      "heading": "Welcome",
-      "body": "Whether you're beginning with a single conversation, exploring a specific challenge, or starting The Journey itself, you don't need to have everything figured out.\nYou only need one thing.\nA willingness to become curious about yourself.\nBecause every meaningful journey begins with curiosity.",
-      "button": "Start free"
+      "heading": "Willkommen",
+      "body": "Ob du mit einem einzigen Gespräch beginnst, eine bestimmte Herausforderung erkundest oder direkt in „Die Reise“ selbst startest — du musst nicht schon alles verstanden haben.\nDu brauchst nur eines.\nEine Bereitschaft, neugierig auf dich selbst zu werden.\nDenn jede bedeutsame Reise beginnt mit Neugier.",
+      "button": "Kostenlos starten"
     }
   },
   "Faq": {

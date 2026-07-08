@@ -215,118 +215,118 @@
   "Landing": {
     "signIn": "Accedi",
     "account": "Account",
-    "heroKicker": "Un punto di svolta. Un metodo.",
-    "heroTitle": "Una via di ritorno\na sé.",
-    "heroSubtitle": "A way back to yourself.",
+    "heroKicker": "Una moderna piattaforma di benessere per la comprensione emotiva di sé",
+    "heroTitle": "Perché continui a reagire in modi che non vuoi più?",
+    "heroSubtitle": "Sai già cosa dovresti fare.",
     "heroBody": [
-      "Lo sente, vero? Quella sensazione sommessa che qualcosa, dentro, non sia allineato.",
-      "Lei funziona. È capace. Ma sotto — c’è una confusione, una stanchezza, o un vuoto che non riesce a spiegare del tutto."
+      "Eppure le stesse reazioni continuano a ripresentarsi — nelle tue relazioni, nelle tue decisioni, nella tua fiducia e nel modo in cui ti tratti.",
+      "Questa piattaforma ti aiuta a esplorare le risposte emotive dietro questi schemi attraverso un metodo strutturato, basato su principi psicologici riconosciuti e sostenuto dalla tecnologia moderna."
     ],
-    "heroCta": "Iniziare",
-    "heroNote": "Inizia con un check-in di cinque minuti.",
-    "whatKicker": "Che cos’è",
-    "whatTitle": "Struttura, non consigli.",
+    "heroCta": "Inizia con un check-in gratuito di 5 minuti",
+    "heroNote": "Oppure prova MiniMind gratis — 50 messaggi, senza carta",
+    "whatKicker": "Che cos'è",
+    "whatTitle": "Un modo diverso di lavorare su di sé.",
     "whatNot": [
       "terapia",
-      "coaching",
-      "un servizio di crisi"
+      "diagnosi",
+      "servizio di crisi"
     ],
-    "notWord": "Né",
-    "whatClose": "It's where you go when insight isn't enough — and crisis isn't where you are.",
+    "notWord": "Non",
+    "whatClose": "Quando la sola comprensione non basta — e la crisi non è dove ti trovi.",
     "whoKicker": "Per chi è",
-    "whoTitle": "Disorientati dentro,\nfunzionanti fuori.",
+    "whoTitle": "Se ti risuona.",
     "whoScenarios": [
-      "Sentirsi persi o disconnessi pur sembrando andare tutto bene",
-      "Esaurimento emotivo dopo anni di responsabilità o di cura",
-      "Confusione identitaria dopo un divorzio, un trasferimento, il passare degli anni o un grande cambiamento di vita",
-      "Trascuratezza cronica di sé, abitudine a compiacere, mettere gli altri sempre prima",
-      "Dirsi: «Ho provato la terapia, i libri, il lavoro su di me — eppure manca ancora qualcosa»"
+      "Hai letto libri, tenuto un diario, riflettuto o lavorato su di te — eppure senti che qualcosa, sotto la superficie, non si è mosso.",
+      "Comprendi i tuoi schemi a livello intellettuale, ma continui a ritrovarti a ripeterli.",
+      "Continui a mettere gli altri al primo posto e fai fatica a scegliere te senza sentirti in colpa.",
+      "Sai cosa dovresti fare, ma la tua reazione emotiva arriva prima.",
+      "Funzioni, sei capace, vai avanti nella vita — ma senti una stanchezza che il riposo non riesce del tutto a placare."
     ],
-    "whoClose": "È per chi è emotivamente stabile, ma interiormente disorientato.",
+    "whoClose": "Non sei in crisi.\nSei pronto/a a comprenderti in modo diverso.",
     "safetyKicker": "Sicurezza",
-    "safetyTitle": "Lei mantiene il controllo.",
-    "safetyLead": "MindReset è costruito attorno alla sicurezza emotiva.",
+    "safetyTitle": "Il controllo resta a te.",
+    "safetyLead": "Questa piattaforma è costruita ponendo la sicurezza emotiva al centro.",
     "safetyItems": [
       "Nessuna diagnosi. Nessuna etichetta. Nessuna pressione.",
-      "Nessun lavoro profondo sul trauma se non lo sceglie Lei.",
-      "Può fermarsi, rallentare o interrompere in qualsiasi momento.",
-      "Se le Sue risposte fanno pensare a un disagio o a un’instabilità, il sistema si ferma con delicatezza e La indirizza a un sostegno professionale."
+      "Nessun lavoro profondo se non lo scegli tu.",
+      "Puoi fermarti, rallentare o interrompere in qualsiasi momento.",
+      "Se le tue risposte suggeriscono disagio o instabilità, il sistema si mette dolcemente in pausa e ti indirizza verso un supporto professionale."
     ],
-    "pathsKicker": "Cosa c’è dentro",
-    "pathsTitle": "Tre vie,\ntre profondità.",
+    "pathsKicker": "Cosa c'è dentro",
+    "pathsTitle": "Tre modi per iniziare.",
     "paths": [
       {
         "name": "MiniMind",
-        "kind": "Compagno quotidiano",
-        "body": "Un compagno di conversazione caldo, a cui tornare in qualsiasi momento. Check-in quotidiani, brevi pratiche di radicamento, un posto dove approdare quando qualcosa pesa. Apprende i Suoi schemi con dolcezza e propone un lavoro più profondo quando può aiutare.",
+        "kind": "Il tuo compagno emotivo quotidiano",
+        "body": "Uno spazio accogliente per fermarti, riflettere e pensare ad alta voce. Usa MiniMind per i check-in quotidiani, il supporto emotivo, spunti per ritrovare il tuo centro e per quei momenti in cui qualcosa pesa ma non sai da dove iniziare. È il modo più leggero di entrare nella piattaforma — e puoi iniziare gratis.",
         "price": "Da £14.99 / mese"
       },
       {
-        "name": "Stati e Temi",
-        "kind": "Moduli mirati",
-        "body": "Percorsi brevi e strutturati per momenti precisi. Gli Stati per il presente: ansia, disconnessione, vuoto interiore, intorpidimento. I Temi per gli schemi sottostanti: denaro e autostima, famiglia, corpo, vergogna, realizzazione di sé.",
-        "price": "£29–£59 a modulo"
+        "name": "Scegli il tuo punto di partenza",
+        "kind": "Punti d'ingresso mirati",
+        "body": "Inizia da ciò che hai in mente oggi. Denaro. Relazioni. Piacere agli altri. Fiducia. Ansia. Autostima. Famiglia. Il corpo. Vergogna. Ogni tema apre lo stesso metodo strutturato attraverso una porta che si adatta a dove sei ora.",
+        "price": "In arrivo"
       },
       {
         "name": "Il Cammino",
-        "kind": "Un rinnovamento in otto tappe",
-        "body": "Un percorso lento e sequenziale, dalla stabilizzazione fino a un nuovo senso di chi è Lei. Mesi di lavoro, al ritmo di ciò che il Suo sistema può sostenere. Pensato per lasciare andare credenze che non sono mai state Sue, ristabilire i confini, e ricordarsi di sé.",
-        "price": "From £55/month · or £599 for 1-year access"
+        "kind": "Il metodo completo",
+        "body": "Il livello più profondo del lavoro. Un processo strutturato e sequenziale, pensato per aiutarti a comprendere le risposte emotive dietro gli schemi che continui a ripetere. Otto tappe, al ritmo di ciò che riesci a sostenere — dal ritrovare il tuo centro a una percezione più chiara di chi sei ora.",
+        "price": "Da £55 / mese · oppure £599 per l'accesso di 1 anno"
       }
     ],
-    "methodKicker": "Inside The Journey",
-    "methodTitle": "Inside the slower work.",
+    "methodKicker": "Dentro «Il Cammino»",
+    "methodTitle": "Dentro il lavoro più profondo.",
     "methodBody": [
-      "The Journey is a months-long structured reset. Paced by what you can hold. A sequenced path through inner work, designed by a woman who built it from what she lived.",
-      "We start by helping you find ground. We look at what's been hurting, gently, without forcing anything. We strengthen the part of you that can hold the smaller, hurt parts — and meet them with safe distance, with curiosity. We separate what's actually yours from what was placed in you. And we build a clearer sense of who you are now — letting it land in the way you actually live.",
-      "There's no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work.",
-      "There is no diagnosis. No labels. No pressure to feel anything in particular. The method does the holding so you can do the work."
+      "«Il Cammino» è il metodo centrale di MindReset.",
+      "È un percorso strutturato e sequenziale per chi è pronto a esplorare perché certe risposte emotive continuano a tornare — e cosa può averle formate all'origine.",
+      "Iniziamo aiutandoti a ritrovare il tuo centro. Poi guardiamo a ciò che ha fatto male, con delicatezza, senza forzare nulla. Il processo ti aiuta a incontrare le emozioni difficili con distanza, curiosità e struttura. Dà spazio per notare cosa ti appartiene ora, cosa può essere stato appreso nel tempo, e cosa non ha più bisogno di guidarti.",
+      "Nessuna diagnosi. Nessuna etichetta. Nessuna pressione di sentire qualcosa in particolare. Il metodo tiene lo spazio, così tu puoi fare il lavoro."
     ],
-    "differentKicker": "Perché MindReset è diverso",
-    "differentTitle": "Built for the work, not the noise.",
+    "differentKicker": "Perché ti sembrerà diverso",
+    "differentTitle": "Costruito per il lavoro che sta sotto la reazione.",
     "differentRows": [
       {
-        "headline": "Meditation isn't the answer when you don't know what you're feeling.",
-        "body": "The meditation apps quiet the noise. MindReset helps you understand what the noise was."
+        "headline": "La meditazione può placare il rumore.",
+        "body": "Qui, comprendi cos'era quel rumore."
       },
       {
-        "headline": "CBT scripts don't reach the pattern.",
-        "body": "The chatbots offer evidence-based exercises. MindReset works the pattern underneath, in sequence."
+        "headline": "Il diario può aiutarti a esprimere ciò che senti.",
+        "body": "Il metodo segue il sentimento fino alla risposta che sta sotto."
       },
       {
-        "headline": "Therapy is precious — and not always accessible.",
-        "body": "The meditation apps quiet the noise. The chatbots run through exercises. MindReset is self-help wellbeing built for women in midlife — MiniMind as your daily companion, and The Journey as the deeper, structured work when you're ready. Not a replacement for therapy. A different shape of work."
+        "headline": "I consigli ti dicono cosa fare.",
+        "body": "Questa piattaforma ti aiuta a comprendere perché è stato così difficile farlo."
       },
       {
-        "headline": "Most tools answer your questions.",
-        "body": "This platform moves you through them — with structure, sequence and emotional safety."
+        "headline": "La maggior parte degli strumenti risponde alle tue domande.",
+        "body": "Il nostro approccio ti conduce attraverso di esse — con struttura, sequenza e sicurezza emotiva."
       }
     ],
-    "differentClose": "Most AI tools answer questions.\nMindReset moves you through them.",
-    "closingKicker": "Quando si sente pronto",
-    "closingTitle": "Iniziare.",
-    "closingBody": "Non deve essere in pezzi per iniziare. Non deve sapere ciò che vuole. Il check-in Le dice — con delicatezza — se questo Le corrisponde in questo momento.",
-    "closingCta": "Iniziare il check-in",
-    "stickyTryFree": "Try MiniMind free — 50 messages, no card",
+    "differentClose": "",
+    "closingKicker": "Quando sarai pronto/a",
+    "closingTitle": "Inizia.",
+    "closingBody": "Non devi essere a pezzi per iniziare. Non devi sapere esattamente cosa vuoi. Il primo check-in ti aiuta a trovare il posto giusto da cui partire — con delicatezza, sicurezza e al tuo ritmo.",
+    "closingCta": "Inizia il check-in",
+    "stickyTryFree": "Prova MiniMind gratis — 50 messaggi, senza carta",
     "heroChip": "Prova gratuita · 50 messaggi · senza carta",
     "newsletter": {
-      "kicker": "RESTIAMO IN CONTATTO",
-      "title": "Non sei ancora pronta?",
-      "body": "Inviamo poche email — nuovi moduli, spunti gentili, qualche riflessione. Senza pressione.",
-      "emailPlaceholder": "tua@email.com",
+      "kicker": "RESTA IN CONTATTO",
+      "title": "Non sei ancora pronto/a?",
+      "body": "Inviamo aggiornamenti occasionali — nuovi moduli, spunti gentili e riflessioni sul lavoro emotivo su di sé. Nessuna pressione. Nessun rumore.",
+      "emailPlaceholder": "your@email.com",
       "consent": "Accetto di ricevere email occasionali. Posso disiscrivermi in qualsiasi momento.",
-      "submit": "Ricevi gli aggiornamenti",
+      "submit": "Ricevi aggiornamenti",
       "success": "Grazie. Ti scriveremo quando avremo qualcosa da condividere.",
-      "error": "Qualcosa è andato storto. Riprova."
+      "error": "Qualcosa è andato storto. Per favore riprova."
     },
     "whatBody": [
-      "This is not another place for generic advice. It is a structured self-help wellbeing platform designed to help you understand why certain reactions keep repeating — even when you already know better.",
-      "The work begins with emotional responses: the guilt, fear, shutdown, overthinking, pleasing, avoidance or pressure that appears before logic has time to speak. Instead of asking you to force a new behaviour, the method helps you explore what may be driving the old one."
+      "Questo non è un altro spazio per consigli generici. È una piattaforma di auto-aiuto e benessere strutturata, pensata per aiutarti a comprendere perché certe reazioni continuano a ripetersi — anche quando già sai come dovresti comportarti.",
+      "Il lavoro inizia dalle risposte emotive: il senso di colpa, la paura, il blocco, il rimuginio, il compiacere, l'evitamento o la pressione che compaiono prima che la logica abbia il tempo di parlare. Invece di chiederti di forzare un nuovo comportamento, il metodo ti aiuta a esplorare cosa potrebbe muovere quello vecchio."
     ],
-    "whatShortLine": "Structure, not advice.",
-    "safetyLine": "A self-help wellbeing tool. Not therapy, not diagnosis, not a crisis service.",
-    "pathsIntro": "You do not have to know where to start. Begin with a daily check-in, a specific challenge, or the complete Journey. Each path is designed to meet you where you are.",
-    "methodClose": "Understanding comes first. Everything else follows from there."
+    "whatShortLine": "Struttura, non consigli.",
+    "safetyLine": "Uno strumento di auto-aiuto per il benessere. Non è una terapia, non è una diagnosi, non è un servizio di crisi.",
+    "pathsIntro": "Non devi sapere da dove iniziare. Comincia con un check-in quotidiano, una sfida specifica, o «Il Cammino» completo. Ogni percorso è pensato per incontrarti dove sei.",
+    "methodClose": "Prima viene la comprensione. Tutto il resto segue da lì."
   },
   "MiniMind": {
     "opener": "Salve. È bello che Lei sia qui. Come si sente oggi?",
@@ -1030,67 +1030,67 @@
     "primaryNavAria": "Primary navigation"
   },
   "About": {
-    "metaTitle": "Il metodo — MindReset",
-    "metaDescription": "La storia dietro il metodo. Come un percorso personale di ritorno a sé stessa è diventato MindReset.",
+    "metaTitle": "Il progetto — MindReset",
+    "metaDescription": "Perché esiste «Il Cammino». Una metodologia strutturata di auto-aiuto e benessere, costruita su concetti psicologici riconosciuti.",
     "hero": {
-      "label": "Il metodo",
-      "title": "La storia dietro il metodo",
+      "label": "Il progetto",
+      "title": "Perché esiste «Il Cammino»",
       "opening": [
-        "Every meaningful piece of work begins with a question.\nMine was simple.",
-        "Why do intelligent, capable people keep repeating emotional reactions they no longer want?\nWhy do we stay in relationships that hurt us?\nWhy does saying \"no\" feel so difficult?\nWhy do we recognise our patterns, yet still find ourselves living them?",
-        "Over time, one thing became impossible to ignore.\nMany approaches helped me understand what I was experiencing.\nFar fewer helped me understand why I kept responding the same way.\nThat question became the beginning of The Journey."
+        "Ogni lavoro significativo inizia con una domanda.\nLa mia era semplice.",
+        "Perché persone intelligenti e capaci continuano a ripetere reazioni emotive che non vogliono più?\nPerché restiamo in relazioni che ci fanno male?\nPerché dire «no» sembra così difficile?\nPerché riconosciamo i nostri schemi, eppure ci ritroviamo ancora a viverli?",
+        "Con il tempo, una cosa è diventata impossibile da ignorare.\nMolti approcci mi hanno aiutata a comprendere cosa stavo vivendo.\nMolti meno mi hanno aiutata a comprendere perché continuavo a rispondere nello stesso modo.\nQuella domanda è diventata l'inizio di «Il Cammino»."
       ]
     },
     "search": {
       "paragraphs": [
-        "It didn't begin as a product.\nIt began as a search for understanding.",
-        "Like many people, I explored different ways of working on myself.\nSome gave me language.\nSome brought moments of clarity.\nSome offered comfort.\nAll of them taught me something.",
-        "But one question never left me.\nWhy did I still find myself returning to the same emotional reactions?\nI could explain my patterns.\nYet I was still living them.",
-        "That was the moment everything changed.\nI stopped searching for another technique.\nInstead, I began studying the process itself.",
-        "My background in methodology taught me to look for structure rather than quick answers. I began mapping what was happening beneath the surface — how emotional responses formed, why they repeated themselves, and what helped create space for something different.",
-        "Slowly, a framework began to emerge.\nNot for becoming someone else.\nBut for understanding myself differently."
+        "Non è nato come un prodotto.\nÈ nato come una ricerca di comprensione.",
+        "Come molte persone, ho esplorato modi diversi di lavorare su di me.\nAlcuni mi hanno dato un linguaggio.\nAlcuni hanno portato momenti di chiarezza.\nAlcuni hanno offerto conforto.\nTutti mi hanno insegnato qualcosa.",
+        "Ma una domanda non mi ha mai lasciata.\nPerché continuavo a tornare alle stesse reazioni emotive?\nPotevo spiegare i miei schemi.\nEppure li stavo ancora vivendo.",
+        "Quello è stato il momento in cui tutto è cambiato.\nHo smesso di cercare un'altra tecnica.\nHo invece iniziato a studiare il processo stesso.",
+        "La mia formazione in metodologia mi ha insegnato a cercare la struttura, più che risposte rapide. Ho iniziato a mappare cosa stava accadendo sotto la superficie — come si formavano le risposte emotive, perché si ripetevano, e cosa aiutava a creare spazio per qualcosa di diverso.",
+        "Lentamente, un quadro ha iniziato a emergere.\nNon per diventare qualcun altro.\nMa per comprendere me stessa in modo diverso."
       ]
     },
     "methodology": {
-      "heading": "A methodology built on established knowledge",
+      "heading": "Una metodologia costruita su conoscenze riconosciute",
       "paragraphs": [
-        "The Journey wasn't built around a single technique.\nIt brings together well-established ideas from psychology, emotional learning and evidence-informed approaches to self-reflection into one structured methodology.",
-        "The principles behind the method are not new.\nMany have been explored, studied and used for years across psychology, psychotherapy and behavioural science.",
-        "I didn't invent psychology.\nI didn't invent emotional learning.\nI didn't invent the science behind how people learn, adapt or develop emotional responses.",
-        "What I did was something different.\nAs a methodologist, I brought together established ideas from different disciplines and organised them into one clear, structured methodology that people can follow independently.",
-        "I wanted to create a practical framework that helps people move beyond simply understanding their patterns intellectually and begin exploring the emotional responses that continue to shape everyday life."
+        "«Il Cammino» non è stato costruito attorno a una singola tecnica.\nUnisce idee ben riconosciute della psicologia, dell'apprendimento emotivo e di approcci basati su evidenze all'auto-riflessione in un'unica metodologia strutturata.",
+        "I principi alla base del metodo non sono nuovi.\nMolti sono stati esplorati, studiati e utilizzati per anni nella psicologia, nella psicoterapia e nella scienza del comportamento.",
+        "Non ho inventato la psicologia.\nNon ho inventato l'apprendimento emotivo.\nNon ho inventato la scienza dietro il modo in cui le persone apprendono, si adattano o sviluppano risposte emotive.",
+        "Ciò che ho fatto è stato qualcosa di diverso.\nCome metodologa, ho unito idee riconosciute provenienti da discipline diverse e le ho organizzate in un'unica metodologia chiara e strutturata, che le persone possono seguire in modo autonomo.",
+        "Ho voluto creare un quadro pratico che aiuti le persone ad andare oltre la semplice comprensione intellettuale dei propri schemi e a iniziare a esplorare le risposte emotive che continuano a plasmare la vita quotidiana."
       ],
-      "pullQuote": "Because understanding creates choice. And choice is where meaningful change begins."
+      "pullQuote": "Perché la comprensione crea la scelta. E la scelta è il luogo in cui iniziano i cambiamenti che contano davvero."
     },
     "technology": {
-      "heading": "Why technology became part of the method",
+      "heading": "Perché la tecnologia è diventata parte del metodo",
       "paragraphs": [
-        "The Journey is not about AI.\nTechnology simply makes this work more accessible.\nIt allows a structured methodology to become a guided conversation — available whenever people need it.",
-        "Instead of facing a blank journal or wondering where to begin, people are guided through thoughtful questions, structured reflection and a clear process that helps them keep moving forward."
+        "«Il Cammino» non riguarda l'intelligenza artificiale.\nLa tecnologia semplicemente rende questo lavoro più accessibile.\nPermette a una metodologia strutturata di diventare una conversazione guidata — disponibile ogni volta che le persone ne hanno bisogno.",
+        "Invece di trovarsi davanti a un diario vuoto o di chiedersi da dove iniziare, le persone sono accompagnate attraverso domande pensate con cura, una riflessione strutturata e un processo chiaro che le aiuta a continuare ad andare avanti."
       ],
-      "pullQuote": "The method comes first. Technology supports the method. Never the other way around."
+      "pullQuote": "Prima viene il metodo. La tecnologia sostiene il metodo. Mai il contrario."
     },
     "whatItIs": {
-      "heading": "What The Journey is",
+      "heading": "Che cos'è «Il Cammino»",
       "paragraphs": [
-        "The Journey is a structured self-help and wellbeing methodology.\nIt combines guided reflection, emotional exploration and a clear step-by-step process designed to help people better understand the emotional responses behind their reactions.\nIt is built on established psychological concepts and organised into a practical framework for independent self-work.",
-        "It is not therapy.\nIt is not a medical device.\nIt does not diagnose or treat mental health conditions.",
-        "It offers something different.\nA place to pause.\nTo reflect.\nTo become curious.\nTo understand yourself with greater clarity and compassion."
+        "«Il Cammino» è una metodologia strutturata di auto-aiuto e benessere.\nUnisce riflessione guidata, esplorazione emotiva e un chiaro processo passo dopo passo, pensato per aiutare le persone a comprendere meglio le risposte emotive dietro le loro reazioni.\nÈ costruito su concetti psicologici riconosciuti e organizzato in un quadro pratico per un lavoro strutturato su di sé, da svolgere in autonomia.",
+        "Non è una terapia.\nNon è un dispositivo medico.\nNon diagnostica né tratta condizioni di salute mentale.",
+        "Offre qualcosa di diverso.\nUno spazio in cui fermarsi.\nRiflettere.\nDiventare curiosi.\nComprendersi con maggiore chiarezza e compassione."
       ]
     },
     "discover": {
-      "heading": "What I hope people discover",
+      "heading": "Cosa spero che le persone scoprano",
       "paragraphs": [
-        "I didn't create The Journey because I believed people needed fixing.\nI created it because I believe people deserve understanding.",
-        "When we understand ourselves more deeply, we stop fighting our own reactions.\nWe become less reactive.\nMore intentional.\nMore compassionate towards ourselves.",
-        "Not because we forced ourselves to change.\nBut because we finally understood what had been shaping our responses all along.",
-        "Change doesn't begin with becoming someone else.\nIt begins with understanding yourself differently.\nThat is the work of The Journey."
+        "Non ho creato «Il Cammino» perché credessi che le persone avessero bisogno di essere aggiustate.\nL'ho creato perché credo che le persone meritino comprensione.",
+        "Quando ci comprendiamo più profondamente, smettiamo di combattere le nostre reazioni.\nDiventiamo meno reattivi.\nPiù intenzionali.\nPiù compassionevoli verso noi stessi.",
+        "Non perché ci siamo costretti a cambiare.\nMa perché finalmente abbiamo compreso cosa aveva plasmato le nostre risposte fin dall'inizio.",
+        "Il cambiamento non inizia diventando qualcun altro.\nInizia comprendendo se stessi in modo diverso.\nÈ questo il lavoro di «Il Cammino»."
       ]
     },
     "welcome": {
-      "heading": "Welcome",
-      "body": "Whether you're beginning with a single conversation, exploring a specific challenge, or starting The Journey itself, you don't need to have everything figured out.\nYou only need one thing.\nA willingness to become curious about yourself.\nBecause every meaningful journey begins with curiosity.",
-      "button": "Start free"
+      "heading": "Benvenuto/a",
+      "body": "Che tu stia iniziando con una sola conversazione, esplorando una sfida specifica o cominciando «Il Cammino» stesso, non hai bisogno di avere tutto chiaro.\nTi serve solo una cosa.\nLa disponibilità a diventare curioso/a di te stesso/a.\nPerché ogni cammino significativo inizia con la curiosità.",
+      "button": "Inizia gratis"
     }
   },
   "Faq": {
