@@ -1030,67 +1030,67 @@
     "primaryNavAria": "Основная навигация"
   },
   "About": {
-    "metaTitle": "About — MindReset",
-    "metaDescription": "Why The Journey exists. A structured self-help and wellbeing methodology built on established psychological concepts.",
+    "metaTitle": "О проекте — MindReset",
+    "metaDescription": "Почему существует «Путь к себе». Структурированная методология самопомощи и эмоционального самопонимания, построенная на признанных психологических концепциях.",
     "hero": {
-      "label": "About",
-      "title": "Why The Journey exists",
+      "label": "О проекте",
+      "title": "Почему существует «Путь к себе»",
       "opening": [
-        "Every meaningful piece of work begins with a question.\nMine was simple.",
-        "Why do intelligent, capable people keep repeating emotional reactions they no longer want?\nWhy do we stay in relationships that hurt us?\nWhy does saying \"no\" feel so difficult?\nWhy do we recognise our patterns, yet still find ourselves living them?",
-        "Over time, one thing became impossible to ignore.\nMany approaches helped me understand what I was experiencing.\nFar fewer helped me understand why I kept responding the same way.\nThat question became the beginning of The Journey."
+        "Каждая значимая работа начинается с вопроса. Мой был простым.",
+        "Почему умные, способные люди продолжают повторять эмоциональные реакции, которых больше не хотят? Почему мы остаёмся в отношениях, которые причиняют боль? Почему сказать «нет» бывает так трудно? Почему мы узнаём свои сценарии, но всё равно продолжаем их проживать?",
+        "Со временем эти вопросы стало невозможно игнорировать. Многие подходы помогали мне понять, что я переживаю. Но гораздо меньше помогали понять, почему я снова и снова реагирую одинаково. Этот вопрос стал началом методики «Путь к себе»."
       ]
     },
     "search": {
       "paragraphs": [
-        "It didn't begin as a product.\nIt began as a search for understanding.",
-        "Like many people, I explored different ways of working on myself.\nSome gave me language.\nSome brought moments of clarity.\nSome offered comfort.\nAll of them taught me something.",
-        "But one question never left me.\nWhy did I still find myself returning to the same emotional reactions?\nI could explain my patterns.\nYet I was still living them.",
-        "That was the moment everything changed.\nI stopped searching for another technique.\nInstead, I began studying the process itself.",
-        "My background in methodology taught me to look for structure rather than quick answers. I began mapping what was happening beneath the surface — how emotional responses formed, why they repeated themselves, and what helped create space for something different.",
-        "Slowly, a framework began to emerge.\nNot for becoming someone else.\nBut for understanding myself differently."
+        "Мой метод изначально не был продуктом для самопомощи. Он зародился как поиск понимания себя.",
+        "Как и многие люди, я искала разные способы работать с собой. Что-то давало мне объяснение процессов. Что-то приносило моменты ясности. Что-то давало облегчение. И каждый опыт чему-то меня учил.",
+        "Но один вопрос не отпускал меня. Почему я всё равно возвращаюсь к тем же эмоциональным реакциям? Я могла объяснить свои сценарии. Но всё ещё продолжала их проживать.",
+        "Именно тогда всё изменилось. Я перестала искать очередную технику. Вместо этого я начала изучать сам процесс.",
+        "Мой опыт в методологии научил меня искать структуру, а не быстрые ответы. Я начала собирать карту того, что происходит под поверхностью: как формируются эмоциональные реакции, почему они повторяются и что помогает создать пространство для чего-то нового.",
+        "Постепенно начала складываться система трансформации личности. Не для того, чтобы стать кем-то другим. А для того, чтобы понять себя и свои действия иначе."
       ]
     },
     "methodology": {
-      "heading": "A methodology built on established knowledge",
+      "heading": "Методология, основанная на признанных знаниях",
       "paragraphs": [
-        "The Journey wasn't built around a single technique.\nIt brings together well-established ideas from psychology, emotional learning and evidence-informed approaches to self-reflection into one structured methodology.",
-        "The principles behind the method are not new.\nMany have been explored, studied and used for years across psychology, psychotherapy and behavioural science.",
-        "I didn't invent psychology.\nI didn't invent emotional learning.\nI didn't invent the science behind how people learn, adapt or develop emotional responses.",
-        "What I did was something different.\nAs a methodologist, I brought together established ideas from different disciplines and organised them into one clear, structured methodology that people can follow independently.",
-        "I wanted to create a practical framework that helps people move beyond simply understanding their patterns intellectually and begin exploring the emotional responses that continue to shape everyday life."
+        "«Путь к себе» не построен вокруг одной определенной техники. Он объединяет признанные идеи из психологии, эмоционального научения и доказательно ориентированных подходов к саморефлексии в одну структурированную методологию.",
+        "Принципы, лежащие в основе метода, не являются новыми. Многие из них годами изучались, применялись и развивались в психологии, психотерапии и поведенческих науках.",
+        "Я не изобретала психологию. Я не изобретала эмоциональное научение. Я не изобретала научные принципы того, как люди учатся, адаптируются и формируют эмоциональные реакции.",
+        "Я сделала другое. Как методолог, я объединила признанные идеи из разных дисциплин и организовала их в одну ясную, структурированную методологию, которой человек может следовать самостоятельно.",
+        "Я хотела создать практическую систему, которая помогает людям выйти за пределы интеллектуального понимания своих сценариев и начать исследовать эмоциональные реакции, которые продолжают формировать повседневную жизнь."
       ],
-      "pullQuote": "Because understanding creates choice. And choice is where meaningful change begins."
+      "pullQuote": "Понимание создаёт выбор. А выбор — это место, где начинаются настоящие изменения."
     },
     "technology": {
-      "heading": "Why technology became part of the method",
+      "heading": "Почему технология стала частью метода",
       "paragraphs": [
-        "The Journey is not about AI.\nTechnology simply makes this work more accessible.\nIt allows a structured methodology to become a guided conversation — available whenever people need it.",
-        "Instead of facing a blank journal or wondering where to begin, people are guided through thoughtful questions, structured reflection and a clear process that helps them keep moving forward."
+        "«Путь к себе» не про ИИ ассистента. Технология просто делает эту работу доступнее. Она позволяет структурированной методологии стать направляемым диалогом — доступным тогда, когда он нужен человеку.",
+        "Вместо пустой страницы дневника или растерянности перед вопросом, с чего начать, человек проходит через продуманные вопросы, структурированную рефлексию и ясный процесс, который помогает двигаться дальше."
       ],
-      "pullQuote": "The method comes first. Technology supports the method. Never the other way around."
+      "pullQuote": "Сначала метод. Технология поддерживает метод. Не наоборот."
     },
     "whatItIs": {
-      "heading": "What The Journey is",
+      "heading": "Что такое «Путь к себе»",
       "paragraphs": [
-        "The Journey is a structured self-help and wellbeing methodology.\nIt combines guided reflection, emotional exploration and a clear step-by-step process designed to help people better understand the emotional responses behind their reactions.\nIt is built on established psychological concepts and organised into a practical framework for independent self-work.",
-        "It is not therapy.\nIt is not a medical device.\nIt does not diagnose or treat mental health conditions.",
-        "It offers something different.\nA place to pause.\nTo reflect.\nTo become curious.\nTo understand yourself with greater clarity and compassion."
+        "«Путь к себе» — это структурированная методология самопомощи и эмоционального самопонимания. Она объединяет направляемую рефлексию, эмоциональное исследование и ясный пошаговый процесс, созданный для того, чтобы помочь людям лучше понять эмоциональные реакции, стоящие за их поведением. Метод построен на признанных психологических концепциях и организован в практическую систему для самостоятельной внутренней работы.",
+        "Это не терапия. Это не медицинское устройство. Это не ставит диагнозы и не лечит психические состояния.",
+        "Это предлагает другое пространство. Место, где можно остановиться. Поразмышлять. Стать любопытнее к себе. Понять себя с большей ясностью и состраданием. Сделать выбор, изменить отношение к ситуации, выстроить новые эмоциональные реакции и начать жить по-новому. Вернуть себе себя, отбросив чужие установки и стереотипы."
       ]
     },
     "discover": {
-      "heading": "What I hope people discover",
+      "heading": "Что я хочу, чтобы люди открыли для себя",
       "paragraphs": [
-        "I didn't create The Journey because I believed people needed fixing.\nI created it because I believe people deserve understanding.",
-        "When we understand ourselves more deeply, we stop fighting our own reactions.\nWe become less reactive.\nMore intentional.\nMore compassionate towards ourselves.",
-        "Not because we forced ourselves to change.\nBut because we finally understood what had been shaping our responses all along.",
-        "Change doesn't begin with becoming someone else.\nIt begins with understanding yourself differently.\nThat is the work of The Journey."
+        "Я создала «Путь к себе» не потому, что верила, будто людей нужно исправлять. Я создала его потому, что верю: люди заслуживают понимания и знания своей идентичности.",
+        "Когда мы глубже понимаем себя, мы перестаём бороться с собственными реакциями. Мы становимся менее реактивными. Более осознанными. Более сострадательными к себе.",
+        "Не потому, что заставили себя измениться. А потому, что наконец поняли, что и кто всё это время формировало наши реакции.",
+        "Изменения начинаются не с попытки стать кем-то другим. Они начинаются с нового понимания себя. В этом и заключается работа «Путь к себе»."
       ]
     },
     "welcome": {
-      "heading": "Welcome",
-      "body": "Whether you're beginning with a single conversation, exploring a specific challenge, or starting The Journey itself, you don't need to have everything figured out.\nYou only need one thing.\nA willingness to become curious about yourself.\nBecause every meaningful journey begins with curiosity.",
-      "button": "Start free"
+      "heading": "Добро пожаловать",
+      "body": "Начинаешь ли ты с разговора, исследуешь конкретную тему или сразу хочешь начать «Путь к себе» — тебе не нужно заранее всё понимать. Нужна только одна вещь — готовность стать любопытнее к себе. Потому что каждый настоящий путь начинается с любопытства.",
+      "button": "Начать бесплатно"
     }
   },
   "Faq": {
