@@ -32,6 +32,10 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 
 // Locales with native-quality content (EN: Julia native, RU: Julia native).
 // The remaining 6 ship with English placeholder bundles until Phase 2.
+// Note: Landing + About namespaces are machine-translated (July 2026);
+// the other public namespaces (Pricing/Terms/Privacy/FAQ/ShareYourStory)
+// and all signed-in surfaces are still EN placeholder, so the "· en"
+// suffix stays for fr/de/es/it/pl/pt until translation coverage is full.
 const NATIVE_CONTENT_LOCALES: ReadonlySet<string> = new Set(['en', 'ru']);
 
 // Native-language self-names, displayed in the dropdown. Keep inline for
