@@ -180,6 +180,18 @@ function renderStateBlock(state: JourneyState): string {
     lines.push(
       `- This is a resumed session. Gently re-anchor before continuing into deeper work — check in with the user about what has moved since last time, and let them lead the depth of this session.`,
     );
+  } else if (
+    state.hoursSinceLastTurn !== null &&
+    state.hoursSinceLastTurn < 1
+  ) {
+    // PR β (2026-07-09). Live test showed the AI freelancing "session_open"
+    // rituals when the user sent a short input mid-session (e.g. "hey" 40s
+    // after the prior turn). The absence of a resume signal wasn't enough on
+    // its own — the model needed an explicit "this is a continuation" line
+    // to override its default reading of a bare greeting as a fresh open.
+    lines.push(
+      `- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.`,
+    );
   }
   if (state.stageJustAdvanced) {
     lines.push('');

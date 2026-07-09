@@ -89,24 +89,55 @@ describe('renderStateBlock — time awareness (Journey polish PR 1)', () => {
     const stateText = blocks[STATE_BLOCK_INDEX].text;
     expect(stateText).not.toContain('Last user turn');
     expect(stateText).not.toContain('resumed session');
+    // First-ever turn is NOT a continuation either — nothing to continue from.
+    expect(stateText).not.toContain('CONTINUATION');
   });
 
-  it('renders "just now" for a fresh turn within 30 minutes', () => {
+  it('renders "just now" for a fresh turn within 30 minutes AND the same-session continuation directive (PR β)', () => {
     const blocks = assembleSystemPromptBlocks(
       makeState({ hoursSinceLastTurn: 0.1, isSessionResume: false }),
     );
     const stateText = blocks[STATE_BLOCK_INDEX].text;
     expect(stateText).toContain('Last user turn: just now.');
     expect(stateText).not.toContain('resumed session');
+    // PR β continuation directive fires for <1h gap.
+    expect(stateText).toContain('CONTINUATION of the current session');
+    expect(stateText).toContain('Do NOT run a session-open ritual');
   });
 
-  it('renders "today" and no session-resume for a 2-hour gap', () => {
+  it('renders "today" and no session-resume for a 2-hour gap; also no continuation directive (>= 1h)', () => {
     const blocks = assembleSystemPromptBlocks(
       makeState({ hoursSinceLastTurn: 2, isSessionResume: false }),
     );
     const stateText = blocks[STATE_BLOCK_INDEX].text;
     expect(stateText).toContain('Last user turn: today.');
     expect(stateText).not.toContain('resumed session');
+    // Over 1h — beyond the "user might still be right there" window; no
+    // continuation directive. Neither a hard resume nor a hard continuation.
+    expect(stateText).not.toContain('CONTINUATION');
+  });
+
+  it('renders the continuation directive at exactly 0.99h and drops it at 1.0h', () => {
+    const under = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 0.99, isSessionResume: false }),
+    );
+    expect(under[STATE_BLOCK_INDEX].text).toContain('CONTINUATION');
+    const at = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 1.0, isSessionResume: false }),
+    );
+    expect(at[STATE_BLOCK_INDEX].text).not.toContain('CONTINUATION');
+  });
+
+  it('does NOT render the continuation directive when isSessionResume is true (resume directive wins)', () => {
+    // Belt-and-braces: even if hoursSinceLastTurn were somehow low but
+    // isSessionResume is true (shouldn't happen, but tests defend the
+    // branch), the resume directive should be the one that fires.
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ hoursSinceLastTurn: 0.1, isSessionResume: true }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('This is a resumed session');
+    expect(stateText).not.toContain('CONTINUATION');
   });
 
   it('renders "yesterday" and adds session-resume note for a >4h gap', () => {
