@@ -9,11 +9,19 @@ import type {
   PracticeFamily,
   PracticeRunStatus,
   CanonicalMove,
+  TherapeuticMode,
+  ModalityRejected,
+  CycleStatus,
+  NextBestMode,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
   MOVE_NONE,
   MAX_MOVES_PER_TURN,
+  THERAPEUTIC_MODES,
+  MODALITIES_REJECTED,
+  CYCLE_STATUSES,
+  NEXT_BEST_MODES,
 } from './schema';
 import type {
   JourneyChannel,
@@ -276,6 +284,29 @@ export function parseStateReport(raw: string | null): StateReport {
   const moves = parseMoveJustPerformed(obj.moveJustPerformed);
   if (moves) report.moveJustPerformed = moves;
 
+  // Therapeutic Sensitivity Layer — PR α (2026-07-09). Data collection
+  // only. Later PRs will use these fields for close-refusal, cycle
+  // continuity across sessions, and modality-rejection enforcement.
+  const tm = pickEnumOptional(obj.therapeuticMode, THERAPEUTIC_MODES as unknown as TherapeuticMode[]);
+  if (tm) report.therapeuticMode = tm;
+
+  if (typeof obj.channelShiftDetected === 'boolean') {
+    report.channelShiftDetected = obj.channelShiftDetected;
+  }
+
+  const modalities = parseModalityRejected(obj.modalityRejected);
+  if (modalities) report.modalityRejected = modalities;
+
+  const cs = pickEnumOptional(obj.cycleStatus, CYCLE_STATUSES as unknown as CycleStatus[]);
+  if (cs) report.cycleStatus = cs;
+
+  if (typeof obj.cycleCanClose === 'boolean') {
+    report.cycleCanClose = obj.cycleCanClose;
+  }
+
+  const nbm = pickEnumOptional(obj.nextBestMode, NEXT_BEST_MODES as unknown as NextBestMode[]);
+  if (nbm) report.nextBestMode = nbm;
+
   copyStringField(obj, 'continuityNote', report);
 
   return report;
@@ -363,6 +394,32 @@ function parsePracticeRun(v: unknown): PracticeRun | undefined {
 //   - Return undefined if the array is missing, not an array, empty, or
 //     contains no known IDs — the field is optional and absent means
 //     "AI didn't emit it this turn."
+// Therapeutic Sensitivity Layer — parse the modalityRejected array.
+// Julia's spec makes this a session-level record of what the user has
+// refused. Kept as an array (not single value) because a single turn can
+// carry multiple rejections ("no more body, no more breathing").
+// Returns undefined for missing / non-array / all-invalid inputs so the
+// field is simply absent from the parsed report — matches the pattern
+// used elsewhere in this file.
+export function parseModalityRejected(
+  v: unknown,
+): ModalityRejected[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const set = new Set<ModalityRejected>();
+  for (const item of v) {
+    if (typeof item !== 'string') continue;
+    if ((MODALITIES_REJECTED as readonly string[]).includes(item)) {
+      set.add(item as ModalityRejected);
+    }
+  }
+  if (set.size === 0) return undefined;
+  // 'none' is a signal of "no rejection" — if the AI emits it alongside
+  // other real values, the real values win. Same discipline as
+  // parseMoveJustPerformed's universal.none handling.
+  const real = Array.from(set).filter((v) => v !== 'none');
+  return real.length > 0 ? real : ['none'];
+}
+
 export function parseMoveJustPerformed(v: unknown): CanonicalMove[] | undefined {
   if (!Array.isArray(v)) return undefined;
   const knownInOrder: CanonicalMove[] = [];

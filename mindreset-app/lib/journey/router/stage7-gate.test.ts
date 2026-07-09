@@ -54,6 +54,10 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     stageJustAdvanced: false,
     hoursSinceLastTurn: null,
     isSessionResume: false,
+    hasOpenCycle: false,
+    openCycleDescription: null,
+    sessionRejectedModalities: [],
+    recentChannelShift: false,
     ...overrides,
   };
 }

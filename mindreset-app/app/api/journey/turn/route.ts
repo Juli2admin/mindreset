@@ -37,6 +37,11 @@ import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 import { checkJourneyRateLimit } from '@/lib/rateLimit';
 import { checkJourneyAccess, markFirstAccessAndIncrement } from '@/lib/journey/access';
+import {
+  createProcessorState,
+  ingestChunk,
+  finaliseStream,
+} from '@/lib/journey/streaming/reply-processor';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,9 +53,6 @@ const MAX_TOKENS = 1500;
 // 30-message history replay (no risk of one user blowing the prompt
 // budget). MiniMind enforces a similar cap.
 const MAX_USER_MESSAGE_CHARS = 4000;
-// Tag pair used by the assembler's output-format instruction; we strip
-// everything from STATE_REPORT_OPEN onward before streaming to the client.
-const STATE_REPORT_OPEN = '<state-report>';
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -210,12 +212,16 @@ export async function POST(request: NextRequest) {
     messages,
   });
 
-  // We stream the human-reply portion to the client; the state report stays
-  // server-side. We strip everything from the first <state-report> tag onward.
-  let buffer = '';
-  let truncatedAtOpen = false;
-  let displayedSoFar = 0;
-  let fullText = '';
+  // Streaming pipeline — PR α (2026-07-09) uses a dedicated state
+  // machine at lib/journey/streaming/reply-processor.ts. Two tags are
+  // stripped from what reaches the user:
+  //   - <assessment>...</assessment> — the Therapeutic Sensitivity Layer's
+  //     private clinical reasoning. Buffering until </assessment> adds
+  //     ~2-4s of first-byte delay when the AI emits an assessment; owner
+  //     accepted this trade-off to guarantee reasoning shapes the reply
+  //     rather than being a post-hoc rationalisation.
+  //   - <state-report>...</state-report> — pre-existing hidden JSON.
+  const processor = createProcessorState();
 
   const encoder = new TextEncoder();
 
@@ -227,35 +233,15 @@ export async function POST(request: NextRequest) {
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
           ) {
-            const delta = event.delta.text;
-            fullText += delta;
-            if (truncatedAtOpen) continue;
-            buffer += delta;
-            const idx = buffer.indexOf(STATE_REPORT_OPEN);
-            if (idx >= 0) {
-              // Stream up to the tag, then stop displaying.
-              const beforeTag = buffer.slice(0, idx);
-              const newDisplay = beforeTag.length - displayedSoFar;
-              if (newDisplay > 0) {
-                controller.enqueue(encoder.encode(beforeTag.slice(displayedSoFar)));
-                displayedSoFar = beforeTag.length;
-              }
-              truncatedAtOpen = true;
-            } else {
-              // Safe to stream the new delta — but keep the last ~20 chars
-              // buffered so we don't accidentally stream a partial open tag.
-              const safeUpTo = Math.max(0, buffer.length - STATE_REPORT_OPEN.length);
-              const toStream = buffer.slice(displayedSoFar, safeUpTo);
-              if (toStream.length > 0) {
-                controller.enqueue(encoder.encode(toStream));
-                displayedSoFar = safeUpTo;
-              }
+            const visible = ingestChunk(processor, event.delta.text);
+            if (visible.length > 0) {
+              controller.enqueue(encoder.encode(visible));
             }
           }
         }
-        // Stream is complete — if we never hit the open tag, flush the rest.
-        if (!truncatedAtOpen && displayedSoFar < buffer.length) {
-          controller.enqueue(encoder.encode(buffer.slice(displayedSoFar)));
+        const tail = finaliseStream(processor);
+        if (tail.length > 0) {
+          controller.enqueue(encoder.encode(tail));
         }
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
@@ -274,7 +260,7 @@ export async function POST(request: NextRequest) {
             stageAtTurn: state.currentStage,
             depthAtTurn: state.currentDepth,
             userMessage,
-            fullText,
+            fullText: processor.fullText,
             recentForVerifier: decryptedHistory.slice(0, -1),
           }),
         );

@@ -40,6 +40,10 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     stageJustAdvanced: false,
     hoursSinceLastTurn: null,
     isSessionResume: false,
+    hasOpenCycle: false,
+    openCycleDescription: null,
+    sessionRejectedModalities: [],
+    recentChannelShift: false,
     ...overrides,
   };
 }
@@ -393,6 +397,72 @@ describe('renderStateBlock — pattern staleness (Journey polish PR 6)', () => {
     expect(stateText).not.toContain('still_alive` — "words for still_alive" — last seen');
   });
 
+  it('renders context, days-ago, and reconfirmation together correctly (existing test)', () => {
+    // placeholder for correct chaining; the actual body is below (kept)
+    expect(true).toBe(true);
+  });
+});
+
+describe('renderStateBlock — Therapeutic Sensitivity Layer signals (PR α)', () => {
+  it('omits all sensitivity lines when no signals are present', () => {
+    const blocks = assembleSystemPromptBlocks(makeState({}));
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain('A THERAPEUTIC CYCLE IS OPEN');
+    expect(stateText).not.toContain('explicitly refused this session');
+    expect(stateText).not.toContain('Recent channel shift detected');
+  });
+
+  it('renders the open-cycle warning when hasOpenCycle is true', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        hasOpenCycle: true,
+        openCycleDescription: 'User in mid-somatic release, image not re-checked',
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('A THERAPEUTIC CYCLE IS OPEN');
+    expect(stateText).toContain('Do NOT close this session');
+    expect(stateText).toContain('cycleCanClose: true');
+    expect(stateText).toContain('User in mid-somatic release');
+  });
+
+  it('renders the rejected-modality list when set', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ sessionRejectedModalities: ['body', 'breathing'] }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Modalities the user has explicitly refused this session');
+    expect(stateText).toContain('body, breathing');
+    expect(stateText).toContain('Do NOT re-offer these');
+  });
+
+  it('renders the channel-shift signal when true', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ recentChannelShift: true }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Recent channel shift detected');
+    expect(stateText).toContain('in your <assessment> block');
+  });
+
+  it('renders all three signals together when the session has cycled hard', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        hasOpenCycle: true,
+        openCycleDescription: 'mother_hysterical_attack fear discharge in progress',
+        sessionRejectedModalities: ['grounding', 'breathing'],
+        recentChannelShift: true,
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('A THERAPEUTIC CYCLE IS OPEN');
+    expect(stateText).toContain('mother_hysterical_attack');
+    expect(stateText).toContain('grounding, breathing');
+    expect(stateText).toContain('Recent channel shift detected');
+  });
+});
+
+describe('renderStateBlock — pattern rendering with all context set', () => {
   it('renders context, days-ago, and reconfirmation together correctly', () => {
     const p = {
       id: 'p1',

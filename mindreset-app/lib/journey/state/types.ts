@@ -189,4 +189,25 @@ export type JourneyState = {
   //   turn — that's a start, not a resume.
   hoursSinceLastTurn: number | null;
   isSessionResume: boolean;
+
+  // Therapeutic Sensitivity Layer signals — PR α (2026-07-09). Derived
+  // in load.ts from the AI's own state reports across the current
+  // session. Rendered in the state block so the next turn can honour
+  // continuity (open cycles, refused modalities, channel shifts).
+  //
+  // hasOpenCycle: true if the most-recent cycleStatus in this session
+  //   was 'open' or 'closing'. The AI must NOT close a session while
+  //   this is true (see Sensitivity Layer §7 in journey-master.md).
+  // openCycleDescription: the clinicalRead from the turn where the
+  //   open cycle was last observed — brief narrative continuity.
+  // sessionRejectedModalities: modalities the user has explicitly
+  //   refused this session (accumulated from prior turns' modality-
+  //   Rejected arrays). The AI must not re-offer these.
+  // recentChannelShift: true if a channel shift was flagged in any of
+  //   the last 3 turns — the AI should track whether it's stabilised or
+  //   still moving.
+  hasOpenCycle: boolean;
+  openCycleDescription: string | null;
+  sessionRejectedModalities: import('../stateReport/schema').ModalityRejected[];
+  recentChannelShift: boolean;
 };

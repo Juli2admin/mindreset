@@ -188,6 +188,34 @@ function renderStateBlock(state: JourneyState): string {
     );
   }
 
+  // Therapeutic Sensitivity Layer — PR α (2026-07-09). Surface signals
+  // from the AI's own prior turns so this turn honours session-level
+  // continuity: open cycles must not be closed, refused modalities
+  // must not be re-offered, channel shifts must be tracked. These lines
+  // sit high in the state block because the AI's <assessment> block on
+  // this turn should read them before writing the reply.
+  if (state.hasOpenCycle) {
+    lines.push('');
+    lines.push(
+      `**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit \`cycleCanClose: true\` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.`,
+    );
+    if (state.openCycleDescription) {
+      lines.push(`  Context from the last open-cycle turn: "${state.openCycleDescription.slice(0, 240)}"`);
+    }
+  }
+  if (state.sessionRejectedModalities.length > 0) {
+    lines.push('');
+    lines.push(
+      `**Modalities the user has explicitly refused this session:** ${state.sessionRejectedModalities.join(', ')}. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm).`,
+    );
+  }
+  if (state.recentChannelShift) {
+    lines.push('');
+    lines.push(
+      `**Recent channel shift detected.** The user has moved between processing channels in the last few turns (e.g. imagery → somatic, cognitive → emotional). Assess in your <assessment> block whether the shift has stabilised or is still moving.`,
+    );
+  }
+
   if (state.anchorText) {
     lines.push('');
     lines.push(`**Personal Anchor (in user's exact words — never overwrite):**`);
