@@ -47,7 +47,12 @@ export const dynamic = 'force-dynamic';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 const HISTORY_LIMIT = 30;
-const MAX_TOKENS = 1500;
+// Raised from 1500 to 2500 in PR β (2026-07-09) after live test showed the
+// model was truncating optional state-report fields (moveJustPerformed,
+// patternsTouched, clinicalRead) on rich turns — reply + full state report
+// with the new Sensitivity Layer fields fits comfortably in 2500, and the
+// model still stops on its own long before the ceiling on light turns.
+const MAX_TOKENS = 2500;
 // Max characters in a single user message. ~4000 chars ≈ 1000 tokens —
 // keeps any one turn within reasonable bounds for cost AND for the
 // 30-message history replay (no risk of one user blowing the prompt
@@ -215,11 +220,12 @@ export async function POST(request: NextRequest) {
   // Streaming pipeline — PR α (2026-07-09) uses a dedicated state
   // machine at lib/journey/streaming/reply-processor.ts. Two tags are
   // stripped from what reaches the user:
-  //   - <assessment>...</assessment> — the Therapeutic Sensitivity Layer's
-  //     private clinical reasoning. Buffering until </assessment> adds
-  //     ~2-4s of first-byte delay when the AI emits an assessment; owner
-  //     accepted this trade-off to guarantee reasoning shapes the reply
-  //     rather than being a post-hoc rationalisation.
+  //   - <assessment>...</assessment> — retained as a defensive safety net.
+  //     PR α asked the AI to emit this block; PR β (2026-07-09) revised the
+  //     master prompt to drop the requirement because the buffering added
+  //     20–30s of first-byte delay in practice — too slow for the product.
+  //     Keeping the strip logic protects against any prompt-cache-serving
+  //     lag where the older instruction is still in effect.
   //   - <state-report>...</state-report> — pre-existing hidden JSON.
   const processor = createProcessorState();
 
