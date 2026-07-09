@@ -2,6 +2,8 @@
 // These describe the *decrypted* shape in memory; storage at rest is
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
+import type { ModalityRejected } from '../stateReport/schema';
+
 export type JourneyChannel =
   | 'visual'
   | 'kinesthetic'
@@ -208,6 +210,6 @@ export type JourneyState = {
   //   still moving.
   hasOpenCycle: boolean;
   openCycleDescription: string | null;
-  sessionRejectedModalities: import('../stateReport/schema').ModalityRejected[];
+  sessionRejectedModalities: ModalityRejected[];
   recentChannelShift: boolean;
 };

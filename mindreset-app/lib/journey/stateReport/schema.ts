@@ -368,6 +368,17 @@ export type StateReport = {
   cycleCanClose?: boolean;
   nextBestMode?: NextBestMode;
 
+  // The AI's internal clinical read of this turn — one or two sentences
+  // capturing the working hypothesis. Referenced by the master prompt
+  // and the sensitivity layer as a scratchpad for the reasoning that
+  // happens in the <assessment> block. The load-side signals
+  // (openCycleDescription, etc.) surface this on the next turn for
+  // narrative continuity across the current session.
+  //
+  // Distinct from continuityNote (which is a running cross-session
+  // formulation). clinicalRead is per-turn.
+  clinicalRead?: string;
+
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
 

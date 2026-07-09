@@ -3,7 +3,11 @@
 // no code enforcement yet.
 
 import { describe, expect, it } from 'vitest';
-import { parseStateReport, parseModalityRejected } from './parse';
+import {
+  parseStateReport,
+  parseModalityRejected,
+  splitReplyAndReport,
+} from './parse';
 import {
   THERAPEUTIC_MODES,
   MODALITIES_REJECTED,
@@ -180,6 +184,113 @@ describe('parseStateReport — nextBestMode', () => {
   });
 });
 
+describe('splitReplyAndReport — assessment block is stripped from humanReply', () => {
+  // The BLOCKING fix from the PR α code-review pass. splitReplyAndReport
+  // computes what gets persisted as the assistant message and rendered
+  // on every page reload. If the assessment block isn't stripped here,
+  // the AI's private clinical reasoning appears in the chat history on
+  // the next reload — a critical clinical safety violation.
+
+  it('strips the assessment block from humanReply when both blocks are present', () => {
+    const raw =
+      '<assessment>\nDominant process: somatic\nCycle: open\n</assessment>\n\n' +
+      'Warm reply to the user goes here.\n\n' +
+      '<state-report>{"intensity":5,"safetyFlag":"none","recommendedAction":"stay"}</state-report>';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Warm reply to the user goes here.');
+    expect(split.humanReply).not.toContain('Dominant process');
+    expect(split.humanReply).not.toContain('<assessment>');
+    expect(split.humanReply).not.toContain('</assessment>');
+    expect(split.rawStateReport).toBe(
+      '{"intensity":5,"safetyFlag":"none","recommendedAction":"stay"}',
+    );
+  });
+
+  it('strips the assessment block when no state-report follows', () => {
+    const raw =
+      '<assessment>reasoning</assessment>\n\nJust a reply, no state report.';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Just a reply, no state report.');
+    expect(split.humanReply).not.toContain('reasoning');
+    expect(split.rawStateReport).toBeNull();
+  });
+
+  it('returns empty humanReply when the assessment tag is opened but never closed', () => {
+    const raw =
+      '<assessment>\nEverything is private — no close tag was ever emitted.';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('');
+    expect(split.humanReply).not.toContain('private');
+    expect(split.rawStateReport).toBeNull();
+  });
+
+  it('preserves backwards compat when NO assessment block is present', () => {
+    const raw =
+      'Just a reply.\n\n<state-report>{"intensity":3,"safetyFlag":"none","recommendedAction":"stay"}</state-report>';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Just a reply.');
+    expect(split.rawStateReport).toContain('intensity');
+  });
+
+  it('strips assessment even when the reply contains angle brackets', () => {
+    const raw =
+      '<assessment>private</assessment>\n\nReply with <em>emphasis</em> here.';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Reply with <em>emphasis</em> here.');
+  });
+});
+
+describe('parseStateReport — clinicalRead', () => {
+  it('parses clinicalRead when present', () => {
+    const r = parseStateReport(
+      JSON.stringify({
+        intensity: 4,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        clinicalRead: 'User in mid-somatic release, image not re-checked.',
+      }),
+    );
+    expect(r.clinicalRead).toBe(
+      'User in mid-somatic release, image not re-checked.',
+    );
+  });
+
+  it('omits clinicalRead when absent', () => {
+    const r = parseStateReport(
+      JSON.stringify({
+        intensity: 4,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+      }),
+    );
+    expect(r.clinicalRead).toBeUndefined();
+  });
+
+  it('omits clinicalRead when empty string', () => {
+    const r = parseStateReport(
+      JSON.stringify({
+        intensity: 4,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        clinicalRead: '',
+      }),
+    );
+    expect(r.clinicalRead).toBeUndefined();
+  });
+
+  it('drops non-string clinicalRead', () => {
+    const r = parseStateReport(
+      JSON.stringify({
+        intensity: 4,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        clinicalRead: 42,
+      }),
+    );
+    expect(r.clinicalRead).toBeUndefined();
+  });
+});
+
 describe('parseStateReport — full integration example', () => {
   it('parses all sensitivity fields from a well-formed state report', () => {
     const r = parseStateReport(
@@ -203,6 +314,9 @@ describe('parseStateReport — full integration example', () => {
     expect(r.cycleStatus).toBe('open');
     expect(r.cycleCanClose).toBe(false);
     expect(r.nextBestMode).toBe('allow_discharge');
+    expect(r.clinicalRead).toBe(
+      'User shifted from imagery to somatic activation. Cycle open — do not close.',
+    );
   });
 
   it('leaves all fields undefined when the AI omits them (backwards compat)', () => {

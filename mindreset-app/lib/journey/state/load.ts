@@ -305,6 +305,105 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
  * carry across session boundaries. The AI reads the resume flag and
  * decides whether to re-open the material.
  */
+/**
+ * Pure derivation of sensitivity signals from a list of already-decoded
+ * turn state reports (newest first). Exported for exhaustive unit
+ * testing of the walk-back + edge cases (empty rows, single row, exact
+ * boundary equality, isSessionResume, missing reports).
+ *
+ * `nowMs` is injected for determinism in tests.
+ */
+export type SensitivityInputRow = {
+  createdAtMs: number;
+  report: StateReportForSensitivity | null;
+};
+
+// Narrower shape of the state report — only the fields sensitivity
+// derivation reads. Keeps the pure helper decoupled from the full
+// StateReport type shape.
+export type StateReportForSensitivity = {
+  cycleStatus?: 'open' | 'closing' | 'closed';
+  clinicalRead?: string;
+  modalityRejected?: ModalityRejected[];
+  channelShiftDetected?: boolean;
+};
+
+export function deriveSensitivitySignals(
+  rows: SensitivityInputRow[],
+  isSessionResume: boolean,
+  nowMs: number,
+): {
+  hasOpenCycle: boolean;
+  openCycleDescription: string | null;
+  sessionRejectedModalities: ModalityRejected[];
+  recentChannelShift: boolean;
+} {
+  const emptyResult = {
+    hasOpenCycle: false,
+    openCycleDescription: null as string | null,
+    sessionRejectedModalities: [] as ModalityRejected[],
+    recentChannelShift: false,
+  };
+  if (rows.length === 0) return emptyResult;
+
+  // If this turn IS a session resume, the previous session's cycle is
+  // treated as implicitly closed. The AI decides whether to re-open
+  // anything on the fresh session.
+  if (isSessionResume) return emptyResult;
+
+  // Walk backwards from most-recent (rows are already newest-first),
+  // stopping at the first row that would sit BEFORE a session boundary
+  // relative to the row that follows it in the walk. Boundary rule
+  // matches the same >=SESSION_BOUNDARY_MS threshold used everywhere
+  // else in the codebase.
+  const currentSessionRows: SensitivityInputRow[] = [];
+  let prevMs = nowMs;
+  for (const row of rows) {
+    if (prevMs - row.createdAtMs >= SESSION_BOUNDARY_MS) break;
+    currentSessionRows.push(row);
+    prevMs = row.createdAtMs;
+  }
+
+  let hasOpenCycle = false;
+  let openCycleDescription: string | null = null;
+  // The FIRST row with any cycleStatus (newest-first walk) is
+  // authoritative — a subsequent 'closed' from a newer turn overrides
+  // an older 'open'. This flag tracks whether we've resolved cycle
+  // status at all yet, so older statuses can't override newer ones.
+  let cycleStatusResolved = false;
+  const rejectedSet = new Set<ModalityRejected>();
+  let recentChannelShift = false;
+  let shiftScanCount = 0;
+
+  for (const row of currentSessionRows) {
+    if (!row.report) continue;
+    const r = row.report;
+    if (!cycleStatusResolved && r.cycleStatus) {
+      cycleStatusResolved = true;
+      if (r.cycleStatus === 'open' || r.cycleStatus === 'closing') {
+        hasOpenCycle = true;
+        openCycleDescription = r.clinicalRead ?? null;
+      }
+    }
+    if (r.modalityRejected) {
+      for (const m of r.modalityRejected) {
+        if (m !== 'none') rejectedSet.add(m);
+      }
+    }
+    if (shiftScanCount < 3 && r.channelShiftDetected === true) {
+      recentChannelShift = true;
+    }
+    shiftScanCount++;
+  }
+
+  return {
+    hasOpenCycle,
+    openCycleDescription,
+    sessionRejectedModalities: Array.from(rejectedSet),
+    recentChannelShift,
+  };
+}
+
 async function loadRecentSensitivitySignals(
   userId: string,
   isSessionResume: boolean,
@@ -320,66 +419,23 @@ async function loadRecentSensitivitySignals(
     take: 10,
     select: { createdAt: true, stateReportEncrypted: true },
   });
-  if (rows.length === 0) {
-    return {
-      hasOpenCycle: false,
-      openCycleDescription: null,
-      sessionRejectedModalities: [],
-      recentChannelShift: false,
-    };
-  }
-  // Walk backwards from most-recent, stopping at the first session
-  // boundary (>=4h gap since the previous row). Everything inside that
-  // range is "the current session."
-  const nowMs = Date.now();
-  const currentSessionRows: typeof rows = [];
-  let prevMs = nowMs;
-  for (const row of rows) {
-    const rowMs = row.createdAt.getTime();
-    if (prevMs - rowMs >= SESSION_BOUNDARY_MS) break;
-    currentSessionRows.push(row);
-    prevMs = rowMs;
-  }
-  // If the current turn IS a session resume, treat this session as
-  // empty — the AI decides whether to reopen anything.
-  const scanRows = isSessionResume ? [] : currentSessionRows;
-
-  let hasOpenCycle = false;
-  let openCycleDescription: string | null = null;
-  const rejectedSet = new Set<ModalityRejected>();
-  let recentChannelShift = false;
-  let shiftScanCount = 0;
-
-  for (const row of scanRows) {
-    if (!row.stateReportEncrypted) continue;
-    let report;
-    try {
-      report = parseStateReport(decrypt(row.stateReportEncrypted));
-    } catch {
-      continue;
-    }
-    // Most-recent cycleStatus wins (scanRows is newest-first).
-    if (!hasOpenCycle && report.cycleStatus) {
-      if (report.cycleStatus === 'open' || report.cycleStatus === 'closing') {
-        hasOpenCycle = true;
-        openCycleDescription = report.clinicalRead ?? null;
+  const inputRows: SensitivityInputRow[] = rows.map((row) => {
+    let report: StateReportForSensitivity | null = null;
+    if (row.stateReportEncrypted) {
+      try {
+        const full = parseStateReport(decrypt(row.stateReportEncrypted));
+        report = {
+          cycleStatus: full.cycleStatus,
+          clinicalRead: full.clinicalRead,
+          modalityRejected: full.modalityRejected,
+          channelShiftDetected: full.channelShiftDetected,
+        };
+      } catch {
+        // decrypt / parse failure — leave null so the pure helper
+        // treats the row as unusable.
       }
     }
-    if (report.modalityRejected) {
-      for (const m of report.modalityRejected) {
-        if (m !== 'none') rejectedSet.add(m);
-      }
-    }
-    if (shiftScanCount < 3 && report.channelShiftDetected === true) {
-      recentChannelShift = true;
-    }
-    shiftScanCount++;
-  }
-
-  return {
-    hasOpenCycle,
-    openCycleDescription,
-    sessionRejectedModalities: Array.from(rejectedSet),
-    recentChannelShift,
-  };
+    return { createdAtMs: row.createdAt.getTime(), report };
+  });
+  return deriveSensitivitySignals(inputRows, isSessionResume, Date.now());
 }

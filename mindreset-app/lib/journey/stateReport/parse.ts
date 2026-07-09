@@ -33,6 +33,14 @@ import type {
 
 const STATE_REPORT_OPEN = '<state-report>';
 const STATE_REPORT_CLOSE = '</state-report>';
+// Therapeutic Sensitivity Layer — PR α (2026-07-09). The AI's clinical
+// reasoning lives in an <assessment>...</assessment> block that
+// immediately precedes the reply. It MUST NEVER reach the user, not on
+// the live stream (handled by lib/journey/streaming/reply-processor.ts)
+// and not on page reload from the persisted message (handled here in
+// splitReplyAndReport).
+const ASSESSMENT_OPEN = '<assessment>';
+const ASSESSMENT_CLOSE = '</assessment>';
 
 const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
@@ -73,17 +81,41 @@ export type SplitReply = {
 };
 
 export function splitReplyAndReport(fullReply: string): SplitReply {
-  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
+  // Skip past <assessment>...</assessment> if present (PR α, 2026-07-09).
+  // The block is private clinical reasoning; it must never appear in
+  // humanReply, which is persisted as the assistant JourneyMessage and
+  // rendered from history on every page reload. The streaming processor
+  // strips it from the live stream, but that only handles what the user
+  // sees NOW — not what a future reload would render.
+  let bodyStart = 0;
+  const assessmentOpen = fullReply.indexOf(ASSESSMENT_OPEN);
+  if (assessmentOpen >= 0) {
+    const assessmentClose = fullReply.indexOf(ASSESSMENT_CLOSE, assessmentOpen);
+    if (assessmentClose < 0) {
+      // Unclosed assessment tag — treat everything up to now as private.
+      // Matches the streaming processor's defensive behaviour and never
+      // leaks the reasoning even in the malformed case.
+      return { humanReply: '', rawStateReport: null };
+    }
+    bodyStart = assessmentClose + ASSESSMENT_CLOSE.length;
+  }
+
+  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN, bodyStart);
   if (openIdx < 0) {
-    return { humanReply: fullReply.trim(), rawStateReport: null };
+    return {
+      humanReply: fullReply.slice(bodyStart).trim(),
+      rawStateReport: null,
+    };
   }
   const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
-  const human = fullReply.slice(0, openIdx).trim();
+  const human = fullReply.slice(bodyStart, openIdx).trim();
   if (closeIdx < 0) {
     // Open tag found but no close — strip from human reply, treat report as missing.
     return { humanReply: human, rawStateReport: null };
   }
-  const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
+  const raw = fullReply
+    .slice(openIdx + STATE_REPORT_OPEN.length, closeIdx)
+    .trim();
   return { humanReply: human, rawStateReport: raw };
 }
 
@@ -306,6 +338,11 @@ export function parseStateReport(raw: string | null): StateReport {
 
   const nbm = pickEnumOptional(obj.nextBestMode, NEXT_BEST_MODES as unknown as NextBestMode[]);
   if (nbm) report.nextBestMode = nbm;
+
+  // Per-turn clinical scratchpad. Referenced by the sensitivity layer
+  // and the master prompt as the AI's working hypothesis for this turn.
+  // Distinct from continuityNote (which is cross-session).
+  copyStringField(obj, 'clinicalRead', report);
 
   copyStringField(obj, 'continuityNote', report);
 
