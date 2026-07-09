@@ -3,6 +3,8 @@
 
 import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
+import { parseStateReport } from '../stateReport/parse';
+import type { ModalityRejected } from '../stateReport/schema';
 import type {
   JourneyState,
   JourneyChannel,
@@ -232,6 +234,17 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
 
   const continuity = deriveContinuitySignals(progress.currentStage, recentTurns);
 
+  // Therapeutic Sensitivity Layer — PR α (2026-07-09). Derive session-
+  // level signals from the AI's own recent state reports so they can be
+  // rendered in the state block and shape the next reply. Cheap: same
+  // decrypt-per-turn cost the router already pays via loadRecentTurns.
+  // Bounded to the last 10 turns and to the CURRENT session — a cycle
+  // that closed at end of a previous session should not carry forward.
+  const sensitivity = await loadRecentSensitivitySignals(
+    userId,
+    continuity.isSessionResume,
+  );
+
   return {
     userId: progress.userId,
     currentStage: progress.currentStage,
@@ -264,5 +277,165 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     stageJustAdvanced: continuity.stageJustAdvanced,
     hoursSinceLastTurn: continuity.hoursSinceLastTurn,
     isSessionResume: continuity.isSessionResume,
+    hasOpenCycle: sensitivity.hasOpenCycle,
+    openCycleDescription: sensitivity.openCycleDescription,
+    sessionRejectedModalities: sensitivity.sessionRejectedModalities,
+    recentChannelShift: sensitivity.recentChannelShift,
   };
+}
+
+/**
+ * Load recent JourneyTurn state reports and derive the Therapeutic
+ * Sensitivity Layer session-level signals — PR α (2026-07-09).
+ *
+ * Signals returned:
+ *   - hasOpenCycle: true if the most-recent cycleStatus in the current
+ *     session was 'open' or 'closing' (not 'closed').
+ *   - openCycleDescription: the clinicalRead from the turn where the
+ *     open cycle was last observed. Passes narrative continuity across
+ *     turns without needing a separate persistent field.
+ *   - sessionRejectedModalities: accumulated modalityRejected values
+ *     across the current session's turns, deduplicated.
+ *   - recentChannelShift: true if any of the last 3 turns emitted
+ *     channelShiftDetected: true. Signal to the AI that channel drift
+ *     is in play.
+ *
+ * If this is a session resume (>=4h since last turn), we treat the
+ * PREVIOUS session's cycle as implicitly closed — open cycles do not
+ * carry across session boundaries. The AI reads the resume flag and
+ * decides whether to re-open the material.
+ */
+/**
+ * Pure derivation of sensitivity signals from a list of already-decoded
+ * turn state reports (newest first). Exported for exhaustive unit
+ * testing of the walk-back + edge cases (empty rows, single row, exact
+ * boundary equality, isSessionResume, missing reports).
+ *
+ * `nowMs` is injected for determinism in tests.
+ */
+export type SensitivityInputRow = {
+  createdAtMs: number;
+  report: StateReportForSensitivity | null;
+};
+
+// Narrower shape of the state report — only the fields sensitivity
+// derivation reads. Keeps the pure helper decoupled from the full
+// StateReport type shape.
+export type StateReportForSensitivity = {
+  cycleStatus?: 'open' | 'closing' | 'closed';
+  clinicalRead?: string;
+  modalityRejected?: ModalityRejected[];
+  channelShiftDetected?: boolean;
+};
+
+export function deriveSensitivitySignals(
+  rows: SensitivityInputRow[],
+  isSessionResume: boolean,
+  nowMs: number,
+): {
+  hasOpenCycle: boolean;
+  openCycleDescription: string | null;
+  sessionRejectedModalities: ModalityRejected[];
+  recentChannelShift: boolean;
+} {
+  const emptyResult = {
+    hasOpenCycle: false,
+    openCycleDescription: null as string | null,
+    sessionRejectedModalities: [] as ModalityRejected[],
+    recentChannelShift: false,
+  };
+  if (rows.length === 0) return emptyResult;
+
+  // If this turn IS a session resume, the previous session's cycle is
+  // treated as implicitly closed. The AI decides whether to re-open
+  // anything on the fresh session.
+  if (isSessionResume) return emptyResult;
+
+  // Walk backwards from most-recent (rows are already newest-first),
+  // stopping at the first row that would sit BEFORE a session boundary
+  // relative to the row that follows it in the walk. Boundary rule
+  // matches the same >=SESSION_BOUNDARY_MS threshold used everywhere
+  // else in the codebase.
+  const currentSessionRows: SensitivityInputRow[] = [];
+  let prevMs = nowMs;
+  for (const row of rows) {
+    if (prevMs - row.createdAtMs >= SESSION_BOUNDARY_MS) break;
+    currentSessionRows.push(row);
+    prevMs = row.createdAtMs;
+  }
+
+  let hasOpenCycle = false;
+  let openCycleDescription: string | null = null;
+  // The FIRST row with any cycleStatus (newest-first walk) is
+  // authoritative — a subsequent 'closed' from a newer turn overrides
+  // an older 'open'. This flag tracks whether we've resolved cycle
+  // status at all yet, so older statuses can't override newer ones.
+  let cycleStatusResolved = false;
+  const rejectedSet = new Set<ModalityRejected>();
+  let recentChannelShift = false;
+  let shiftScanCount = 0;
+
+  for (const row of currentSessionRows) {
+    if (!row.report) continue;
+    const r = row.report;
+    if (!cycleStatusResolved && r.cycleStatus) {
+      cycleStatusResolved = true;
+      if (r.cycleStatus === 'open' || r.cycleStatus === 'closing') {
+        hasOpenCycle = true;
+        openCycleDescription = r.clinicalRead ?? null;
+      }
+    }
+    if (r.modalityRejected) {
+      for (const m of r.modalityRejected) {
+        if (m !== 'none') rejectedSet.add(m);
+      }
+    }
+    if (shiftScanCount < 3 && r.channelShiftDetected === true) {
+      recentChannelShift = true;
+    }
+    shiftScanCount++;
+  }
+
+  return {
+    hasOpenCycle,
+    openCycleDescription,
+    sessionRejectedModalities: Array.from(rejectedSet),
+    recentChannelShift,
+  };
+}
+
+async function loadRecentSensitivitySignals(
+  userId: string,
+  isSessionResume: boolean,
+): Promise<{
+  hasOpenCycle: boolean;
+  openCycleDescription: string | null;
+  sessionRejectedModalities: ModalityRejected[];
+  recentChannelShift: boolean;
+}> {
+  const rows = await prisma.journeyTurn.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 10,
+    select: { createdAt: true, stateReportEncrypted: true },
+  });
+  const inputRows: SensitivityInputRow[] = rows.map((row) => {
+    let report: StateReportForSensitivity | null = null;
+    if (row.stateReportEncrypted) {
+      try {
+        const full = parseStateReport(decrypt(row.stateReportEncrypted));
+        report = {
+          cycleStatus: full.cycleStatus,
+          clinicalRead: full.clinicalRead,
+          modalityRejected: full.modalityRejected,
+          channelShiftDetected: full.channelShiftDetected,
+        };
+      } catch {
+        // decrypt / parse failure — leave null so the pure helper
+        // treats the row as unusable.
+      }
+    }
+    return { createdAtMs: row.createdAt.getTime(), report };
+  });
+  return deriveSensitivitySignals(inputRows, isSessionResume, Date.now());
 }

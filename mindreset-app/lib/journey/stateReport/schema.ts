@@ -87,6 +87,55 @@ export const CANONICAL_MOVES_SET: ReadonlySet<string> = new Set(CANONICAL_MOVES)
 export const MOVE_NONE: CanonicalMove = 'universal.none';
 export const MAX_MOVES_PER_TURN = 3;
 
+// Therapeutic Sensitivity Layer — PR α (2026-07-09).
+//
+// Structured fields the AI emits after silently reasoning through the 5
+// clinical questions in an <assessment>...</assessment> block that
+// precedes the reply. Data collection for now — no code enforcement in
+// this PR. Future PRs (β, γ) will use these fields to (a) surface open
+// cycles across sessions, (b) refuse close-adjacent replies when
+// cycleStatus is open + stabilityCheck.score < 6, (c) block repeated
+// use of a rejected modality.
+//
+// Enums intentionally match Julia's spec verbatim so we can trace
+// design decisions back to the source document.
+export const THERAPEUTIC_MODES = [
+  'imagery',
+  'somatic',
+  'emotional_discharge',
+  'cognitive',
+  'parts_work',
+  'integration',
+  'stabilisation',
+  'closure',
+] as const;
+export type TherapeuticMode = (typeof THERAPEUTIC_MODES)[number];
+
+export const MODALITIES_REJECTED = [
+  'body',
+  'imagery',
+  'breathing',
+  'grounding',
+  'none',
+] as const;
+export type ModalityRejected = (typeof MODALITIES_REJECTED)[number];
+
+export const CYCLE_STATUSES = ['open', 'closing', 'closed'] as const;
+export type CycleStatus = (typeof CYCLE_STATUSES)[number];
+
+export const NEXT_BEST_MODES = [
+  'continue_imagery',
+  'switch_to_somatic',
+  'switch_to_imagery',
+  'use_narrative',
+  'use_compassion',
+  'allow_discharge',
+  'integrate',
+  'stabilise',
+  'close',
+] as const;
+export type NextBestMode = (typeof NEXT_BEST_MODES)[number];
+
 export type PracticeFamily =
   | 'regulation'
   | 'somatic'
@@ -289,6 +338,46 @@ export type StateReport = {
   // clinical-move IDs the AI performed this turn, primary first. See
   // CANONICAL_MOVES for the vocabulary. Router does NOT read this yet.
   moveJustPerformed?: CanonicalMove[];
+
+  // Therapeutic Sensitivity Layer — PR α (2026-07-09).
+  // The AI silently assesses these BEFORE writing its reply (enforced
+  // by the <assessment>...</assessment> block that must precede the
+  // reply text in the AI's output — see docs/journey/runtime/
+  // journey-master.md). Data collection only in this PR — future PRs
+  // will enforce protocol rules based on these fields.
+  //
+  // therapeuticMode: which of the 8 modes is dominant this turn.
+  // channelShiftDetected: true when the AI notices the user has moved
+  //   from one processing channel to another mid-session (e.g. imagery
+  //   → somatic). Distinct from `channel` which only reports the
+  //   current one, no history.
+  // modalityRejected: the user has EXPLICITLY refused these modalities
+  //   in the current session ("leave my body alone", "I can't
+  //   visualise"). Empty array (or omitted) if none rejected.
+  // cycleStatus: is a therapeutic work-cycle open, closing, or closed?
+  //   Load-bearing for the "do not close mid-cycle" enforcement in
+  //   later PRs.
+  // cycleCanClose: derived boolean the AI sets to false when any of
+  //   the six not-close conditions from the sensitivity layer hold.
+  // nextBestMode: the AI's recommendation for its own next turn's
+  //   intervention family. Advisory, not enforced.
+  therapeuticMode?: TherapeuticMode;
+  channelShiftDetected?: boolean;
+  modalityRejected?: ModalityRejected[];
+  cycleStatus?: CycleStatus;
+  cycleCanClose?: boolean;
+  nextBestMode?: NextBestMode;
+
+  // The AI's internal clinical read of this turn — one or two sentences
+  // capturing the working hypothesis. Referenced by the master prompt
+  // and the sensitivity layer as a scratchpad for the reasoning that
+  // happens in the <assessment> block. The load-side signals
+  // (openCycleDescription, etc.) surface this on the next turn for
+  // narrative continuity across the current session.
+  //
+  // Distinct from continuityNote (which is a running cross-session
+  // formulation). clinicalRead is per-turn.
+  clinicalRead?: string;
 
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself

@@ -9,11 +9,19 @@ import type {
   PracticeFamily,
   PracticeRunStatus,
   CanonicalMove,
+  TherapeuticMode,
+  ModalityRejected,
+  CycleStatus,
+  NextBestMode,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
   MOVE_NONE,
   MAX_MOVES_PER_TURN,
+  THERAPEUTIC_MODES,
+  MODALITIES_REJECTED,
+  CYCLE_STATUSES,
+  NEXT_BEST_MODES,
 } from './schema';
 import type {
   JourneyChannel,
@@ -25,6 +33,14 @@ import type {
 
 const STATE_REPORT_OPEN = '<state-report>';
 const STATE_REPORT_CLOSE = '</state-report>';
+// Therapeutic Sensitivity Layer — PR α (2026-07-09). The AI's clinical
+// reasoning lives in an <assessment>...</assessment> block that
+// immediately precedes the reply. It MUST NEVER reach the user, not on
+// the live stream (handled by lib/journey/streaming/reply-processor.ts)
+// and not on page reload from the persisted message (handled here in
+// splitReplyAndReport).
+const ASSESSMENT_OPEN = '<assessment>';
+const ASSESSMENT_CLOSE = '</assessment>';
 
 const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
@@ -65,17 +81,41 @@ export type SplitReply = {
 };
 
 export function splitReplyAndReport(fullReply: string): SplitReply {
-  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
+  // Skip past <assessment>...</assessment> if present (PR α, 2026-07-09).
+  // The block is private clinical reasoning; it must never appear in
+  // humanReply, which is persisted as the assistant JourneyMessage and
+  // rendered from history on every page reload. The streaming processor
+  // strips it from the live stream, but that only handles what the user
+  // sees NOW — not what a future reload would render.
+  let bodyStart = 0;
+  const assessmentOpen = fullReply.indexOf(ASSESSMENT_OPEN);
+  if (assessmentOpen >= 0) {
+    const assessmentClose = fullReply.indexOf(ASSESSMENT_CLOSE, assessmentOpen);
+    if (assessmentClose < 0) {
+      // Unclosed assessment tag — treat everything up to now as private.
+      // Matches the streaming processor's defensive behaviour and never
+      // leaks the reasoning even in the malformed case.
+      return { humanReply: '', rawStateReport: null };
+    }
+    bodyStart = assessmentClose + ASSESSMENT_CLOSE.length;
+  }
+
+  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN, bodyStart);
   if (openIdx < 0) {
-    return { humanReply: fullReply.trim(), rawStateReport: null };
+    return {
+      humanReply: fullReply.slice(bodyStart).trim(),
+      rawStateReport: null,
+    };
   }
   const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
-  const human = fullReply.slice(0, openIdx).trim();
+  const human = fullReply.slice(bodyStart, openIdx).trim();
   if (closeIdx < 0) {
     // Open tag found but no close — strip from human reply, treat report as missing.
     return { humanReply: human, rawStateReport: null };
   }
-  const raw = fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
+  const raw = fullReply
+    .slice(openIdx + STATE_REPORT_OPEN.length, closeIdx)
+    .trim();
   return { humanReply: human, rawStateReport: raw };
 }
 
@@ -276,6 +316,34 @@ export function parseStateReport(raw: string | null): StateReport {
   const moves = parseMoveJustPerformed(obj.moveJustPerformed);
   if (moves) report.moveJustPerformed = moves;
 
+  // Therapeutic Sensitivity Layer — PR α (2026-07-09). Data collection
+  // only. Later PRs will use these fields for close-refusal, cycle
+  // continuity across sessions, and modality-rejection enforcement.
+  const tm = pickEnumOptional(obj.therapeuticMode, THERAPEUTIC_MODES as unknown as TherapeuticMode[]);
+  if (tm) report.therapeuticMode = tm;
+
+  if (typeof obj.channelShiftDetected === 'boolean') {
+    report.channelShiftDetected = obj.channelShiftDetected;
+  }
+
+  const modalities = parseModalityRejected(obj.modalityRejected);
+  if (modalities) report.modalityRejected = modalities;
+
+  const cs = pickEnumOptional(obj.cycleStatus, CYCLE_STATUSES as unknown as CycleStatus[]);
+  if (cs) report.cycleStatus = cs;
+
+  if (typeof obj.cycleCanClose === 'boolean') {
+    report.cycleCanClose = obj.cycleCanClose;
+  }
+
+  const nbm = pickEnumOptional(obj.nextBestMode, NEXT_BEST_MODES as unknown as NextBestMode[]);
+  if (nbm) report.nextBestMode = nbm;
+
+  // Per-turn clinical scratchpad. Referenced by the sensitivity layer
+  // and the master prompt as the AI's working hypothesis for this turn.
+  // Distinct from continuityNote (which is cross-session).
+  copyStringField(obj, 'clinicalRead', report);
+
   copyStringField(obj, 'continuityNote', report);
 
   return report;
@@ -363,6 +431,32 @@ function parsePracticeRun(v: unknown): PracticeRun | undefined {
 //   - Return undefined if the array is missing, not an array, empty, or
 //     contains no known IDs — the field is optional and absent means
 //     "AI didn't emit it this turn."
+// Therapeutic Sensitivity Layer — parse the modalityRejected array.
+// Julia's spec makes this a session-level record of what the user has
+// refused. Kept as an array (not single value) because a single turn can
+// carry multiple rejections ("no more body, no more breathing").
+// Returns undefined for missing / non-array / all-invalid inputs so the
+// field is simply absent from the parsed report — matches the pattern
+// used elsewhere in this file.
+export function parseModalityRejected(
+  v: unknown,
+): ModalityRejected[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const set = new Set<ModalityRejected>();
+  for (const item of v) {
+    if (typeof item !== 'string') continue;
+    if ((MODALITIES_REJECTED as readonly string[]).includes(item)) {
+      set.add(item as ModalityRejected);
+    }
+  }
+  if (set.size === 0) return undefined;
+  // 'none' is a signal of "no rejection" — if the AI emits it alongside
+  // other real values, the real values win. Same discipline as
+  // parseMoveJustPerformed's universal.none handling.
+  const real = Array.from(set).filter((v) => v !== 'none');
+  return real.length > 0 ? real : ['none'];
+}
+
 export function parseMoveJustPerformed(v: unknown): CanonicalMove[] | undefined {
   if (!Array.isArray(v)) return undefined;
   const knownInOrder: CanonicalMove[] = [];
