@@ -42,6 +42,7 @@ import {
   ingestChunk,
   finaliseStream,
 } from '@/lib/journey/streaming/reply-processor';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 export const dynamic = 'force-dynamic';
 
@@ -255,6 +256,25 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode('\n\n[Connection interrupted. Please try again.]'));
       } finally {
         controller.close();
+        // AI-cost telemetry (PR δ, 2026-07-10). finalMessage() resolves
+        // once the SDK has seen message_stop; safe to await AFTER the
+        // for-await loop. Failure is non-fatal — telemetry loss must not
+        // break the user turn.
+        waitUntil(
+          stream
+            .finalMessage()
+            .then((msg) =>
+              recordAiUsage({
+                userId,
+                callSite: 'journey_turn',
+                model: msg.model ?? model,
+                usage: msg.usage,
+              }),
+            )
+            .catch((err) =>
+              console.error('[journey/turn] failed to record AI usage:', err),
+            ),
+        );
         // Background: parse + persist state report and assistant message.
         // The verifier classifies the user's most recent message in the
         // context of the prior turns. `decryptedHistory` includes that most
@@ -321,7 +341,9 @@ async function finaliseTurn(args: {
   // holding response. Their CURRENT reply has already gone out; that's the
   // trade-off documented in lib/journey/safety/verifier.ts.
   const [verifierResult] = await Promise.all([
-    runJourneyVerifier(args.userMessage, args.recentForVerifier),
+    runJourneyVerifier(args.userMessage, args.recentForVerifier, {
+      userId: args.userId,
+    }),
     applyStateReportToProgress(args.userId, report),
   ]);
 

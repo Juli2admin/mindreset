@@ -24,6 +24,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import type { SafetyEventType } from './keywords';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 const VERIFIER_MODEL = 'claude-haiku-4-5-20251001';
 const VERIFIER_MAX_TOKENS = 200;
@@ -440,6 +441,9 @@ export async function runVerifier(
   userMessage: string,
   recentMessages: { role: 'user' | 'assistant'; content: string }[],
   isCheckingCooldownLift: boolean,
+  // AI-usage attribution (PR δ, 2026-07-10). Optional so tests without
+  // a user context still work.
+  opts?: { userId?: string | null },
 ): Promise<VerifierResult> {
   if (!userMessage || typeof userMessage !== 'string') {
     return failClosedResult(isCheckingCooldownLift);
@@ -466,6 +470,14 @@ export async function runVerifier(
       },
       { signal: controller.signal },
     );
+
+    // Fire-and-forget AI-usage row. Deliberately not awaited.
+    recordAiUsage({
+      userId: opts?.userId ?? null,
+      callSite: 'verifier_minimind',
+      model: response.model ?? VERIFIER_MODEL,
+      usage: response.usage,
+    }).catch((err) => console.error('[verifier] usage record failed:', err));
 
     const textBlock = response.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {
