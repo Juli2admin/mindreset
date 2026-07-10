@@ -65,11 +65,19 @@ describe('emit_state_report tool — top-level shape', () => {
 });
 
 describe('emit_state_report tool — the three safety-critical required fields', () => {
-  it('intensity is an integer 0..10', () => {
+  it('intensity is an integer (0..10 enforced by the reader, not the schema)', () => {
+    // Anthropic strict tool use rejects minimum/maximum on integer types
+    // (confirmed by live smoke test 2026-07-10 with request_id
+    // req_011CctPR5V1jDGf4WztsKjJV). The range is enforced by the
+    // tool-reader via Math.max/Math.min clamping, and communicated to
+    // the model via the schema description.
     const s = schema.properties.intensity;
     expect(s.type).toBe('integer');
-    expect(s.minimum).toBe(0);
-    expect(s.maximum).toBe(10);
+    expect(s.minimum).toBeUndefined();
+    expect(s.maximum).toBeUndefined();
+    expect(typeof s.description).toBe('string');
+    expect(s.description).toContain('0');
+    expect(s.description).toContain('10');
   });
 
   it('safetyFlag enum matches parser exactly', () => {
@@ -104,17 +112,24 @@ describe('emit_state_report tool — PR γ required-on-substantive-turn fields',
     ]);
   });
 
-  it('clinicalRead is a non-empty string', () => {
+  it('clinicalRead is a string (non-empty enforced by reader, not schema)', () => {
+    // Anthropic strict tool use rejects string length constraints
+    // (minLength/maxLength). The reader treats empty strings as absent
+    // via the copyIf-string pattern.
     const s = schema.properties.clinicalRead;
     expect(s.type).toBe('string');
-    expect(s.minLength).toBe(1);
+    expect(s.minLength).toBeUndefined();
+    expect(s.maxLength).toBeUndefined();
   });
 
-  it('moveJustPerformed is a 1..3 array of canonical move IDs — enum equal to source-of-truth', () => {
+  it('moveJustPerformed is an array of canonical move IDs — enum equal to source-of-truth (1..3 cap enforced by reader, not schema)', () => {
+    // Anthropic strict tool use rejects minItems/maxItems on arrays. The
+    // reader caps at 3 via .slice(0, 3) and collapses `[universal.none,
+    // X, ...]` to `[universal.none]`.
     const s = schema.properties.moveJustPerformed;
     expect(s.type).toBe('array');
-    expect(s.minItems).toBe(1);
-    expect(s.maxItems).toBe(3);
+    expect(s.minItems).toBeUndefined();
+    expect(s.maxItems).toBeUndefined();
     expect(s.items.type).toBe('string');
     // Enum equality against the CANONICAL_MOVES source of truth — if any
     // stage moves are added/removed there, this test fails until the
@@ -254,13 +269,15 @@ describe('emit_state_report tool — partsTouched / foreignFilesTouched nested',
 });
 
 describe('emit_state_report tool — stability + landscape update shapes', () => {
-  it('stabilityCheck requires integer score 1..10', () => {
+  it('stabilityCheck requires integer score (1..10 enforced by reader, not schema)', () => {
+    // Anthropic strict tool use rejects integer minimum/maximum. Reader
+    // clamps the score to [1, 10].
     const s = schema.properties.stabilityCheck;
     expect(s.type).toBe('object');
     expect([...s.required]).toEqual(['score']);
     expect(s.properties.score.type).toBe('integer');
-    expect(s.properties.score.minimum).toBe(1);
-    expect(s.properties.score.maximum).toBe(10);
+    expect(s.properties.score.minimum).toBeUndefined();
+    expect(s.properties.score.maximum).toBeUndefined();
     expect(s.additionalProperties).toBe(false);
   });
 
