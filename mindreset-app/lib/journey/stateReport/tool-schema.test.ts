@@ -238,8 +238,12 @@ describe('emit_state_report tool — patternsTouched nested shape', () => {
     expect(pt().items.additionalProperties).toBe(false);
   });
 
-  it('allows optional context object', () => {
-    expect(pt().items.properties.context.type).toBe('object');
+  it('does NOT expose the free-form context field (strict tool use rejects open-shape objects)', () => {
+    // Anthropic strict tool use rejects any object schema without
+    // `additionalProperties: false`, which conflicts with the pre-PR-η
+    // parser's Record<string, unknown> context field. Reader still copies
+    // context through defensively for old DB rows.
+    expect(pt().items.properties.context).toBeUndefined();
   });
 });
 

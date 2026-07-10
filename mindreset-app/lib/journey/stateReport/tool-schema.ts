@@ -251,7 +251,17 @@ export const stateReportInputSchema = {
         properties: {
           category: { type: 'string' },
           description: { type: 'string' },
-          context: { type: 'object' },
+          // NOTE: pre-PR-η the parser accepted an optional free-form
+          // `context: Record<string, unknown>` here for extras like
+          // {trigger: "friend_not_testing_app", ageTag: 9}. Strict tool use
+          // rejects open-shape object schemas (every object requires
+          // additionalProperties: false), and we don't want to enumerate
+          // every possible context key at the tool layer. The tool-reader
+          // still copies `context` through defensively if it appears — so
+          // old DB rows with context still decode correctly — but the
+          // model can't emit it via a tool call. If typed context becomes
+          // useful we'll add specific fields (context_trigger,
+          // context_age_tag, ...) with proper types.
         },
         required: ['category', 'description'],
         additionalProperties: false,
