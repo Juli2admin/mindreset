@@ -41,6 +41,38 @@ const STATE_REPORT_CLOSE = '</state-report>';
 // splitReplyAndReport).
 const ASSESSMENT_OPEN = '<assessment>';
 const ASSESSMENT_CLOSE = '</assessment>';
+// PR ζ (2026-07-10) — `<thinking>` is Claude's default reasoning shape.
+// The model reached for it after PR γ tightened state-report requirements
+// and leaked private clinical reasoning into a real user's chat. Strip
+// identically to `<assessment>` from the persisted humanReply.
+const THINKING_OPEN = '<thinking>';
+const THINKING_CLOSE = '</thinking>';
+const PRIVATE_TAG_PAIRS: ReadonlyArray<{ open: string; close: string }> = [
+  { open: ASSESSMENT_OPEN, close: ASSESSMENT_CLOSE },
+  { open: THINKING_OPEN, close: THINKING_CLOSE },
+];
+
+// Iteratively strip every private-tag pair from a string. Handles multiple
+// occurrences of either tag anywhere in the input. On an unclosed tag
+// (open with no matching close), truncates everything from the open
+// onwards — safer to lose the tail than to leak reasoning that a future
+// page reload would render.
+function stripPrivateTags(text: string): string {
+  let result = text;
+  for (const pair of PRIVATE_TAG_PAIRS) {
+    while (true) {
+      const openIdx = result.indexOf(pair.open);
+      if (openIdx < 0) break;
+      const closeIdx = result.indexOf(pair.close, openIdx);
+      if (closeIdx < 0) {
+        result = result.slice(0, openIdx);
+        break;
+      }
+      result = result.slice(0, openIdx) + result.slice(closeIdx + pair.close.length);
+    }
+  }
+  return result;
+}
 
 const DEFENSIVE_DEFAULT: StateReport = {
   intensity: 5,
@@ -81,42 +113,32 @@ export type SplitReply = {
 };
 
 export function splitReplyAndReport(fullReply: string): SplitReply {
-  // Skip past <assessment>...</assessment> if present (PR α, 2026-07-09).
-  // The block is private clinical reasoning; it must never appear in
-  // humanReply, which is persisted as the assistant JourneyMessage and
+  // Cut at the state-report boundary first, then strip every private-tag
+  // pair from the human body. This handles:
+  //   - `<assessment>...</assessment>` at the start of the reply (PR α)
+  //   - `<thinking>...</thinking>` anywhere in the reply (PR ζ)
+  //   - Multiple occurrences of either
+  //   - Unclosed tags (truncate from the open — never leak)
+  // humanReply is what gets persisted as the assistant JourneyMessage and
   // rendered from history on every page reload. The streaming processor
-  // strips it from the live stream, but that only handles what the user
-  // sees NOW — not what a future reload would render.
-  let bodyStart = 0;
-  const assessmentOpen = fullReply.indexOf(ASSESSMENT_OPEN);
-  if (assessmentOpen >= 0) {
-    const assessmentClose = fullReply.indexOf(ASSESSMENT_CLOSE, assessmentOpen);
-    if (assessmentClose < 0) {
-      // Unclosed assessment tag — treat everything up to now as private.
-      // Matches the streaming processor's defensive behaviour and never
-      // leaks the reasoning even in the malformed case.
-      return { humanReply: '', rawStateReport: null };
-    }
-    bodyStart = assessmentClose + ASSESSMENT_CLOSE.length;
-  }
-
-  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN, bodyStart);
+  // strips these from the live stream too, but this layer is the one that
+  // matters for future reloads.
+  const openIdx = fullReply.indexOf(STATE_REPORT_OPEN);
+  let humanBody: string;
+  let rawStateReport: string | null;
   if (openIdx < 0) {
-    return {
-      humanReply: fullReply.slice(bodyStart).trim(),
-      rawStateReport: null,
-    };
+    humanBody = fullReply;
+    rawStateReport = null;
+  } else {
+    const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
+    humanBody = fullReply.slice(0, openIdx);
+    rawStateReport =
+      closeIdx < 0
+        ? null
+        : fullReply.slice(openIdx + STATE_REPORT_OPEN.length, closeIdx).trim();
   }
-  const closeIdx = fullReply.indexOf(STATE_REPORT_CLOSE, openIdx);
-  const human = fullReply.slice(bodyStart, openIdx).trim();
-  if (closeIdx < 0) {
-    // Open tag found but no close — strip from human reply, treat report as missing.
-    return { humanReply: human, rawStateReport: null };
-  }
-  const raw = fullReply
-    .slice(openIdx + STATE_REPORT_OPEN.length, closeIdx)
-    .trim();
-  return { humanReply: human, rawStateReport: raw };
+  const humanReply = stripPrivateTags(humanBody).trim();
+  return { humanReply, rawStateReport };
 }
 
 // ---------------------------------------------------------------------------
