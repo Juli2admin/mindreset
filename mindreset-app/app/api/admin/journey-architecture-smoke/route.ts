@@ -1,9 +1,13 @@
-// Admin-only smoke-test endpoint for PR η A-full architecture.
+// Admin-only smoke-test endpoint for PR η Option B architecture.
 //
 // Fires ONE real messages.stream() call to Sonnet 4-6 with the strict
-// emit_state_report tool + adaptive extended thinking. Returns the raw
-// diagnostic (streaming events counted, tool input, usage, timing) as JSON
-// for the admin page to render.
+// emit_state_report tool AND forced tool_choice. No extended thinking —
+// per the definitive Anthropic docs audit (2026-07-10), extended thinking
+// + forced tool_choice is explicitly forbidden. Option B trades the
+// architecture-level <thinking> leak guarantee for a hard, structural
+// guarantee that the model MUST emit the state report every turn (which
+// is the bigger clinical problem). The <thinking> leak class is defended
+// by the PR ζ string-strip which Step 3 restores.
 //
 // This does NOT touch the DB. It does NOT persist anything. One API call
 // per POST, ~$0.05. Locked behind currentUserIsAdmin so no rate limiting
@@ -46,16 +50,14 @@ export async function POST() {
   let leakDetected = false;
 
   try {
-    // The `thinking` parameter arrived after SDK 0.30.1's types were
-    // frozen — the wire format is stable, but TypeScript doesn't know
-    // about the key. Cast the whole config to `any` so the runtime call
-    // still ships the parameter to the API. If Anthropic's server rejects
-    // it, the smoke test will surface that as a clean exception rather
-    // than silently ignoring it.
+    // Option B configuration: no extended thinking, forced tool_choice.
+    // This is Anthropic's standard, well-documented tool-use pattern —
+    // low risk of undocumented edge cases. Guarantees the model MUST
+    // invoke emit_state_report on this turn, which structurally fixes
+    // the empty-state-report failure mode we've been chasing.
     const streamConfig: any = {
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      thinking: { type: 'enabled', budget_tokens: 2000 },
       tools: [emitStateReportToolDef],
       tool_choice: { type: 'tool', name: emitStateReportToolDef.name },
       system: SYSTEM,
@@ -104,7 +106,7 @@ export async function POST() {
       { label: 'Reply text streamed', value: `${visibleText.length} chars`, pass: visibleText.length > 0 },
       { label: 'Time to first byte', value: ttfbMs !== null ? `${ttfbMs} ms` : 'never arrived', pass: ttfbMs !== null && ttfbMs < 5000 },
       { label: 'Total stream duration', value: `${totalMs} ms`, pass: totalMs < 30000 },
-      { label: 'Extended thinking block seen', value: sawThinkingBlock ? 'yes' : 'no (adaptive may skip on simple prompts)', pass: true },
+      { label: 'Extended thinking block seen', value: sawThinkingBlock ? 'yes (unexpected — Option B has no thinking)' : 'no (expected — Option B disables thinking)', pass: !sawThinkingBlock },
       { label: 'Thinking chars streamed', value: String(thinkingChars), pass: true },
       { label: 'Tool call block seen', value: sawToolUseBlock ? 'yes' : 'NO', pass: sawToolUseBlock },
       { label: 'Tool input: intensity', value: toolInput?.intensity !== undefined ? String(toolInput.intensity) : 'missing', pass: toolInput?.intensity !== undefined },
