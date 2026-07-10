@@ -582,9 +582,12 @@ REQUIRED every turn:
 - `safetyFlag` — "none" | "watch" | "red_flag".
 - `recommendedAction` — "stay" | "advance" | "regress_to_grounding" | "regress_to_parts" | "red_flag" | "discharge". Default "stay". Code makes the final call; this is advisory.
 
+REQUIRED on every substantive turn (any turn where the user shares emotional content, a body signal, an image, a pattern, OR where you performed any clinical move — this is nearly every turn; the ONLY exceptions are pure connection-checks like "hi" / "ok" / "yes" where no clinical work happened):
+- `channel` — "visual" | "kinesthetic" | "emotional" | "cognitive" | "verbal" | "mixed". Do NOT leave null just because the user is complex; pick the dominant register or `mixed`.
+- `clinicalRead` — one or two sentences of your working clinical read (internal). What the turn was about, what you noticed shift or hold, what you did. Never surfaced to the user — use it.
+- `moveJustPerformed` — array of 1..3 canonical clinical-move IDs (vocabulary below). Even pure witnessing is a move (`universal.witness_and_reflect`). If truly nothing clinical happened, emit `["universal.none"]` explicitly — do not silently drop the field. The stage-advancement router reads this; leaving it null costs the user real progression.
+
 INCLUDE when applicable:
-- `channel` — "visual" | "kinesthetic" | "emotional" | "cognitive" | "verbal" | "mixed".
-- `clinicalRead` — one or two sentences of your working clinical read. Internal use only — never surfaced to the user. Use it.
 - `adultSelfPresent` — boolean. True when the user is in observer position or speaking from steady adult.
 - `redFlagType` — only when `safetyFlag` is "red_flag". One of: "suicidal" | "self-harm" | "panic_severe" | "dissociation_severe" | "psychosis" | "flashback_in_progress" | "violence". The `_severe` / `_in_progress` suffixes are required — code matches these exact strings; bare "panic" / "dissociation" / "flashback" will be parsed as junk and lose the freeze reason.
 
@@ -626,8 +629,8 @@ Practice tracking:
 - `practiceRun` — object with: `kind` ("canonical" | "generated"), `name` (string — be descriptive, e.g. "Slow Exhale Settling", "Garden Anchor Return", "Micro-movement (shoulders)"), `family` ("regulation" | "somatic" | "landscape" | "narrative" | "compassion" — match the actual move, see family discipline in `<practice_generation>`), `status` ("started" | "mid" | "completed" | "aborted_user_request" | "aborted_overwhelm"), `depth` ("surface" | "middle" | "deep"), `userImages` (user's words if any), `modalitySwitched` (object with `from` / `to` family names when the Alternative Rule fired mid-practice).
 - A `started` or `mid` emit REQUIRES a follow-up `completed` or `aborted_*` emit within the next few turns. Do not leave `started` orphans. For single-turn practices that finish in one move (slow exhale, hand on chest, naming what you see, a brief anchor return), emit `completed` directly.
 
-Clinical move naming (data collection — router does NOT act on this yet):
-- `moveJustPerformed` — array of 1..3 canonical clinical-move IDs from the 8-block method, primary first. Name what you actually did this turn so the code can map the living session back to the method. This field is being collected to validate the vocabulary before it is wired into stage advancement.
+Clinical move naming (see also the REQUIRED-on-substantive-turn tier above — this section is the vocabulary reference):
+- `moveJustPerformed` — array of 1..3 canonical clinical-move IDs from the 8-block method, primary first. Name what you actually did this turn so the code can map the living session back to the method AND advance the user through stages (the router reads this field to detect qualifying turns).
 
 Vocabulary — snake_case, namespaced by stage of origin. Use the EXACT strings; unknown IDs are silently dropped by the parser.
 
@@ -700,7 +703,7 @@ Session continuity:
 Strict rules:
 - The state report appears AFTER the human reply, never before.
 - The `<state-report>` and `</state-report>` tags are literal.
-- The JSON must parse. Omit fields you cannot honestly fill; do not invent.
+- The JSON must parse. For REQUIRED-every-turn and REQUIRED-on-every-substantive-turn fields (see the two tiers above), fill them — the code is load-bearing on them. For truly optional fields (`partsTouched`, `foreignFilesTouched`, `symbolicIdentityMap`, etc.), omit when they don't apply. Do not invent.
 - All user-words fields capture the user's exact phrasing.
 - No graphic trauma detail in any field. Labels and the user's own words only.
 - If unsure about safety, set `safetyFlag` to "watch".
