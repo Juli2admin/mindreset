@@ -469,8 +469,15 @@ describe('emit_state_report tool — Anthropic tool wrapper', () => {
     expect(emitStateReportToolDef.description!.length).toBeGreaterThan(60);
   });
 
-  it('sets strict: true (grammar-constrained sampling)', () => {
-    expect((emitStateReportToolDef as any).strict).toBe(true);
+  it('does NOT set strict: true (Option B.1 — schema exceeds 24-optional-param strict limit)', () => {
+    // Anthropic strict tool use caps optional parameters across the
+    // schema at 24 total (confirmed at request_id req_011CctSbKN4mFSB8yw814g2H:
+    // "Schemas contains too many optional parameters (63)…"). Our schema
+    // has ~63 optional params. Option B.1 keeps the schema rich as
+    // documentation to the model; the tool call is still guaranteed via
+    // forced tool_choice at the caller side, and the tool-reader
+    // defensively validates + normalises the input.
+    expect((emitStateReportToolDef as any).strict).toBeUndefined();
   });
 
   it('input_schema references the exported schema object', () => {
