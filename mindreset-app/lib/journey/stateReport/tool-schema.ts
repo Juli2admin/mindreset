@@ -117,10 +117,13 @@ export const stateReportInputSchema = {
     // -----------------------------------------------------------------
     intensity: {
       type: 'integer',
-      minimum: 0,
-      maximum: 10,
+      // Anthropic strict tool use does NOT accept minimum/maximum on
+      // integer types (API rejects with invalid_request_error). The
+      // reader (tool-reader.ts) clamps the value to [0, 10] after read.
+      // Describe the range in the description so the model still emits
+      // in-range values.
       description:
-        "Your clinical read of the user's distress right now, integer 0–10.",
+        "Your clinical read of the user's distress right now, integer 0–10 (values outside this range will be clamped).",
     },
     safetyFlag: {
       type: 'string',
@@ -142,20 +145,22 @@ export const stateReportInputSchema = {
     },
     clinicalRead: {
       type: 'string',
-      minLength: 1,
+      // No minLength (strict tool use rejects string length constraints).
+      // The reader drops empty strings; the description conveys intent.
       description:
-        "One or two sentences of your working clinical read. Internal — never surfaced to the user.",
+        "One or two sentences of your working clinical read. Internal — never surfaced to the user. Must be non-empty on substantive turns.",
     },
     moveJustPerformed: {
       type: 'array',
-      minItems: 1,
-      maxItems: 3,
+      // No minItems / maxItems (strict tool use rejects these). The
+      // reader caps at 3 and collapses `[universal.none, X, ...]` →
+      // `[universal.none]`. The description communicates the 1..3 bound.
       items: {
         type: 'string',
         enum: [...CANONICAL_MOVES],
       },
       description:
-        'The canonical clinical move(s) you performed this turn, primary first (1–3). If truly nothing clinical happened, use ["universal.none"].',
+        'The canonical clinical move(s) you performed this turn — 1 to 3 IDs, primary first. If truly nothing clinical happened, use ["universal.none"] alone.',
     },
 
     // -----------------------------------------------------------------
@@ -337,7 +342,13 @@ export const stateReportInputSchema = {
     stabilityCheck: {
       type: 'object',
       properties: {
-        score: { type: 'integer', minimum: 1, maximum: 10 },
+        // No minimum/maximum on score (strict tool use rejects). Reader
+        // clamps to [1, 10]. Description conveys the range.
+        score: {
+          type: 'integer',
+          description:
+            "User's stability, 1 (overwhelmed) to 10 (fully grounded). Values outside will be clamped.",
+        },
         contextNote: { type: 'string' },
       },
       required: ['score'],
