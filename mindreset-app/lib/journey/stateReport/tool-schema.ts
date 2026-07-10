@@ -402,13 +402,22 @@ export const stateReportInputSchema = {
   additionalProperties: false,
 } as const;
 
-// The full Anthropic Tool definition. `strict: true` invokes grammar-
-// constrained sampling — required fields cannot be omitted, enum values
-// cannot be violated, `additionalProperties: false` cannot be sidestepped.
+// The full Anthropic Tool definition.
+//
+// Option B.1 (2026-07-10): `strict: true` is NOT set. Strict tool use
+// caps optional parameters across the schema at 24 total; our schema
+// has ~63 (confirmed by API rejection at request_id
+// req_011CctSbKN4mFSB8yw814g2H). Keeping the schema rich as documentation
+// to the model — the tool call itself is still guaranteed via forced
+// `tool_choice: {type: 'tool', name: 'emit_state_report'}` at the caller
+// side, and the tool-reader defensively validates + normalises everything
+// (enum drops, string coercion, moveJustPerformed cap, etc.), so the
+// downstream contract holds. If real sessions show field-level compliance
+// is inadequate we'll fall back to Option B.2 (shrink schema to ≤24
+// optional params + strict: true).
 export const emitStateReportToolDef: Anthropic.Tool & { strict?: boolean } = {
   name: 'emit_state_report',
   description:
     "Emit the hidden state report for this turn. Called EVERY turn, once, after (or alongside) your warm human reply. This is how the code sees what you observed and what you did. The user never sees this. Fields marked required MUST be populated on every turn; on light turns (a bare 'hi' / 'ok' / 'yes'), use ['universal.none'] for moveJustPerformed, 'mixed' for channel, and a brief clinicalRead like 'brief opener, no clinical content this turn'.",
   input_schema: stateReportInputSchema as unknown as Anthropic.Tool['input_schema'],
-  strict: true,
 };
