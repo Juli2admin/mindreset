@@ -240,6 +240,68 @@ describe('splitReplyAndReport — assessment block is stripped from humanReply',
   });
 });
 
+describe('splitReplyAndReport — <thinking> block is stripped from humanReply (PR ζ)', () => {
+  // PR ζ (2026-07-10) — the AI reached for <thinking> tags after PR γ
+  // tightened state-report requirements and leaked private clinical
+  // reasoning into a real user's chat. Same clinical safety violation
+  // as PR α's assessment leak; same fix — strip from persistence so
+  // the reasoning doesn't reappear on page reload.
+
+  it('strips a <thinking> block at the start of the reply', () => {
+    const raw =
+      '<thinking>\nUser doubting. Redirect to shorter certification path.\n</thinking>\n\n' +
+      'Six years is the clinical psychology route.\n\n' +
+      '<state-report>{"intensity":3,"safetyFlag":"none","recommendedAction":"stay"}</state-report>';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Six years is the clinical psychology route.');
+    expect(split.humanReply).not.toContain('doubting');
+    expect(split.humanReply).not.toContain('<thinking>');
+    expect(split.humanReply).not.toContain('</thinking>');
+    expect(split.rawStateReport).toContain('intensity');
+  });
+
+  it('strips a <thinking> block that appears mid-reply', () => {
+    const raw =
+      'Reply part one. <thinking>mid-reply reasoning</thinking> Reply part two.\n\n' +
+      '<state-report>{"intensity":4,"safetyFlag":"none","recommendedAction":"stay"}</state-report>';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toContain('Reply part one.');
+    expect(split.humanReply).toContain('Reply part two.');
+    expect(split.humanReply).not.toContain('mid-reply reasoning');
+  });
+
+  it('returns everything up to the unclosed <thinking> when the tag never closes', () => {
+    // Defensive: an unclosed thinking tag truncates from the open onwards.
+    // Better to lose the tail than to leak reasoning on reload.
+    const raw = 'Warm reply. <thinking>never closes and everything after leaks';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Warm reply.');
+    expect(split.humanReply).not.toContain('never closes');
+  });
+
+  it('strips BOTH <assessment> at start AND <thinking> mid-reply in the same input', () => {
+    const raw =
+      '<assessment>early reasoning</assessment>\n\n' +
+      'Warm start. <thinking>mid reasoning</thinking> Warm end.\n\n' +
+      '<state-report>{"intensity":4,"safetyFlag":"none","recommendedAction":"stay"}</state-report>';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toContain('Warm start.');
+    expect(split.humanReply).toContain('Warm end.');
+    expect(split.humanReply).not.toContain('early reasoning');
+    expect(split.humanReply).not.toContain('mid reasoning');
+  });
+
+  it('strips multiple <thinking> blocks in the same reply', () => {
+    const raw =
+      '<thinking>first</thinking>Reply.<thinking>second</thinking>More.<thinking>third</thinking>End.';
+    const split = splitReplyAndReport(raw);
+    expect(split.humanReply).toBe('Reply.More.End.');
+    expect(split.humanReply).not.toContain('first');
+    expect(split.humanReply).not.toContain('second');
+    expect(split.humanReply).not.toContain('third');
+  });
+});
+
 describe('parseStateReport — clinicalRead', () => {
   it('parses clinicalRead when present', () => {
     const r = parseStateReport(

@@ -1,0 +1,6 @@
+# Repo-root gitignore. The app-level gitignore lives in mindreset-app/.
+# This file catches stray artifacts that occasionally get created at repo
+# root (usually because a tool ran with the wrong working directory).
+
+node_modules/
+.DS_Store

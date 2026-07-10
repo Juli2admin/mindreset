@@ -18,6 +18,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ASSESSMENT_OPEN,
   ASSESSMENT_CLOSE,
+  THINKING_OPEN,
+  THINKING_CLOSE,
   STATE_REPORT_OPEN,
   createProcessorState,
   ingestChunk,
@@ -252,5 +254,90 @@ describe('extractStateReportRaw', () => {
       `${ASSESSMENT_OPEN}private${ASSESSMENT_CLOSE}\nreply\n${STATE_REPORT_OPEN}{"a":1}</state-report>`,
     );
     expect(raw).toBe('{"a":1}');
+  });
+});
+
+// PR ζ (2026-07-10) — `<thinking>` leak coverage. Julia's live session
+// showed the model dumping its private reasoning into `<thinking>` tags
+// after PR γ tightened state-report requirements. Same clinical safety
+// mechanic as `<assessment>` — must be stripped from the visible stream.
+describe('reply-processor — <thinking> leak', () => {
+  it('strips a <thinking> block at the start of the reply', () => {
+    const thinking = 'The user is back and doubting. Redirect to shorter certification.';
+    const raw =
+      `${THINKING_OPEN}\n${thinking}\n${THINKING_CLOSE}\n\n` +
+      "Six years is the clinical psychology route.\n\n" +
+      `${STATE_REPORT_OPEN}{"intensity":3}</state-report>`;
+    const { visible, finalisedTail, fullText } = runProcessor(raw);
+    const total = visible + finalisedTail;
+    expect(total).toContain('Six years');
+    expect(total).not.toContain('doubting');
+    expect(total).not.toContain(THINKING_OPEN);
+    expect(total).not.toContain(THINKING_CLOSE);
+    // fullText still carries everything for the parser layer.
+    expect(fullText).toContain(THINKING_OPEN);
+  });
+
+  it('strips a <thinking> block chunked byte-by-byte across many deltas', () => {
+    const thinking = 'Reasoning that must NEVER leak.';
+    const raw =
+      `${THINKING_OPEN}${thinking}${THINKING_CLOSE}\n\nUser-facing reply.`;
+    // Byte-by-byte is the harshest test — the state machine must handle
+    // partial tag boundaries at every possible split.
+    const { visible, finalisedTail } = runProcessor(raw);
+    const total = visible + finalisedTail;
+    expect(total).toBe('User-facing reply.');
+  });
+
+  it('returns empty when a <thinking> block never closes (defensive)', () => {
+    const unclosed =
+      `${THINKING_OPEN}\nEverything is private. No close tag. Stream ended.`;
+    const { visible, finalisedTail } = runProcessor(unclosed);
+    expect(visible + finalisedTail).toBe('');
+  });
+
+  it('strips a <thinking> block that appears MID-REPLY (not only at start)', () => {
+    // Defensive against a model that starts the reply, drops into
+    // reasoning mid-flow, then resumes. Both segments of the reply must
+    // reach the user; the reasoning must not.
+    const raw =
+      'Reply part one. ' +
+      `${THINKING_OPEN}Mid-reply reasoning that must never leak.${THINKING_CLOSE}` +
+      ' Reply part two.';
+    const { visible, finalisedTail } = runProcessor(raw);
+    const total = visible + finalisedTail;
+    expect(total).toContain('Reply part one.');
+    expect(total).toContain('Reply part two.');
+    expect(total).not.toContain('Mid-reply reasoning');
+    expect(total).not.toContain(THINKING_OPEN);
+    expect(total).not.toContain(THINKING_CLOSE);
+  });
+
+  it('strips both <assessment> at start AND a mid-reply <thinking>', () => {
+    // Belt-and-braces: an assessment opens, closes, reply starts, then a
+    // thinking block appears mid-reply. Only the plain reply reaches user.
+    const raw =
+      `${ASSESSMENT_OPEN}assess${ASSESSMENT_CLOSE}\n\n` +
+      'Warm start of reply. ' +
+      `${THINKING_OPEN}should I say more?${THINKING_CLOSE}` +
+      ' Warm end of reply.\n\n' +
+      `${STATE_REPORT_OPEN}{"intensity":4}</state-report>`;
+    const { visible, finalisedTail } = runProcessor(raw);
+    const total = visible + finalisedTail;
+    expect(total).toContain('Warm start of reply.');
+    expect(total).toContain('Warm end of reply.');
+    expect(total).not.toContain('assess');
+    expect(total).not.toContain('should I say more');
+    expect(total).not.toContain(THINKING_OPEN);
+    expect(total).not.toContain(ASSESSMENT_OPEN);
+  });
+
+  it("does NOT strip text that starts with `<thin` but isn't `<thinking>`", () => {
+    // Prefix collision — an actual reply that begins with the letters `<thin...`
+    // followed by not-a-tag must stream normally, not get buffered forever.
+    const raw = '<thing that looks like a tag but is not>\n\nOK.';
+    const { visible, finalisedTail } = runProcessor(raw);
+    const total = visible + finalisedTail;
+    expect(total).toContain('<thing that looks like a tag');
   });
 });
