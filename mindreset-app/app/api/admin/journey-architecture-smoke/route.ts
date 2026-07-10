@@ -20,7 +20,19 @@ export const dynamic = 'force-dynamic';
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 2500;
 
-const SYSTEM = `You are the AI clinician for MindReset's therapeutic journey. This is a smoke test — reply to the user warmly (2-3 sentences) then call the emit_state_report tool with the correct fields. The user is in Block 1 (Stabilisation), stage 1, surface depth. They just described a body sensation as a black heavy ball.`;
+// System prompt with STRONG instruction to always call emit_state_report.
+// Necessary because Anthropic disallows extended thinking + forced
+// tool_choice (invalid_request_error confirmed 2026-07-10 with
+// request_id req_011CctQjdXCh3ATR1chn5jgf). tool_choice is 'auto' below;
+// this prose is what makes compliance near-guaranteed.
+const SYSTEM = `You are the AI clinician for MindReset's therapeutic journey.
+
+This is a smoke test. Do exactly these two things, in this order, on every turn:
+
+  1. Reply warmly to the user (2-3 sentences)
+  2. YOU MUST CALL the emit_state_report tool. This is not optional. Every turn ends with a tool call. Fill in every required field: intensity (0-10), safetyFlag (none/watch/red_flag), recommendedAction (usually "stay"), channel, clinicalRead (1-2 sentence internal read), moveJustPerformed (at least ["universal.witness_and_reflect"]). Populate the sensitivity fields (therapeuticMode, cycleStatus, cycleCanClose) when they apply.
+
+The user is in Block 1 (Stabilisation), stage 1, surface depth. They just described a body sensation as a black heavy ball.`;
 
 const USER_MESSAGE = `The speech is about maybe image even, so I can feel like something black heavy ball inside. And, well, it doesn't talk to me.`;
 
@@ -52,12 +64,19 @@ export async function POST() {
     // still ships the parameter to the API. If Anthropic's server rejects
     // it, the smoke test will surface that as a clean exception rather
     // than silently ignoring it.
+    // tool_choice is 'auto' (not forced) because Anthropic disallows
+    // extended thinking + a specific-tool tool_choice. Compliance relies
+    // on the strong prompt directive in SYSTEM plus the fact that
+    // emit_state_report is the only tool available. If this proves
+    // unreliable in real sessions we'll fall back to Option 2 (drop
+    // extended thinking, force tool_choice) with a defensive <thinking>
+    // strip.
     const streamConfig: any = {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       thinking: { type: 'enabled', budget_tokens: 2000 },
       tools: [emitStateReportToolDef],
-      tool_choice: { type: 'tool', name: emitStateReportToolDef.name },
+      tool_choice: { type: 'auto' },
       system: SYSTEM,
       messages: [{ role: 'user', content: USER_MESSAGE }],
     };
