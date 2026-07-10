@@ -13,6 +13,7 @@ import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkChatRateLimit } from '@/lib/rateLimit';
 import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
 import { waitUntil } from '@vercel/functions';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 export const dynamic = 'force-dynamic';
 
@@ -296,6 +297,7 @@ export async function POST(req: NextRequest) {
         content: m.content,
       })),
       true,
+      { userId },
     );
 
     const userMessageRow = await prisma.message.create({
@@ -527,6 +529,26 @@ export async function POST(req: NextRequest) {
             controller.enqueue(encoder.encode(event.delta.text));
           }
         }
+        // AI-cost telemetry (PR δ, 2026-07-10). finalMessage() resolves
+        // once the SDK has seen message_stop; safe to await AFTER the
+        // for-await. Uses waitUntil directly (not triggerBackground —
+        // triggerBackground is the single-use resolver for the profile-
+        // update chain that gates the whole request).
+        waitUntil(
+          anthropicStream
+            .finalMessage()
+            .then((msg) =>
+              recordAiUsage({
+                userId,
+                callSite: 'minimind_chat',
+                model: msg.model ?? MODEL,
+                usage: msg.usage,
+              }),
+            )
+            .catch((err) =>
+              console.error('[minimind/chat] failed to record AI usage:', err),
+            ),
+        );
       } catch (err) {
         console.error('[minimind/chat] stream error:', err);
         streamFailed = true;
@@ -691,7 +713,9 @@ async function runAsyncVerifier(input: AsyncVerifierInput): Promise<void> {
   // available at that time. Concurrent requests get their own verifier
   // tasks with their own snapshots.
 
-  const result = await runVerifier(input.message, input.history, false);
+  const result = await runVerifier(input.message, input.history, false, {
+    userId: input.userId,
+  });
 
   // Phase 3d: write state occurrence if the verifier detected a tracked
   // state. Event-driven counter for the 7-day pattern threshold; the batch

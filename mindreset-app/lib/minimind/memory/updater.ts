@@ -43,6 +43,7 @@ import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import type { DetectedState } from '@/lib/minimind/safety/verifier';
 import { decrypt } from '@/lib/encrypt';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 const UPDATER_MODEL = 'claude-haiku-4-5-20251001';
 const UPDATER_MAX_TOKENS = 800;
@@ -464,6 +465,14 @@ async function callHaiku(
       },
       { signal: controller.signal },
     );
+    // Fire-and-forget AI-usage row (PR δ, 2026-07-10). Non-fatal.
+    recordAiUsage({
+      userId,
+      callSite: 'memory_updater',
+      model: response.model ?? UPDATER_MODEL,
+      usage: response.usage,
+    }).catch((err) => console.error('[memory-updater] usage record failed:', err));
+
     const textBlock = response.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {
       console.error('[PROFILE UPDATE FAILED]', {

@@ -21,6 +21,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import type { RedFlagType } from './keywords';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 const VERIFIER_MODEL = 'claude-haiku-4-5-20251001';
 const VERIFIER_MAX_TOKENS = 200;
@@ -240,6 +241,10 @@ function formatRecentContext(
 export async function runJourneyVerifier(
   userMessage: string,
   recentMessages: { role: 'user' | 'assistant'; content: string }[],
+  // AI-usage attribution (PR δ, 2026-07-10). Optional so tests / one-off
+  // scripts that don't have a user context still work. When present, the
+  // verifier's Anthropic cost is recorded against this user.
+  opts?: { userId?: string | null },
 ): Promise<VerifierResult> {
   if (!userMessage || typeof userMessage !== 'string') return failClosedResult();
 
@@ -262,6 +267,15 @@ ${userMessage}`;
       },
       { signal: controller.signal },
     );
+
+    // Fire-and-forget AI-usage row. Deliberately not awaited — the verifier
+    // is on the reply hot path and must not wait on a telemetry insert.
+    recordAiUsage({
+      userId: opts?.userId ?? null,
+      callSite: 'verifier_journey',
+      model: response.model ?? VERIFIER_MODEL,
+      usage: response.usage,
+    }).catch((err) => console.error('[journey/verifier] usage record failed:', err));
 
     const textBlock = response.content.find((b) => b.type === 'text');
     if (!textBlock || textBlock.type !== 'text') {

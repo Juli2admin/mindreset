@@ -109,6 +109,10 @@ model User {
   journeySignatureImages JourneySignatureImage[]
   journeyPatterns        JourneyPattern[]
   journeyMessages        JourneyMessage[]
+  // AI usage rows (per Anthropic call — token counts + cost). Nullable
+  // relation because internal admin / support-categorise calls may not
+  // be attributable to a single user.
+  aiUsages               AiUsage[]
 }
 
 // =============================================================================
@@ -791,4 +795,65 @@ model Practice {
   notes           String?
 
   @@index([userId, completedAt])
+}
+
+// =============================================================================
+// AI USAGE — one row per Anthropic API call (streaming or non-streaming)
+// =============================================================================
+// Captures the token counts Anthropic returns in each response and derives a
+// $ cost using a per-model pricing table (see lib/ai-usage/cost.ts). Written
+// fire-and-forget from each call site so a DB blip never breaks a user turn.
+//
+// Why a separate table (not fields on JourneyTurn): we want visibility on
+// MiniMind chat, both safety verifiers, the MiniMind memory updater, and
+// support-ticket categorisation — all Anthropic call sites. Grouping them
+// all here lets one admin query answer "what's this user costing me this
+// month across every surface?" and "what's my total AI spend today?".
+//
+// userId is nullable because a few call sites (support_categorise) have no
+// user context. journeyTurnId is a nullable FK back to the audit row so a
+// reviewer looking at one Journey turn can see its exact Anthropic cost.
+model AiUsage {
+  id                     String       @id @default(cuid())
+  createdAt              DateTime     @default(now())
+
+  user                   User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId                 String?
+
+  // Which code path spent this. See CALL_SITES in lib/ai-usage/record.ts.
+  //   journey_turn         — main Journey streaming call
+  //   minimind_chat        — main MiniMind streaming call
+  //   verifier_journey     — Journey safety verifier (Haiku)
+  //   verifier_minimind    — MiniMind safety verifier (Haiku)
+  //   memory_updater       — MiniMind memory updater
+  //   support_categorise   — support-ticket categorisation
+  callSite               String
+
+  // Anthropic model ID as returned in the response (or requested if not
+  // present in the response — some models omit .model on stream events).
+  model                  String
+
+  // Token counts as reported by Anthropic in `response.usage` /
+  // `finalMessage.usage`. cache_read + cache_creation split lets us see the
+  // caching health per turn (high cache_read = cache warm; high cache_write
+  // + no reads = cold or invalidated).
+  inputTokens            Int
+  outputTokens           Int
+  cacheReadTokens        Int          @default(0)
+  cacheCreationTokens    Int          @default(0)
+
+  // $ USD, computed at write time from the model's pricing (see
+  // lib/ai-usage/cost.ts). Stored so aggregate queries don't have to
+  // re-multiply and can survive pricing changes without back-recompute.
+  costUsd                Float
+
+  // Optional FK back to the Journey audit row this call produced. Written
+  // by the Journey turn hook; null for MiniMind + support paths.
+  journeyTurnId          String?
+
+  // Composite indexes for the common admin queries: per-user monthly spend,
+  // per-day totals, per-call-site totals.
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@index([callSite, createdAt])
 }

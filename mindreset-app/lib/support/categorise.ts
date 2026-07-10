@@ -11,6 +11,7 @@
 // ("uncategorised") or surface the error to the admin.
 
 import Anthropic from '@anthropic-ai/sdk';
+import { recordAiUsage } from '@/lib/ai-usage/record';
 
 const MODEL = 'claude-sonnet-4-6';
 const MAX_TOKENS = 1500;
@@ -136,6 +137,15 @@ export async function categoriseSupport(input: {
       },
       { signal: controller.signal },
     );
+    // Fire-and-forget AI-usage row (PR δ, 2026-07-10). Support tickets
+    // aren't attributable to a single user in this codepath, so userId
+    // stays null.
+    recordAiUsage({
+      userId: null,
+      callSite: 'support_categorise',
+      model: response.model ?? MODEL,
+      usage: response.usage,
+    }).catch((err) => console.error('[support/categorise] usage record failed:', err));
   } finally {
     clearTimeout(timeout);
   }
