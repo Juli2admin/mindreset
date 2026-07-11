@@ -30,9 +30,13 @@ import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
-import { scanForJourneyRedFlag, getCrisisResponseForLocale } from '@/lib/journey/safety/keywords';
+import {
+  scanForJourneyRedFlag,
+  getCrisisResponseForLocale,
+  getCooldownLiftMessageForLocale,
+} from '@/lib/journey/safety/keywords';
 import { runJourneyVerifier } from '@/lib/journey/safety/verifier';
-import { freezeJourney } from '@/lib/journey/safety/freeze';
+import { freezeJourney, clearFreezeForReview } from '@/lib/journey/safety/freeze';
 import { decideRoute, applyRouteDecision } from '@/lib/journey/router/router';
 import { loadJourneyState as reloadJourneyState } from '@/lib/journey/state/load';
 import { checkJourneyRateLimit } from '@/lib/rateLimit';
@@ -59,6 +63,19 @@ const MAX_TOKENS = 2500;
 // 30-message history replay (no risk of one user blowing the prompt
 // budget). MiniMind enforces a similar cap.
 const MAX_USER_MESSAGE_CHARS = 4000;
+
+// PR ξ (2026-07-11) — Journey cooldown-lift floor. When a user is frozen,
+// their first message-after-freeze is held for 20 seconds before the
+// cooldown-lift verifier runs. This prevents:
+//   (a) Instant retry loops where a user (or bot) taps "send" repeatedly
+//       hoping to auto-lift on the next Haiku call
+//   (b) The lift firing while the user is still in the moment that
+//       triggered the freeze — silence is often what they need first
+// 20s is much shorter than MiniMind's Sev5 cooldown (which is a
+// deliberate longer pause after a crisis event); Journey freezes
+// disproportionately catch false positives during deep clinical work
+// so the responsive-lift bias is warranted.
+const JOURNEY_COOLDOWN_MIN_WAIT_MS = 20 * 1000;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -142,26 +159,44 @@ export async function POST(request: NextRequest) {
   const state = await loadJourneyState(userId);
   if (!state) return NextResponse.json({ error: 'Journey not started' }, { status: 409 });
 
-  // Frozen-for-review: return the holding crisis response, no LLM call.
-  // Item 4.6 fix: STILL run the synchronous keyword scan on the message so
-  // an escalating self-harm utterance from a frozen user is logged as a
-  // distinct audit row with the new flag. Without this, a frozen user
-  // sending escalating content leaves no audit trace at all — owner
-  // loses the signal they need to triage.
+  // Frozen-for-review: run the cooldown-lift verifier to decide whether
+  // to auto-unfreeze this user based on their message.
+  //
+  // PR ξ (2026-07-11): Journey now auto-unfreezes on safety_confirmation,
+  // matching the MiniMind cooldown-lift pattern. Rationale: the safety
+  // layer is calibrated conservative — many freezes catch normal deep
+  // clinical work (post-release phenomenology, body-report during
+  // guided somatic work). Requiring the owner to run SQL to unfreeze
+  // every false positive is UX friction that interrupts paid trauma
+  // work. The verifier's cooldown-lift mode is trained to distinguish
+  // "no I'm fine, describing" (lift) from genuine crisis (hold).
+  //
+  // Ordering:
+  //   1. Below the min-wait floor → always hold (prevent instant retry).
+  //   2. Keyword scan → if hit, this is fresh crisis material; hold and
+  //      log the escalation.
+  //   3. Cooldown-lift verifier → safety_confirmation lifts; anything
+  //      else holds.
   //
   // Pre-launch audit fix B1 (2026-07-11): do NOT call
-  // markFirstAccessAndIncrement on the frozen path. Rationale:
-  //   - Frozen turns run no LLM and cost nothing.
-  //   - The old behaviour stamped firstAccessedAt (starting the 365-day
-  //     access clock) on canned responses, so a user frozen at signup
-  //     could lose their paid year without ever getting a real turn.
-  //   - The old behaviour also incremented journeyMessagesUsed against
-  //     the 5,000 abuse cap, so a false-positive-frozen user confused-
-  //     tapping "send" could hit the permanent lockout.
-  // Bot abuse against a frozen user is caught at rate-limit + Vercel
-  // logs rather than at the paid-quota / year-clock layer.
+  // markFirstAccessAndIncrement on the frozen path. Frozen turns cost
+  // nothing (canned response, no LLM) and shouldn't stamp the 365-day
+  // access clock or count against the 5,000 abuse cap.
   if (state.frozenForReview) {
     await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
+
+    // Floor: silence-time after the freeze. Not conditional on Redis or
+    // anything external — just a wall-clock check on frozenAt.
+    const withinFloor =
+      state.frozenAt !== null &&
+      Date.now() - state.frozenAt.getTime() < JOURNEY_COOLDOWN_MIN_WAIT_MS;
+
+    if (withinFloor) {
+      return cannedResponse(crisisResponse);
+    }
+
+    // Fresh keyword-scan hit inside a frozen session → new crisis material,
+    // never lift, log the escalation.
     const flag = scanForJourneyRedFlag(userMessage);
     if (flag.matched) {
       await writeAuditTurn({
@@ -176,7 +211,60 @@ export async function POST(request: NextRequest) {
           redFlagType: flag.flagType,
         },
       });
+      return cannedResponse(crisisResponse);
     }
+
+    // Past the floor, no fresh keyword hit → run the cooldown-lift
+    // verifier. Recent history is intentionally NOT passed — the lift
+    // decision is about THIS reply as a safety confirmation, not about
+    // the earlier flow that triggered the freeze.
+    const liftVerdict = await runJourneyVerifier(userMessage, [], {
+      userId,
+      isCheckingCooldownLift: true,
+    });
+
+    if (liftVerdict.verdict === 'safety_confirmation') {
+      const cleared = await clearFreezeForReview(userId);
+      console.info('[journey/turn] cooldown lifted', {
+        userId,
+        cleared,
+        reasoning: liftVerdict.reasoning,
+      });
+      const liftMessage = getCooldownLiftMessageForLocale(body.locale ?? null);
+      // Overwrite the just-persisted canned response with the lift
+      // message so the user's next page load shows the correct history.
+      // Small extra write, but the accurate transcript matters
+      // clinically.
+      await prisma.journeyMessage.create({
+        data: {
+          userId,
+          role: 'assistant',
+          contentEncrypted: encrypt(liftMessage),
+          stageAtTime: state.currentStage,
+        },
+      });
+      return cannedResponse(liftMessage);
+    }
+
+    if (liftVerdict.verdict === 'clear_crisis') {
+      // The verifier detected NEW crisis content in the lift reply. Log
+      // the escalation like a fresh keyword-scan freeze would.
+      await writeAuditTurn({
+        userId,
+        stageAtTurn: state.currentStage,
+        depthAtTurn: state.currentDepth,
+        userMessage,
+        report: {
+          intensity: 10,
+          safetyFlag: 'red_flag',
+          recommendedAction: 'red_flag',
+          redFlagType: liftVerdict.redFlagType ?? undefined,
+        },
+      });
+    }
+
+    // Any non-lift verdict (ambiguous, clear_safe, clear_crisis) → hold
+    // the freeze. Canned response goes out.
     return cannedResponse(crisisResponse);
   }
 

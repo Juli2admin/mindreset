@@ -6,7 +6,12 @@
 // clear_safe with no visible failure. These tests pin the contract.
 
 import { describe, expect, it } from 'vitest';
-import { parseResult, stripCodeFences, SYSTEM_PROMPT } from './verifier';
+import {
+  parseResult,
+  stripCodeFences,
+  SYSTEM_PROMPT,
+  SYSTEM_COOLDOWN_LIFT,
+} from './verifier';
 
 describe('stripCodeFences', () => {
   it('passes plain JSON through unchanged', () => {
@@ -250,5 +255,79 @@ describe('verifier SYSTEM_PROMPT — post-release phenomenology awareness (PR ι
     // co-occurring emergency markers alongside the symptom language.
     expect(SYSTEM_PROMPT).toContain('ACTIVE panic attack');
     expect(SYSTEM_PROMPT).toContain('emergency signalling');
+  });
+});
+
+// PR ξ (2026-07-11) — cooldown-lift mode. Journey now auto-unfreezes on
+// safety_confirmation, matching the MiniMind pattern. These tests lock in
+// the verifier's contract for the lift-check path.
+
+describe('parseResult — cooldown-lift safety_confirmation verdict', () => {
+  it("accepts safety_confirmation with severity: null", () => {
+    const r = parseResult({
+      verdict: 'safety_confirmation',
+      severity: null,
+      redFlagType: null,
+      reasoning: 'User confirmed post-release body-report, no crisis.',
+    });
+    expect(r?.verdict).toBe('safety_confirmation');
+    expect(r?.severity).toBeNull();
+    expect(r?.redFlagType).toBeNull();
+  });
+
+  it('forces severity: null on safety_confirmation regardless of input', () => {
+    // Verifier misbehaving and putting a number in shouldn't break parity.
+    const r = parseResult({
+      verdict: 'safety_confirmation',
+      severity: 3,
+      redFlagType: null,
+      reasoning: 'ok',
+    });
+    expect(r?.severity).toBeNull();
+  });
+
+  it('does NOT accept unknown verdict "safety_lift"', () => {
+    // Regression guard: verifier prompt says "safety_confirmation", not
+    // "safety_lift". If the string changes we want to catch it.
+    expect(
+      parseResult({
+        verdict: 'safety_lift',
+        severity: null,
+        redFlagType: null,
+        reasoning: '',
+      }),
+    ).toBeNull();
+  });
+});
+
+describe('SYSTEM_COOLDOWN_LIFT — cooldown-lift system prompt shape', () => {
+  it('exists and is a non-empty string', () => {
+    expect(typeof SYSTEM_COOLDOWN_LIFT).toBe('string');
+    expect(SYSTEM_COOLDOWN_LIFT.length).toBeGreaterThan(500);
+  });
+
+  it('names safety_confirmation as the lift verdict', () => {
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('safety_confirmation');
+  });
+
+  it('preserves the fail-closed bias: in doubt → ambiguous, hold the freeze', () => {
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('ambiguous');
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('BIAS');
+    // The bias paragraph explicitly warns about auto-lifting on ambiguity.
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('When in doubt');
+  });
+
+  it('mentions the post-release phenomenology false-positive class', () => {
+    // The most common Journey freeze false-positive pattern (per PR ι).
+    expect(SYSTEM_COOLDOWN_LIFT).toContain("I can't breathe");
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('POST-RELEASE PHENOMENOLOGY');
+  });
+
+  it('names clear_crisis as the "new crisis in the reply" verdict', () => {
+    // A freeze that lifts inappropriately is unsafe; the verifier must
+    // keep the freeze in place AND log if the reply itself contains new
+    // crisis content.
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('clear_crisis');
+    expect(SYSTEM_COOLDOWN_LIFT).toContain('new crisis');
   });
 });

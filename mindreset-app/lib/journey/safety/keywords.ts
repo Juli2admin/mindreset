@@ -188,3 +188,21 @@ export function getCrisisResponseForLocale(locale: string | null | undefined): s
   if (locale === 'ru') return CRISIS_RESPONSE_RU;
   return CRISIS_RESPONSE_EN;
 }
+
+// ---------------------------------------------------------------------------
+// Cooldown-lift confirmation messages
+// PR ξ (2026-07-11). Delivered when the AI safety verifier decides the
+// user's next-after-freeze reply is a safety_confirmation and the freeze
+// can be lifted. Their next message goes through the normal Journey turn
+// flow; this is the "we're back" acknowledgement in between.
+// ---------------------------------------------------------------------------
+export const COOLDOWN_LIFT_MESSAGE_EN = `Thank you for letting me know. I'm glad you're okay. Take a moment, and let me know when you're ready to keep going.`;
+
+export const COOLDOWN_LIFT_MESSAGE_RU = `Спасибо, что дали знать. Я рада, что с вами всё в порядке. Не спешите — дайте знать, когда будете готовы продолжить.`;
+
+export function getCooldownLiftMessageForLocale(
+  locale: string | null | undefined,
+): string {
+  if (locale === 'ru') return COOLDOWN_LIFT_MESSAGE_RU;
+  return COOLDOWN_LIFT_MESSAGE_EN;
+}
