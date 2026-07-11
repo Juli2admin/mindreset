@@ -31,19 +31,31 @@ const REASONING_MAX_CHARS = 200;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
-export type VerifierVerdict = 'clear_safe' | 'ambiguous' | 'clear_crisis';
+export type VerifierVerdict =
+  | 'clear_safe'
+  | 'ambiguous'
+  | 'clear_crisis'
+  // PR ξ (2026-07-11): cooldown-lift verdict, only produced when the
+  // verifier is called with `isCheckingCooldownLift: true`. The route
+  // handler treats this as "user has confirmed they're safe → clear the
+  // freeze". Matches the MiniMind pattern in lib/minimind/safety/verifier.ts.
+  | 'safety_confirmation';
 
 export type VerifierResult = {
   verdict: VerifierVerdict;
-  severity: 2 | 3 | 4 | 5;
+  // safety_confirmation carries no severity — it's a "you're clear to
+  // resume" signal, not an assessment of concern level.
+  severity: 2 | 3 | 4 | 5 | null;
   redFlagType: RedFlagType | null;
   reasoning: string;
 };
 
-// Fail-CLOSED default: when the verifier crashes / times out / returns junk,
-// we return 'ambiguous'. The freeze flow does NOT trigger on ambiguous —
-// only on clear_crisis. So fail-closed here means "don't freeze on infra
-// failure, but DO log it for review".
+// Fail-CLOSED default: when the verifier crashes / times out / returns junk:
+//   - Regular mode: return 'ambiguous'. Freeze flow does NOT trigger on
+//     ambiguous, but the log records it so Julia can review.
+//   - Cooldown-lift mode: return 'ambiguous' too. In lift mode, only
+//     safety_confirmation clears the freeze — ambiguous keeps it in place.
+//     Fail-closed here means "don't auto-unfreeze on infra failure".
 function failClosedResult(): VerifierResult {
   return {
     verdict: 'ambiguous',
@@ -185,10 +197,83 @@ When in doubt between ambiguous and clear_crisis → ambiguous.
 The verdict gates whether the Journey freezes. Defaulting to ambiguous on uncertainty is the correct, expected behaviour.`;
 
 // ===========================================================================
+// SYSTEM_COOLDOWN_LIFT — used when the user is already frozen and we're
+// deciding whether to lift the freeze based on their next message.
+// PR ξ (2026-07-11). Mirrors the MiniMind cooldown-lift pattern.
+// ===========================================================================
+export const SYSTEM_COOLDOWN_LIFT = `You are the safety-confirmation classifier for MindReset's Journey. The user is currently in a freeze — a prior turn tripped the safety verifier or keyword scan, so the Journey is paused and every user message returns a canned crisis response.
+
+Your job is to read the user's next message and classify whether the freeze should be LIFTED so the Journey can continue.
+
+THE JOURNEY CONTEXT
+The user is paying for and actively doing deliberate, often intense emotional work. False positives on the freeze happen — the safety layer is calibrated conservative (better to freeze than miss a real crisis), so many freezes are legitimate but many others catch normal deep clinical work that superficially resembled a crisis phrase.
+
+POST-RELEASE PHENOMENOLOGY, SOMATIC BODY-REPORT, AND OTHER FALSE-POSITIVE PATTERNS
+Common reasons the freeze fired but the user is actually fine:
+  - "I can't breathe" describing chest tightness after guided somatic work
+  - "There's a hole in my chest" describing a released burden's residue
+  - "It's squeezing me" describing an image the AI was holding with them
+  - Phrases that sound like panic in bare form but are body-report in-session
+
+WHAT SAFETY_CONFIRMATION LOOKS LIKE
+The user's next message signals they're okay and want to continue. Look for:
+  - Direct confirmation: "no, I'm fine", "I'm okay", "I was describing", "just body-report"
+  - Correction of the false read: "I meant the image", "sorry that came out wrong", "you misunderstood"
+  - Clear present-time orientation + calm affect: "I'm here at my desk, just resting"
+  - Explicit request to continue: "let's keep going", "I want to keep working"
+
+WHAT KEEPS THE FREEZE IN PLACE
+  - New crisis-shaped content in the reply itself: "actually yes I do want to die"
+  - Denial that reads as dissociative or overwhelmed: "nothing matters, get me out"
+  - Emergency signalling: "help me", "call someone", "I'm going to pass out"
+  - Ambiguous replies where you can't tell (fail-closed → hold the freeze)
+
+VERDICT TYPES
+  - "safety_confirmation" — user's next message is a clear reassurance. Lift the freeze.
+  - "clear_crisis" — new crisis content in the reply. Keep frozen. Set redFlagType and severity 4 or 5.
+  - "ambiguous" — you can't tell. Keep frozen (fail-closed). Log for Julia's review.
+  - "clear_safe" — reply is safe/neutral but not an explicit reassurance. Keep frozen — the user hasn't affirmatively confirmed they're okay after the safety event.
+
+OUTPUT FORMAT
+JSON only. No prose, no code fences. Shape:
+
+For safety_confirmation:
+{
+  "verdict": "safety_confirmation",
+  "severity": null,
+  "redFlagType": null,
+  "reasoning": "<one sentence, max 120 chars>"
+}
+
+For clear_crisis (new crisis in the reply):
+{
+  "verdict": "clear_crisis",
+  "severity": 4 | 5,
+  "redFlagType": "suicidal" | "self-harm" | "violence" | "panic_severe" | "dissociation_severe" | "psychosis" | "flashback_in_progress",
+  "reasoning": "<one sentence, max 120 chars>"
+}
+
+For ambiguous or clear_safe (both keep the freeze in place):
+{
+  "verdict": "ambiguous" | "clear_safe",
+  "severity": 3 | 2,
+  "redFlagType": null | "<any>",
+  "reasoning": "<one sentence, max 120 chars>"
+}
+
+BIAS
+When in doubt between safety_confirmation and ambiguous → ambiguous. The freeze holding for one more message is a mild UX friction; auto-lifting on ambiguity could let a genuine crisis user talk themselves out of protection.`;
+
+// ===========================================================================
 // Parsing
 // ===========================================================================
 
-const ALL_VERDICTS: VerifierVerdict[] = ['clear_safe', 'ambiguous', 'clear_crisis'];
+const ALL_VERDICTS: VerifierVerdict[] = [
+  'clear_safe',
+  'ambiguous',
+  'clear_crisis',
+  'safety_confirmation',
+];
 const ALL_RED_FLAG_TYPES: RedFlagType[] = [
   'suicidal',
   'self-harm',
@@ -215,12 +300,15 @@ export function parseResult(parsed: unknown): VerifierResult | null {
     return null;
   }
   const severityRaw = obj.severity;
-  let severity: 2 | 3 | 4 | 5;
+  let severity: 2 | 3 | 4 | 5 | null;
   if (verdict === 'clear_crisis') {
     if (severityRaw !== 4 && severityRaw !== 5) return null;
     severity = severityRaw;
   } else if (verdict === 'ambiguous') {
     severity = 3;
+  } else if (verdict === 'safety_confirmation') {
+    // No severity — this is a "clear to resume" signal.
+    severity = null;
   } else {
     severity = 2;
   }
@@ -261,15 +349,31 @@ export async function runJourneyVerifier(
   // AI-usage attribution (PR δ, 2026-07-10). Optional so tests / one-off
   // scripts that don't have a user context still work. When present, the
   // verifier's Anthropic cost is recorded against this user.
-  opts?: { userId?: string | null },
+  //
+  // PR ξ (2026-07-11): isCheckingCooldownLift = true switches to the
+  // cooldown-lift system prompt. The verifier's job is now "should we
+  // unfreeze?" rather than "is this a new crisis?". A safety_confirmation
+  // verdict signals the caller to clear the freeze; any other verdict
+  // holds the freeze in place.
+  opts?: { userId?: string | null; isCheckingCooldownLift?: boolean },
 ): Promise<VerifierResult> {
   if (!userMessage || typeof userMessage !== 'string') return failClosedResult();
+
+  const isCheckingCooldownLift = opts?.isCheckingCooldownLift === true;
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), VERIFIER_TIMEOUT_MS);
 
   try {
-    const userPrompt = `RECENT CONTEXT (up to ${RECENT_CONTEXT_LIMIT} most recent turns, oldest first):
+    const system = isCheckingCooldownLift ? SYSTEM_COOLDOWN_LIFT : SYSTEM_PROMPT;
+
+    // In cooldown-lift mode the recent-context is deliberately narrower —
+    // the verifier's decision is about whether THIS message is a "I'm okay"
+    // confirmation, not about the broader crisis flow.
+    const userPrompt = isCheckingCooldownLift
+      ? `USER REPLY TO CLASSIFY (currently in Journey freeze):
+${userMessage}`
+      : `RECENT CONTEXT (up to ${RECENT_CONTEXT_LIMIT} most recent turns, oldest first):
 ${formatRecentContext(recentMessages)}
 
 MOST RECENT USER MESSAGE TO CLASSIFY:
@@ -279,7 +383,7 @@ ${userMessage}`;
       {
         model: VERIFIER_MODEL,
         max_tokens: VERIFIER_MAX_TOKENS,
-        system: SYSTEM_PROMPT,
+        system,
         messages: [{ role: 'user', content: userPrompt }],
       },
       { signal: controller.signal },
