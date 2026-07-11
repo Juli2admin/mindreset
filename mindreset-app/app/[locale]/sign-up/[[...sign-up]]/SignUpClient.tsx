@@ -24,8 +24,45 @@ function Checkbox({
   children: ReactNode;
 }) {
   const { palette: PALETTE } = useTheme();
+  // ARIA checkbox pattern (role="checkbox" + aria-checked + explicit onClick)
+  // instead of the standard <label><input type="checkbox" className="sr-only" />
+  // pattern — same fix as Screening.jsx's Check (PR #262). On iOS Safari,
+  // clicking a <label> that wraps a visually-hidden checkbox is known to
+  // silently fail to fire the input's onChange, and here that failure blocks
+  // the entire sign-up flow (both boxes gate the Clerk widget below). Direct
+  // onClick avoids the label→input delegation entirely and works uniformly
+  // on every browser. Keyboard support (space / enter) preserved. Screen
+  // readers announce "checkbox, checked/not, [label]" via role + aria-checked.
+  // No <form> submission of these values is needed — they drive the Clerk
+  // widget's mount condition (`ready` above) directly from React state.
+  const toggle = () => onChange(!checked);
   return (
-    <label className="flex items-start gap-3 py-2.5 cursor-pointer">
+    <div
+      role="checkbox"
+      aria-checked={checked}
+      tabIndex={0}
+      onClick={toggle}
+      onKeyDown={(e) => {
+        // Space only, per WAI-ARIA APG checkbox pattern (native
+        // <input type="checkbox"> does nothing on Enter either).
+        if (e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      }}
+      className="flex items-start gap-3 py-2.5 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded-sm"
+      style={{
+        // Focus ring uses the accent so it's visible on both themes. Only
+        // shown on keyboard focus (focus-visible), not on click. Both the
+        // ring color AND ring-offset color must be set explicitly — Tailwind
+        // defaults the offset to `#fff`, which shows as a bright white band
+        // against the dark-theme bg (#393939) before the accent ring.
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        '--tw-ring-color': PALETTE.accent,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        '--tw-ring-offset-color': PALETTE.bg,
+      } as React.CSSProperties}
+    >
       <span
         className="mt-[3px] shrink-0 w-[18px] h-[18px] rounded border-[1.5px] flex items-center justify-center transition-colors"
         style={{
@@ -46,19 +83,13 @@ function Checkbox({
           </svg>
         )}
       </span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="sr-only"
-      />
       <span
         className="leading-[1.55] text-[15px]"
         style={{ fontFamily: TOKENS.sans, color: PALETTE.text }}
       >
         {children}
       </span>
-    </label>
+    </div>
   );
 }
 
@@ -103,6 +134,11 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
                     style={{ color: PALETTE.accent }}
+                    // stopPropagation so clicking "Terms" opens the tab
+                    // without also toggling the parent checkbox — the
+                    // Checkbox root is role="checkbox" onClick={toggle}, so
+                    // any bubbled click would flip the state as a side effect.
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {chunks}
                   </Link>
@@ -118,6 +154,8 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
                     style={{ color: PALETTE.accent }}
+                    // Same rationale as the Terms link above.
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {chunks}
                   </Link>
