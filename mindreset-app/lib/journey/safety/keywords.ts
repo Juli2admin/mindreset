@@ -87,7 +87,20 @@ const VIOLENCE_PATTERNS: RegExp[] = [
 // Severe panic / acute medical — current physical-symptom emergency markers
 // ---------------------------------------------------------------------------
 const PANIC_SEVERE_PATTERNS: RegExp[] = [
-  /\bi\s+(am\s+)?(can'?t|cannot)\s+breathe\b/i,
+  // "I can't breathe" — 2026-07-11 false-positive fix. Previously the bare
+  // `\bi\s+(am\s+)?(can'?t|cannot)\s+breathe\b` pattern matched somatic
+  // phenomenology (post-release residue in Journey work: "chest gone down
+  // and squeezed my lungs, I can't breathe, describing the picture") and
+  // froze a user mid-integration. In Journey clinical context, "I can't
+  // breathe" is almost always a body-report about a somatic experience the
+  // AI just guided the user into. True medical panic is characterised by
+  // co-occurring emergency signalling — help-seeking, call-for-help,
+  // imminent physical failure, or explicit inability-to-continue markers
+  // — in the same message. Bare "I can't breathe" now falls through to
+  // the async verifier, whose SYSTEM_PROMPT ("POST-RELEASE PHENOMENOLOGY
+  // IS NOT PANIC") classifies it with full context.
+  /\bi\s+(am\s+)?(can'?t|cannot)\s+breathe\b.{0,80}\b(help\s+me|call\s+(someone|911|999|ambulance|emergency)|passing\s+out|about\s+to\s+pass\s+out|dying|emergency)\b/i,
+  /\b(help\s+me|call\s+(someone|911|999|ambulance|emergency)|emergency)\b.{0,80}\bi\s+(am\s+)?(can'?t|cannot)\s+breathe\b/i,
   /\b(having|i\s+think\s+i\s+am\s+having)\s+a\s+heart\s+attack\b/i,
   /\bi\s+(am\s+)?dying\s+right\s+now\b/i,
 ];
