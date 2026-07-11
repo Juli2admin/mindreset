@@ -94,12 +94,22 @@ function MiniMindHeader({
   const t = useTranslations('MiniMind');
   const { palette: PALETTE } = useTheme();
   return (
+    // Sticky lives on the WRAPPER, not on TopBar's own <header>. TopBar's
+    // <header> can only stick within its containing block; the wrapper
+    // here has the same rendered height as TopBar itself, so a sticky
+    // <header> inside would have zero room to stick and would behave like
+    // a normal header. Applying `sticky top-0` to the wrapper — a direct
+    // child of the tall <main className="min-h-[100dvh] flex flex-col">
+    // container — is what actually keeps the wordmark + UserButton
+    // visible while a long conversation scrolls past.
     <div
-      className="px-6"
-      style={{ borderBottom: `1px solid ${PALETTE.border}` }}
+      className="sticky top-0 z-40 px-6"
+      style={{
+        borderBottom: `1px solid ${PALETTE.border}`,
+        background: PALETTE.bg,
+      }}
     >
       <TopBar
-        sticky
         right={
           showStartNew && onStartNew ? (
             <button
