@@ -94,20 +94,13 @@ function ChevronDown({ size = 10 }) {
 // ============================================================================
 function Check({ checked, onChange, children }) {
   const { palette: c } = useTheme();
-  // The unchecked box previously used `c.borderStrong` at 1.5px — visible in
-  // light mode against the cream background but essentially invisible in dark
-  // mode (dark-grey box on near-black background with a barely-lighter grey
-  // border). New users testing the screening reported the whole screen looked
-  // "disabled": they couldn't see the boxes were interactive, so they never
-  // ticked them, so the Begin button (correctly gated on both ticks) stayed
-  // greyed out. The fix uses `c.text` for the unchecked border — dark against
-  // light card in day mode, cream against dark card in night mode — so the
-  // box is unambiguously a clickable form element in both themes. Border
-  // bumped to 2px so the outline reads solid at glance.
+  // Border uses `c.text` (not `borderStrong`) so the outline reads solid on
+  // the card in both themes; night-mode borderStrong was ~1.9:1 contrast and
+  // testers couldn't tell the boxes were interactive.
   return (
     <label className="flex items-start gap-3 cursor-pointer group py-2.5">
       <span
-        className="mt-[3px] shrink-0 w-[20px] h-[20px] rounded border-2 flex items-center justify-center transition-colors group-hover:opacity-90"
+        className="mt-[3px] shrink-0 w-[20px] h-[20px] rounded border-2 flex items-center justify-center transition-all group-hover:opacity-90"
         style={{
           background: checked ? c.text : c.bgCard,
           borderColor: c.text,
