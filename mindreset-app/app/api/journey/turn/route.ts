@@ -29,6 +29,7 @@ import { applyStateReportToProgress } from '@/lib/journey/state/save';
 import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
 import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
+import type { StateReport } from '@/lib/journey/stateReport/schema';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import {
   scanForJourneyRedFlag,
@@ -599,13 +600,29 @@ async function finaliseTurn(args: {
   // Always write an audit row. If the verifier disagreed with the state
   // report (e.g. report said safe, verifier said crisis), the recorded
   // safetyFlag is the WORSE of the two so downstream review surfaces it.
-  const finalReport = { ...report };
+  //
+  // M20 (2026-07-11). Both the model's own red_flag and a verifier
+  // escalation happen AFTER the reply has already streamed to the user —
+  // unlike the keyword-scan sync path where the canned crisis response
+  // is delivered instead. Tag those cases with _deliveredBeforeFreeze so a
+  // reviewer skimming the audit can tell "the user saw the AI reply and
+  // was frozen only on their NEXT turn" apart from "the user was frozen
+  // pre-reply and saw the canned crisis text". Underscore-prefixed to
+  // signal it's a diagnostic annotation, not part of the model's schema.
+  const finalReport = { ...report } as StateReport & {
+    _deliveredBeforeFreeze?: boolean;
+    _verifierEscalation?: boolean;
+  };
   if (verifierResult.verdict === 'clear_crisis') {
+    finalReport._verifierEscalation = finalReport.safetyFlag !== 'red_flag';
     finalReport.safetyFlag = 'red_flag';
     finalReport.recommendedAction = 'red_flag';
     finalReport.redFlagType = verifierResult.redFlagType ?? undefined;
   } else if (verifierResult.verdict === 'ambiguous' && finalReport.safetyFlag === 'none') {
     finalReport.safetyFlag = 'watch';
+  }
+  if (finalReport.safetyFlag === 'red_flag') {
+    finalReport._deliveredBeforeFreeze = true;
   }
 
   await writeAuditTurn({
