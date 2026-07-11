@@ -11,9 +11,20 @@ const nextConfig = {
   // the canonical human-readable source of truth; lib/journey/prompts/*
   // reads them via fs.readFileSync. Without this hint, Next's file-trace
   // would not include the .md files in the function bundle.
-  outputFileTracingIncludes: {
-    '/api/journey/turn': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
-    '/api/journey/start': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
+  //
+  // Pre-launch audit fix B4 (2026-07-11): this belongs under
+  // `experimental.` in Next 14.2 — at the top level Next silently
+  // ignores it (Vercel build log warning: "Unrecognized key(s) in
+  // object: 'outputFileTracingIncludes'"). Auto-trace has been picking
+  // up the .md reads via require analysis in production so far, but
+  // that's fragile — any refactor of the loader that hides the paths
+  // from static analysis (dynamic string concat, indirection, etc.)
+  // would ship ENOENT to /api/journey/turn on the first call.
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/journey/turn': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
+      '/api/journey/start': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
+    },
   },
 };
 

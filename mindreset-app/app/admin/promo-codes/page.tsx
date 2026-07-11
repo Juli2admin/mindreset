@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { stripe } from '@/lib/stripe/client';
+import { currentUserIsAdmin } from '@/lib/admin/auth';
 import CreatePromoCodeForm from './CreatePromoCodeForm';
 
 // /admin/promo-codes — list active Stripe promotion codes and create
@@ -16,6 +17,12 @@ export const dynamic = 'force-dynamic';
 
 async function createPromoCode(formData: FormData) {
   'use server';
+
+  // Pre-launch audit fix B3 (2026-07-11): defence-in-depth admin gate.
+  // Layout gate blocks page-render but server-action POST is separate.
+  if (!(await currentUserIsAdmin())) {
+    throw new Error('Forbidden');
+  }
 
   const code = String(formData.get('code') ?? '').trim().toUpperCase();
   const discountType = String(formData.get('discountType') ?? '');

@@ -54,11 +54,47 @@ export async function POST(request: NextRequest) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, stripeCustomerId: true, currentTier: true },
+      select: {
+        id: true,
+        email: true,
+        stripeCustomerId: true,
+        currentTier: true,
+        // Pre-launch audit fix B5 (2026-07-11): block Journey purchases
+        // for Red-screened users so we don't take their money for a
+        // product our own screening judges is contraindicated for them.
+        // MiniMind subscriptions stay allowed (soft-tier product); only
+        // the deep trauma work is gated.
+        screeningResult: true,
+        // Pre-launch audit fix B2 (2026-07-11): don't sell to users who
+        // have already asked to delete their account.
+        deletedAt: true,
+      },
     });
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Pre-launch audit fixes B2 + B5 (2026-07-11). Refuse checkout when:
+    //   B2: user has confirmed account deletion — they've asked to
+    //       erase, don't sell them anything new.
+    //   B5: user screened Red AND is trying to buy a Journey product —
+    //       our own screening judges deep trauma work contraindicated
+    //       for them, so we don't take their £599.
+    if (user.deletedAt) {
+      return NextResponse.json(
+        { error: 'account_scheduled_for_deletion' },
+        { status: 403 },
+      );
+    }
+    if (
+      user.screeningResult === 'red' &&
+      (priceKey === 'journeyFull' || priceKey === 'journeyInstallment')
+    ) {
+      return NextResponse.json(
+        { error: 'screening_red_journey_blocked' },
+        { status: 403 },
+      );
     }
 
     // Guard against double-purchasing The Journey. Both journeyFull

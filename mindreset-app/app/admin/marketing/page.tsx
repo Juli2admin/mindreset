@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { sendMarketing } from '@/lib/email/sendMarketing';
+import { currentUserIsAdmin } from '@/lib/admin/auth';
 import ComposeForm from './ComposeForm';
 
 // /admin/marketing — compose + send a marketing email to all opted-in
@@ -22,6 +23,15 @@ export const dynamic = 'force-dynamic';
 
 async function sendCampaign(formData: FormData) {
   'use server';
+
+  // Pre-launch audit fix B3 (2026-07-11): defence-in-depth admin gate.
+  // The /admin layout blocks non-admin page-render, but server actions
+  // are POST endpoints with encrypted action IDs. Belt-and-braces auth
+  // check here so a signed-in non-admin cannot invoke this via network
+  // replay or leaked action ID.
+  if (!(await currentUserIsAdmin())) {
+    throw new Error('Forbidden');
+  }
 
   const subject = String(formData.get('subject') ?? '').trim();
   const body = String(formData.get('body') ?? '').trim();
