@@ -182,6 +182,12 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: '#2D7A85',
+  // viewportFit: 'cover' opts the app in to iOS safe-area — without it
+  // `env(safe-area-inset-bottom)` resolves to 0 on every device, and any
+  // composer/banner padding using that env value renders identically to
+  // no-safe-area code. Enables the composer safe-area fix in PR #258 to
+  // actually take effect on iPhones with home-indicator bars.
+  viewportFit: 'cover',
 };
 
 export default async function LocaleLayout({
