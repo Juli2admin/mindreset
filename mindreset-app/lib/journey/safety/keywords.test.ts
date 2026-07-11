@@ -140,3 +140,79 @@ describe('scanForJourneyRedFlag — the sibling patterns still work', () => {
     expect(scanForJourneyRedFlag("I hate my husband").matched).toBe(false);
   });
 });
+
+describe('scanForJourneyRedFlag — "I can\'t breathe" (2026-07-11 false-positive fix)', () => {
+  // Live-session case: user was doing a foreign-material release (dark stone /
+  // meteorite image) and after the release described the somatic residue —
+  // "kind of my chest gone down and squeezed my lungs. I can't breathe. I
+  // feel heavy to breathe. Difficult." — as normal post-release body-report.
+  // The old bare pattern `\bi\s+(am\s+)?(can'?t|cannot)\s+breathe\b` matched
+  // and froze the user mid-integration. The tightened pattern now requires
+  // co-occurring emergency signalling; bare somatic body-report falls
+  // through to the async verifier, whose SYSTEM_PROMPT explicitly
+  // classifies post-release "can't breathe" as clear_safe.
+
+  it('does NOT match Julia\'s live conversation somatic residue message', () => {
+    // The exact message that fired the freeze in the 2026-07-11 session.
+    const msg =
+      "It's still heavy because kind of my chest gone down and squeezed my lungs. I can't breathe. I feel heavy to breathe. Difficult.";
+    expect(scanForJourneyRedFlag(msg).matched).toBe(false);
+  });
+
+  it("does NOT match bare 'I can't breathe' as post-release body-report", () => {
+    expect(scanForJourneyRedFlag("I can't breathe").matched).toBe(false);
+    expect(scanForJourneyRedFlag("I cannot breathe").matched).toBe(false);
+    expect(scanForJourneyRedFlag('i can\'t breathe').matched).toBe(false);
+    expect(scanForJourneyRedFlag("I can't breathe properly").matched).toBe(false);
+  });
+
+  it("does NOT match somatic body-locating replies containing 'can't breathe'", () => {
+    // Common Journey-work replies where the user is describing what they
+    // notice when the AI asks about a body sensation.
+    expect(
+      scanForJourneyRedFlag("Heavy on my chest. I can't breathe deeply.")
+        .matched,
+    ).toBe(false);
+    expect(
+      scanForJourneyRedFlag(
+        "The image is pressing down. I can't breathe. It's like a stone on my chest.",
+      ).matched,
+    ).toBe(false);
+    expect(
+      scanForJourneyRedFlag(
+        "There's a hole in my chest and I can't breathe well",
+      ).matched,
+    ).toBe(false);
+  });
+
+  it("MATCHES real panic emergencies (co-occurring help-signalling)", () => {
+    // The tightened pattern still catches genuine acute distress where the
+    // user is signalling an emergency they cannot manage.
+    expect(scanForJourneyRedFlag("Help me I can't breathe").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I can't breathe, call someone").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I can't breathe, call 999").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I can't breathe, call 911").matched).toBe(true);
+    expect(
+      scanForJourneyRedFlag("I can't breathe I think I'm passing out").matched,
+    ).toBe(true);
+    expect(
+      scanForJourneyRedFlag("I can't breathe I'm dying help").matched,
+    ).toBe(true);
+    expect(
+      scanForJourneyRedFlag("Emergency — I can't breathe").matched,
+    ).toBe(true);
+  });
+
+  it("classifies real panic emergencies as 'panic_severe' red-flag type", () => {
+    const hit = scanForJourneyRedFlag("Help me I can't breathe");
+    expect(hit.matched).toBe(true);
+    expect(hit.flagType).toBe('panic_severe');
+  });
+
+  it('still matches other unambiguous panic patterns (heart attack / dying)', () => {
+    // Confidence check: the other PANIC_SEVERE_PATTERNS entries are
+    // unchanged by this fix.
+    expect(scanForJourneyRedFlag("I think I'm having a heart attack").matched).toBe(true);
+    expect(scanForJourneyRedFlag("I am dying right now").matched).toBe(true);
+  });
+});

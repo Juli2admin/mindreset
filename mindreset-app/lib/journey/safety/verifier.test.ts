@@ -6,7 +6,7 @@
 // clear_safe with no visible failure. These tests pin the contract.
 
 import { describe, expect, it } from 'vitest';
-import { parseResult, stripCodeFences } from './verifier';
+import { parseResult, stripCodeFences, SYSTEM_PROMPT } from './verifier';
 
 describe('stripCodeFences', () => {
   it('passes plain JSON through unchanged', () => {
@@ -177,5 +177,78 @@ describe('parseResult — fail-closed guards', () => {
       redFlagType: null,
     });
     expect(r?.reasoning).toBe('');
+  });
+});
+
+// PR ι (2026-07-11) — post-release phenomenology awareness.
+//
+// Julia's live session did beautiful foreign-material release work (dark
+// gemstone / meteorite image, sealed with "don't touch me", released to a
+// jewelry-maker's hands, integration with a residual hole). The AI then
+// asked "what does the hole feel like now?" and the user answered with
+// somatic residue: "chest gone down and squeezed my lungs. I can't
+// breathe." The keyword scanner froze the Journey on "I can't breathe"
+// (fixed separately in keywords.ts). The verifier's SYSTEM_PROMPT
+// previously told it to ignore context; if the sync scan had not caught
+// it, the verifier would have made the same false-positive classification.
+//
+// These tests lock in the new SYSTEM_PROMPT sections so a future edit
+// can't silently regress them.
+
+describe('verifier SYSTEM_PROMPT — post-release phenomenology awareness (PR ι)', () => {
+  it('CONTEXT VS CLASSIFICATION section acknowledges context for disambiguation', () => {
+    expect(SYSTEM_PROMPT).toContain('CONTEXT VS CLASSIFICATION');
+    // The revised rule explicitly names the ambiguous phrase family.
+    expect(SYSTEM_PROMPT).toContain('disambiguate somatic phenomenology from medical crisis');
+    expect(SYSTEM_PROMPT).toContain('"I can\'t breathe"');
+    expect(SYSTEM_PROMPT).toContain('"chest is heavy"');
+  });
+
+  it('has a POST-RELEASE PHENOMENOLOGY IS NOT PANIC section', () => {
+    expect(SYSTEM_PROMPT).toContain('POST-RELEASE PHENOMENOLOGY IS NOT PANIC');
+  });
+
+  it("post-release section explicitly reclassifies 'I can't breathe' after guided somatic work as clear_safe", () => {
+    // The exact rule that would have prevented the freeze.
+    const idx = SYSTEM_PROMPT.indexOf('POST-RELEASE PHENOMENOLOGY IS NOT PANIC');
+    expect(idx).toBeGreaterThan(-1);
+    const section = SYSTEM_PROMPT.slice(idx, idx + 2000);
+    expect(section).toContain("I can't breathe");
+    expect(section).toContain('clear_safe');
+    expect(section).toContain('NOT panic_severe');
+  });
+
+  it('post-release section names other body-report phrases (chest heavy, hole, empty)', () => {
+    const idx = SYSTEM_PROMPT.indexOf('POST-RELEASE PHENOMENOLOGY IS NOT PANIC');
+    const section = SYSTEM_PROMPT.slice(idx, idx + 2000);
+    expect(section).toContain('My chest is heavy');
+    expect(section).toContain('hole in my chest');
+    expect(section).toContain('I feel empty');
+  });
+
+  it('post-release section names the emergency-signalling criteria that WOULD still fire panic_severe', () => {
+    // The safety net stays — real emergencies still classify correctly.
+    const idx = SYSTEM_PROMPT.indexOf('POST-RELEASE PHENOMENOLOGY IS NOT PANIC');
+    const section = SYSTEM_PROMPT.slice(idx, idx + 2000);
+    expect(section).toContain('help-seeking');
+    expect(section).toContain('pass out');
+    expect(section).toContain('emergency');
+  });
+
+  it("acknowledges 'no, I'm fine, I'm just describing' should be believed", () => {
+    // The exact wall Julia hit — she said "No, I'm okay, I'm just
+    // describing you the picture" three times and got canned responses
+    // each time (because the freeze had already fired). The verifier
+    // guidance now says to believe the user on a safety-check response.
+    expect(SYSTEM_PROMPT).toContain("no, I'm fine");
+    expect(SYSTEM_PROMPT).toContain("just describing");
+    expect(SYSTEM_PROMPT).toContain('believe them');
+  });
+
+  it('panic_severe definition updated to require emergency-signalling in Journey sessions', () => {
+    // Old definition matched the bare phrase. New definition requires
+    // co-occurring emergency markers alongside the symptom language.
+    expect(SYSTEM_PROMPT).toContain('ACTIVE panic attack');
+    expect(SYSTEM_PROMPT).toContain('emergency signalling');
   });
 });
