@@ -317,7 +317,7 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
       className="min-h-screen flex flex-col"
       style={{ background: PALETTE.bg, color: PALETTE.text }}
     >
-      <TopBar />
+      <TopBar sticky />
 
       <main className="flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
@@ -444,10 +444,14 @@ function Composer({
   const canSend = value.trim().length > 0 && !disabled;
   return (
     <div
-      className="px-6 py-4"
+      className="px-6 pt-4"
       style={{
         borderTop: `1px solid ${PALETTE.border}`,
         background: PALETTE.bg,
+        // iOS safe-area padding so the send button + composer aren't hidden
+        // behind the home-indicator bar on iPhones. Testers on mobile
+        // reported the composer as "almost half visible only".
+        paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
       }}
     >
       <div className="max-w-2xl mx-auto">
