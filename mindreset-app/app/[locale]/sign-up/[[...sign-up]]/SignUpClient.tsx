@@ -43,7 +43,9 @@ function Checkbox({
       tabIndex={0}
       onClick={toggle}
       onKeyDown={(e) => {
-        if (e.key === ' ' || e.key === 'Enter') {
+        // Space only, per WAI-ARIA APG checkbox pattern (native
+        // <input type="checkbox"> does nothing on Enter either).
+        if (e.key === ' ') {
           e.preventDefault();
           toggle();
         }
@@ -51,9 +53,14 @@ function Checkbox({
       className="flex items-start gap-3 py-2.5 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded-sm"
       style={{
         // Focus ring uses the accent so it's visible on both themes. Only
-        // shown on keyboard focus (focus-visible), not on click.
+        // shown on keyboard focus (focus-visible), not on click. Both the
+        // ring color AND ring-offset color must be set explicitly — Tailwind
+        // defaults the offset to `#fff`, which shows as a bright white band
+        // against the dark-theme bg (#393939) before the accent ring.
         // eslint-disable-next-line @typescript-eslint/naming-convention
         '--tw-ring-color': PALETTE.accent,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        '--tw-ring-offset-color': PALETTE.bg,
       } as React.CSSProperties}
     >
       <span
@@ -127,6 +134,11 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
                     style={{ color: PALETTE.accent }}
+                    // stopPropagation so clicking "Terms" opens the tab
+                    // without also toggling the parent checkbox — the
+                    // Checkbox root is role="checkbox" onClick={toggle}, so
+                    // any bubbled click would flip the state as a side effect.
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {chunks}
                   </Link>
@@ -142,6 +154,8 @@ export default function SignUpClient({ footerSlot }: SignUpClientProps) {
                     rel="noopener noreferrer"
                     className="underline underline-offset-2"
                     style={{ color: PALETTE.accent }}
+                    // Same rationale as the Terms link above.
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {chunks}
                   </Link>
