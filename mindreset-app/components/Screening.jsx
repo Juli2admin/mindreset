@@ -94,17 +94,20 @@ function ChevronDown({ size = 10 }) {
 // ============================================================================
 function Check({ checked, onChange, children }) {
   const { palette: c } = useTheme();
+  // Border uses `c.text` (not `borderStrong`) so the outline reads solid on
+  // the card in both themes; night-mode borderStrong was ~1.9:1 contrast and
+  // testers couldn't tell the boxes were interactive.
   return (
     <label className="flex items-start gap-3 cursor-pointer group py-2.5">
       <span
-        className="mt-[3px] shrink-0 w-[18px] h-[18px] rounded border-[1.5px] flex items-center justify-center transition-colors"
+        className="mt-[3px] shrink-0 w-[20px] h-[20px] rounded border-2 flex items-center justify-center transition-all group-hover:opacity-90"
         style={{
           background: checked ? c.text : c.bgCard,
-          borderColor: checked ? c.text : c.borderStrong,
+          borderColor: c.text,
         }}
       >
         {checked && (
-          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke={c.bg} strokeWidth="2.5">
+          <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke={c.bg} strokeWidth="2.5">
             <path d="M3 8.5L6.5 12L13 4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
