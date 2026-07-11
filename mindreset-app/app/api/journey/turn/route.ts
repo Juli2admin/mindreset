@@ -47,6 +47,7 @@ import {
   finaliseStream,
 } from '@/lib/journey/streaming/reply-processor';
 import { recordAiUsage } from '@/lib/ai-usage/record';
+import { checkJourneyMonthlyCap } from '@/lib/ai-usage/monthly-cap';
 
 export const dynamic = 'force-dynamic';
 
@@ -143,6 +144,36 @@ export async function POST(request: NextRequest) {
   }
   if (user.screeningResult === 'red') {
     return NextResponse.json({ error: 'screening-red' }, { status: 412 });
+  }
+
+  // PR ε (2026-07-11) — per-user monthly $ cap. Julia's principle:
+  // "protect app from abusive bots, or overspending users outside of paid
+  // plan/subscriptions." Runs before the LLM call; refuses turns for
+  // users past the monthly cap; logs a warning at 80%. Fail-open on
+  // aggregate errors — the 5,000-msg + rate-limit are the real guards.
+  const capCheck = await checkJourneyMonthlyCap(userId);
+  if (capCheck.verdict === 'over_cap') {
+    console.error('[journey/turn] per-user monthly cap reached', {
+      userId,
+      spentUsd: capCheck.spentUsd,
+      capUsd: capCheck.capUsd,
+    });
+    return NextResponse.json(
+      {
+        error: 'monthly_spend_cap_reached',
+        capUsd: capCheck.capUsd,
+        spentUsd: capCheck.spentUsd,
+      },
+      { status: 429 },
+    );
+  }
+  if (capCheck.verdict === 'warn') {
+    console.warn('[journey/turn] per-user monthly cap approaching', {
+      userId,
+      spentUsd: capCheck.spentUsd,
+      warnUsd: capCheck.warnUsd,
+      capUsd: capCheck.capUsd,
+    });
   }
 
   // Access check — completed Purchase + within 1-year access window + under
@@ -512,11 +543,22 @@ async function finaliseTurn(args: {
 
   // Persist the assistant message (human reply only — the state report is
   // never stored on the message itself; it lives encrypted on the audit log).
+  // Pre-launch audit fix H5 (2026-07-11). If the stream fell over inside
+  // a private-tag (`<thinking>` / `<assessment>`) block, finaliseStream
+  // returns "" and split.humanReply is empty. Persisting an empty
+  // assistant message shows the user a blank bubble on page reload with
+  // no signal that something failed. Persist a visible "connection
+  // interrupted" placeholder instead so page-load transcript is honest
+  // about the failure.
+  const persistedReply =
+    split.humanReply.length === 0
+      ? '[Reply interrupted. Please try again.]'
+      : split.humanReply;
   await prisma.journeyMessage.create({
     data: {
       userId: args.userId,
       role: 'assistant',
-      contentEncrypted: encrypt(split.humanReply),
+      contentEncrypted: encrypt(persistedReply),
       stageAtTime: args.stageAtTurn,
     },
   });

@@ -16,4 +16,23 @@ Sentry.init({
   environment: process.env.VERCEL_ENV ?? 'development',
 
   debug: false,
+
+  // Pre-launch audit fix H12 (2026-07-11). Same PII-scrub posture as
+  // server config — middleware sees URLs and headers, so cookie and
+  // authorization scrubbing matters here too even though message body
+  // isn't reachable in edge runtime.
+  beforeSend(event) {
+    if (event.request) {
+      delete event.request.data;
+      delete event.request.cookies;
+      if (event.request.headers) {
+        delete event.request.headers['authorization'];
+        delete event.request.headers['Authorization'];
+        delete event.request.headers['cookie'];
+        delete event.request.headers['Cookie'];
+      }
+    }
+    return event;
+  },
+  sendDefaultPii: false,
 });
