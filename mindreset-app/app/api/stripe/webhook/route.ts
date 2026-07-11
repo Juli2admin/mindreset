@@ -112,12 +112,43 @@ async function handleSubscriptionUpsert(sub: Stripe.Subscription) {
   // any messages the user sent between the two deliveries are not
   // wiped.
   let isFirstActivation = false;
+  // Pre-launch audit fix H4 (2026-07-11). Read the user's current
+  // stripeSubscriptionId + currentTier BEFORE the write so we can
+  // detect a race where a different active sub would be silently
+  // overwritten. The scalar `stripeSubscriptionId` column can only hold
+  // one value — if two MiniMind subs somehow exist for the same
+  // customer (stale-client double-click, portal-upgrade race), the
+  // second overwrite orphans the first sub and Stripe bills the user
+  // indefinitely for a sub with no code-side tracking.
+  //
+  // Behaviour:
+  //   - If current == null or current == sub.id: proceed normally.
+  //   - If current is set to a DIFFERENT id AND the incoming sub is
+  //     active AND the current tier is already a paid tier: log a hard
+  //     error (Sentry surfaces this), then compare-and-set. The write
+  //     still happens (this is the state we can observe now), but the
+  //     alert lets Julia investigate + reconcile the orphan.
+  const existing = await prisma.user.findFirst({
+    where: { stripeCustomerId: cid },
+    select: { currentTier: true, stripeSubscriptionId: true },
+  });
   if (willBePaid) {
-    const existing = await prisma.user.findFirst({
-      where: { stripeCustomerId: cid },
-      select: { currentTier: true },
-    });
     isFirstActivation = existing?.currentTier === 'free';
+  }
+  if (
+    existing?.stripeSubscriptionId &&
+    existing.stripeSubscriptionId !== sub.id &&
+    active
+  ) {
+    console.error(
+      '[webhook] stripeSubscriptionId overwrite detected — orphaning risk. Investigate both subs in Stripe.',
+      {
+        cid,
+        currentSubId: existing.stripeSubscriptionId,
+        incomingSubId: sub.id,
+        incomingStatus: sub.status,
+      },
+    );
   }
 
   await prisma.user.updateMany({
@@ -272,13 +303,55 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const cid = extractCustomerId(session.customer);
   if (!cid) return;
 
-  const user = await prisma.user.findUnique({
+  // Pre-launch audit fix H1 (2026-07-11). Race condition: if the Clerk
+  // `user.created` webhook hasn't landed by the time this fires,
+  // findUnique(stripeCustomerId) returns null and the old code returned
+  // silently — Stripe marked the event as processed, no Purchase row
+  // written, paid user hits /journey with "no access", Julia has to
+  // reconcile manually.
+  //
+  // Fallback path: checkout metadata carries clerkId (see
+  // /api/checkout/create). Look up by that. If found, backfill the
+  // User's stripeCustomerId so subsequent events resolve fast. If STILL
+  // not found (Clerk truly hasn't run yet), throw so Stripe retries the
+  // whole event — the /home defensive upsert or the retried Clerk
+  // webhook will win eventually. Idempotency on stripeSessionId
+  // protects against double-processing.
+  let user = await prisma.user.findUnique({
     where: { stripeCustomerId: cid },
     select: { id: true },
   });
   if (!user) {
-    console.warn('[webhook] no user for customer:', cid);
-    return;
+    const clerkId = session.metadata?.clerkId;
+    if (clerkId) {
+      user = await prisma.user.findUnique({
+        where: { id: clerkId },
+        select: { id: true },
+      });
+      if (user) {
+        // Backfill so future Stripe events on this customer are fast.
+        await prisma.user
+          .update({
+            where: { id: user.id },
+            data: { stripeCustomerId: cid },
+          })
+          .catch((err) =>
+            console.warn(
+              '[webhook] stripeCustomerId backfill failed (non-fatal):',
+              err,
+            ),
+          );
+      }
+    }
+    if (!user) {
+      console.error(
+        '[webhook] no user found by stripeCustomerId OR metadata.clerkId — Clerk webhook likely delayed. Throwing so Stripe retries.',
+        { cid, clerkId, sessionId: session.id },
+      );
+      throw new Error(
+        `Checkout completed but no matching User (cid=${cid}, clerkId=${clerkId ?? 'none'}). Retryable.`,
+      );
+    }
   }
 
   // Subscription mode covers two products distinguished by priceKey:
@@ -389,13 +462,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     if (priceKey !== 'topUp') {
-      // Unknown payment-mode priceKey — treat defensively as topUp so the
-      // paid checkout isn't silently dropped, but log so it's visible in
-      // Sentry telemetry. This branch should never fire in prod.
-      console.warn(
-        '[webhook] unknown payment-mode priceKey, falling back to topUp:',
-        priceKey,
-        session.id,
+      // Pre-launch audit fix H9 (2026-07-11). Old behaviour fell back
+      // to topUp on unknown priceKey — silently granting +200 credits
+      // and booking £4.99 revenue for a product we don't know we sold.
+      // Now: refuse to guess. Throw so Stripe retries and Julia sees
+      // the error in Sentry; she can look at the session and configure
+      // the priceKey mapping before Stripe stops retrying (72h window).
+      console.error(
+        '[webhook] unknown payment-mode priceKey — refusing to grant. Investigate the Stripe session in the dashboard.',
+        { priceKey, sessionId: session.id },
+      );
+      throw new Error(
+        `Unknown payment-mode priceKey "${priceKey}" on session ${session.id}. Refusing to grant. Configure the priceKey mapping or refund the session.`,
       );
     }
 
