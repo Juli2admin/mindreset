@@ -216,3 +216,33 @@ describe('scanForJourneyRedFlag — "I can\'t breathe" (2026-07-11 false-positiv
     expect(scanForJourneyRedFlag("I am dying right now").matched).toBe(true);
   });
 });
+
+// PR σ (2026-07-11) — homoglyph / unicode-compatibility bypass defense.
+// Regexes are ASCII; without NFKC normalisation a mathematical-bold "𝗄𝗂𝗅𝗅"
+// or full-width "ｉ ｄｉｅ" would dodge the scanner and only the async
+// verifier would catch it — after the AI reply already streamed. NFKC
+// folds these compatibility codepoints back to plain ASCII before the
+// regex runs, and doesn't touch Cyrillic (Russian native locale).
+describe('scanForJourneyRedFlag — unicode compatibility normalisation', () => {
+  it('MATCHES full-width homoglyph "kill myself"', () => {
+    // Fullwidth Latin block (U+FF21-U+FF5A) is a compatibility block that
+    // NFKC folds back to plain ASCII. This is the concrete attack shape:
+    // a user pastes "ｋｉｌｌ ｍｙｓｅｌｆ" and the raw regex misses it.
+    expect(scanForJourneyRedFlag('ｋｉｌｌ ｍｙｓｅｌｆ').matched).toBe(true);
+  });
+
+  it('MATCHES full-width "I want to die"', () => {
+    expect(scanForJourneyRedFlag('Ｉ ｗａｎｔ ｔｏ ｄｉｅ').matched).toBe(true);
+  });
+
+  it('MATCHES mixed full-width + ASCII', () => {
+    expect(scanForJourneyRedFlag('please, ｉ ｗａｎｔ ｔｏ ｄｉｅ').matched).toBe(true);
+  });
+
+  it('preserves Cyrillic — normal RU text is untouched by NFKC', () => {
+    // Sanity: NFKC on a benign Russian sentence stays a false match. Ensures
+    // the normalization step doesn't accidentally rewrite Cyrillic into an
+    // English phrase that would then trip the EN regexes.
+    expect(scanForJourneyRedFlag('Я хочу поговорить о своих чувствах').matched).toBe(false);
+  });
+});
