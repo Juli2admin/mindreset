@@ -94,17 +94,27 @@ function ChevronDown({ size = 10 }) {
 // ============================================================================
 function Check({ checked, onChange, children }) {
   const { palette: c } = useTheme();
+  // The unchecked box previously used `c.borderStrong` at 1.5px — visible in
+  // light mode against the cream background but essentially invisible in dark
+  // mode (dark-grey box on near-black background with a barely-lighter grey
+  // border). New users testing the screening reported the whole screen looked
+  // "disabled": they couldn't see the boxes were interactive, so they never
+  // ticked them, so the Begin button (correctly gated on both ticks) stayed
+  // greyed out. The fix uses `c.text` for the unchecked border — dark against
+  // light card in day mode, cream against dark card in night mode — so the
+  // box is unambiguously a clickable form element in both themes. Border
+  // bumped to 2px so the outline reads solid at glance.
   return (
     <label className="flex items-start gap-3 cursor-pointer group py-2.5">
       <span
-        className="mt-[3px] shrink-0 w-[18px] h-[18px] rounded border-[1.5px] flex items-center justify-center transition-colors"
+        className="mt-[3px] shrink-0 w-[20px] h-[20px] rounded border-2 flex items-center justify-center transition-colors group-hover:opacity-90"
         style={{
           background: checked ? c.text : c.bgCard,
-          borderColor: checked ? c.text : c.borderStrong,
+          borderColor: c.text,
         }}
       >
         {checked && (
-          <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke={c.bg} strokeWidth="2.5">
+          <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke={c.bg} strokeWidth="2.5">
             <path d="M3 8.5L6.5 12L13 4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
