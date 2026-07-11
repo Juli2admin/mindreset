@@ -94,11 +94,37 @@ function ChevronDown({ size = 10 }) {
 // ============================================================================
 function Check({ checked, onChange, children }) {
   const { palette: c } = useTheme();
-  // Border uses `c.text` (not `borderStrong`) so the outline reads solid on
-  // the card in both themes; night-mode borderStrong was ~1.9:1 contrast and
-  // testers couldn't tell the boxes were interactive.
+  // ARIA checkbox pattern (role="checkbox" + aria-checked + explicit onClick)
+  // instead of the standard <label><input type="checkbox" className="sr-only" />
+  // pattern. On iOS Safari, clicking a <label> that wraps a visually-hidden
+  // checkbox is known to silently fail to fire the input's onChange — testers
+  // on iPhone reported the boxes as "no tick appeared, like frozen." Direct
+  // onClick on this div avoids the label→input delegation entirely and works
+  // uniformly on every browser. Keyboard support (space / enter) preserved via
+  // onKeyDown. Screen readers announce "checkbox, checked/not checked, [label]"
+  // via role + aria-checked exactly like a native input. No <form> submission
+  // needed here — the age/notMed values live in React state.
+  const toggle = () => onChange(!checked);
   return (
-    <label className="flex items-start gap-3 cursor-pointer group py-2.5">
+    <div
+      role="checkbox"
+      aria-checked={checked}
+      tabIndex={0}
+      onClick={toggle}
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggle();
+        }
+      }}
+      className="flex items-start gap-3 cursor-pointer group py-2.5 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded-sm"
+      style={{
+        // Focus ring uses the accent so it's visible on both themes. Only
+        // shown on keyboard focus (focus-visible), not on click.
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        '--tw-ring-color': c.accent,
+      }}
+    >
       <span
         className="mt-[3px] shrink-0 w-[20px] h-[20px] rounded border-2 flex items-center justify-center transition-all group-hover:opacity-90"
         style={{
@@ -112,11 +138,10 @@ function Check({ checked, onChange, children }) {
           </svg>
         )}
       </span>
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
       <span className="leading-[1.55] text-[15px]" style={{ ...sansStyle, color: c.text }}>
         {children}
       </span>
-    </label>
+    </div>
   );
 }
 
