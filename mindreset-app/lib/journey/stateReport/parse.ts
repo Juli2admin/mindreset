@@ -57,6 +57,14 @@ const PRIVATE_TAG_PAIRS: ReadonlyArray<{ open: string; close: string }> = [
 // (open with no matching close), truncates everything from the open
 // onwards — safer to lose the tail than to leak reasoning that a future
 // page reload would render.
+//
+// M6 (2026-07-11). Also strip any orphan CLOSING tag left behind after
+// the balanced-pair sweep. Nested tags of the same name (e.g.
+// `<assessment>a<assessment>b</assessment>c</assessment>`) match the
+// first close greedily, so the outer close survives and would render
+// literally in the user's message pane. Not a security risk (the payload
+// wasn't sensitive), just a visible tag string — the extra sweep keeps
+// output clean under any nesting the model might emit.
 function stripPrivateTags(text: string): string {
   let result = text;
   for (const pair of PRIVATE_TAG_PAIRS) {
@@ -69,6 +77,11 @@ function stripPrivateTags(text: string): string {
         break;
       }
       result = result.slice(0, openIdx) + result.slice(closeIdx + pair.close.length);
+    }
+    while (true) {
+      const orphan = result.indexOf(pair.close);
+      if (orphan < 0) break;
+      result = result.slice(0, orphan) + result.slice(orphan + pair.close.length);
     }
   }
   return result;
