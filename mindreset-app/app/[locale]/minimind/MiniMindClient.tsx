@@ -99,6 +99,7 @@ function MiniMindHeader({
       style={{ borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <TopBar
+        sticky
         right={
           showStartNew && onStartNew ? (
             <button
@@ -521,10 +522,14 @@ function ChattingView({
             e.preventDefault();
             onSend();
           }}
-          className="sticky bottom-0 px-6 py-4"
+          className="sticky bottom-0 px-6 pt-4"
           style={{
             background: PALETTE.bg,
             borderTop: `1px solid ${PALETTE.border}`,
+            // iOS safe-area padding so the send button isn't hidden behind
+            // the iPhone home-indicator bar. Testers on mobile reported the
+            // composer as "almost half visible only".
+            paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
           }}
         >
           <div className="max-w-[700px] mx-auto">
@@ -669,10 +674,13 @@ function AtCapBanner({
 
   return (
     <div
-      className="sticky bottom-0 px-6 py-6"
+      className="sticky bottom-0 px-6 pt-6"
       style={{
         background: PALETTE.bg,
         borderTop: `1px solid ${PALETTE.border}`,
+        // Same safe-area treatment as the main composer — this "cap reached"
+        // banner is also fixed to the bottom of the viewport.
+        paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))',
       }}
     >
       <div

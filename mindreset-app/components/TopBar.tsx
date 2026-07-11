@@ -45,6 +45,11 @@ type Props = {
    *  wordmark. Enabled on marketing surfaces so users can cross-navigate
    *  without scrolling to the footer. Ignored when align='centered'. */
   showMarketingNav?: boolean;
+  /** Stick the header to the top of the viewport with a solid background,
+   *  so users mid-scroll on a long chat can reach the wordmark (→ home) and
+   *  the UserButton without scrolling all the way back to the top. Opt-in
+   *  per page; default false preserves the existing marketing-page layout. */
+  sticky?: boolean;
 };
 
 export default function TopBar({
@@ -52,6 +57,7 @@ export default function TopBar({
   align = 'default',
   showTreeMark = false,
   showMarketingNav = false,
+  sticky = false,
 }: Props) {
   const t = useTranslations('TopBar');
   const tFooter = useTranslations('Footer');
@@ -94,9 +100,19 @@ export default function TopBar({
     </Link>
   );
 
+  // When sticky, the header gets `sticky top-0 z-40` + a solid background
+  // (matching page bg) so scrolling chat content passes cleanly beneath it.
+  // z-40 sits under Toast/menus (z-50) but above message content — same
+  // stack the app already uses for other sticky elements.
+  const stickyClasses = sticky ? 'sticky top-0 z-40' : '';
+  const stickyStyle = sticky ? { background: PALETTE.bg } : undefined;
+
   if (align === 'centered') {
     return (
-      <header className="flex items-center justify-center py-6">
+      <header
+        className={`flex items-center justify-center py-6 ${stickyClasses}`}
+        style={stickyStyle}
+      >
         {wordmark}
       </header>
     );
@@ -128,7 +144,10 @@ export default function TopBar({
     // flex-wrap + gap-y-3 lets the left group (wordmark + nav) wrap under
     // the right group on narrow phones cleanly, rather than crushing
     // into one line.
-    <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-6">
+    <header
+      className={`flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-6 ${stickyClasses}`}
+      style={stickyStyle}
+    >
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
         {wordmark}
         {marketingNav}
