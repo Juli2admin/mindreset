@@ -34,10 +34,28 @@ function extractCustomerId(
 // current_period_end moved from Subscription to SubscriptionItem in
 // API version 2025-08-27.basil. Webhook endpoint may be on dahlia
 // while the SDK types are acacia; read defensively from both.
+//
+// M22 (2026-07-11). If BOTH locations miss (Stripe adds a third
+// API-version move, or an unexpected sub shape lands), we silently write
+// cycleResetAt=null and the user's message-cap counter never resets.
+// Log a hard console.error with the sub id + status so Vercel search
+// surfaces it — Sentry captureMessage would be nicer but this webhook
+// already relies on console.error for Vercel log-based alerting.
 function getPeriodEnd(sub: Stripe.Subscription): number | null {
   const item = sub.items.data[0] as
     (Stripe.SubscriptionItem & { current_period_end?: number }) | undefined;
-  return item?.current_period_end ?? sub.current_period_end ?? null;
+  const fromItem = item?.current_period_end ?? null;
+  const fromSub = sub.current_period_end ?? null;
+  const value = fromItem ?? fromSub;
+  if (value === null) {
+    console.error('[stripe-webhook] getPeriodEnd returned null — Stripe schema drift?', {
+      subId: sub.id,
+      status: sub.status,
+      hasItem: !!item,
+      itemCount: sub.items.data.length,
+    });
+  }
+  return value;
 }
 
 // Journey installment subscriptions run through the same subscription /
