@@ -189,7 +189,20 @@ export default async function MiniMindPage({
         (Date.now() - lastMessageAt.getTime()) / (1000 * 60 * 60 * 24),
       );
       const showSnippet = daysAgo <= SNIPPET_DAYS_THRESHOLD;
-      const collapsed = decrypt(lastUserMessage.content).replace(/\s+/g, ' ').trim();
+      // Defensive decrypt: mirrors chat/route.ts:242 and
+      // conversations/route.ts. A single corrupt / key-rotated /
+      // migration-artifact row previously threw and 500'd the whole
+      // MiniMind page render — locking the user out of chat entirely.
+      // On failure: log + treat as empty string; the message row is
+      // preserved and the rest of the history renders. Missing content
+      // reads as an empty bubble, which is recoverable UX.
+      let collapsed: string;
+      try {
+        collapsed = decrypt(lastUserMessage.content).replace(/\s+/g, ' ').trim();
+      } catch (err) {
+        console.error('[minimind/page] decrypt failed for snippet message', lastUserMessage.id, err);
+        collapsed = '';
+      }
       const snippet =
         collapsed.length > SNIPPET_MAX_CHARS
           ? collapsed.slice(0, SNIPPET_MAX_CHARS).trimEnd() + '…'
@@ -206,11 +219,20 @@ export default async function MiniMindPage({
           .slice()
           .reverse()
           .filter((m) => m.role === 'user' || m.role === 'assistant')
-          .map((m) => ({
-            id: m.id,
-            role: m.role as 'user' | 'assistant',
-            content: decrypt(m.content),
-          })),
+          .map((m) => {
+            let content: string;
+            try {
+              content = decrypt(m.content);
+            } catch (err) {
+              console.error('[minimind/page] decrypt failed for message', m.id, err);
+              content = '';
+            }
+            return {
+              id: m.id,
+              role: m.role as 'user' | 'assistant',
+              content,
+            };
+          }),
       };
     }
   }

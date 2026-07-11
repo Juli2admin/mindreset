@@ -78,7 +78,11 @@ export default async function JourneyPage() {
   });
 
   // Load recent messages for the client. Decrypted server-side so the client
-  // never sees ciphertext.
+  // never sees ciphertext. Defensive decrypt mirrors chat/route.ts:242 and
+  // journey/router/history.ts:52 — a single corrupt / key-rotated / migration-
+  // artifact row previously threw and 500'd the whole Journey page render,
+  // locking a paying user out of chat entirely. On failure: log + treat as
+  // empty string; the row is preserved and the rest of the history renders.
   const recentRows = await prisma.journeyMessage.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
@@ -88,11 +92,20 @@ export default async function JourneyPage() {
   const messages = recentRows
     .slice()
     .reverse()
-    .map((m) => ({
-      id: m.id,
-      role: m.role as 'user' | 'assistant',
-      content: decrypt(m.contentEncrypted),
-    }));
+    .map((m) => {
+      let content: string;
+      try {
+        content = decrypt(m.contentEncrypted);
+      } catch (err) {
+        console.error('[journey/page] decrypt failed for message', m.id, err);
+        content = '';
+      }
+      return {
+        id: m.id,
+        role: m.role as 'user' | 'assistant',
+        content,
+      };
+    });
 
   return (
     <JourneyClient
