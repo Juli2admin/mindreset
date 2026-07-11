@@ -7,6 +7,11 @@ import { MINIMIND_PROMPT_V2_3 } from '@/lib/minimind/prompt';
 import { scanForKeywords } from '@/lib/minimind/safety/keywords';
 import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
+import {
+  getMinimindCrisisResponseForLocale,
+  getMinimindCooldownHoldingForLocale,
+  getMinimindCooldownLiftForLocale,
+} from '@/lib/minimind/safety/canned-responses';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
 import { updateWellbeingSnapshot } from '@/lib/minimind/memory/updater';
 import { encrypt, decrypt } from '@/lib/encrypt';
@@ -41,21 +46,10 @@ const RECENT_STATE_OCCURRENCES_CAP = 50;
 const PROFILE_UPDATE_EVERY_N_MESSAGES = 20;
 
 // ============================================================================
-// Canned crisis copy (EN only for v1; i18n lift later moves to locales/)
+// Canned crisis copy — moved to lib/minimind/safety/canned-responses.ts
+// (PR π, 2026-07-11) with proper EN + RU localisation. Fetched per-user
+// via billingUser.locale below.
 // ============================================================================
-const CRISIS_RESPONSE = `I hear how serious this is. What you're carrying right now is more than this conversation is built for, and I want you safe. Please reach out to a person who can be with you in this:
-
-Samaritans — 116 123 (free, 24/7)
-NHS 111, option 2 — for mental health crisis
-Your GP if you have one
-If you're in immediate physical danger, call 999 or go to A&E
-
-I'll be here when you're ready to come back.`;
-
-const COOLDOWN_HOLDING_MESSAGE = "I'm here. Are you somewhere safe right now?";
-
-const COOLDOWN_LIFT_MESSAGE =
-  "I'm glad you're letting me know. How are you doing right now?";
 
 // ============================================================================
 // Helpers
@@ -153,6 +147,10 @@ export async function POST(req: NextRequest) {
       // means they don't accrue billed messages / stored content under a
       // request they've asked to erase.
       deletedAt:                true,
+      // Pre-launch audit fix M11 (2026-07-11): locale drives which
+      // language the canned crisis/holding/lift responses come out in.
+      // RU users in crisis previously got EN text with a UK phone number.
+      locale:                   true,
     },
   });
   if (!billingUser) {
@@ -268,6 +266,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Locale-picked canned messages. PR π (2026-07-11) — was English-only.
+  const crisisResponse = getMinimindCrisisResponseForLocale(billingUser.locale);
+  const cooldownHoldingMessage = getMinimindCooldownHoldingForLocale(
+    billingUser.locale,
+  );
+  const cooldownLiftMessage = getMinimindCooldownLiftForLocale(
+    billingUser.locale,
+  );
+
   // ==========================================================================
   // BRANCH: Conversation is in crisis cooldown
   // Memory NOT injected — cooldown delivers canned text only.
@@ -292,11 +299,11 @@ export async function POST(req: NextRequest) {
         data: {
           conversationId: conversation.id,
           role: 'assistant',
-          content: encrypt(COOLDOWN_HOLDING_MESSAGE),
+          content: encrypt(cooldownHoldingMessage),
         },
       });
       return makeStreamResponse(
-        cannedResponseStream(COOLDOWN_HOLDING_MESSAGE),
+        cannedResponseStream(cooldownHoldingMessage),
         conversation.id,
       );
     }
@@ -329,11 +336,11 @@ export async function POST(req: NextRequest) {
         data: {
           conversationId: conversation.id,
           role: 'assistant',
-          content: encrypt(COOLDOWN_LIFT_MESSAGE),
+          content: encrypt(cooldownLiftMessage),
         },
       });
       return makeStreamResponse(
-        cannedResponseStream(COOLDOWN_LIFT_MESSAGE),
+        cannedResponseStream(cooldownLiftMessage),
         conversation.id,
       );
     }
@@ -343,7 +350,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'assistant',
-        content: encrypt(COOLDOWN_HOLDING_MESSAGE),
+        content: encrypt(cooldownHoldingMessage),
       },
     });
 
@@ -357,14 +364,14 @@ export async function POST(req: NextRequest) {
         type: verifier.type ?? 'other',
         severity: verifier.severity,
         triggerExcerpt: message,
-        aiResponse: COOLDOWN_HOLDING_MESSAGE,
+        aiResponse: cooldownHoldingMessage,
         reasoning: verifier.reasoning,
         source: 'verifier_sync',
       });
     }
 
     return makeStreamResponse(
-      cannedResponseStream(COOLDOWN_HOLDING_MESSAGE),
+      cannedResponseStream(cooldownHoldingMessage),
       conversation.id,
     );
   }
@@ -396,7 +403,7 @@ export async function POST(req: NextRequest) {
       type: keywordMatch.type,
       severity: keywordMatch.severity,
       triggerExcerpt: keywordMatch.triggerExcerpt,
-      aiResponse: CRISIS_RESPONSE,
+      aiResponse: crisisResponse,
       source: 'keyword',
     });
 
@@ -404,7 +411,7 @@ export async function POST(req: NextRequest) {
       data: {
         conversationId: conversation.id,
         role: 'assistant',
-        content: encrypt(CRISIS_RESPONSE),
+        content: encrypt(crisisResponse),
       },
     });
 
@@ -421,7 +428,7 @@ export async function POST(req: NextRequest) {
     }
 
     return makeStreamResponse(
-      cannedResponseStream(CRISIS_RESPONSE),
+      cannedResponseStream(crisisResponse),
       conversation.id,
     );
   }

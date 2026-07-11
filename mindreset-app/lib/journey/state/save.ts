@@ -26,8 +26,6 @@ type Updates = {
   continuityNote?: string;
   // MII updates (partial — merged into existing mii JSON)
   miiPatch?: Partial<MiiState>;
-  // Frozen-for-review (Red Flag)
-  frozen?: { reason: string };
 };
 
 export async function applyStateReportToProgress(
@@ -43,9 +41,11 @@ export async function applyStateReportToProgress(
   if (typeof report.intensity === 'number') updates.lastIntensity = report.intensity;
   if (report.continuityNote) updates.continuityNote = report.continuityNote;
   if (report.practiceRun?.depth === 'deep') updates.deepLayerContact = true;
-  if (report.safetyFlag === 'red_flag') {
-    updates.frozen = { reason: report.redFlagType ?? 'unspecified' };
-  }
+  // Note: the red_flag freeze write is intentionally NOT here — turn/route.ts
+  // calls freezeJourney({source:'state_report'}) after applyStateReportToProgress
+  // so the reason string composed by freezeJourney (source | type | reasoning)
+  // is the one that persists. Writing here too would (a) race with the freeze
+  // helper and (b) clobber the composed reason with a bare type string.
 
   // Stage 4 MII-6 (48-hour settling check). The AI emits mii6Check ONLY
   // when the soft check-in instruction was injected this turn. Map the
@@ -115,12 +115,6 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
   if (u.miiPatch) {
     const merged = { ...(current.mii as MiiState), ...u.miiPatch };
     data.mii = merged;
-  }
-
-  if (u.frozen) {
-    data.frozenForReview = true;
-    data.frozenAt = new Date();
-    data.frozenReason = u.frozen.reason;
   }
 
   await prisma.recodeProgress.update({

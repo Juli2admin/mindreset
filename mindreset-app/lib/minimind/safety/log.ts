@@ -13,6 +13,7 @@
 import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
 import { sendSev5Alert } from '@/lib/email/sendSev5Alert';
+import { encrypt } from '@/lib/encrypt';
 
 const TRIGGER_EXCERPT_MAX_CHARS = 500;
 
@@ -51,6 +52,15 @@ export async function logSafetyEvent(params: SafetyEventLogParams): Promise<void
       .filter(Boolean)
       .join(' | ');
 
+    // Pre-launch audit fix M18/M19 (2026-07-11). Encrypt user content at
+    // rest to match the encrypt-at-rest posture on every other user-
+    // content column (JourneyMessage.contentEncrypted,
+    // Conversation notes, etc.). triggerExcerpt is the raw user message
+    // that tripped safety — the single most sensitive field in the DB —
+    // and aiResponse can carry Sev 5 wording we've deemed confidential.
+    // Legacy rows are unencrypted; admin surfaces should decrypt-on-read
+    // best-effort and fall through to the raw value for pre-migration
+    // rows.
     await prisma.safetyEvent.create({
       data: {
         userId: params.userId,
@@ -58,8 +68,8 @@ export async function logSafetyEvent(params: SafetyEventLogParams): Promise<void
         messageId: params.messageId ?? null,
         type: params.type,
         severity: params.severity,
-        triggerExcerpt: truncated,
-        aiResponse: params.aiResponse,
+        triggerExcerpt: encrypt(truncated),
+        aiResponse: encrypt(params.aiResponse),
         reviewNotes: reviewNotes || null,
       },
     });
