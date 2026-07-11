@@ -23,6 +23,7 @@
 
 export const PILOT_TESTER_EMAILS: ReadonlySet<string> = new Set<string>([
   'svetlana.morozova@inbox.lv',
+  'quin55@gmail.com',
 ]);
 
 export function isPilotTester(email: string | null | undefined): boolean {
