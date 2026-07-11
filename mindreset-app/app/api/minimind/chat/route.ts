@@ -147,6 +147,12 @@ export async function POST(req: NextRequest) {
       lifetimeMessagesUsed:     true,
       screeningResult:          true,
       disclaimerAcknowledgedAt: true,
+      // Pre-launch audit fix B2 (2026-07-11): if the user has confirmed
+      // account deletion, block new chat turns during the 30-day grace
+      // window. They can undo via /api/account/cancel-deletion; blocking
+      // means they don't accrue billed messages / stored content under a
+      // request they've asked to erase.
+      deletedAt:                true,
     },
   });
   if (!billingUser) {
@@ -154,6 +160,12 @@ export async function POST(req: NextRequest) {
     // unauthorised rather than letting the request through with no
     // billing/safety context.
     return NextResponse.json({ error: 'user-not-found' }, { status: 412 });
+  }
+  if (billingUser.deletedAt) {
+    return NextResponse.json(
+      { error: 'account_scheduled_for_deletion' },
+      { status: 403 },
+    );
   }
   if (!billingUser.screeningResult) {
     return NextResponse.json({ error: 'screening-required' }, { status: 412 });

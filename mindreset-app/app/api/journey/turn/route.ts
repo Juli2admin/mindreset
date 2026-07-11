@@ -104,6 +104,30 @@ export async function POST(request: NextRequest) {
   // silently fail to deliver SOME canned response in a Red Flag situation.
   const crisisResponse = getCrisisResponseForLocale(body.locale ?? null);
 
+  // Pre-launch audit fixes B2 + B5 (2026-07-11): fetch deletedAt +
+  // screeningResult before any expensive work. Blocks (a) users who have
+  // asked for account deletion from continuing to spend money during
+  // the 30-day grace window, and (b) users who screened Red from
+  // starting Journey turns (MiniMind already blocks Red; Journey did
+  // not, letting the exact population the screening exists to protect
+  // from paid trauma work through).
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { deletedAt: true, screeningResult: true },
+  });
+  if (!user) {
+    return NextResponse.json({ error: 'user-not-found' }, { status: 412 });
+  }
+  if (user.deletedAt) {
+    return NextResponse.json(
+      { error: 'account_scheduled_for_deletion' },
+      { status: 403 },
+    );
+  }
+  if (user.screeningResult === 'red') {
+    return NextResponse.json({ error: 'screening-red' }, { status: 412 });
+  }
+
   // Access check — completed Purchase + within 1-year access window + under
   // anti-abuse ceiling. See lib/journey/access.ts.
   const access = await checkJourneyAccess(userId);
@@ -124,9 +148,20 @@ export async function POST(request: NextRequest) {
   // distinct audit row with the new flag. Without this, a frozen user
   // sending escalating content leaves no audit trace at all — owner
   // loses the signal they need to triage.
+  //
+  // Pre-launch audit fix B1 (2026-07-11): do NOT call
+  // markFirstAccessAndIncrement on the frozen path. Rationale:
+  //   - Frozen turns run no LLM and cost nothing.
+  //   - The old behaviour stamped firstAccessedAt (starting the 365-day
+  //     access clock) on canned responses, so a user frozen at signup
+  //     could lose their paid year without ever getting a real turn.
+  //   - The old behaviour also incremented journeyMessagesUsed against
+  //     the 5,000 abuse cap, so a false-positive-frozen user confused-
+  //     tapping "send" could hit the permanent lockout.
+  // Bot abuse against a frozen user is caught at rate-limit + Vercel
+  // logs rather than at the paid-quota / year-clock layer.
   if (state.frozenForReview) {
     await persistMessages(userId, state.currentStage, userMessage, crisisResponse);
-    await markFirstAccessAndIncrement(purchase.id);
     const flag = scanForJourneyRedFlag(userMessage);
     if (flag.matched) {
       await writeAuditTurn({

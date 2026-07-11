@@ -1,5 +1,16 @@
 import { revalidatePath } from 'next/cache';
 import prisma from '@/lib/prisma';
+import { currentUserIsAdmin } from '@/lib/admin/auth';
+
+// Pre-launch audit fix B3 (2026-07-11): defence-in-depth admin gate on
+// server actions. The /admin layout blocks non-admin page-render, but
+// server actions are POST endpoints with encrypted action IDs. Each
+// action explicitly re-checks admin status.
+async function assertAdmin(): Promise<void> {
+  if (!(await currentUserIsAdmin())) {
+    throw new Error('Forbidden');
+  }
+}
 
 // /admin/testimonials — moderation queue.
 //
@@ -42,6 +53,7 @@ function StatusBadge({ status }: { status: string }) {
 
 async function approveTestimonial(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   const publicName = String(formData.get('publicName') ?? '').trim();
   const story = String(formData.get('story') ?? '').trim();
@@ -61,6 +73,7 @@ async function approveTestimonial(formData: FormData) {
 
 async function rejectTestimonial(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   const notes = String(formData.get('notes') ?? '').trim();
   if (!id) return;
@@ -78,6 +91,7 @@ async function rejectTestimonial(formData: FormData) {
 
 async function unapproveTestimonial(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   if (!id) return;
   await prisma.testimonial.update({

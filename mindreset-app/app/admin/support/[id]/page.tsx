@@ -5,7 +5,17 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { categoriseSupport } from '@/lib/support/categorise';
 import { sendSupportReply } from '@/lib/email/sendSupportReply';
+import { currentUserIsAdmin } from '@/lib/admin/auth';
 import SendReplyForm from './SendReplyForm';
+
+// Pre-launch audit fix B3 (2026-07-11): defence-in-depth admin gate on
+// every server action in this file. Layout-level gate blocks page
+// render but server-action POST endpoints need their own auth check.
+async function assertAdmin(): Promise<void> {
+  if (!(await currentUserIsAdmin())) {
+    throw new Error('Forbidden');
+  }
+}
 
 // /admin/support/[id] — single inbound email view + reply workflow.
 // PR 2b additions over PR 2a's view-only stub: AI categoriser fields
@@ -28,6 +38,7 @@ function formatTimestamp(d: Date): string {
 
 async function runAi(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   if (!id) return;
   const email = await prisma.supportEmail.findUnique({ where: { id } });
@@ -62,6 +73,7 @@ async function runAi(formData: FormData) {
 // to call regardless of state — only flips rows currently auto_queued.
 async function cancelAutoSend(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   if (!id) return;
   await prisma.supportEmail.updateMany({
@@ -73,6 +85,7 @@ async function cancelAutoSend(formData: FormData) {
 
 async function sendReply(formData: FormData) {
   'use server';
+  await assertAdmin();
   const id = String(formData.get('id') ?? '');
   const draft = String(formData.get('draft') ?? '').trim();
   if (!id || !draft) return;
