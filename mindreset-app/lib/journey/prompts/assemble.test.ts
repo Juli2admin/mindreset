@@ -78,73 +78,76 @@ describe('assembleSystemPrompt — 3-layer architecture', () => {
     expect(prompt).toContain('## 8. The Persistent Inner Landscape');
   });
 
-  it('includes the active stage spec for Stage 1', () => {
+  it('includes all 8 stage specs (PR λ) — Stage 1 spec content is present', () => {
     const prompt = assembleSystemPrompt(makeState(1));
-    expect(prompt).toContain('## ACTIVE STAGE SPEC');
+    // The all-stages header replaces "ACTIVE STAGE SPEC" from the prior
+    // single-stage architecture.
+    expect(prompt).toContain('## ALL 8 STAGE SPECS');
     // Stage 1 spec has Personal Anchor practice
     expect(prompt).toContain('Personal Anchor Identification');
   });
 
-  it('switches the active stage spec when currentStage changes', () => {
-    const stage4 = assembleSystemPrompt(makeState(4));
-    // Stage 4 spec talks about parts work and MII
-    expect(stage4).toContain('Compassion Bridge');
-    expect(stage4).toContain('Securing the Part');
-
+  it('includes ALL 8 stage specs regardless of currentStage (PR λ)', () => {
+    // Whichever router stage the state carries, the prompt must contain
+    // every stage's playbook.
+    const stage1 = assembleSystemPrompt(makeState(1));
+    // Stage 4 spec content
+    expect(stage1).toContain('Compassion Bridge');
+    expect(stage1).toContain('Securing the Part');
+    // Stage 5 spec content
+    expect(stage1).toContain('Foreign Material');
+    expect(stage1).toContain('Symbolic Return');
+    // Same must hold at any other router-stage
     const stage5 = assembleSystemPrompt(makeState(5));
-    // Stage 5 spec talks about foreign material
-    expect(stage5).toContain('Foreign Material');
-    expect(stage5).toContain('Symbolic Return');
-    // Stage 5 should not load Stage 4's MII content as the active stage
-    // (it loads its own spec — Stage 4 content only present via master's
-    // 8-moves summary, not via the stage spec load).
+    expect(stage5).toContain('Personal Anchor Identification'); // Stage 1
+    expect(stage5).toContain('Compassion Bridge'); // Stage 4
   });
 
   it('injects the state block into the master prompt slot', () => {
     const prompt = assembleSystemPrompt(makeState(3));
-    // Render state block has these markers
-    expect(prompt).toContain('Active internal stage: 3/8');
+    // Render state block has these markers (PR λ label change).
+    expect(prompt).toContain("Router's stage label: 3/8");
     expect(prompt).toContain('Current depth: surface');
     // The placeholder should be replaced (no leftover {{STATE_INJECTION}})
     expect(prompt).not.toContain('{{STATE_INJECTION}}');
   });
 
-  it('orders the layers as Shared Core → active stage spec → master', () => {
-    // Layer ordering changed in PR 3 (prompt caching): canon docs come
-    // first because Anthropic prompt cache requires the cacheable prefix
-    // to start from the beginning of the system message. Master with
-    // its dynamic state block comes after canon.
+  it('orders the layers as Shared Core → all-stages → master', () => {
     const prompt = assembleSystemPrompt(makeState(2));
     const sharedCoreIdx = prompt.indexOf('## SHARED CORE');
-    const stageSpecIdx = prompt.indexOf('## ACTIVE STAGE SPEC');
+    const allStagesIdx = prompt.indexOf('## ALL 8 STAGE SPECS');
     const masterIdx = prompt.indexOf('<method>');
 
     expect(sharedCoreIdx).toBeGreaterThanOrEqual(0);
-    expect(stageSpecIdx).toBeGreaterThan(sharedCoreIdx);
-    expect(masterIdx).toBeGreaterThan(stageSpecIdx);
+    expect(allStagesIdx).toBeGreaterThan(sharedCoreIdx);
+    expect(masterIdx).toBeGreaterThan(allStagesIdx);
   });
 });
 
-describe('assembleSystemPromptBlocks — Anthropic prompt caching', () => {
-  it('returns 5 blocks: shared core / stage spec / master-before-state / state / master-after-state', () => {
+describe('assembleSystemPromptBlocks — Anthropic prompt caching (PR λ)', () => {
+  // PR λ (2026-07-11) — the 5-block architecture became 4 blocks. Canon
+  // (Shared Core + Practice Gen Algorithm) merged with ALL 8 stage specs
+  // into one cached prefix block. Under Julia's clinical philosophy the
+  // AI is the clinician and reaches for whichever stage's methodology
+  // fits the turn — so it needs every stage's playbook available in
+  // context, not only the router's current-stage bookkeeping label.
+
+  it('returns 4 blocks: canon+all-stages / master-before-state / state / master-after-state', () => {
     const blocks = assembleSystemPromptBlocks(makeState(2));
-    expect(blocks).toHaveLength(5);
+    expect(blocks).toHaveLength(4);
   });
 
-  it('marks the stage spec and master-before-state blocks with cache_control', () => {
+  it('marks the canon and master-before-state blocks with cache_control', () => {
     const blocks = assembleSystemPromptBlocks(makeState(2));
-    // Block 0 (Shared Core): no cache_control on its own (gets cached
-    // by virtue of cache_control on block 1).
-    expect(blocks[0].cache_control).toBeUndefined();
-    // Block 1 (active stage spec): cache breakpoint.
+    // Block 0 (canon + all 8 stage specs): cache breakpoint.
+    expect(blocks[0].cache_control).toEqual({ type: 'ephemeral' });
+    // Block 1 (master-before-state): cache breakpoint.
     expect(blocks[1].cache_control).toEqual({ type: 'ephemeral' });
-    // Block 2 (master-before-state): cache breakpoint.
-    expect(blocks[2].cache_control).toEqual({ type: 'ephemeral' });
-    // Block 3 (state block): NOT cached — dynamic per turn.
-    expect(blocks[3].cache_control).toBeUndefined();
-    // Block 4 (master-after-state): NOT cached — sits after dynamic
+    // Block 2 (state block): NOT cached — dynamic per turn.
+    expect(blocks[2].cache_control).toBeUndefined();
+    // Block 3 (master-after-state): NOT cached — sits after dynamic
     // content so caching it would never hit.
-    expect(blocks[4].cache_control).toBeUndefined();
+    expect(blocks[3].cache_control).toBeUndefined();
   });
 
   it('every block declares type "text"', () => {
@@ -154,55 +157,74 @@ describe('assembleSystemPromptBlocks — Anthropic prompt caching', () => {
     }
   });
 
-  it('shared core block contains Shared Core canon', () => {
+  it('canon block contains Shared Core + Practice Algorithm + all-stages header', () => {
     const blocks = assembleSystemPromptBlocks(makeState(1));
     expect(blocks[0].text).toContain('## SHARED CORE');
-    expect(blocks[0].text).toContain('Practice Generation Algorithm');
+    expect(blocks[0].text).toContain('## PRACTICE GENERATION ALGORITHM');
+    expect(blocks[0].text).toContain('## ALL 8 STAGE SPECS');
   });
 
-  it('shared core block includes the full Practice Generation Algorithm doc (Journey polish PR 2)', () => {
+  it('canon block includes the full Practice Generation Algorithm doc', () => {
     const blocks = assembleSystemPromptBlocks(makeState(1));
-    // Divider header added by the assembler between Shared Core and the
-    // algorithm doc.
-    expect(blocks[0].text).toContain('## PRACTICE GENERATION ALGORITHM');
-    // H1 title unique to PRACTICE_GENERATION_ALGORITHM.md — proves the
-    // whole doc is loaded, not just referenced.
     expect(blocks[0].text).toContain('# MindReset Practice Generation Algorithm');
-    // Section header names for each of the five practice families — the
-    // AI must see these to reach beyond regulation-family practices.
     expect(blocks[0].text).toContain('Regulation Practices');
     expect(blocks[0].text).toContain('Somatic Awareness');
     expect(blocks[0].text).toContain('Guided Inner Landscape');
     expect(blocks[0].text).toContain('Narrative Rewriting');
     expect(blocks[0].text).toContain('Self-Compassion');
-    // Canon-precedence header updated from "Two documents" to "Three
-    // documents" — confirms the assembler introduces the algorithm doc
-    // in the correct layer ordering.
-    expect(blocks[0].text).toContain('Three documents follow');
+    // Canon header now says "Three sources of clinical method follow".
+    expect(blocks[0].text).toContain('Three sources of clinical method');
   });
 
-  it('shared core block layers docs in the correct order (canon header → shared core → algorithm → stage spec header)', () => {
+  it('canon block includes ALL 8 stage specs (not just the current one)', () => {
+    // This is the load-bearing test for PR λ. The AI must see EVERY
+    // stage's playbook — the router's stage label doesn't gate what
+    // playbook is loaded. State-passed makeState(1) but Stage 5's spec
+    // must still be in the block.
+    const blocks = assembleSystemPromptBlocks(makeState(1));
+    const canon = blocks[0].text;
+    // Section separators for each stage (from STAGE_SEPARATORS in the
+    // assembler).
+    expect(canon).toContain('STAGE 1 SPEC — STABILISATION');
+    expect(canon).toContain('STAGE 2 SPEC — PAIN');
+    expect(canon).toContain('STAGE 3 SPEC — ADULT SELF');
+    expect(canon).toContain('STAGE 4 SPEC — PARTS');
+    expect(canon).toContain('STAGE 5 SPEC — FOREIGN MATERIAL');
+    expect(canon).toContain('STAGE 6 SPEC — INTEGRATION');
+    expect(canon).toContain('STAGE 7 SPEC — NEW IDENTITY');
+    expect(canon).toContain('STAGE 8 SPEC — EMBODIMENT');
+    // Content spot-checks — a phrase unique to each stage spec.
+    expect(canon).toContain('Compassion Bridge'); // Stage 4
+    expect(canon).toContain('Foreign Material'); // Stage 5
+  });
+
+  it('canon block is identical regardless of the router stage label (proves stage number does not gate playbook loading)', () => {
+    // The whole point of PR λ. Advancing to stage 5 must not change
+    // which playbooks are loaded — they were all there at stage 1.
+    const stage1Canon = assembleSystemPromptBlocks(makeState(1))[0].text;
+    const stage5Canon = assembleSystemPromptBlocks(makeState(5))[0].text;
+    expect(stage1Canon).toBe(stage5Canon);
+  });
+
+  it('canon block orders sections: canon header → shared core → algorithm → all-stages header → stage specs', () => {
     const blocks = assembleSystemPromptBlocks(makeState(2));
     const text = blocks[0].text;
     const canonHeaderIdx = text.indexOf('# CLINICAL METHOD SOURCE');
     const sharedCoreIdx = text.indexOf('## SHARED CORE');
     const practiceAlgoIdx = text.indexOf('## PRACTICE GENERATION ALGORITHM');
-    const stageSpecHeaderIdx = text.indexOf('## ACTIVE STAGE SPEC');
+    const allStagesHeaderIdx = text.indexOf('## ALL 8 STAGE SPECS');
+    const stage1SectionIdx = text.indexOf('STAGE 1 SPEC — STABILISATION');
     expect(canonHeaderIdx).toBeGreaterThanOrEqual(0);
     expect(sharedCoreIdx).toBeGreaterThan(canonHeaderIdx);
     expect(practiceAlgoIdx).toBeGreaterThan(sharedCoreIdx);
-    expect(stageSpecHeaderIdx).toBeGreaterThan(practiceAlgoIdx);
+    expect(allStagesHeaderIdx).toBeGreaterThan(practiceAlgoIdx);
+    expect(stage1SectionIdx).toBeGreaterThan(allStagesHeaderIdx);
   });
 
-  it('stage spec block contains the active stage', () => {
-    const blocks4 = assembleSystemPromptBlocks(makeState(4));
-    expect(blocks4[1].text).toContain('Compassion Bridge');
-    const blocks5 = assembleSystemPromptBlocks(makeState(5));
-    expect(blocks5[1].text).toContain('Foreign Material');
-  });
-
-  it('state block sits at index 3 and contains the rendered state', () => {
+  it("state block sits at index 2 and contains the router's stage label", () => {
     const blocks = assembleSystemPromptBlocks(makeState(3));
-    expect(blocks[3].text).toContain('Active internal stage: 3/8');
+    expect(blocks[2].text).toContain("Router's stage label: 3/8");
+    // Explicit permission for the AI to reach for any stage.
+    expect(blocks[2].text).toContain('bookkeeping');
   });
 });

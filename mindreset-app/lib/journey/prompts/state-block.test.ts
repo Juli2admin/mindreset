@@ -49,7 +49,11 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
 }
 
 // The state block is the 4th block in the assembleSystemPromptBlocks array.
-const STATE_BLOCK_INDEX = 3;
+// PR λ (2026-07-11) — the assembled system prompt has 4 blocks now
+// (was 5). The canon and per-stage spec were merged into one cached
+// block so the AI has ALL 8 stage playbooks available. State block moved
+// from index 3 → 2.
+const STATE_BLOCK_INDEX = 2;
 
 describe('renderStateBlock — continuity signals (PR 5, Bundle C)', () => {
   it('surfaces sessionCount, daysEngaged, and this-session message count', () => {

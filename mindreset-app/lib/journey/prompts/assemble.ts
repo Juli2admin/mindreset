@@ -10,6 +10,14 @@ import {
   loadStageSpec,
   loadEngineeredStagePrompt,
   loadMasterJourneyPrompt,
+  stage01,
+  stage02,
+  stage03,
+  stage04,
+  stage05,
+  stage06,
+  stage07,
+  stage08,
 } from './load-spec';
 import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
 import { formatTimeSinceLastTurnBucket } from '../state/load';
@@ -143,7 +151,12 @@ function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
   lines.push('');
-  lines.push(`- Active internal stage: ${state.currentStage}/8`);
+  // PR λ (2026-07-11) — the router's current bookkeeping label, not a
+  // capability gate. All 8 stage specs are in the AI's canon block above;
+  // the AI reaches for whichever stage's methodology fits the turn.
+  lines.push(
+    `- Router's stage label: ${state.currentStage}/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)`,
+  );
   lines.push(`- Current depth: ${state.currentDepth}`);
   if (state.processingChannel) {
     lines.push(`- Processing channel detected: ${state.processingChannel}`);
@@ -347,15 +360,30 @@ const DIVIDER = '\n\n---\n\n';
 // Header introducing the canon section. Placed at the top of the cached
 // canon blocks so the AI sees its layer-ordering hint before reading
 // Shared Core.
+//
+// PR λ (2026-07-11) — three architectural pieces in this header rewrite:
+//   1. Renamed section 3 from "Active stage spec" to "All 8 stage specs"
+//      because that's what we now load — the AI has the detailed playbook
+//      for every stage in its context, not just the current stage.
+//   2. Reframed stage number as a bookkeeping label the router uses, not
+//      a constraint on what the AI can reach for. Julia's clinical
+//      philosophy: AI leads like a clinician, everything else is support
+//      information. The AI reaches for whichever stage's methodology fits
+//      what the user is actually doing this turn.
+//   3. Explicit permission to freely mix stage methodologies as needed —
+//      e.g. Stage 5 foreign-material work alongside Stage 6 integration
+//      language when both are alive in one turn.
 const CANON_PROMPT_HEADER = `# CLINICAL METHOD SOURCE (canon)
 
-Three documents follow, then your operational behavior layer.
+Three sources of clinical method follow, then your operational behavior layer.
 
 **1. Shared Core** — your clinical constitution. Applies every turn, every stage.
 **2. Practice Generation Algorithm** — how you compose practices at runtime from the five practice families (regulation, somatic awareness, guided inner landscape, narrative rewriting, self-compassion). The system does NOT ship a fixed library of scripts; you generate practices dynamically from this algorithm against the user's live state, exact words, body signals, and safety layer. Reach into all five families, not only stabilisation.
-**3. Active stage spec** — the full clinical playbook for the user's current stage. Use the practices, prohibitions, and session-close ritual described there. Earlier-stage moves remain available when the user needs them (stages are progress markers, not constraints on the moves you can use).
+**3. All 8 stage specs** — the full clinical playbooks for every stage of the Journey, Stage 1 through Stage 8, all loaded in your context. Reach for whichever stage's methodology fits what the user is actually doing this turn — not what the router's stage label says. If the user is doing foreign-material release work (Stage 5), use the Stage 5 playbook even if the router still labels them Stage 1. If integration language is alive (Stage 6) inside a stabilisation session (Stage 1), reach for both. Stage numbers are a bookkeeping label for progression tracking; they are NOT capability gates.
 
 This canon is the authoritative reference for the method you are delivering. Where it overlaps with the general behavior layer (master prompt) that follows, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the master prompt takes precedence on voice, character, and operational format.
+
+You lead. The stage number, the state block, the master prompt, the audit fields — these are all support. Your clinical judgment on which stage's methodology to reach for this turn is the final call.
 
 ---
 
@@ -384,9 +412,39 @@ const CANON_STAGE_HEADER = `
 
 ---
 
-## ACTIVE STAGE SPEC
+## ALL 8 STAGE SPECS
+
+Every stage of the Journey follows, in order. Each is a full clinical playbook — its practices, its prohibitions, its gates, its session-close ritual. Reach for whichever stage's methodology fits what the user is actually doing this turn.
 
 `;
+
+// PR λ (2026-07-11) — dividers that separate the 8 stage specs inside the
+// canon block. Each divider names the stage so the AI can scan-locate the
+// right playbook when it decides which stage's methodology fits the turn.
+const STAGE_SEPARATORS: string[] = [
+  '\n\n---\n\n## STAGE 1 SPEC — STABILISATION\n\n',
+  '\n\n---\n\n## STAGE 2 SPEC — PAIN\n\n',
+  '\n\n---\n\n## STAGE 3 SPEC — ADULT SELF\n\n',
+  '\n\n---\n\n## STAGE 4 SPEC — PARTS\n\n',
+  '\n\n---\n\n## STAGE 5 SPEC — FOREIGN MATERIAL\n\n',
+  '\n\n---\n\n## STAGE 6 SPEC — INTEGRATION\n\n',
+  '\n\n---\n\n## STAGE 7 SPEC — NEW IDENTITY\n\n',
+  '\n\n---\n\n## STAGE 8 SPEC — EMBODIMENT\n\n',
+];
+
+function allStageSpecs(): string {
+  const specs = [
+    stage01(),
+    stage02(),
+    stage03(),
+    stage04(),
+    stage05(),
+    stage06(),
+    stage07(),
+    stage08(),
+  ];
+  return specs.map((s, i) => STAGE_SEPARATORS[i] + s).join('');
+}
 
 // Header introducing the operational behavior layer (master prompt) after
 // the canon. Brief — orients the AI to the layer transition.
@@ -447,12 +505,19 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
     idx >= 0 ? master.slice(idx + STATE_INJECTION_TOKEN.length) : '';
 
   const blocks: SystemPromptBlock[] = [
-    // Canon header + Shared Core + Practice Generation Algorithm (cached).
-    // Journey polish PR 2 (2026-07-04): the practice algorithm joined
-    // this block — same cache prefix as Shared Core because both are
-    // stage-agnostic canon, and this way no new cache breakpoint is
-    // added (cache breakpoint budget is limited on the Anthropic API,
-    // so we compose rather than fragment).
+    // Canon header + Shared Core + Practice Generation Algorithm + ALL 8
+    // stage specs (all cached in one block). PR λ (2026-07-11) — per
+    // Julia's clinical philosophy, the AI is the clinician and reaches
+    // for whichever stage's methodology fits the turn. Loading all 8
+    // detailed playbooks removes the artificial restriction of only the
+    // current stage's spec being in context. Cost delta: ~+24K cached
+    // tokens on top of the ~30K already cached; cache-read cost per
+    // warm turn rises by ~$0.007, cache-write on cold-start rises by
+    // ~$0.09. Small absolute cost for full method fidelity.
+    //
+    // All of this stays in the SAME cached block as Shared Core because
+    // it's all stage-agnostic canon that never changes per turn — no
+    // new cache breakpoint needed (cache-breakpoint budget is limited).
     {
       type: 'text',
       text:
@@ -460,14 +525,8 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
         sharedCore() +
         CANON_PRACTICE_HEADER +
         practiceGenerationAlgorithm() +
-        CANON_STAGE_HEADER,
-    },
-    // Active stage spec (cached). Cache breakpoint here — turns that
-    // stay in the same stage hit the cache; advancing to a new stage
-    // rebuilds from this block onward.
-    {
-      type: 'text',
-      text: loadStageSpec(state.currentStage),
+        CANON_STAGE_HEADER +
+        allStageSpecs(),
       cache_control: { type: 'ephemeral' },
     },
     // Master prompt body before the state injection slot (cached).
