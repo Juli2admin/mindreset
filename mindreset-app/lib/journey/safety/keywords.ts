@@ -140,10 +140,18 @@ const BANDS: Array<{ patterns: RegExp[]; flagType: RedFlagType }> = [
   { patterns: FLASHBACK_IN_PROGRESS_PATTERNS, flagType: 'flashback_in_progress' },
 ];
 
+// PR σ (2026-07-11). NFKC normalisation before regex matching so
+// homoglyph-style bypasses (mathematical bold "𝗄𝗂𝗅𝗅", full-width
+// "Ｉ ｗａｎｔ ｔｏ ｄｉｅ") fold to their plain ASCII equivalents. Without
+// this, the async verifier is the only safety net for such messages —
+// which means the AI reply already streamed before the freeze triggers.
+// NFKC is safe for Cyrillic (Russian native locale) — it doesn't
+// alter Cyrillic letters, only decomposes compatibility characters.
 export function scanForJourneyRedFlag(message: string): RedFlagHit {
+  const normalised = message.normalize('NFKC');
   for (const band of BANDS) {
     for (const re of band.patterns) {
-      if (re.test(message)) {
+      if (re.test(normalised)) {
         return { matched: true, flagType: band.flagType, matchedPattern: re.source };
       }
     }

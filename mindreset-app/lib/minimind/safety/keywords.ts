@@ -343,7 +343,14 @@ function escapeForRegex(s: string): string {
 // silently convert these — without this step, "what's the point" types as
 // "what’s the point" and slips past every apostrophed phrase in the list.
 function normalizeForScan(text: string): string {
+  // NFKC folds compatibility characters (mathematical bold "𝗄𝗂𝗅𝗅",
+  // full-width "Ｉ ｗａｎｔ ｔｏ ｄｉｅ", ligatures, etc.) into their plain
+  // ASCII equivalents so homoglyph-style bypasses can't dodge the
+  // keyword scanner. Safe for Cyrillic (Russian native locale) —
+  // NFKC does not alter Cyrillic letters, only decomposes
+  // compatibility codepoints outside the block.
   return text
+    .normalize('NFKC')
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"');
 }
