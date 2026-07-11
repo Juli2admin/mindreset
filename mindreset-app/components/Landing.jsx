@@ -526,6 +526,16 @@ function StickyTryFreeCTA({ closingCtaRef }) {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const [hidden, setHidden] = useState(false);
+  // A signed-out click on this button previously went to `/minimind`, which
+  // is auth-protected — middleware silently redirected to `/sign-in` and the
+  // user landed on a login form with no explanation. New-user testers found
+  // this confusing ("weird page with prices/FAQ/About/T&C" — the footer of
+  // the sign-in page). Match the pattern the Hero and ClosingCTA buttons
+  // already use: signed-out → `/screening` (the free-taster funnel starts
+  // with screening; screening flow itself prompts sign-up on completion),
+  // signed-in → `/minimind` (straight to chat, unchanged from before).
+  const { isLoaded, isSignedIn } = useUser();
+  const signedIn = isLoaded && isSignedIn;
 
   useEffect(() => {
     const el = closingCtaRef?.current;
@@ -540,7 +550,7 @@ function StickyTryFreeCTA({ closingCtaRef }) {
 
   return (
     <Link
-      href="/minimind"
+      href={signedIn ? '/minimind' : '/screening'}
       aria-label={t('stickyTryFree')}
       className={[
         'fixed z-50 inline-flex items-center justify-center gap-2',
