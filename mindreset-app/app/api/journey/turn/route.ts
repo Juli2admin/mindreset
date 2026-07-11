@@ -256,24 +256,28 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode('\n\n[Connection interrupted. Please try again.]'));
       } finally {
         controller.close();
-        // AI-cost telemetry (PR δ, 2026-07-10). finalMessage() resolves
-        // once the SDK has seen message_stop; safe to await AFTER the
-        // for-await loop. Failure is non-fatal — telemetry loss must not
-        // break the user turn.
+        // Single finalMessage() await — its result is passed to BOTH the
+        // AI-usage telemetry (PR δ) and the finaliseTurn state-report
+        // diagnostic (PR κ, 2026-07-11). finalMessage() resolves once the
+        // SDK has seen message_stop; safe to await AFTER the for-await
+        // loop. Failure is non-fatal — telemetry / diagnostic loss must
+        // not break the user turn.
+        const finalMessagePromise = stream.finalMessage().catch((err) => {
+          console.error('[journey/turn] finalMessage() failed:', err);
+          return null;
+        });
         waitUntil(
-          stream
-            .finalMessage()
-            .then((msg) =>
-              recordAiUsage({
-                userId,
-                callSite: 'journey_turn',
-                model: msg.model ?? model,
-                usage: msg.usage,
-              }),
-            )
-            .catch((err) =>
+          finalMessagePromise.then((msg) => {
+            if (!msg) return;
+            return recordAiUsage({
+              userId,
+              callSite: 'journey_turn',
+              model: msg.model ?? model,
+              usage: msg.usage,
+            }).catch((err) =>
               console.error('[journey/turn] failed to record AI usage:', err),
-            ),
+            );
+          }),
         );
         // Background: parse + persist state report and assistant message.
         // The verifier classifies the user's most recent message in the
@@ -281,14 +285,18 @@ export async function POST(request: NextRequest) {
         // recent message at the end (we persisted it before loading history),
         // so we strip it: `slice(0, -1)`.
         waitUntil(
-          finaliseTurn({
-            userId,
-            stageAtTurn: state.currentStage,
-            depthAtTurn: state.currentDepth,
-            userMessage,
-            fullText: processor.fullText,
-            recentForVerifier: decryptedHistory.slice(0, -1),
-          }),
+          finalMessagePromise.then((msg) =>
+            finaliseTurn({
+              userId,
+              stageAtTurn: state.currentStage,
+              depthAtTurn: state.currentDepth,
+              userMessage,
+              fullText: processor.fullText,
+              recentForVerifier: decryptedHistory.slice(0, -1),
+              stopReason: msg?.stop_reason ?? null,
+              outputTokens: msg?.usage?.output_tokens ?? null,
+            }),
+          ),
         );
         // Bump the Journey access meter (firstAccessedAt on first turn,
         // journeyMessagesUsed +1 always). Runs in the background so it
@@ -320,9 +328,64 @@ async function finaliseTurn(args: {
   userMessage: string;
   fullText: string;
   recentForVerifier: { role: 'user' | 'assistant'; content: string }[];
+  // PR κ (2026-07-11) — per-turn state-report emission diagnostics. Both
+  // are nullable because finalMessage() can fail; the diagnostic still
+  // logs whatever it has.
+  stopReason: string | null;
+  outputTokens: number | null;
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   const report = parseStateReport(split.rawStateReport);
+
+  // ------------------------------------------------------------------
+  // PR κ (2026-07-11) — state-report emission diagnostics.
+  //
+  // Across five test sessions the same pattern keeps appearing: mid-
+  // session turns emit the required-3 fields only, close turns emit
+  // full state reports. The parser can't distinguish these three cases
+  // in the current audit row:
+  //   (A) model emitted no <state-report> at all
+  //   (B) model emitted <state-report> but truncated at max_tokens
+  //       (open tag present, close tag absent → parser sees null)
+  //   (C) model emitted a well-formed <state-report> but chose to skip
+  //       optional fields
+  // The fix depends on which is happening. This log line emits enough
+  // per-turn signal to disambiguate in the Vercel logs. Structured
+  // JSON so it's greppable / parseable.
+  // ------------------------------------------------------------------
+  const hadStateReportOpen = args.fullText.includes('<state-report>');
+  const hadStateReportClose = args.fullText.includes('</state-report>');
+  const rawJsonLength = split.rawStateReport?.length ?? 0;
+  const REQUIRED_3 = new Set(['intensity', 'safetyFlag', 'recommendedAction']);
+  const filledOptionalFieldNames = Object.keys(report).filter(
+    (k) => !REQUIRED_3.has(k) && (report as Record<string, unknown>)[k] !== undefined,
+  );
+  const failureModeGuess = !hadStateReportOpen
+    ? 'A_no_state_report_tag'
+    : !hadStateReportClose
+      ? 'B_truncated_at_max_tokens'
+      : filledOptionalFieldNames.length === 0
+        ? 'C_model_skipped_all_optional_fields'
+        : 'D_ok';
+
+  console.info(
+    '[journey/state-report-diag]',
+    JSON.stringify({
+      userId: args.userId,
+      stageAtTurn: args.stageAtTurn,
+      stopReason: args.stopReason,
+      outputTokens: args.outputTokens,
+      fullTextLength: args.fullText.length,
+      humanReplyLength: split.humanReply.length,
+      hadStateReportOpen,
+      hadStateReportClose,
+      rawJsonLength,
+      filledOptionalFieldCount: filledOptionalFieldNames.length,
+      filledOptionalFieldNames,
+      failureModeGuess,
+    }),
+  );
+  // ------------------------------------------------------------------
 
   // Persist the assistant message (human reply only — the state report is
   // never stored on the message itself; it lives encrypted on the audit log).
