@@ -1,43 +1,43 @@
 {
   "Pilot": {
     "redeem": {
-      "kicker": "MindReset · Pilot",
-      "welcomeTitle": "Welcome. Your pilot access is active.",
-      "alreadyTitle": "You're already in — welcome back.",
-      "body": "You have 30 days of full free access to The Journey. Your pilot ends on {date}. If you'd like to continue after that, we'll email you a 50% discount for the next 10 months.",
-      "startJourneyCta": "Open The Journey →",
-      "beforeFormCta": "Fill the short Before form (5 min) →",
-      "safetyNote": "This is a self-help wellbeing tool — not therapy, not a crisis service. If you're in immediate distress, please contact your local emergency service or a national helpline in your country.",
+      "kicker": "MindReset · Program pilotażowy",
+      "welcomeTitle": "Witaj. Twój dostęp pilotażowy jest aktywny.",
+      "alreadyTitle": "Już jesteś z nami — miło znowu Cię widzieć.",
+      "body": "Masz 30 dni pełnego, bezpłatnego dostępu do Drogi. Twój pilotaż kończy się {date}. Jeśli zechcesz kontynuować, wyślemy Ci mailem 50 % zniżki na kolejne 10 miesięcy.",
+      "startJourneyCta": "Otwórz Drogę →",
+      "beforeFormCta": "Wypełnij krótką ankietę wstępną (5 min) →",
+      "safetyNote": "To narzędzie samopomocy i dobrostanu — nie terapia, nie służba kryzysowa. Jeśli jesteś w bezpośrednim zagrożeniu, skontaktuj się z lokalną służbą ratunkową lub krajową linią wsparcia w swoim kraju.",
       "error": {
-        "backCta": "See plans",
+        "backCta": "Zobacz plany",
         "not_found": {
-          "title": "This invitation code doesn't exist.",
-          "body": "Please double-check the link Julia sent you. If it looks right, reply to her email — we'll sort it out."
+          "title": "Ten kod zaproszenia nie istnieje.",
+          "body": "Sprawdź link, który wysłała Ci Julia. Jeśli wygląda dobrze, odpisz na jej maila — poradzimy sobie z tym."
         },
         "invitation_expired": {
-          "title": "This invitation has expired.",
-          "body": "The pilot window on this code has closed. Reply to Julia and she'll issue a fresh one."
+          "title": "To zaproszenie wygasło.",
+          "body": "Okno pilotażu dla tego kodu jest zamknięte. Odpisz Julii, a wystawi Ci nowe."
         },
         "invitation_revoked": {
-          "title": "This invitation was revoked.",
-          "body": "This pilot access has been closed. Please reach out to support@mindreset.ai if you think this is a mistake."
+          "title": "To zaproszenie zostało cofnięte.",
+          "body": "Ten dostęp pilotażowy został zamknięty. Napisz na support@mindreset.ai, jeśli sądzisz, że to pomyłka."
         },
         "already_redeemed_by_other": {
-          "title": "This invitation has already been claimed.",
-          "body": "This code was redeemed by someone else. If you believe this is a mistake, please email support@mindreset.ai."
+          "title": "To zaproszenie zostało już wykorzystane.",
+          "body": "Ten kod został aktywowany przez kogoś innego. Jeśli sądzisz, że to pomyłka, napisz na support@mindreset.ai."
         },
         "user_already_pilot": {
-          "title": "You're already in a pilot.",
-          "body": "This account already has an active pilot code linked to it. You can go straight to The Journey."
+          "title": "Jesteś już w programie pilotażowym.",
+          "body": "Do tego konta jest już przypisany aktywny kod pilotażowy. Możesz od razu przejść do Drogi."
         }
       }
     }
   },
   "Pricing": {
-    "h1Title": "Choose how you want to begin.",
-    "h1Subtitle": "MiniMind starts with a free 50-message taster — no card needed.",
+    "h1Title": "Wybierz, jak chcesz zacząć.",
+    "h1Subtitle": "MiniMind zaczyna się od bezpłatnej próbki 50 wiadomości — bez karty.",
     "comingSoon": "Wkrótce",
-    "comingSoonIntro": "Modules in development. We'll open them as each one is ready.",
+    "comingSoonIntro": "Moduły w przygotowaniu. Otworzymy je, gdy każdy z nich będzie gotowy.",
     "tierOpen": "Otwarty",
     "tierActive": "Aktywny",
     "tiers": {
@@ -106,27 +106,27 @@
     "disclaimer": "MindReset to narzędzie wspierające dobrostan — nie terapia, nie wyrób medyczny i nie zastępstwo dla opieki specjalistycznej. W razie bezpośredniego zagrożenia proszę skorzystać z jednej z linii powyżej lub zadzwonić 999."
   },
   "CheckoutSuccess": {
-    "metaTitle": "Payment successful",
-    "kicker": "Payment complete",
-    "title": "You're all set.",
-    "body": "Your purchase is confirmed. Subscription access activates within a few seconds — head to your space to get started.",
-    "cta": "Go to your space →"
+    "metaTitle": "Płatność zrealizowana",
+    "kicker": "Płatność zakończona",
+    "title": "Wszystko gotowe.",
+    "body": "Twój zakup jest potwierdzony. Dostęp do subskrypcji aktywuje się w kilka sekund — przejdź do swojej przestrzeni, aby zacząć.",
+    "cta": "Do Twojej przestrzeni →"
   },
   "ConfirmDelete": {
-    "metaTitle": "Confirm account deletion",
-    "title": "Confirm account deletion"
+    "metaTitle": "Potwierdź usunięcie konta",
+    "title": "Potwierdź usunięcie konta"
   },
   "A11y": {
-    "themeToggleToDay": "Switch to day mode",
-    "themeToggleToNight": "Switch to night mode",
-    "languagePickerEnglishSuffix": "content in English",
-    "testimonialShowNth": "Show testimonial {n} of {total}"
+    "themeToggleToDay": "Przełącz na tryb dzienny",
+    "themeToggleToNight": "Przełącz na tryb nocny",
+    "languagePickerEnglishSuffix": "treść po angielsku",
+    "testimonialShowNth": "Pokaż opinię {n} z {total}"
   },
   "Errors": {
-    "networkError": "Network error — please try again.",
-    "checkoutFailed": "Checkout failed — please try again.",
-    "portalFailed": "Could not open the customer portal. Please try again.",
-    "generic": "Something went wrong. Please try again."
+    "networkError": "Błąd sieci — spróbuj ponownie.",
+    "checkoutFailed": "Płatność nie powiodła się — spróbuj ponownie.",
+    "portalFailed": "Nie udało się otworzyć portalu klienta. Spróbuj ponownie.",
+    "generic": "Coś poszło nie tak. Spróbuj ponownie."
   },
   "DisclaimerModal": {
     "title": "Ważne — zanim Pani przejdzie dalej",
@@ -190,7 +190,7 @@
       "openMinimind": "Otwórz MiniMind",
       "buyTopUp": "Kup doładowanie",
       "managePlan": "Zarządzaj subskrypcją",
-      "managePlanBody": "Open Stripe's customer portal to view invoices, update your payment method, or cancel a subscription.",
+      "managePlanBody": "Otwórz portal klienta Stripe, aby zobaczyć faktury, zaktualizować sposób płatności lub anulować subskrypcję.",
       "seePlans": "Zobacz plany",
       "browsePlans": "Zobacz wszystkie plany →"
     },
@@ -198,7 +198,7 @@
     "moduleBuyButton": "Otwórz moduł →",
     "states": {
       "kicker": "TWOJE STANY",
-      "intro": "Quick resets for the moments a wave hits. Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe.",
+      "intro": "Szybkie resety na chwile, gdy uderza fala. Krótkie, ustrukturyzowane moduły, po które możesz sięgnąć w czasie rzeczywistym — uziemienie, świadomość ciała, w tempie, które daje poczucie bezpieczeństwa.",
       "modules": {
         "anxiety": "Wyciszyć moment lęku",
         "lowEnergy": "Odzyskać siły",
@@ -223,8 +223,8 @@
       "title": "Droga do siebie",
       "priceFormat": "Jednorazowo £599 · 12 × £55/tydzień",
       "buyButton": "Rozpocznij Drogę →",
-      "buyOneOffCta": "Buy — £599",
-      "buyInstallmentCta": "Pay monthly — £55"
+      "buyOneOffCta": "Kup — £599",
+      "buyInstallmentCta": "Płać miesięcznie — £55"
     },
     "availableSoon": "Wkrótce",
     "marketingConsent": {
@@ -389,7 +389,7 @@
   "MiniMind": {
     "opener": "Witam. Cieszę się, że Pani tu jest. Jak się Pani dzisiaj czuje?",
     "placeholder": "Proszę powiedzieć, co Pani teraz zajmuje.",
-    "send": "Send",
+    "send": "Wyślij",
     "streamErrorSuffix": "— *(Zgubiłem na chwilę wątek. Proszę wysłać ponownie, kiedy będzie Pani gotowa.)*",
     "preparingResponse": "MiniMind przygotowuje odpowiedź",
     "startNew": "Zacznij od nowa",
@@ -421,57 +421,57 @@
     }
   },
   "Journey": {
-    "sendAria": "Send",
-    "opener": "Hello. Good to have you here.\n\nThis isn't just a chat. It's a deep, gradual process for re-shaping the patterns you've been carrying: old beliefs, stuck reactions, parts of you that have been waiting to be heard. Real change here takes weeks, sometimes months. There's no rush.\n\nA few things to know before we begin:\n\n- You can bring anything. If it gets too much, we slow down.\n- You don't need to know where to start. We'll find it together, in your own words.\n- You can pause at any moment, in a session or for days at a time. There's no failing here.\n- What you share is private. Your words are encrypted and seen only by you and this work.\n- If you're in immediate crisis — feeling unsafe with yourself or someone else — please reach out to Samaritans (116 123) or NHS 111 option 2 in the UK. If you're outside the UK, please look up your local crisis line. This space isn't built for crisis care.\n\nI'm here to listen, reflect what you say, and help you find what's underneath. The work is yours. I'm with you in it.\n\nWhen you're ready — tell me how you're feeling today. Whatever's here is fine.",
+    "sendAria": "Wyślij",
+    "opener": "Cześć. Cieszę się, że tu jesteś.\n\nTo nie jest zwykła rozmowa. To głęboki, stopniowy proces przekształcania wzorców, które w sobie nosisz: starych przekonań, utknionych reakcji, części Ciebie, które czekały, aby zostać usłyszane. Prawdziwa zmiana zajmuje tu tygodnie, czasem miesiące. Nie ma pośpiechu.\n\nKilka rzeczy warto wiedzieć, zanim zaczniemy:\n\n- Możesz przynieść cokolwiek. Jeśli będzie za dużo, zwolnimy.\n- Nie musisz wiedzieć, od czego zacząć. Znajdziemy to razem, Twoimi słowami.\n- Możesz zatrzymać się w dowolnym momencie — w środku sesji lub na kilka dni. Tu nie ma porażki.\n- To, co dzielisz, jest prywatne. Twoje słowa są zaszyfrowane i widziane tylko przez Ciebie i tę pracę.\n- Jeśli jesteś w bezpośrednim kryzysie — czujesz się niebezpiecznie ze sobą lub z kimś innym — skontaktuj się z Samaritans (116 123) lub NHS 111 opcja 2 w Wielkiej Brytanii. Jeśli jesteś poza Wielką Brytanią, poszukaj lokalnej linii kryzysowej. Ta przestrzeń nie jest zbudowana do opieki kryzysowej.\n\nJestem tu, żeby słuchać, odzwierciedlać to, co mówisz, i pomóc Ci znaleźć to, co pod spodem. Praca jest Twoja. Ja jestem z Tobą w niej.\n\nGdy będziesz gotowa — powiedz, jak się dziś czujesz. Cokolwiek tu jest, jest w porządku.",
     "placeholder": "Take your time.",
-    "preparingResponse": "Listening",
-    "streamErrorSuffix": " *(I lost my thread for a moment. Please send again when you're ready.)*",
-    "noAccessTitle": "The Journey isn't open for you yet.",
-    "noAccessBody": "When you're ready, you can begin from the pricing page.",
-    "expiredTitle": "Your year with The Journey has come to a close.",
-    "expiredBody": "The time you had here has passed. If you'd like to continue, you can begin again.",
-    "capReachedTitle": "Something isn't quite right with your account.",
-    "capReachedBody": "There's been unusual activity here. Please email support@mindreset.ai and we'll help sort it out.",
-    "pilotExpiredTitle": "Your 30-day pilot has ended.",
+    "preparingResponse": "Słucham",
+    "streamErrorSuffix": " *(Zgubiłam wątek na chwilę. Wyślij ponownie, gdy będziesz gotowa.)*",
+    "noAccessTitle": "Droga nie jest jeszcze dla Ciebie otwarta.",
+    "noAccessBody": "Gdy będziesz gotowa, możesz zacząć ze strony z cenami.",
+    "expiredTitle": "Twój rok z Drogą dobiegł końca.",
+    "expiredBody": "Czas, który tu miałaś, minął. Jeśli chcesz kontynuować, możesz zacząć od nowa.",
+    "capReachedTitle": "Coś nie gra z Twoim kontem.",
+    "capReachedBody": "Wykryto niezwykłą aktywność. Napisz na support@mindreset.ai i pomożemy to wyjaśnić.",
+    "pilotExpiredTitle": "Twój 30-dniowy pilotaż zakończył się.",
     "pilotExpiredBody": "Thank you for being part of the pilot. If you'd like to continue The Journey, use your 50% discount code on the pricing page.",
-    "pilotUpgradeCta": "Continue with 50% off — £299.50 →",
-    "pilotUpgradeError": "Something went wrong opening checkout. Please try again in a moment, or email support@mindreset.ai.",
-    "pilotRevokedTitle": "Your pilot access has been closed.",
-    "pilotRevokedBody": "Please contact support@mindreset.ai if you think this is a mistake.",
-    "seePricing": "See pricing →",
+    "pilotUpgradeCta": "Kontynuuj z 50 % zniżką — £299,50 →",
+    "pilotUpgradeError": "Coś poszło nie tak przy otwieraniu płatności. Spróbuj za chwilę ponownie lub napisz na support@mindreset.ai.",
+    "pilotRevokedTitle": "Twój dostęp pilotażowy został zamknięty.",
+    "pilotRevokedBody": "Napisz na support@mindreset.ai, jeśli sądzisz, że to pomyłka.",
+    "seePricing": "Zobacz ceny →",
     "voice": {
-      "startAria": "Start voice input",
-      "stopAria": "Stop recording",
-      "transcribing": "Transcribing…",
+      "startAria": "Rozpocznij wprowadzanie głosowe",
+      "stopAria": "Zatrzymaj nagrywanie",
+      "transcribing": "Transkrypcja…",
       "errors": {
-        "permissionDenied": "Microphone access denied. You can enable it in your browser settings.",
-        "noMic": "No microphone found.",
-        "transcriptionFailed": "Couldn't transcribe — please try again.",
-        "rateLimited": "Please pause a moment, then try again.",
-        "unavailable": "Voice input is unavailable right now.",
-        "networkError": "Network error — please try again.",
-        "startFailed": "Couldn't start recording.",
-        "emptyAudio": "Didn't hear anything. Try again."
+        "permissionDenied": "Dostęp do mikrofonu odmówiony. Możesz go włączyć w ustawieniach przeglądarki.",
+        "noMic": "Nie znaleziono mikrofonu.",
+        "transcriptionFailed": "Transkrypcja nie powiodła się — spróbuj ponownie.",
+        "rateLimited": "Zrób chwilę przerwy i spróbuj jeszcze raz.",
+        "unavailable": "Wprowadzanie głosowe nie jest teraz dostępne.",
+        "networkError": "Błąd sieci — spróbuj ponownie.",
+        "startFailed": "Nie udało się rozpocząć nagrywania.",
+        "emptyAudio": "Nic nie usłyszałam. Spróbuj ponownie."
       }
     },
     "frozen": {
-      "title": "Let's pause here.",
-      "body": "I want you safe. Please reach out to a person who can be with you in this.",
-      "samaritans": "Samaritans — 116 123 (free, 24/7)",
-      "nhs": "NHS 111, option 2 — for mental health crisis",
-      "gp": "Your GP if you have one",
-      "emergency": "If you're in immediate physical danger, call 999 or go to A&E.",
-      "reviewIntro": "If you think this happened by mistake, you can ask for a review.",
-      "reviewButton": "Request a review",
-      "reviewSending": "Sending…",
-      "reviewSent": "Thank you. We've received your request and will review it as soon as we can.",
-      "reviewError": "Couldn't send right now. Please try again later, or email support."
+      "title": "Zatrzymajmy się tu na chwilę.",
+      "body": "Chcę, żebyś była bezpieczna. Skontaktuj się z osobą, która może być teraz z Tobą.",
+      "samaritans": "Samaritans — 116 123 (bezpłatnie, 24/7)",
+      "nhs": "NHS 111, opcja 2 — dla kryzysu zdrowia psychicznego",
+      "gp": "Twój lekarz rodzinny, jeśli go masz",
+      "emergency": "Jeśli jesteś w bezpośrednim zagrożeniu fizycznym, zadzwoń pod 999 lub idź na ostry dyżur (A&E).",
+      "reviewIntro": "Jeśli uważasz, że to pomyłka, możesz poprosić o przegląd.",
+      "reviewButton": "Poproś o przegląd",
+      "reviewSending": "Wysyłanie…",
+      "reviewSent": "Dziękuję. Otrzymaliśmy Twoje zgłoszenie i przejrzymy je najszybciej, jak to możliwe.",
+      "reviewError": "Nie udało się teraz wysłać. Spróbuj później lub napisz do wsparcia."
     },
-    "homeCardCta": "Continue →"
+    "homeCardCta": "Kontynuuj →"
   },
   "Screening": {
     "brand": "MindReset",
-    "tagline": "A self-help wellbeing companion — not therapy, not a crisis service.",
+    "tagline": "Towarzysz samopomocy i dobrostanu — nie terapia, nie służba kryzysowa.",
     "introTitle": "Zanim zaczniemy",
     "introBody": "Ta krótka ankieta pomaga nam zrozumieć, czy MindReset jest dla Pani odpowiedni w tym momencie. Zajmuje około pięciu minut. Niektóre pytania są bezpośrednie — proszę odpowiadać szczerze. Jeśli coś stanie się za dużo, można zamknąć tę kartę w dowolnej chwili.",
     "ageGate": "Potwierdzam, że mam co najmniej 18 lat.",
@@ -736,8 +736,8 @@
           "openedNonRefundableItem": "<strong>Po otwarciu modułu zakup nie podlega zwrotowi</strong>"
         },
         "journey": {
-          "title": "The Journey",
-          "note": "The Journey is a structured eight-stage method.",
+          "title": "Droga",
+          "note": "Droga to ustrukturyzowana metoda w ośmiu etapach.",
           "optionsLabel": "Dwie opcje zakupu:",
           "onetime": {
             "title": "Opcja A — Pełny program, jednorazowa płatność:",
@@ -904,7 +904,7 @@
     "preamble": {
       "controllerLabel": "Administrator danych:",
       "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, spółka zarejestrowana w England & Wales, z siedzibą w Londynie, Wielka Brytania — <mail>support@mindreset.ai</mail>",
-      "note": "MindReset AI Ltd is registered with the UK Information Commissioner's Office under registration number ZB642008."
+      "note": "MindReset AI Ltd jest zarejestrowana w brytyjskim Information Commissioner's Office pod numerem rejestracyjnym ZB642008."
     },
     "section1": {
       "title": "1. Zakres niniejszej Privacy Policy",
@@ -1093,7 +1093,7 @@
   },
   "TopBar": {
     "wordmarkAria": "Strona główna MindReset",
-    "primaryNavAria": "Primary navigation"
+    "primaryNavAria": "Nawigacja główna"
   },
   "About": {
     "metaTitle": "O projekcie — MindReset",
@@ -1251,79 +1251,79 @@
     }
   },
   "Alternatives": {
-    "metaTitle": "MindReset alternatives — wellbeing apps compared · MindReset.ai",
-    "metaDescription": "A clear, honest comparison of self-help wellbeing apps for women in midlife. Headspace, Calm, Wysa, BetterHelp, and where MindReset fits.",
-    "kicker": "THE LANDSCAPE",
-    "pageTitle": "MindReset alternatives.",
+    "metaTitle": "Alternatywy dla MindReset — aplikacje do dobrostanu w porównaniu · MindReset.ai",
+    "metaDescription": "Jasne, uczciwe porównanie aplikacji do samopomocy i dobrostanu dla kobiet w średnim wieku. Headspace, Calm, Wysa, BetterHelp — i gdzie mieści się MindReset.",
+    "kicker": "KRAJOBRAZ",
+    "pageTitle": "Alternatywy dla MindReset.",
     "introParagraphs": [
-      "We made this page because we want you to find the right thing, not just choose us. The wellbeing space is crowded, and most roundup articles are paid placements.",
-      "Here is a clear picture of what each named tool actually does, who it serves best, and where MindReset fits."
+      "Zrobiłyśmy tę stronę, ponieważ chcemy, żebyś znalazła to, co dla Ciebie odpowiednie, a nie po prostu wybrała nas. Przestrzeń dobrostanu jest zatłoczona, a większość artykułów porównawczych to płatne pozycjonowanie.",
+      "Oto jasny obraz tego, co każde wymienione narzędzie faktycznie robi, dla kogo jest najbardziej odpowiednie i gdzie mieści się MindReset."
     ],
     "mindresetBlock": {
       "name": "MindReset",
-      "bestFor": "Best for: women aged 35–55 in midlife who want a structured method for inner work, not a meditation library or CBT exercises.",
-      "description": "MiniMind (£14.99/month) is a daily companion for thinking out loud and grounding in the moment. The Journey (£599 once or £55/week) is an eight-stage structured method for sustained, paced inner work."
+      "bestFor": "Najlepsze dla: kobiet w wieku 35–55 lat w średnim wieku, które chcą ustrukturyzowanej metody pracy wewnętrznej, a nie biblioteki medytacji ani ćwiczeń CBT.",
+      "description": "MiniMind (£14,99/miesiąc) to codzienny towarzysz do myślenia na głos i uziemiania się w chwili. Droga (£599 jednorazowo lub £55/tydzień) to ustrukturyzowana metoda w ośmiu etapach do trwałej, rytmicznej pracy wewnętrznej."
     },
-    "ctaTryFree": "Try MiniMind free — 50 messages, no card",
-    "listingHeader": "Other apps in the landscape.",
-    "readFullComparison": "Read MindReset.ai vs {competitor} →",
+    "ctaTryFree": "Wypróbuj MiniMind za darmo — 50 wiadomości, bez karty",
+    "listingHeader": "Inne aplikacje w krajobrazie.",
+    "readFullComparison": "Przeczytaj MindReset.ai vs {competitor} →",
     "competitors": [
       {
         "name": "Headspace",
-        "bestFor": "Best for: stress reduction, meditation practice, sleep stories.",
-        "description": "One of the most established meditation apps. Large library of guided meditations, courses, and sleep stories. Excellent for daily relaxation and meditation practice. Not built for inner-pattern work or sustained method."
+        "bestFor": "Najlepsze dla: redukcji stresu, praktyki medytacji, opowieści do snu.",
+        "description": "Jedna z najlepiej ugruntowanych aplikacji medytacyjnych. Duża biblioteka medytacji prowadzonych, kursów i opowieści do snu. Doskonała do codziennego relaksu i praktyki medytacyjnej. Nie zbudowana do pracy nad wzorcami wewnętrznymi ani do trwałej metody."
       },
       {
         "name": "Calm",
-        "bestFor": "Best for: relaxation, sleep, ambient wellbeing.",
-        "description": "Strong sleep stories, meditations, masterclasses, music. Particularly known for sleep content. Calming, accessible, broad audience."
+        "bestFor": "Najlepsze dla: relaksu, snu, otoczeniowego dobrostanu.",
+        "description": "Mocne opowieści do snu, medytacje, masterclasses, muzyka. Szczególnie znana z treści na sen. Uspokajająca, dostępna, szeroka publiczność."
       },
       {
         "name": "Wysa",
-        "bestFor": "Best for: CBT exercises on demand, mild anxiety symptom management.",
-        "description": "AI chatbot that uses CBT and DBT techniques and cites a research base. Useful for users who want short structured exercises for anxiety, low mood, or stress."
+        "bestFor": "Najlepsze dla: ćwiczeń CBT na żądanie, zarządzania objawami łagodnego lęku.",
+        "description": "Chatbot AI, który używa technik CBT i DBT i cytuje bazę badań. Przydatny dla użytkowników chcących krótkich, ustrukturyzowanych ćwiczeń na lęk, obniżony nastrój lub stres."
       },
       {
         "name": "Woebot",
-        "bestFor": "Best for: short daily CBT check-ins, symptom management.",
-        "description": "AI chatbot that offers CBT-based conversations aimed at mild-to-moderate low mood. Brief, structured, designed for everyday use."
+        "bestFor": "Najlepsze dla: krótkich codziennych check-inów CBT, zarządzania objawami.",
+        "description": "Chatbot AI oferujący rozmowy oparte na CBT skierowane do łagodnego do umiarkowanego obniżonego nastroju. Krótki, ustrukturyzowany, zaprojektowany do codziennego użytku."
       },
       {
         "name": "BetterHelp",
-        "bestFor": "Best for: weekly therapy sessions with a licensed clinician.",
-        "description": "Online therapy platform connecting users with licensed human therapists. Weekly sessions plus messaging. Premium subscription. For users who want real human therapy."
+        "bestFor": "Najlepsze dla: cotygodniowych sesji terapii z licencjonowanym klinicystą.",
+        "description": "Platforma terapii online łącząca użytkowników z licencjonowanymi ludzkimi terapeutami. Cotygodniowe sesje plus wiadomości. Subskrypcja premium. Dla użytkowników chcących prawdziwej ludzkiej terapii."
       },
       {
         "name": "Talkspace",
-        "bestFor": "Best for: messaging-first therapy, psychiatry options.",
-        "description": "Online therapy and psychiatry platform. Licensed human therapists via text, voice, or video. Premium subscription. Comparable to BetterHelp."
+        "bestFor": "Najlepsze dla: terapii opartej na wiadomościach, opcji psychiatrycznych.",
+        "description": "Platforma online terapii i psychiatrii. Licencjonowani ludzcy terapeuci przez tekst, głos lub wideo. Subskrypcja premium. Porównywalna do BetterHelp."
       },
       {
         "name": "Insight Timer",
-        "bestFor": "Best for: free meditation, large teacher library.",
-        "description": "Meditation app with thousands of free guided meditations from independent teachers. Wide-ranging styles and traditions. Free core with a premium subscription tier."
+        "bestFor": "Najlepsze dla: darmowej medytacji, dużej biblioteki nauczycieli.",
+        "description": "Aplikacja medytacyjna z tysiącami darmowych medytacji prowadzonych przez niezależnych nauczycieli. Zróżnicowane style i tradycje. Darmowa baza z poziomem subskrypcji premium."
       },
       {
         "name": "Ten Percent Happier",
-        "bestFor": "Best for: meditation skeptics, pragmatic tone.",
-        "description": "Meditation app founded by journalist Dan Harris. Research-oriented, pragmatic register. Premium subscription. For users who want meditation without the spiritual register."
+        "bestFor": "Najlepsze dla: sceptyków medytacji, pragmatycznego tonu.",
+        "description": "Aplikacja medytacyjna założona przez dziennikarza Dana Harrisa. Rejestr pragmatyczny, zorientowany na badania. Subskrypcja premium. Dla użytkowników chcących medytacji bez rejestru duchowego."
       }
     ],
-    "closingTitle": "If you want a method, not a library.",
-    "closingBody": "MindReset is a different shape of work. MiniMind sits with you in the moment. The Journey takes you through the patterns underneath, over weeks to months. Both are built for women in midlife who feel stuck and are ready for structure, not quick fixes.",
-    "ctaReadMore": "Read about the method"
+    "closingTitle": "Jeśli chcesz metody, a nie biblioteki.",
+    "closingBody": "MindReset to inna forma pracy. MiniMind siedzi z Tobą w chwili. Droga prowadzi Cię przez wzorce pod spodem, przez tygodnie do miesięcy. Oba są zbudowane dla kobiet w średnim wieku, które czują się utknięte i są gotowe na strukturę, a nie szybkie rozwiązania.",
+    "ctaReadMore": "Przeczytaj o metodzie"
   },
   "Vs": {
-    "kicker": "HEAD TO HEAD",
-    "h1Pattern": "MindReset.ai vs {competitor}: how they compare.",
-    "byline": "MindReset.ai · built by Julia Loya · UK",
-    "backToAlternatives": "All alternatives",
-    "whatTheyAreHeading": "What {competitor} is.",
-    "whatMindResetIsHeading": "What MindReset.ai is.",
-    "theyFitWhenHeading": "{competitor} fits when:",
-    "mindresetFitsWhenHeading": "MindReset.ai fits when:",
-    "honestOverlapHeading": "Honest overlap.",
-    "ctaTryFree": "Try MiniMind free — 50 messages, no card",
-    "ctaReadMore": "Read about the method"
+    "kicker": "TWARZĄ W TWARZ",
+    "h1Pattern": "MindReset.ai vs {competitor}: jak się porównują.",
+    "byline": "MindReset.ai · zbudowana przez Julię Loya · Wielka Brytania",
+    "backToAlternatives": "Wszystkie alternatywy",
+    "whatTheyAreHeading": "Czym jest {competitor}.",
+    "whatMindResetIsHeading": "Czym jest MindReset.ai.",
+    "theyFitWhenHeading": "{competitor} pasuje, gdy:",
+    "mindresetFitsWhenHeading": "MindReset.ai pasuje, gdy:",
+    "honestOverlapHeading": "Uczciwe pokrywanie.",
+    "ctaTryFree": "Wypróbuj MiniMind za darmo — 50 wiadomości, bez karty",
+    "ctaReadMore": "Przeczytaj o metodzie"
   }
 }
