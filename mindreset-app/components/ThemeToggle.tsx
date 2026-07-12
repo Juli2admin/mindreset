@@ -8,6 +8,7 @@
 // TopBar drops this into its default right slot so the toggle is
 // available on every page that uses TopBar in align='default' mode.
 
+import { useTranslations } from 'next-intl';
 import { useTheme } from '@/lib/theme/useTheme';
 
 function SunIcon({ size = 14 }: { size?: number }) {
@@ -48,6 +49,7 @@ function MoonIcon({ size = 14 }: { size?: number }) {
 
 export default function ThemeToggle() {
   const { theme, palette, toggle } = useTheme();
+  const t = useTranslations('A11y');
   const Icon = theme === 'day' ? MoonIcon : SunIcon;
   return (
     <button
@@ -58,7 +60,7 @@ export default function ThemeToggle() {
       // header. Borderless to match the LanguagePicker trigger style.
       className="inline-flex items-center justify-center min-w-9 min-h-9 rounded-full transition-colors"
       style={{ color: palette.textMuted, border: `1px solid ${palette.border}` }}
-      aria-label={theme === 'day' ? 'Switch to night mode' : 'Switch to day mode'}
+      aria-label={theme === 'day' ? t('themeToggleToNight') : t('themeToggleToDay')}
     >
       <Icon size={14} />
     </button>
