@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Olá. É bom tê-lo aqui. Como está hoje?",
     "placeholder": "Diga o que lhe vai na cabeça.",
+    "send": "Send",
     "streamErrorSuffix": "— *(Perdi o fio por um momento. Por favor, envie de novo quando estiver pronto.)*",
     "preparingResponse": "MiniMind está a preparar uma resposta",
     "startNew": "Começar nova",

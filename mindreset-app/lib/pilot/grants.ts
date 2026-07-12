@@ -33,7 +33,16 @@ export async function ensurePilotGrants(
   userId: string,
   email: string | null,
 ): Promise<void> {
-  if (!isPilotTester(email)) return;
+  const isTester = isPilotTester(email);
+  // Loud log so Vercel search surfaces every grant attempt. Distinguishes
+  // "grant path never fired for this user" from "grant path fired but
+  // Prisma write silently failed" during pilot-tester debugging.
+  console.log('[pilot-grants] check', {
+    userId,
+    emailLower: email ? email.trim().toLowerCase() : null,
+    isTester,
+  });
+  if (!isTester) return;
 
   // 1. Journey Purchase (idempotent by existing-row check)
   const existingRecode = await prisma.purchase.findFirst({
@@ -41,6 +50,7 @@ export async function ensurePilotGrants(
     select: { id: true },
   });
   if (!existingRecode) {
+    console.log('[pilot-grants] creating Journey Purchase', { userId });
     await prisma.purchase.create({
       data: {
         userId,
@@ -51,6 +61,11 @@ export async function ensurePilotGrants(
         completedAt: new Date(),
       },
     });
+  } else {
+    console.log('[pilot-grants] Journey Purchase already exists', {
+      userId,
+      purchaseId: existingRecode.id,
+    });
   }
 
   // 2. MiniMind Extended tier (idempotent by tier check)
@@ -59,6 +74,10 @@ export async function ensurePilotGrants(
     select: { currentTier: true },
   });
   if (user && user.currentTier !== 'extended') {
+    console.log('[pilot-grants] upgrading tier to extended', {
+      userId,
+      priorTier: user.currentTier,
+    });
     await prisma.user.update({
       where: { id: userId },
       data: {

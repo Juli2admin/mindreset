@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Hello. Good to have you here. How are you doing today?",
     "placeholder": "Say what's on your mind.",
+    "send": "Send",
     "streamErrorSuffix": "— *(I lost my thread for a moment. Please send again when you're ready.)*",
     "preparingResponse": "MiniMind is preparing a response",
     "startNew": "Start new",
