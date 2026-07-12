@@ -15,13 +15,14 @@
 // The UI is deliberately quiet — slow tempo matches the method.
 
 import type { Metadata } from 'next';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { useTranslations } from 'next-intl';
 import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
 import { checkJourneyAccess } from '@/lib/journey/access';
+import { ensurePilotGrants } from '@/lib/pilot/grants';
 import JourneyClient from './JourneyClient';
 
 export const dynamic = 'force-dynamic';
@@ -51,6 +52,24 @@ export default async function JourneyPage() {
     throw new Error(
       'Unauthenticated request reached /journey page — middleware matcher likely misconfigured',
     );
+  }
+
+  // Pilot-tester defensive grant. ensurePilotGrants normally runs on
+  // /home. A tester who lands on /journey directly (from a signup email
+  // link or a bookmark) would otherwise hit NoAccessView until they
+  // visited /home. Idempotent + fast-exits for non-testers, so cheap to
+  // run defensively here.
+  try {
+    const user = await currentUser();
+    const primaryEmail =
+      user?.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ??
+      user?.emailAddresses[0]?.emailAddress ??
+      null;
+    if (primaryEmail) {
+      await ensurePilotGrants(userId, primaryEmail);
+    }
+  } catch (err) {
+    console.error('[journey] pilot grants failed (continuing):', err);
   }
 
   // Access gate: completed Journey purchase + within 1-year window + under
