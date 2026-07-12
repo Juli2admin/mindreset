@@ -68,6 +68,7 @@ export async function checkJourneyAccess(userId: string): Promise<JourneyAccessC
       id: true,
       firstAccessedAt: true,
       journeyMessagesUsed: true,
+      amount: true,
     },
   });
 
@@ -78,19 +79,30 @@ export async function checkJourneyAccess(userId: string): Promise<JourneyAccessC
   // paid 1-year window does not apply because a pilot Purchase has
   // amount=0 and no Stripe transaction backs it. Revoke takes precedence
   // over natural expiry.
-  if (user?.pilotInvitation?.revokedAt) {
-    return { allowed: false, reason: 'pilot_revoked' };
-  }
-  if (user?.pilotTrialEndsAt) {
-    if (Date.now() > user.pilotTrialEndsAt.getTime()) {
-      return { allowed: false, reason: 'pilot_expired' };
+  //
+  // EXCEPTION: a former pilot tester who took the "Continue with 50% off"
+  // offer post-trial will have a NEWER paid recode Purchase (amount > 0)
+  // sitting on top of the original pilot Purchase (amount = 0). The
+  // findFirst above already sorted by completedAt desc, so `purchase` is
+  // the paid one. In that case we skip the pilot check entirely and fall
+  // through to the normal 1-year window — they've graduated from pilot
+  // to full customer.
+  const isPaidPurchase = purchase.amount > 0;
+  if (!isPaidPurchase) {
+    if (user?.pilotInvitation?.revokedAt) {
+      return { allowed: false, reason: 'pilot_revoked' };
     }
-    // Trial still active — the 5,000-msg abuse cap still applies, but skip
-    // the 1-year firstAccessedAt window (pilot has its own window).
-    if (purchase.journeyMessagesUsed >= JOURNEY_ABUSE_MSG_CAP) {
-      return { allowed: false, reason: 'cap_reached' };
+    if (user?.pilotTrialEndsAt) {
+      if (Date.now() > user.pilotTrialEndsAt.getTime()) {
+        return { allowed: false, reason: 'pilot_expired' };
+      }
+      // Trial still active — the 5,000-msg abuse cap still applies, but skip
+      // the 1-year firstAccessedAt window (pilot has its own window).
+      if (purchase.journeyMessagesUsed >= JOURNEY_ABUSE_MSG_CAP) {
+        return { allowed: false, reason: 'cap_reached' };
+      }
+      return { allowed: true, purchase };
     }
-    return { allowed: true, purchase };
   }
 
   if (purchase.firstAccessedAt) {

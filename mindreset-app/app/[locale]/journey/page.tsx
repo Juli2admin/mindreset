@@ -24,6 +24,7 @@ import { TOKENS } from '@/lib/brand/colors';
 import { checkJourneyAccess } from '@/lib/journey/access';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
 import JourneyClient from './JourneyClient';
+import PilotUpgradeButton from './PilotUpgradeButton';
 
 export const dynamic = 'force-dynamic';
 // Neutralises Next.js fetch cache and intermediate edge caches for this
@@ -168,6 +169,14 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
         <p className="mb-6 text-base leading-relaxed" style={{ color: '#6A6A6A' }}>
           {t(bodyKey)}
         </p>
+        {reason === 'pilot_expired' && (
+          <div className="mb-6">
+            <PilotUpgradeButton
+              label={t('pilotUpgradeCta')}
+              errorLabel={t('pilotUpgradeError')}
+            />
+          </div>
+        )}
         <Link
           href="/pricing"
           className="inline-block underline underline-offset-4 hover:no-underline"
