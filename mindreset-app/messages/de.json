@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Hallo. Schön, dass Sie hier sind. Wie geht es Ihnen heute?",
     "placeholder": "Sagen Sie, was Sie beschäftigt.",
+    "send": "Send",
     "streamErrorSuffix": "— *(Ich habe den Faden kurz verloren. Bitte senden Sie nochmal, wenn Sie bereit sind.)*",
     "preparingResponse": "MiniMind bereitet eine Antwort vor",
     "startNew": "Neu beginnen",

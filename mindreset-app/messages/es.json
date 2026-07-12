@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Hola. Me alegra que esté aquí. ¿Cómo se encuentra hoy?",
     "placeholder": "Diga lo que le pasa por la cabeza.",
+    "send": "Send",
     "streamErrorSuffix": "— *(Perdí el hilo un momento. Vuelva a enviar cuando esté listo.)*",
     "preparingResponse": "MiniMind está preparando una respuesta",
     "startNew": "Empezar nueva",

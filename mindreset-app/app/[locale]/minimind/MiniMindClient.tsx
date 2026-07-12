@@ -656,7 +656,7 @@ function ChattingView({
                     sending || recording || transcribing || input.trim().length === 0 ? 0.5 : 1,
                 }}
               >
-                Send
+                {t('send')}
               </button>
             </div>
           </div>

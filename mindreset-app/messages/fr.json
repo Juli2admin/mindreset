@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Bonjour. Heureux que vous soyez là. Comment vous sentez-vous aujourd’hui ?",
     "placeholder": "Dites ce qui vous traverse.",
+    "send": "Send",
     "streamErrorSuffix": "— *(J’ai perdu le fil un instant. Renvoyez quand vous êtes prêt.)*",
     "preparingResponse": "MiniMind prépare une réponse",
     "startNew": "Commencer une nouvelle",

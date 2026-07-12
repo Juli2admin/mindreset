@@ -331,6 +331,7 @@
   "MiniMind": {
     "opener": "Witam. Cieszę się, że Pani tu jest. Jak się Pani dzisiaj czuje?",
     "placeholder": "Proszę powiedzieć, co Pani teraz zajmuje.",
+    "send": "Send",
     "streamErrorSuffix": "— *(Zgubiłem na chwilę wątek. Proszę wysłać ponownie, kiedy będzie Pani gotowa.)*",
     "preparingResponse": "MiniMind przygotowuje odpowiedź",
     "startNew": "Zacznij od nowa",

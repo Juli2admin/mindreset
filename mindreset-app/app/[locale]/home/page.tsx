@@ -108,12 +108,22 @@ export default async function HomePage({
   //     The page renders with defaults; user still sees /home.
   if (primaryEmail) {
     try {
+      // Sync locale from the URL prefix. The Clerk webhook always creates
+      // the User row with locale='en' (it has no browser context). Without
+      // this sync, a Russian-speaking user's DB locale stays 'en' forever
+      // — which means MiniMind's memory context reports "Preferred
+      // language: en" to the AI, and the AI answers in English even when
+      // the user writes in Russian. LanguagePicker only changes the URL
+      // prefix (never touches the DB), so treating the URL locale as
+      // authoritative on every /home visit is safe and eventually
+      // consistent with what the user is browsing in.
+      const dbLocale: 'ru' | 'en' = locale === 'ru' ? 'ru' : 'en';
       await prisma.user.upsert({
         where: { id: user.id },
         create: {
           id: user.id,
           email: primaryEmail,
-          locale: locale === 'ru' ? 'ru' : 'en',
+          locale: dbLocale,
           themePref: 'system',
           // Sign-up UI already required T&C + Privacy consent; timestamps
           // reflect that consent implicitly happened by the time the user
@@ -121,10 +131,10 @@ export default async function HomePage({
           tcAcceptedAt: new Date(),
           privacyAcceptedAt: new Date(),
         },
-        // Only update fields that Clerk owns as source of truth. Never
-        // overwrite tier / cycle counters / welcomeEmailSentAt — those
-        // belong to the Stripe webhook and this page's downstream logic.
-        update: { email: primaryEmail },
+        // Clerk owns email; the URL owns locale (LanguagePicker updates
+        // it, no separate DB write). Everything else stays under Stripe /
+        // downstream ownership.
+        update: { email: primaryEmail, locale: dbLocale },
       });
     } catch (err) {
       // Log and continue. The most common failure is P2002 (email
