@@ -126,6 +126,10 @@ The Service is **not designed for emergencies or active mental health crises.**
 - **Your GP** — for non-urgent mental health support
 - **A&E or 999** — for any medical or psychiatric emergency
 
+**Outside the UK:**
+- Call your **local emergency service** — 112 across the EU, 911 in the US and Canada, or your country's equivalent.
+- For a national suicide-prevention line, search "suicide prevention hotline [your country]" — most countries have one, free and 24/7.
+
 The operator of the Service and the Service itself are not liable for any decision or action you take based on AI suggestions or content provided through the Service.
 
 ---
@@ -532,6 +536,8 @@ Nothing in this Refund Policy excludes your statutory rights under the **Consume
 > The AI here cannot diagnose, treat, or replace a clinician. If you are in crisis, in danger, or experiencing severe psychological symptoms — please reach out to professional support.
 >
 > **UK:** Samaritans **116 123** (24/7). NHS **111** option 2. Your GP. In an emergency: **999** or A&E.
+>
+> **Outside the UK:** your local emergency service (**112** in the EU, **911** in the US and Canada) or your country's suicide-prevention helpline.
 >
 > *By continuing, you confirm you have read this disclaimer and understand the Service's limitations.*
 >

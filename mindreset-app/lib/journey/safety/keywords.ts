@@ -163,27 +163,37 @@ export function scanForJourneyRedFlag(message: string): RedFlagHit {
 // or when the async verifier returns clear_crisis, or while the Journey is
 // in frozen-for-review state.
 //
-// Localised per the user's locale on the request. UK lines are kept for the EN
-// and RU defaults — Samaritans operates in EN; the RU translation routes UK
-// users who speak Russian to the same lines (Samaritans accepts non-English
-// callers via translation, and Russian-speaking UK residents are the primary
-// MindReset audience for RU). When MindReset expands to other markets,
-// localisation per locale follows here.
+// PR ρ3 (2026-07-12) — added non-UK signpost so Russian speakers (and
+// anyone else) outside the UK have actionable resources at the moment
+// they most need them. UK lines stay as the primary block because
+// Julia's operating jurisdiction is UK and the RU-native audience skews
+// UK-resident. But we can't assume every Russian speaker is in Britain —
+// a Muscovite in acute crisis needs a Moscow line, not Samaritans.
 export const CRISIS_RESPONSE_EN = `I hear how serious this is. What you're carrying right now is more than this conversation is built for, and I want you safe. Please reach out to a person who can be with you in this:
 
+In the UK:
 Samaritans — 116 123 (free, 24/7)
 NHS 111, option 2 — for mental health crisis
 Your GP if you have one
 If you're in immediate physical danger, call 999 or go to A&E
 
+Outside the UK:
+Call your local emergency service (112 in the EU, 911 in the US and Canada).
+For a national suicide-prevention line, search "suicide prevention hotline [your country]" — most countries have one and they're free and 24/7.
+
 I'll be here when you're ready to come back.`;
 
 export const CRISIS_RESPONSE_RU = `Я слышу, насколько это серьёзно. То, что вы сейчас несёте, — больше, чем может вместить этот разговор, и я хочу, чтобы вы были в безопасности. Пожалуйста, обратитесь к человеку, который сможет побыть рядом:
 
+В Великобритании:
 Samaritans — 116 123 (бесплатно, круглосуточно)
 NHS 111, вариант 2 — кризисная психиатрическая помощь
 Ваш врач общей практики, если есть
 Если жизнь в непосредственной опасности — звоните 999 или обратитесь в отделение скорой помощи (A&E)
+
+Вне Великобритании:
+Позвоните в местную экстренную службу (112 в ЕС, 911 в США и Канаде).
+Национальную линию доверия можно найти по запросу «телефон доверия [ваша страна]» — почти в каждой стране такая линия есть, она бесплатная и работает круглосуточно.
 
 Я буду здесь, когда вы будете готовы вернуться.`;
 

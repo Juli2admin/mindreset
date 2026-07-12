@@ -9,21 +9,33 @@
 //
 // EN is the fallback for any locale we don't have translated yet.
 
+// PR ρ3 (2026-07-12) — added non-UK signpost. See lib/journey/safety/
+// keywords.ts for the rationale (mirrors that fix).
 export const MINIMIND_CRISIS_RESPONSE_EN = `I hear how serious this is. What you're carrying right now is more than this conversation is built for, and I want you safe. Please reach out to a person who can be with you in this:
 
+In the UK:
 Samaritans — 116 123 (free, 24/7)
 NHS 111, option 2 — for mental health crisis
 Your GP if you have one
 If you're in immediate physical danger, call 999 or go to A&E
 
+Outside the UK:
+Call your local emergency service (112 in the EU, 911 in the US and Canada).
+For a national suicide-prevention line, search "suicide prevention hotline [your country]" — most countries have one and they're free and 24/7.
+
 I'll be here when you're ready to come back.`;
 
 export const MINIMIND_CRISIS_RESPONSE_RU = `Я слышу, насколько это серьёзно. То, что вы сейчас несёте, — больше, чем может вместить этот разговор, и я хочу, чтобы вы были в безопасности. Пожалуйста, обратитесь к человеку, который сможет побыть рядом:
 
+В Великобритании:
 Samaritans — 116 123 (бесплатно, круглосуточно)
 NHS 111, вариант 2 — кризисная психиатрическая помощь
 Ваш врач общей практики, если есть
 Если жизнь в непосредственной опасности — звоните 999 или обратитесь в отделение скорой помощи (A&E)
+
+Вне Великобритании:
+Позвоните в местную экстренную службу (112 в ЕС, 911 в США и Канаде).
+Национальную линию доверия можно найти по запросу «телефон доверия [ваша страна]» — почти в каждой стране такая линия есть, она бесплатная и работает круглосуточно.
 
 Я буду здесь, когда вы будете готовы вернуться.`;
 
