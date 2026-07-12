@@ -23,14 +23,8 @@
 // back to /pricing.
 
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
-import { redirect } from '@/i18n/navigation';
 import { auth } from '@clerk/nextjs/server';
 import { redeemInvitation } from '@/lib/pilot/invitations';
-import {
-  PILOT_REDEEM_COOKIE,
-  PILOT_REDEEM_COOKIE_MAX_AGE,
-} from '@/lib/pilot/cookie';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 
@@ -51,28 +45,16 @@ export default async function RedeemPage({
   const { userId } = await auth();
   const t = await getTranslations({ locale: params.locale, namespace: 'Pilot.redeem' });
 
-  // Signed-out path: stash code, redirect to sign-up. We don't check
-  // whether the code exists here — a bad code is caught after signup on
-  // the /home consume path, which is more forgiving UX than blocking
-  // sign-up on a typo.
+  // Middleware handles the signed-out branch: it stashes the code cookie
+  // and redirects to /sign-up. If we reach this page component at all, the
+  // user is signed in — redeem synchronously. (Belt-and-braces: if a race
+  // sends a signed-out request through, render the error page rather than
+  // crashing on a null userId.)
   if (!userId) {
-    cookies().set({
-      name: PILOT_REDEEM_COOKIE,
-      value: params.code,
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: PILOT_REDEEM_COOKIE_MAX_AGE,
-      path: '/',
-    });
-    // Redirect signed-out users to sign-up. Middleware will keep the
-    // locale prefix.
-    redirect({ href: '/sign-up', locale: params.locale });
+    return <RedeemError reason="not_found" t={t} />;
   }
 
-  // Signed-in path: redeem synchronously. Server action lives inline so
-  // there's no separate API route to secure.
-  const result = await redeemInvitation(params.code, userId!);
+  const result = await redeemInvitation(params.code, userId);
 
   if (result.ok === false) {
     return <RedeemError reason={result.reason} t={t} />;

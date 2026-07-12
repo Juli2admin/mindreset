@@ -166,9 +166,13 @@ export default async function HomePage({
     }
 
     // Post-signup pilot-code consume (PR ρ, 2026-07-12). If the user
-    // arrived via /redeem/[code] while signed out, we stashed the code
-    // in mr_pilot_code. Now they're signed in — claim it. Idempotent;
-    // errors don't block the /home render.
+    // arrived via /redeem/[code] while signed out, middleware stashed the
+    // code in mr_pilot_code before redirecting them to /sign-up. Now
+    // they're signed in — claim it. redeemInvitation is idempotent, so a
+    // stale cookie left behind by a previous partial flow is safe: it'll
+    // return `already_redeemed_by_this_user` or `user_already_pilot` and
+    // no-op. We deliberately don't delete the cookie here (page-render
+    // can't set cookies — Next.js restriction); it expires on its own.
     const pilotCookie = cookies().get(PILOT_REDEEM_COOKIE);
     if (pilotCookie?.value) {
       try {
@@ -188,8 +192,6 @@ export default async function HomePage({
       } catch (err) {
         console.error('[home] pilot code redemption failed:', err);
       }
-      // Always clear the cookie — succeed or fail, one shot.
-      cookies().delete(PILOT_REDEEM_COOKIE);
     }
   }
 
