@@ -25,6 +25,7 @@ export default function TestimonialsSection({
 }) {
   const { palette: PALETTE } = useTheme();
   const t = useTranslations('Testimonials');
+  const tA11y = useTranslations('A11y');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -112,7 +113,7 @@ export default function TestimonialsSection({
                 <button
                   key={i}
                   onClick={() => setActiveIndex(i)}
-                  aria-label={`Show testimonial ${i + 1} of ${testimonials.length}`}
+                  aria-label={tA11y('testimonialShowNth', { n: i + 1, total: testimonials.length })}
                   className="min-w-9 min-h-9 inline-flex items-center justify-center"
                   style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                 >

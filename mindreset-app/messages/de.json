@@ -105,6 +105,12 @@
     ],
     "disclaimer": "MindReset ist ein Wohlbefinden-Werkzeug — keine Therapie, kein Medizinprodukt und kein Ersatz für professionelle Versorgung. Wenn Sie in unmittelbarer Gefahr sind, nutzen Sie bitte eine der oben genannten Linien oder rufen Sie 999 an."
   },
+  "A11y": {
+    "themeToggleToDay": "Switch to day mode",
+    "themeToggleToNight": "Switch to night mode",
+    "languagePickerEnglishSuffix": "content in English",
+    "testimonialShowNth": "Show testimonial {n} of {total}"
+  },
   "DisclaimerModal": {
     "title": "Wichtig — bevor Sie fortfahren",
     "primary": "MindReset ist ein Wohlbefinden-Werkzeug — keine Therapie, kein Medizinprodukt, kein Krisendienst.",

@@ -105,6 +105,12 @@
     ],
     "disclaimer": "MindReset is a wellbeing tool — not therapy, not a medical device, and not a substitute for professional care. If you are in immediate danger, please use one of the lines above (UK) or call your local emergency service (112 in the EU, 911 in the US and Canada, or your country's equivalent)."
   },
+  "A11y": {
+    "themeToggleToDay": "Switch to day mode",
+    "themeToggleToNight": "Switch to night mode",
+    "languagePickerEnglishSuffix": "content in English",
+    "testimonialShowNth": "Show testimonial {n} of {total}"
+  },
   "DisclaimerModal": {
     "title": "Important — before you continue",
     "primary": "MindReset is a wellbeing tool — not therapy, not a medical device, not a crisis service.",

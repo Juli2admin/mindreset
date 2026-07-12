@@ -105,6 +105,12 @@
     ],
     "disclaimer": "MindReset est un outil de bien-être — ni thérapie, ni dispositif médical, ni substitut à un soin professionnel. Si vous êtes en danger immédiat, utilisez l'une des lignes ci-dessus ou appelez le 999."
   },
+  "A11y": {
+    "themeToggleToDay": "Switch to day mode",
+    "themeToggleToNight": "Switch to night mode",
+    "languagePickerEnglishSuffix": "content in English",
+    "testimonialShowNth": "Show testimonial {n} of {total}"
+  },
   "DisclaimerModal": {
     "title": "Important — avant de continuer",
     "primary": "MindReset est un outil de bien-être — ni thérapie, ni dispositif médical, ni service de crise.",

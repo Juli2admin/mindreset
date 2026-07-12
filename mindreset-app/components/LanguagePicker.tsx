@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { TOKENS } from '@/lib/brand/colors';
@@ -90,6 +90,7 @@ export default function FooterLanguagePicker({
   direction = 'up',
 }: Props) {
   const currentLocale = useLocale();
+  const tA11y = useTranslations('A11y');
   const router = useRouter();
   const currentPath = usePathname();
   const { palette: PALETTE } = useTheme();
@@ -147,6 +148,20 @@ export default function FooterLanguagePicker({
         ? '; Secure'
         : '';
     document.cookie = `mr_locale=${next}; Path=/; Max-Age=${ONE_YEAR_SECONDS}; SameSite=Lax${secure}`;
+
+    // Persist to User.locale for signed-in users so downstream OFF-request
+    // surfaces (MiniMind memory context, transactional emails, drip cron)
+    // see the correct locale immediately. Fire-and-forget — navigation
+    // shouldn't block on a DB write. Signed-out visitors 401, we ignore.
+    fetch('/api/account/locale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: next }),
+      keepalive: true,
+    }).catch(() => {
+      // swallow — /home will sync on next authenticated visit
+    });
+
     setOpen(false);
     // router.replace (not push) so the back-button from /fr/screening
     // doesn't return to /ru/screening — locale switches shouldn't
@@ -257,7 +272,7 @@ export default function FooterLanguagePicker({
                     <span
                       className="ml-1.5 text-[11px]"
                       style={{ color: PALETTE.textHint }}
-                      aria-label="content in English"
+                      aria-label={tA11y('languagePickerEnglishSuffix')}
                     >
                       · en
                     </span>

@@ -105,6 +105,12 @@
     ],
     "disclaimer": "MindReset to narzędzie wspierające dobrostan — nie terapia, nie wyrób medyczny i nie zastępstwo dla opieki specjalistycznej. W razie bezpośredniego zagrożenia proszę skorzystać z jednej z linii powyżej lub zadzwonić 999."
   },
+  "A11y": {
+    "themeToggleToDay": "Switch to day mode",
+    "themeToggleToNight": "Switch to night mode",
+    "languagePickerEnglishSuffix": "content in English",
+    "testimonialShowNth": "Show testimonial {n} of {total}"
+  },
   "DisclaimerModal": {
     "title": "Ważne — zanim Pani przejdzie dalej",
     "primary": "MindReset to narzędzie wspierające dobrostan — nie terapia, nie wyrób medyczny, nie usługa kryzysowa.",
