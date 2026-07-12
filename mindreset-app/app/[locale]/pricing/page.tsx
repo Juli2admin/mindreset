@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import { pageAlternates, SITE_URL } from '@/lib/seo/alternates';
 import { getApprovedTestimonials } from '@/lib/testimonials/queries';
+import { ensurePilotGrants } from '@/lib/pilot/grants';
 
 export const dynamic = 'force-dynamic';
 
@@ -136,6 +137,22 @@ export default async function PricingPage({ params }: { params: { locale: string
   let currentTier: string | null = null;
   let journeyPurchased = false;
   if (user) {
+    // Pilot-tester defensive grant. ensurePilotGrants normally runs on
+    // /home, but a tester who lands on /pricing first (from a direct
+    // link) would otherwise see the £599 Buy button until they visited
+    // /home. Idempotent + fast-exits for non-testers, so cheap to
+    // duplicate here.
+    const primaryEmail =
+      user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress ??
+      user.emailAddresses[0]?.emailAddress ??
+      null;
+    if (primaryEmail) {
+      try {
+        await ensurePilotGrants(user.id, primaryEmail);
+      } catch (err) {
+        console.error('[pricing] pilot grants failed (continuing):', err);
+      }
+    }
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { currentTier: true },
