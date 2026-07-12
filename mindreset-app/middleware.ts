@@ -2,6 +2,10 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createNextIntlMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
+import {
+  PILOT_REDEEM_COOKIE,
+  PILOT_REDEEM_COOKIE_MAX_AGE,
+} from './lib/pilot/cookie';
 
 // Phase i18n.1a — composition pattern (Clerk first, then next-intl):
 //   1. API routes bypass next-intl entirely (no [locale] segment for APIs).
@@ -67,6 +71,36 @@ export default clerkMiddleware((auth, req) => {
   // /unsubscribe/<token> doesn't get rewritten to /en/unsubscribe/<token>.
   if (req.nextUrl.pathname.startsWith('/unsubscribe')) {
     return NextResponse.next();
+  }
+
+  // /redeem/[code] — pilot invitation landing. Signed-out visitors need
+  // the code stashed in a cookie so /home can consume it after sign-up.
+  // Cookie writes aren't allowed inside a server-component render, so we
+  // do it here in middleware where response headers are legal. Signed-in
+  // visitors fall through to the page component which redeems inline.
+  const redeemMatch = req.nextUrl.pathname.match(
+    /^\/(?:[a-z]{2}\/)?redeem\/([A-Za-z0-9_-]+)\/?$/,
+  );
+  if (redeemMatch) {
+    const { userId } = auth();
+    if (!userId) {
+      const code = redeemMatch[1];
+      const locale = localeFromPath(req.nextUrl.pathname);
+      const signUpPath =
+        locale === routing.defaultLocale ? '/sign-up' : `/${locale}/sign-up`;
+      const response = NextResponse.redirect(new URL(signUpPath, req.url));
+      response.cookies.set({
+        name: PILOT_REDEEM_COOKIE,
+        value: code,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: PILOT_REDEEM_COOKIE_MAX_AGE,
+        path: '/',
+      });
+      return response;
+    }
+    // Signed in — page component handles the redeem synchronously.
   }
 
   // Clerk auth gate first.
