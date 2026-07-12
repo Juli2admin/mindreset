@@ -105,11 +105,28 @@
     ],
     "disclaimer": "MindReset è uno strumento di benessere — non terapia, non dispositivo medico, non sostituto di una cura professionale. Se è in pericolo immediato, utilizzi una delle linee qui sopra o chiami il 999."
   },
+  "CheckoutSuccess": {
+    "metaTitle": "Payment successful",
+    "kicker": "Payment complete",
+    "title": "You're all set.",
+    "body": "Your purchase is confirmed. Subscription access activates within a few seconds — head to your space to get started.",
+    "cta": "Go to your space →"
+  },
+  "ConfirmDelete": {
+    "metaTitle": "Confirm account deletion",
+    "title": "Confirm account deletion"
+  },
   "A11y": {
     "themeToggleToDay": "Switch to day mode",
     "themeToggleToNight": "Switch to night mode",
     "languagePickerEnglishSuffix": "content in English",
     "testimonialShowNth": "Show testimonial {n} of {total}"
+  },
+  "Errors": {
+    "networkError": "Network error — please try again.",
+    "checkoutFailed": "Checkout failed — please try again.",
+    "portalFailed": "Could not open the customer portal. Please try again.",
+    "generic": "Something went wrong. Please try again."
   },
   "DisclaimerModal": {
     "title": "Importante — prima di continuare",
@@ -173,6 +190,7 @@
       "openMinimind": "Aprire MiniMind",
       "buyTopUp": "Acquistare una ricarica",
       "managePlan": "Gestire l’abbonamento",
+      "managePlanBody": "Open Stripe's customer portal to view invoices, update your payment method, or cancel a subscription.",
       "seePlans": "Vedere i piani",
       "browsePlans": "Vedi tutti i piani →"
     },

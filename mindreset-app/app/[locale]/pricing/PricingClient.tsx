@@ -57,6 +57,7 @@ export default function PricingClient({
   // show the same product names without duplicate translations.
   const tHome = useTranslations('Home');
   const tJourney = useTranslations('Journey');
+  const tErr = useTranslations('Errors');
   const locale = useLocale();
   const { isSignedIn } = useUser();
   const { palette: PALETTE } = useTheme();
@@ -84,11 +85,11 @@ export default function PricingClient({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setCheckoutError(data.detail ?? data.error ?? 'Checkout failed');
+        setCheckoutError(data.detail ?? data.error ?? tErr('checkoutFailed'));
         setLoading(null);
       }
     } catch {
-      setCheckoutError('Network error — please try again');
+      setCheckoutError(tErr('networkError'));
       setLoading(null);
     }
   }
@@ -106,11 +107,11 @@ export default function PricingClient({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setCheckoutError(data.detail ?? data.error ?? 'Could not open portal');
+        setCheckoutError(data.detail ?? data.error ?? tErr('portalFailed'));
         setLoading(null);
       }
     } catch {
-      setCheckoutError('Network error — please try again');
+      setCheckoutError(tErr('networkError'));
       setLoading(null);
     }
   }
