@@ -546,7 +546,7 @@ function Composer({
               minHeight: 44,
               height: 44,
             }}
-            aria-label="Send"
+            aria-label={t('sendAria')}
           >
             →
           </button>
