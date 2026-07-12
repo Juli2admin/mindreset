@@ -7,6 +7,8 @@ import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import { TIER_CAPS } from '@/lib/billing/limits';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
+import { redeemInvitation } from '@/lib/pilot/invitations';
+import { PILOT_REDEEM_COOKIE } from '@/lib/pilot/cookie';
 import HomeClient from './HomeClient';
 import Footer from '@/components/Footer';
 // Phase i18n.1a — locale-aware redirect: redirect('/sign-in') from a /ru/
@@ -161,6 +163,33 @@ export default async function HomePage({
       await ensurePilotGrants(user.id, primaryEmail);
     } catch (err) {
       console.error('[home] pilot grants failed (continuing):', err);
+    }
+
+    // Post-signup pilot-code consume (PR ρ, 2026-07-12). If the user
+    // arrived via /redeem/[code] while signed out, we stashed the code
+    // in mr_pilot_code. Now they're signed in — claim it. Idempotent;
+    // errors don't block the /home render.
+    const pilotCookie = cookies().get(PILOT_REDEEM_COOKIE);
+    if (pilotCookie?.value) {
+      try {
+        const result = await redeemInvitation(pilotCookie.value, user.id);
+        if (result.ok === true) {
+          console.log('[home] pilot code redeemed on first authenticated visit', {
+            userId: user.id,
+            code: pilotCookie.value,
+          });
+        } else {
+          console.warn('[home] pilot code redemption declined', {
+            userId: user.id,
+            code: pilotCookie.value,
+            reason: result.reason,
+          });
+        }
+      } catch (err) {
+        console.error('[home] pilot code redemption failed:', err);
+      }
+      // Always clear the cookie — succeed or fail, one shot.
+      cookies().delete(PILOT_REDEEM_COOKIE);
     }
   }
 
