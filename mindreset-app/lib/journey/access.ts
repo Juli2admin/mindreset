@@ -39,12 +39,25 @@ export type JourneyAccessOk = {
 
 export type JourneyAccessDenied = {
   allowed: false;
-  reason: 'no_purchase' | 'expired' | 'cap_reached';
+  reason: 'no_purchase' | 'expired' | 'cap_reached' | 'pilot_expired' | 'pilot_revoked';
 };
 
 export type JourneyAccessCheck = JourneyAccessOk | JourneyAccessDenied;
 
 export async function checkJourneyAccess(userId: string): Promise<JourneyAccessCheck> {
+  // Load user pilot state alongside the purchase — a pilot tester has a
+  // recode Purchase (created at redeem time, amount=0) PLUS a trial window
+  // on the User row. checkJourneyAccess needs both to decide correctly.
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      pilotTrialEndsAt: true,
+      pilotInvitation: {
+        select: { revokedAt: true },
+      },
+    },
+  });
+
   // Most-recent completed recode Purchase — if a user ever gets a second
   // Purchase row (shouldn't happen post-#217, but belt-and-braces) we treat
   // the latest as the active grant.
@@ -59,6 +72,26 @@ export async function checkJourneyAccess(userId: string): Promise<JourneyAccessC
   });
 
   if (!purchase) return { allowed: false, reason: 'no_purchase' };
+
+  // Pilot-tester checks BEFORE the paid-tester 1-year window. If pilot
+  // fields are set, the trial expiry is the authoritative gate — the
+  // paid 1-year window does not apply because a pilot Purchase has
+  // amount=0 and no Stripe transaction backs it. Revoke takes precedence
+  // over natural expiry.
+  if (user?.pilotInvitation?.revokedAt) {
+    return { allowed: false, reason: 'pilot_revoked' };
+  }
+  if (user?.pilotTrialEndsAt) {
+    if (Date.now() > user.pilotTrialEndsAt.getTime()) {
+      return { allowed: false, reason: 'pilot_expired' };
+    }
+    // Trial still active — the 5,000-msg abuse cap still applies, but skip
+    // the 1-year firstAccessedAt window (pilot has its own window).
+    if (purchase.journeyMessagesUsed >= JOURNEY_ABUSE_MSG_CAP) {
+      return { allowed: false, reason: 'cap_reached' };
+    }
+    return { allowed: true, purchase };
+  }
 
   if (purchase.firstAccessedAt) {
     const expiresAtMs = purchase.firstAccessedAt.getTime() + JOURNEY_ACCESS_DURATION_MS;

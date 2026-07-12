@@ -1,4 +1,38 @@
 {
+  "Pilot": {
+    "redeem": {
+      "kicker": "MindReset · Pilot",
+      "welcomeTitle": "Welcome. Your pilot access is active.",
+      "alreadyTitle": "You're already in — welcome back.",
+      "body": "You have 30 days of full free access to The Journey. Your pilot ends on {date}. If you'd like to continue after that, we'll email you a 50% discount for the next 10 months.",
+      "startJourneyCta": "Open The Journey →",
+      "beforeFormCta": "Fill the short Before form (5 min) →",
+      "safetyNote": "This is a self-help wellbeing tool — not therapy, not a crisis service. If you're in immediate distress, please contact your local emergency service or a national helpline in your country.",
+      "error": {
+        "backCta": "See plans",
+        "not_found": {
+          "title": "This invitation code doesn't exist.",
+          "body": "Please double-check the link Julia sent you. If it looks right, reply to her email — we'll sort it out."
+        },
+        "invitation_expired": {
+          "title": "This invitation has expired.",
+          "body": "The pilot window on this code has closed. Reply to Julia and she'll issue a fresh one."
+        },
+        "invitation_revoked": {
+          "title": "This invitation was revoked.",
+          "body": "This pilot access has been closed. Please reach out to support@mindreset.ai if you think this is a mistake."
+        },
+        "already_redeemed_by_other": {
+          "title": "This invitation has already been claimed.",
+          "body": "This code was redeemed by someone else. If you believe this is a mistake, please email support@mindreset.ai."
+        },
+        "user_already_pilot": {
+          "title": "You're already in a pilot.",
+          "body": "This account already has an active pilot code linked to it. You can go straight to The Journey."
+        }
+      }
+    }
+  },
   "Pricing": {
     "h1Title": "Choose how you want to begin.",
     "h1Subtitle": "MiniMind starts with a free 50-message taster — no card needed.",
@@ -374,6 +408,10 @@
     "expiredBody": "The time you had here has passed. If you'd like to continue, you can begin again.",
     "capReachedTitle": "Something isn't quite right with your account.",
     "capReachedBody": "There's been unusual activity here. Please email support@mindreset.ai and we'll help sort it out.",
+    "pilotExpiredTitle": "Your 30-day pilot has ended.",
+    "pilotExpiredBody": "Thank you for being part of the pilot. If you'd like to continue The Journey, use your 50% discount code on the pricing page.",
+    "pilotRevokedTitle": "Your pilot access has been closed.",
+    "pilotRevokedBody": "Please contact support@mindreset.ai if you think this is a mistake.",
     "seePricing": "See pricing →",
     "voice": {
       "startAria": "Start voice input",

@@ -113,6 +113,63 @@ model User {
   // relation because internal admin / support-categorise calls may not
   // be attributable to a single user.
   aiUsages               AiUsage[]
+
+  // Pilot programme (PR ρ, 2026-07-12). Set on redemption of a
+  // PilotInvitation code. pilotTrialEndsAt is the hard expiry — the
+  // Journey access gate treats now > pilotTrialEndsAt as expired even
+  // if a completed recode Purchase exists. After expiry the user is
+  // shown a "Continue with 50% off" CTA; the discount is applied via a
+  // Stripe promotion code (env: STRIPE_PROMO_CODE_PILOT_50).
+  pilotTrialStartedAt  DateTime?
+  pilotTrialEndsAt     DateTime?
+  pilotInvitation      PilotInvitation? @relation(fields: [pilotInvitationId], references: [id], onDelete: SetNull)
+  pilotInvitationId    String?  @unique
+}
+
+// =============================================================================
+// PILOT INVITATIONS
+// =============================================================================
+// Self-serve invitation codes for the 4-week clinical pilot. Julia creates
+// codes in /admin/pilot, sends the redeem link to the tester by email
+// (outside the app), and the tester claims by visiting /redeem/[code].
+// One code → one user. Redemption is idempotent — a signed-in visit to
+// /redeem/[code] returns the "already redeemed by you" screen instead of
+// erroring.
+//
+// On redeem:
+//   - PilotInvitation.redeemedAt, redeemedByUserId, pilotInvitationId are stamped
+//   - User.pilotTrialStartedAt = now
+//   - User.pilotTrialEndsAt = now + trialDays
+//   - Purchase(productType='recode', status='completed', amount=0) is created
+//     so the existing Journey access gate finds a grant, but with the extra
+//     trial-window check on top.
+model PilotInvitation {
+  id                 String    @id @default(cuid())
+  code               String    @unique
+  createdAt          DateTime  @default(now())
+  createdByEmail     String?   // Julia's email at creation time (audit trail)
+  notes              String?   @db.Text // free-text: "Sofia, RU, referred by Petya"
+
+  trialDays          Int       @default(30)
+  expiresAt          DateTime? // invitation expiry (rejects redemption after)
+
+  redeemedAt         DateTime?
+  redeemedByUserId   String?   @unique
+  redeemedByUser     User?
+
+  // Julia sets these manually in /admin/pilot as clinical evidence
+  // accumulates. All default false; toggled by admin action.
+  beforeFormFilled   Boolean   @default(false)
+  afterFormFilled    Boolean   @default(false)
+  followUp3mSent     Boolean   @default(false)
+  quoteApproved      Boolean   @default(false)
+
+  // Revoke — kills a tester's active pilot without deleting the row.
+  // checkJourneyAccess treats revokedAt-not-null as expired.
+  revokedAt          DateTime?
+  revokedReason      String?
+
+  @@index([redeemedByUserId])
 }
 
 // =============================================================================

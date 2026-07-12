@@ -121,7 +121,12 @@ export default async function JourneyPage() {
   );
 }
 
-type NoAccessReason = 'no_purchase' | 'expired' | 'cap_reached';
+type NoAccessReason =
+  | 'no_purchase'
+  | 'expired'
+  | 'cap_reached'
+  | 'pilot_expired'
+  | 'pilot_revoked';
 
 function NoAccessView({ reason }: { reason: NoAccessReason }) {
   return <NoAccessInner reason={reason} />;
@@ -130,17 +135,23 @@ function NoAccessView({ reason }: { reason: NoAccessReason }) {
 // Tiny server-rendered "no access" view. Kept in this file so we don't add
 // another component file for a single-purpose surface.
 function NoAccessInner({ reason }: { reason: NoAccessReason }) {
-  // Locale-aware copy via next-intl. Three distinct reasons, three distinct
+  // Locale-aware copy via next-intl. Multiple distinct reasons, distinct
   // messages — a user whose year has ended shouldn't be told "not open for
-  // you yet". Falls back to the general "no purchase" copy.
+  // you yet"; a pilot tester whose trial ended sees a different message
+  // pointing to the 50%-off continuation offer. Falls back to the general
+  // "no purchase" copy.
   const t = useTranslations('Journey');
   const titleKey =
     reason === 'expired' ? 'expiredTitle' :
     reason === 'cap_reached' ? 'capReachedTitle' :
+    reason === 'pilot_expired' ? 'pilotExpiredTitle' :
+    reason === 'pilot_revoked' ? 'pilotRevokedTitle' :
     'noAccessTitle';
   const bodyKey =
     reason === 'expired' ? 'expiredBody' :
     reason === 'cap_reached' ? 'capReachedBody' :
+    reason === 'pilot_expired' ? 'pilotExpiredBody' :
+    reason === 'pilot_revoked' ? 'pilotRevokedBody' :
     'noAccessBody';
   return (
     <div
