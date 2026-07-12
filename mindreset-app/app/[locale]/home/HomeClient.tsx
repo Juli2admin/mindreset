@@ -51,6 +51,7 @@ export default function HomeClient({
   const t = useTranslations('Home');
   const tDel = useTranslations('AccountDeletion');
   const tJourney = useTranslations('Journey');
+  const tErr = useTranslations('Errors');
   const locale = useLocale();
   const { palette: PALETTE } = useTheme();
   const [loading, setLoading] = useState<string | null>(null);
@@ -81,11 +82,11 @@ export default function HomeClient({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.detail ?? data.error ?? 'Checkout failed');
+        setError(data.detail ?? data.error ?? tErr('checkoutFailed'));
         setLoading(null);
       }
     } catch {
-      setError('Network error — please try again');
+      setError(tErr('networkError'));
       setLoading(null);
     }
   }
@@ -103,11 +104,11 @@ export default function HomeClient({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.detail ?? data.error ?? 'Could not open portal');
+        setError(data.detail ?? data.error ?? tErr('portalFailed'));
         setLoading(null);
       }
     } catch {
-      setError('Network error — please try again');
+      setError(tErr('networkError'));
       setLoading(null);
     }
   }
@@ -648,7 +649,7 @@ function SettingsSection({
                 className="text-[13px] mb-3"
                 style={{ color: PALETTE.textMuted, fontFamily: SANS, lineHeight: 1.6 }}
               >
-                Open Stripe&apos;s customer portal to view invoices, update your payment method, or cancel a subscription.
+                {tHome('yourMiniMind.managePlanBody')}
               </p>
               <button
                 onClick={handleManageSubscription}

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
 import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
 import { Link } from '@/i18n/navigation';
@@ -10,13 +12,29 @@ const SERIF = TOKENS.serif;
 
 // Post-purchase landing — no SEO value, may leak Stripe session_id in
 // URL if indexed. noindex.
-export const metadata: Metadata = {
-  title: 'Payment successful',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const t = await getTranslations({
+    locale: params.locale,
+    namespace: 'CheckoutSuccess',
+  });
+  return {
+    title: t('metaTitle'),
+    robots: { index: false, follow: false },
+  };
+}
 
-export default function CheckoutSuccessPage() {
+export default function CheckoutSuccessPage({
+  params,
+}: {
+  params: { locale: string };
+}) {
+  setRequestLocale(params.locale);
   const PALETTE = getServerPalette();
+  const t = useTranslations('CheckoutSuccess');
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
@@ -28,20 +46,19 @@ export default function CheckoutSuccessPage() {
             className="text-[11px] uppercase tracking-[0.22em] mb-6"
             style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
           >
-            Payment complete
+            {t('kicker')}
           </p>
           <h1
             className="text-[36px] leading-[1.15] mb-6"
             style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
           >
-            You&rsquo;re all set.
+            {t('title')}
           </h1>
           <p
             className="text-[16px] leading-[1.7] mb-10"
             style={{ color: PALETTE.textMuted, fontFamily: SANS }}
           >
-            Your purchase is confirmed. Subscription access activates within a
-            few seconds — head to your space to get started.
+            {t('body')}
           </p>
           <Link
             href="/home"
@@ -53,7 +70,7 @@ export default function CheckoutSuccessPage() {
               fontWeight: 500,
             }}
           >
-            Go to your space →
+            {t('cta')}
           </Link>
         </div>
         <Footer />
