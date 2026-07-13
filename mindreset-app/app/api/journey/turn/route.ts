@@ -47,6 +47,11 @@ import {
   ingestChunk,
   finaliseStream,
 } from '@/lib/journey/streaming/reply-processor';
+import {
+  detectLeak,
+  LEAK_USER_PLACEHOLDER,
+  LEAK_HISTORY_MASK,
+} from '@/lib/journey/streaming/leak-detector';
 import { recordAiUsage } from '@/lib/ai-usage/record';
 import { checkJourneyMonthlyCap } from '@/lib/ai-usage/monthly-cap';
 
@@ -361,10 +366,25 @@ export async function POST(request: NextRequest) {
     }),
   );
 
-  const messages: Anthropic.MessageParam[] = decryptedHistory.map((m) => ({
-    role: m.role,
-    content: m.content,
-  }));
+  // Leak-mask gate on history load. Any pre-existing assistant message
+  // that matches a leak signature (from before PR ω1 shipped, or a shape
+  // the detector at persist time missed) is replaced with a terse
+  // internal marker before feeding the model. Prevents legacy DB rows
+  // from priming the current turn into repeating the same failure.
+  // User messages are never inspected — they are the user's own words.
+  const messages: Anthropic.MessageParam[] = decryptedHistory.map((m) => {
+    if (m.role === 'assistant') {
+      const check = detectLeak(m.content);
+      if (check.leaked) {
+        console.warn('[journey/turn] history mask — leaked assistant row', {
+          userId,
+          pattern: check.pattern,
+        });
+        return { role: 'assistant', content: LEAK_HISTORY_MASK };
+      }
+    }
+    return { role: m.role, content: m.content };
+  });
 
   const stream = anthropic.messages.stream({
     model,
@@ -551,9 +571,27 @@ async function finaliseTurn(args: {
   // no signal that something failed. Persist a visible "connection
   // interrupted" placeholder instead so page-load transcript is honest
   // about the failure.
+  // Leak-detection gate on persistence (PR ω1). If the model produced
+  // instruction-leak output instead of a warm reply — a real incident on
+  // 2026-07-13, see lib/journey/streaming/leak-detector.ts docstring —
+  // we refuse to persist the leaked text. Storing it would (a) show it
+  // to the user on their next /journey visit, and (b) prime the next
+  // Anthropic call by feeding the leak back as canonical assistant
+  // history. Replace with the H5 placeholder so the persisted transcript
+  // stays honest about the failure. Log the pattern name for
+  // /admin diagnosis; do NOT log the raw leaked content (privacy).
+  const leakCheck = detectLeak(split.humanReply);
+  if (leakCheck.leaked) {
+    console.warn('[journey/turn] persistence gate — leak detected, substituted placeholder', {
+      userId: args.userId,
+      pattern: leakCheck.pattern,
+      leakedLength: split.humanReply.length,
+      stageAtTurn: args.stageAtTurn,
+    });
+  }
   const persistedReply =
-    split.humanReply.length === 0
-      ? '[Reply interrupted. Please try again.]'
+    leakCheck.leaked || split.humanReply.length === 0
+      ? LEAK_USER_PLACEHOLDER
       : split.humanReply;
   await prisma.journeyMessage.create({
     data: {
