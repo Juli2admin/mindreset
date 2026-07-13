@@ -1,4 +1,36 @@
 {
+  "States": {
+    "metaTitle": "States — quick resets for the moments a wave hits · MindReset.ai",
+    "metaDescription": "Short structured modules for anxiety, apathy, loss of self, and inner emptiness. Trauma-informed, self-guided, 30-day access per module.",
+    "kicker": "STATES",
+    "h1Title": "Quick resets for the moments a wave hits.",
+    "h1Subtitle": "Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe. Each module is a full 30-day access.",
+    "subscriberDiscountApplied": "MiniMind subscriber price applied — {price} per module",
+    "buyCta": "Buy — {price}",
+    "openCta": "Open module →",
+    "signUpToBuy": "Sign up to buy",
+    "opening": "Opening…",
+    "accessNote": "30 days of access. Unlimited fresh sessions in that window.",
+    "safetyNote": "These modules are self-help wellbeing tools — not therapy, not a crisis service. If you are in immediate distress, please contact your local emergency service or a national helpline in your country.",
+    "modules": {
+      "anxiety": {
+        "name": "Anxiety",
+        "tagline": "Steady the moment. Practices for when the wave hits."
+      },
+      "apathy": {
+        "name": "Apathy",
+        "tagline": "The 'nothing matters' state. Micro-sparks back to life."
+      },
+      "loss_of_self": {
+        "name": "Loss of self",
+        "tagline": "When you feel far away from yourself — gentle return practices."
+      },
+      "inner_emptiness": {
+        "name": "Inner emptiness",
+        "tagline": "The grey filter. A first breath of warmth back inside."
+      }
+    }
+  },
   "Pilot": {
     "redeem": {
       "kicker": "MindReset · Programme pilote",

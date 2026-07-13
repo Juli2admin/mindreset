@@ -479,6 +479,45 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return;
     }
 
+    // State module purchase (PR ψ1). Metadata carries productType='state_module'
+    // and moduleId. Grants 30-day access via Purchase.accessExpiresAt.
+    // Idempotent on stripeSessionId. Non-refundable after 14 days or first
+    // open, whichever comes first (docs/implementation/block-b-stripe-plan.md).
+    if (session.metadata?.productType === 'state_module') {
+      const moduleId = session.metadata?.moduleId;
+      if (!moduleId) {
+        console.error(
+          '[webhook] state_module purchase without moduleId in metadata',
+          { sessionId: session.id },
+        );
+        throw new Error(`state_module purchase missing moduleId on session ${session.id}`);
+      }
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      try {
+        await prisma.purchase.create({
+          data: {
+            userId: user.id,
+            productType: 'state_module',
+            productId: moduleId,
+            amount: session.amount_total ?? 0,
+            currency: (session.currency ?? 'gbp').toUpperCase(),
+            stripeSessionId: session.id,
+            status: 'completed',
+            completedAt: now,
+            accessExpiresAt: expiresAt,
+          },
+        });
+      } catch (err) {
+        if (isP2002(err)) {
+          console.log('[webhook] state_module purchase already recorded:', session.id);
+          return;
+        }
+        throw err;
+      }
+      return;
+    }
+
     if (priceKey !== 'topUp') {
       // Pre-launch audit fix H9 (2026-07-11). Old behaviour fell back
       // to topUp on unknown priceKey — silently granting +200 credits

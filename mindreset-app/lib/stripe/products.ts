@@ -26,6 +26,19 @@ const PRICE_ENV_VARS = {
   // while owner migrates from the old weekly cadence to the new monthly
   // cadence (Journey pricing v3, PR #204).
   journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
+
+  // State modules — 30-day access, £59 non-subscriber / £29 subscriber.
+  // One product per state × 2 prices. Env vars are declared in
+  // lib/states/modules.ts::STATE_MODULES; kept aligned here as a tiny
+  // registry so the getPriceId lookup stays typed.
+  state_anxiety_full:               ['STRIPE_PRICE_STATE_ANXIETY_FULL'],
+  state_anxiety_subscriber:         ['STRIPE_PRICE_STATE_ANXIETY_SUBSCRIBER'],
+  state_apathy_full:                ['STRIPE_PRICE_STATE_APATHY_FULL'],
+  state_apathy_subscriber:          ['STRIPE_PRICE_STATE_APATHY_SUBSCRIBER'],
+  state_loss_of_self_full:          ['STRIPE_PRICE_STATE_LOSS_OF_SELF_FULL'],
+  state_loss_of_self_subscriber:    ['STRIPE_PRICE_STATE_LOSS_OF_SELF_SUBSCRIBER'],
+  state_inner_emptiness_full:       ['STRIPE_PRICE_STATE_INNER_EMPTINESS_FULL'],
+  state_inner_emptiness_subscriber: ['STRIPE_PRICE_STATE_INNER_EMPTINESS_SUBSCRIBER'],
 } as const;
 
 /**
