@@ -15,9 +15,23 @@ const SERIF = TOKENS.serif;
 
 // Module catalogue rendered in the States and Themes sections of /home.
 // Each ID resolves a title via `Home.states.modules.<id>` / `Home.themes.modules.<id>`.
-// Buy buttons route to /pricing today; PR3 wires real checkout per module.
+// STATE tiles link into /states/{moduleId} (access-gated server component:
+// redirects to /states catalogue if the user doesn't own it, otherwise
+// opens the module chat). THEME tiles keep the "available soon" badge
+// until Themes ship.
 const STATE_IDS = ['anxiety', 'lowEnergy', 'comeBack', 'empty'] as const;
 const THEME_IDS = ['money', 'body', 'family', 'shame', 'selfRealisation'] as const;
+
+// Display-side tile IDs (used for i18n lookup + STATE_IDS above) don't
+// match the code-side moduleId slugs the /states/{moduleId} route expects
+// (apathy / loss_of_self / inner_emptiness). This map bridges the two.
+// Kept next to STATE_IDS so the pairing is obvious.
+const STATE_TILE_TO_MODULE_ID: Record<(typeof STATE_IDS)[number], string> = {
+  anxiety: 'anxiety',
+  lowEnergy: 'apathy',
+  comeBack: 'loss_of_self',
+  empty: 'inner_emptiness',
+};
 
 type Props = {
   firstName: string | null;
@@ -315,9 +329,10 @@ export default function HomeClient({
           />
         )}
 
-        {/* Your States — 4 individually-priced modules. Cards are
-            informational until PR3 wires per-module Stripe checkout;
-            the "available soon" badge swaps for a real Buy button then. */}
+        {/* Your States — 4 individually-priced modules. Tiles are
+            links into /states/{moduleId}; the server route redirects
+            to the /states catalogue if the user doesn't have access,
+            otherwise opens the module chat. */}
         <div className="mb-12">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
@@ -333,9 +348,10 @@ export default function HomeClient({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {STATE_IDS.map((id) => (
-              <div
+              <Link
                 key={id}
-                className="rounded-lg p-5"
+                href={`/states/${STATE_TILE_TO_MODULE_ID[id]}`}
+                className="rounded-lg p-5 block hover:opacity-90 transition-opacity"
                 style={{
                   background: PALETTE.bgCard,
                   border: `1px solid ${PALETTE.border}`,
@@ -349,16 +365,11 @@ export default function HomeClient({
                     {t(`states.modules.${id}` as 'states.modules.anxiety')}
                   </h3>
                   <span
-                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                    style={{
-                      background: PALETTE.bgSubtle,
-                      color: PALETTE.textHint,
-                      border: `1px solid ${PALETTE.border}`,
-                      fontFamily: SANS,
-                      fontWeight: 500,
-                    }}
+                    className="text-[16px] leading-none shrink-0"
+                    style={{ color: PALETTE.accent, fontFamily: SANS }}
+                    aria-hidden="true"
                   >
-                    {t('availableSoon')}
+                    →
                   </span>
                 </div>
                 <p
@@ -367,7 +378,7 @@ export default function HomeClient({
                 >
                   {t('modulePriceFormat')}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
