@@ -423,6 +423,10 @@ function ChattingView({
       try {
         const form = new FormData();
         form.append('audio', blob, `voice.${ext}`);
+        // Language hint. PR ψ2.3 (2026-07-13). Prevents Whisper auto-detect
+        // from drifting mid-session into a wrong language when a short or
+        // quiet utterance ambiguously matches another phoneme set.
+        form.append('locale', locale);
         const res = await fetch('/api/minimind/transcribe', {
           method: 'POST',
           body: form,

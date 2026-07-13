@@ -23,6 +23,20 @@ const GROQ_MODEL = 'whisper-large-v3-turbo';
 
 const GROQ_TRANSCRIPTIONS_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 
+// Allowlist of ISO-639-1 codes we accept as language hints. Mirrors
+// i18n/routing.ts::locales — anything outside this set falls through
+// to Whisper auto-detect (unhinted behaviour).
+const VALID_LANGUAGE_HINTS = new Set([
+  'en',
+  'ru',
+  'fr',
+  'de',
+  'es',
+  'it',
+  'pl',
+  'pt',
+]);
+
 // POST /api/minimind/transcribe
 //
 // Accepts multipart/form-data with a single field `audio` (a webm/mp3/m4a
@@ -31,9 +45,16 @@ const GROQ_TRANSCRIPTIONS_URL = 'https://api.groq.com/openai/v1/audio/transcript
 //
 // Audio is NOT persisted anywhere on our side — see locked decision #22.
 // Groq's own retention is governed by their Data Controls / ZDR setting
-// (owner-configured in the Groq console). No language hint is sent;
-// Whisper auto-detects, which is more flexible for users who code-switch
-// (e.g., RU users occasionally speaking EN).
+// (owner-configured in the Groq console).
+//
+// Language hint. PR ψ2.3 (2026-07-13). Optional form field `locale`
+// (ISO-639-1). When present + on the allowlist, forwarded to Whisper as
+// `language` — improves accuracy and latency on the app's active locale
+// and prevents mid-session drift into a wrong language (owner testing
+// hit this in EN on 2026-07-13: mid-chat Whisper decided one utterance
+// was Spanish and neither the reader nor the AI could parse the mirrored
+// reply). Unset or unknown locales fall through to auto-detect (the
+// prior behaviour, still useful for callers with no locale context).
 //
 // Defence-in-depth: auth required, dual user+IP rate limit (paid path),
 // size cap, error responses lean on stable codes so the client can show
@@ -57,6 +78,7 @@ export async function POST(req: NextRequest) {
   }
 
   let audio: File;
+  let localeHint: string | null = null;
   try {
     const form = await req.formData();
     const f = form.get('audio');
@@ -67,6 +89,10 @@ export async function POST(req: NextRequest) {
       );
     }
     audio = f;
+    const rawLocale = form.get('locale');
+    if (typeof rawLocale === 'string' && VALID_LANGUAGE_HINTS.has(rawLocale)) {
+      localeHint = rawLocale;
+    }
   } catch (err) {
     console.error('[transcribe] multipart parse failed:', err);
     return NextResponse.json({ error: 'invalid multipart' }, { status: 400 });
@@ -90,6 +116,14 @@ export async function POST(req: NextRequest) {
     groqForm.append('file', audio);
     groqForm.append('model', GROQ_MODEL);
     groqForm.append('response_format', 'json');
+    if (localeHint) {
+      // Whisper's `language` param is ISO-639-1 — improves accuracy for
+      // the specified language. A user who code-switches briefly (e.g.
+      // "OK" in an RU sentence) will still parse reasonably; a hard
+      // wrong-language flip (Spanish for English input) is the failure
+      // this hint prevents.
+      groqForm.append('language', localeHint);
+    }
 
     const res = await fetch(GROQ_TRANSCRIPTIONS_URL, {
       method: 'POST',

@@ -32,6 +32,13 @@ export type UseVoiceInputArgs = {
   endpoint: string;
   /** Hard ceiling for a single recording. Auto-stops at this many seconds. */
   maxSeconds: number;
+  /**
+   * Optional ISO-639-1 hint the endpoint may pass through to Whisper as
+   * `language`. Improves accuracy on the app's active locale and
+   * prevents mid-session drift into a wrong language. Omit if the
+   * surface has no locale context.
+   */
+  hintLocale?: string;
   /** Called with the transcribed text on successful transcription. */
   onTranscript: (text: string) => void;
   /** Called when the user tries to record but is already sending — for callers that want to focus the textarea etc. Optional. */
@@ -58,6 +65,7 @@ export type UseVoiceInputReturn = {
 export function useVoiceInput({
   endpoint,
   maxSeconds,
+  hintLocale,
   onTranscript,
   onError,
 }: UseVoiceInputArgs): UseVoiceInputReturn {
@@ -150,6 +158,7 @@ export function useVoiceInput({
       try {
         const form = new FormData();
         form.append('audio', blob, `voice.${ext}`);
+        if (hintLocale) form.append('locale', hintLocale);
         const res = await fetch(endpoint, { method: 'POST', body: form });
         if (!res.ok) {
           if (res.status === 429) emitError('rate_limited');
