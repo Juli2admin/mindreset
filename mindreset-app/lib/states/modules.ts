@@ -4,9 +4,13 @@
 // (£59 non-subscriber / £29 subscriber), 30-day access, unlimited fresh
 // sessions in that window.
 //
+// Stripe architecture: ONE product per module (£59). Subscribers get a
+// shared £30 coupon (STRIPE_COUPON_MODULE) applied programmatically at
+// checkout, bringing them to £29. See app/api/states/checkout/route.ts.
+//
 // Adding a new state module: append to STATE_MODULES + create the matching
-// Stripe products (see docs/implementation/states-themes-plan.md). No
-// migration required — moduleId is a string in the DB.
+// Stripe product + env var. No migration required — moduleId is a string
+// in the DB.
 
 export type StateModuleId = 'anxiety' | 'apathy' | 'loss_of_self' | 'inner_emptiness';
 
@@ -17,10 +21,18 @@ export type StateModule = {
   name: string;
   /** One-line description shown on the catalogue tile. */
   tagline: string;
-  /** Env var name for the full (non-subscriber) £59 price. */
-  fullPriceEnv: string;
-  /** Env var name for the £29 subscriber price. */
-  subscriberPriceEnv: string;
+  /**
+   * Env var holding the single Stripe Price ID for this module (£59).
+   * Subscribers get the STRIPE_COUPON_MODULE discount applied at checkout;
+   * there is no separate subscriber price.
+   *
+   * Note the DB slug and env-var name can diverge: `apathy` in code maps
+   * to `STRIPE_PRICE_STATE_LOW_ENERGY`, `loss_of_self` → `_COME_BACK`,
+   * `inner_emptiness` → `_EMPTY`. This is intentional — the code-side
+   * slugs are the technical taxonomy; the env vars mirror the Stripe
+   * product names as they exist in the dashboard.
+   */
+  priceEnv: string;
 };
 
 export const STATE_MODULES: readonly StateModule[] = [
@@ -28,29 +40,25 @@ export const STATE_MODULES: readonly StateModule[] = [
     id: 'anxiety',
     name: 'Anxiety',
     tagline: 'Steady the moment. Practices for when the wave hits.',
-    fullPriceEnv: 'STRIPE_PRICE_STATE_ANXIETY_FULL',
-    subscriberPriceEnv: 'STRIPE_PRICE_STATE_ANXIETY_SUBSCRIBER',
+    priceEnv: 'STRIPE_PRICE_STATE_ANXIETY',
   },
   {
     id: 'apathy',
     name: 'Apathy',
     tagline: "The 'nothing matters' state. Micro-sparks back to life.",
-    fullPriceEnv: 'STRIPE_PRICE_STATE_APATHY_FULL',
-    subscriberPriceEnv: 'STRIPE_PRICE_STATE_APATHY_SUBSCRIBER',
+    priceEnv: 'STRIPE_PRICE_STATE_LOW_ENERGY',
   },
   {
     id: 'loss_of_self',
     name: 'Loss of self',
     tagline: 'When you feel far away from yourself — gentle return practices.',
-    fullPriceEnv: 'STRIPE_PRICE_STATE_LOSS_OF_SELF_FULL',
-    subscriberPriceEnv: 'STRIPE_PRICE_STATE_LOSS_OF_SELF_SUBSCRIBER',
+    priceEnv: 'STRIPE_PRICE_STATE_COME_BACK',
   },
   {
     id: 'inner_emptiness',
     name: 'Inner emptiness',
     tagline: 'The grey filter. A first breath of warmth back inside.',
-    fullPriceEnv: 'STRIPE_PRICE_STATE_INNER_EMPTINESS_FULL',
-    subscriberPriceEnv: 'STRIPE_PRICE_STATE_INNER_EMPTINESS_SUBSCRIBER',
+    priceEnv: 'STRIPE_PRICE_STATE_EMPTY',
   },
 ];
 
@@ -72,3 +80,10 @@ export const STATE_ACCESS_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 /** Base prices in pence (for display only — Stripe is the source of truth). */
 export const STATE_PRICE_FULL_PENCE = 5900;
 export const STATE_PRICE_SUBSCRIBER_PENCE = 2900;
+
+/**
+ * Env var holding the Stripe Coupon ID for the £30 subscriber discount.
+ * Applied at checkout via `discounts: [{ coupon }]` when the buyer has
+ * an active MiniMind subscription. Shared across all state modules.
+ */
+export const STATE_SUBSCRIBER_COUPON_ENV = 'STRIPE_COUPON_MODULE';

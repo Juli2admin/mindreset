@@ -214,11 +214,23 @@ STRIPE_PRICE_ESSENTIAL_ANNUAL=price_...
 STRIPE_PRICE_EXTENDED_MONTHLY=price_...
 STRIPE_PRICE_EXTENDED_ANNUAL=price_...
 STRIPE_PRICE_TOPUP=price_...
-STRIPE_PRICE_ST_MODULE_FULL=price_...        # £59 non-subscriber
-STRIPE_PRICE_ST_MODULE_SUBSCRIBER=price_...  # £29 subscriber discount
-STRIPE_PRICE_JOURNEY_ONETIME=price_...       # £599
-STRIPE_PRICE_JOURNEY_INSTALLMENT=price_...   # £55/week × 12
+# S&T modules — one product per module, £59. Subscribers get
+# STRIPE_COUPON_MODULE (£30 off) applied programmatically at checkout.
+# Env-var slugs mirror Stripe product names (LOW_ENERGY = apathy,
+# COME_BACK = loss_of_self, EMPTY = inner_emptiness).
+STRIPE_PRICE_STATE_ANXIETY=price_...
+STRIPE_PRICE_STATE_LOW_ENERGY=price_...      # code slug: apathy
+STRIPE_PRICE_STATE_COME_BACK=price_...       # code slug: loss_of_self
+STRIPE_PRICE_STATE_EMPTY=price_...           # code slug: inner_emptiness
+STRIPE_COUPON_MODULE=<coupon_id>             # £30 off, shared across states
+STRIPE_PRICE_JOURNEY_FULL=price_...          # £599 (see PR ρ — renamed from JOURNEY_ONETIME)
+STRIPE_PRICE_JOURNEY_INSTALLMENT=price_...   # £55/month × 12
 ```
+
+> **Historical note.** An earlier draft of this spec proposed two shared
+> prices (`STRIPE_PRICE_ST_MODULE_FULL`/`_SUBSCRIBER`). The final
+> production architecture is per-module prices + one shared coupon —
+> matching the Themes / Journey pattern already in Vercel.
 
 Note: PR #23 used `STRIPE_PRICE_TOP_UP` (underscore before UP). The
 canonical name per this spec is `STRIPE_PRICE_TOPUP`. Align before PR 2
@@ -243,8 +255,9 @@ Blockers before merge:
 
 Blockers before merge:
 - `lib/billing/limits.ts`: change `TIER_CAPS.free.lifetime` **20 → 50**
-- `.env.example`: add 4 new price ID env vars (ST_MODULE_FULL,
-  ST_MODULE_SUBSCRIBER, JOURNEY_ONETIME, JOURNEY_INSTALLMENT)
+- `.env.example`: add the per-module state price env vars
+  (STATE_ANXIETY, STATE_LOW_ENERGY, STATE_COME_BACK, STATE_EMPTY),
+  STRIPE_COUPON_MODULE, and JOURNEY_FULL / JOURNEY_INSTALLMENT
 - Align env var name: `STRIPE_PRICE_TOPUP` (canonical) vs
   `STRIPE_PRICE_TOP_UP` (current code)
 - Julia runs SQL migration in Supabase after merge

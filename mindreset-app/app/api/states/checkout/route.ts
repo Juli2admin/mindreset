@@ -1,8 +1,9 @@
 // State-module checkout endpoint.
 //
 // POST { moduleId } — creates a Stripe checkout session for the given
-// state module. Auto-picks the subscriber price (£29) if the user has
-// an active MiniMind subscription; otherwise the full price (£59).
+// state module. One Stripe product per module (£59); subscribers get
+// STRIPE_COUPON_MODULE (£30 off) applied programmatically at checkout,
+// bringing them to £29.
 //
 // Access-window semantics: on checkout.session.completed the Stripe
 // webhook creates a Purchase row with accessExpiresAt = now + 30 days.
@@ -16,7 +17,11 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { stripe } from '@/lib/stripe/client';
 import { getPriceId } from '@/lib/stripe/products';
-import { getStateModule, isValidStateModuleId } from '@/lib/states/modules';
+import {
+  getStateModule,
+  isValidStateModuleId,
+  STATE_SUBSCRIBER_COUPON_ENV,
+} from '@/lib/states/modules';
 
 export const dynamic = 'force-dynamic';
 
@@ -64,9 +69,24 @@ export async function POST(request: NextRequest) {
 
   const isSubscriber =
     user.currentTier === 'essential' || user.currentTier === 'extended';
-  const priceKey = isSubscriber
-    ? (`state_${moduleId}_subscriber` as const)
-    : (`state_${moduleId}_full` as const);
+  const priceKey = `state_${moduleId}` as const;
+
+  // Stripe rejects `allow_promotion_codes: true` together with `discounts`,
+  // so subscribers get the coupon applied and lose the manual promo-code
+  // entry (they've already got the biggest discount we offer).
+  const subscriberCoupon = isSubscriber
+    ? process.env[STATE_SUBSCRIBER_COUPON_ENV]
+    : undefined;
+  if (isSubscriber && !subscriberCoupon) {
+    console.error(
+      `[states/checkout] ${STATE_SUBSCRIBER_COUPON_ENV} not set — subscriber ` +
+        'would be charged the full £59. Refusing to proceed.',
+    );
+    return NextResponse.json(
+      { error: 'Subscriber discount not configured' },
+      { status: 500 },
+    );
+  }
 
   const origin =
     request.headers.get('origin') ??
@@ -91,7 +111,9 @@ export async function POST(request: NextRequest) {
       customer: customerId,
       mode: 'payment',
       line_items: [{ price: getPriceId(priceKey), quantity: 1 }],
-      allow_promotion_codes: true,
+      ...(subscriberCoupon
+        ? { discounts: [{ coupon: subscriberCoupon }] }
+        : { allow_promotion_codes: true }),
       success_url: `${origin}/${locale}/states/${moduleId}?checkout=success`,
       cancel_url: `${origin}/${locale}/states`,
       billing_address_collection: 'required',

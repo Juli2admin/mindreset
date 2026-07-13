@@ -28,17 +28,15 @@ const PRICE_ENV_VARS = {
   journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
 
   // State modules — 30-day access, £59 non-subscriber / £29 subscriber.
-  // One product per state × 2 prices. Env vars are declared in
-  // lib/states/modules.ts::STATE_MODULES; kept aligned here as a tiny
-  // registry so the getPriceId lookup stays typed.
-  state_anxiety_full:               ['STRIPE_PRICE_STATE_ANXIETY_FULL'],
-  state_anxiety_subscriber:         ['STRIPE_PRICE_STATE_ANXIETY_SUBSCRIBER'],
-  state_apathy_full:                ['STRIPE_PRICE_STATE_APATHY_FULL'],
-  state_apathy_subscriber:          ['STRIPE_PRICE_STATE_APATHY_SUBSCRIBER'],
-  state_loss_of_self_full:          ['STRIPE_PRICE_STATE_LOSS_OF_SELF_FULL'],
-  state_loss_of_self_subscriber:    ['STRIPE_PRICE_STATE_LOSS_OF_SELF_SUBSCRIBER'],
-  state_inner_emptiness_full:       ['STRIPE_PRICE_STATE_INNER_EMPTINESS_FULL'],
-  state_inner_emptiness_subscriber: ['STRIPE_PRICE_STATE_INNER_EMPTINESS_SUBSCRIBER'],
+  // ONE product per state; subscribers get STRIPE_COUPON_MODULE (£30 off)
+  // applied at checkout. Env-var slugs mirror the Stripe dashboard product
+  // names, which differ from the code-side moduleId (apathy → LOW_ENERGY,
+  // loss_of_self → COME_BACK, inner_emptiness → EMPTY). See
+  // lib/states/modules.ts::STATE_MODULES for the mapping.
+  state_anxiety:         ['STRIPE_PRICE_STATE_ANXIETY'],
+  state_apathy:          ['STRIPE_PRICE_STATE_LOW_ENERGY'],
+  state_loss_of_self:    ['STRIPE_PRICE_STATE_COME_BACK'],
+  state_inner_emptiness: ['STRIPE_PRICE_STATE_EMPTY'],
 } as const;
 
 /**
