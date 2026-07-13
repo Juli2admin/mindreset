@@ -26,6 +26,17 @@ const PRICE_ENV_VARS = {
   // while owner migrates from the old weekly cadence to the new monthly
   // cadence (Journey pricing v3, PR #204).
   journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
+
+  // State modules — 30-day access, £59 non-subscriber / £29 subscriber.
+  // ONE product per state; subscribers get STRIPE_COUPON_MODULE (£30 off)
+  // applied at checkout. Env-var slugs mirror the Stripe dashboard product
+  // names, which differ from the code-side moduleId (apathy → LOW_ENERGY,
+  // loss_of_self → COME_BACK, inner_emptiness → EMPTY). See
+  // lib/states/modules.ts::STATE_MODULES for the mapping.
+  state_anxiety:         ['STRIPE_PRICE_STATE_ANXIETY'],
+  state_apathy:          ['STRIPE_PRICE_STATE_LOW_ENERGY'],
+  state_loss_of_self:    ['STRIPE_PRICE_STATE_COME_BACK'],
+  state_inner_emptiness: ['STRIPE_PRICE_STATE_EMPTY'],
 } as const;
 
 /**

@@ -109,6 +109,8 @@ model User {
   journeySignatureImages JourneySignatureImage[]
   journeyPatterns        JourneyPattern[]
   journeyMessages        JourneyMessage[]
+  // States & Themes — state module sessions.
+  stateSessions          StateSession[]
   // AI usage rows (per Anthropic call — token counts + cost). Nullable
   // relation because internal admin / support-categorise calls may not
   // be attributable to a single user.
@@ -400,8 +402,8 @@ model Purchase {
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
 
-  productType     String    // minimind_sub | module | recode
-  productId       String?   // module id ("anxiety", "money", ...) or null for recode/sub
+  productType     String    // minimind_sub | module | recode | state_module
+  productId       String?   // module id ("anxiety", "apathy", "loss_of_self", "inner_emptiness", ...) or null for recode/sub
   amount          Int       // pence (or cents — currency below)
   currency        String    @default("GBP")
 
@@ -411,6 +413,11 @@ model Purchase {
 
   createdAt       DateTime  @default(now())
   completedAt     DateTime?
+  // Time-bounded access — set on state_module purchases at
+  // Stripe webhook time (completedAt + 30 days). Access gate treats
+  // now > accessExpiresAt as expired. Null on non-time-bounded
+  // products (Journey, MiniMind sub, top-up).
+  accessExpiresAt DateTime?
 
   // The Journey (productType = 'recode') — access window and abuse cap.
   //
@@ -913,4 +920,60 @@ model AiUsage {
   @@index([userId, createdAt])
   @@index([createdAt])
   @@index([callSite, createdAt])
+}
+
+// =============================================================================
+// STATES & THEMES — state modules (short single-topic reset conversations)
+// =============================================================================
+// Each state module (anxiety, apathy, loss_of_self, inner_emptiness) is
+// bought via Stripe as a Purchase(productType='state_module', productId=<slug>)
+// with a 30-day accessExpiresAt window. During that window the user can
+// start any number of fresh sessions in the module. Each session runs to
+// completion (CheckStabilization returns true) or red-flag closure,
+// then archives. The next visit starts a fresh session.
+//
+// Not tied to Journey infrastructure — separate DB tables so state
+// analytics stay clean and Journey code paths untouched.
+
+model StateSession {
+  id                String    @id @default(cuid())
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+
+  // Slug of the module: 'anxiety' | 'apathy' | 'loss_of_self' | 'inner_emptiness'
+  // Kept as string (not enum) so adding a new state is a code-only change,
+  // no migration required.
+  moduleId          String
+
+  startedAt         DateTime  @default(now())
+  // Set when CheckStabilization detects completion OR red-flag triggers.
+  completedAt       DateTime?
+  // 'stabilised' — normal happy completion
+  // 'red_flag' — safety trigger; user routed to crisis resources
+  // 'abandoned' — user left mid-session (heuristic: no message in >2h)
+  completionReason  String?
+
+  // Denormalised for the module-catalogue "N sessions completed" counter
+  // and for the AI's turn context (session message count).
+  turnCount         Int       @default(0)
+
+  messages          StateMessage[]
+
+  @@index([userId, moduleId, startedAt])
+  @@index([userId, moduleId, completedAt])
+}
+
+model StateMessage {
+  id               String    @id @default(cuid())
+  session          StateSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId        String
+
+  role             String    // 'user' | 'assistant'
+  // User's message OR assistant reply, both encrypted at rest (same
+  // pattern as JourneyMessage.contentEncrypted).
+  contentEncrypted String    @db.Text
+
+  createdAt        DateTime  @default(now())
+
+  @@index([sessionId, createdAt])
 }
