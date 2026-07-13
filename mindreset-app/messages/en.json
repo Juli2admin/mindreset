@@ -29,7 +29,18 @@
         "name": "Inner emptiness",
         "tagline": "The grey filter. A first breath of warmth back inside."
       }
-    }
+    },
+    "prompts": {
+      "anxiety": {
+        "greeting": "I'm here with you. When you're ready, tell me what's happening — where are you on a 0–10 anxiety scale (0 = fully calm, 10 = full panic), and where you feel it in the body if you can. If you can't locate it, that's very common — we can start another way."
+      }
+    },
+    "inputPlaceholder": "Take your time. Type what you're noticing…",
+    "send": "Send",
+    "sending": "Sending…",
+    "sessionComplete": "This session is complete. When you're ready, you can start a new one — the practices are yours to come back to any time.",
+    "startAgain": "Start a new session",
+    "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line."
   },
   "Pilot": {
     "redeem": {
