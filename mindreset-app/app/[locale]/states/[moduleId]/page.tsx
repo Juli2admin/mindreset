@@ -21,7 +21,6 @@ import {
   getStateModule,
 } from '@/lib/states/modules';
 import { checkStateModuleAccess } from '@/lib/states/access';
-import TopBar from '@/components/TopBar';
 import StateModuleClient, {
   type HistoryMessage,
 } from './StateModuleClient';
@@ -101,16 +100,17 @@ export default async function StateModulePage({ params }: PageProps) {
     content: decrypt(m.contentEncrypted),
   }));
 
+  // Deliberately no TopBar on the module page. This is a focused-session
+  // surface — the reader is in the middle of an anxiety reset — and the
+  // full app navigation is a distraction. The client renders a minimal
+  // "← States" back-link in its own header instead.
   return (
-    <>
-      <TopBar sticky />
-      <StateModuleClient
-        moduleId={params.moduleId}
-        moduleName={mod.name}
-        sessionId={session.id}
-        history={history}
-        locale={params.locale}
-      />
-    </>
+    <StateModuleClient
+      moduleId={params.moduleId}
+      moduleName={mod.name}
+      sessionId={session.id}
+      history={history}
+      locale={params.locale}
+    />
   );
 }

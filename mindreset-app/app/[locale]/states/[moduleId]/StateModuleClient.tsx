@@ -2,19 +2,29 @@
 
 // State-module chat client — streaming chat UI.
 //
-// PR ψ2 (2026-07-13). Kept intentionally simpler than MiniMindClient:
-// no history sidebar, no last-conversation resume UI, no memory
-// display. Fresh session per visit (the server component decides
-// resume-vs-fresh); one focused conversation from open to close.
+// PR ψ2 (2026-07-13) initial; PR ψ2.2 stabilised layout + added mic.
+// Kept intentionally simpler than MiniMindClient: no history sidebar,
+// no last-conversation resume UI, no memory display. Fresh session per
+// visit (the server component decides resume-vs-fresh); one focused
+// conversation from open to close.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { TOKENS } from '@/lib/brand/colors';
 import { useTheme } from '@/lib/theme/useTheme';
 import { Link } from '@/i18n/navigation';
+import {
+  useVoiceInput,
+  formatVoiceTime,
+  type VoiceErrorCode,
+} from '@/lib/voice/useVoiceInput';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
+const TEXTAREA_MIN_HEIGHT = 48;
+const TEXTAREA_MAX_HEIGHT = 168;
+// Locked decision #22 — 2 minutes per push-to-talk turn.
+const MAX_RECORDING_SECONDS = 120;
 
 export type HistoryMessage = {
   id: string;
@@ -48,24 +58,58 @@ export default function StateModuleClient({
   const [sending, setSending] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useEffect(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, [messages, sessionComplete]);
+  const voice = useVoiceInput({
+    endpoint: '/api/minimind/transcribe',
+    maxSeconds: MAX_RECORDING_SECONDS,
+    onTranscript: (text) => {
+      setInput((prev) => (prev.length > 0 ? `${prev} ${text}` : text));
+      textareaRef.current?.focus();
+    },
+  });
 
   const isFreshSession = history.length === 0;
 
+  // Initial mount: jump-scroll (no animation) to bottom so a resumed
+  // session opens at the newest message, not the oldest.
+  useLayoutEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Smooth-scroll on ADD (new message inserted), NOT on every content
+  // update. Watching messages.length instead of messages avoids
+  // per-token scroll jitter during streaming — the page was jumping
+  // constantly in PR ψ2 v1 because every streaming chunk triggered a
+  // smooth-scroll animation.
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length, sessionComplete]);
+
+  // Auto-grow the textarea within min/max bounds.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height =
+      Math.min(Math.max(el.scrollHeight, TEXTAREA_MIN_HEIGHT), TEXTAREA_MAX_HEIGHT) +
+      'px';
+  }, [input]);
+
+  const voiceErrorText = voice.error ? translateVoiceError(voice.error, t) : null;
+
   async function send() {
     const text = input.trim();
-    if (!text || sending || sessionComplete) return;
+    if (!text || sending || sessionComplete || voice.recording || voice.transcribing) {
+      return;
+    }
 
     setInput('');
     setSending(true);
     setError(null);
+    voice.clearError();
 
     const userMsgId = crypto.randomUUID();
     const assistantMsgId = crypto.randomUUID();
@@ -83,8 +127,6 @@ export default function StateModuleClient({
       });
 
       if (res.status === 409) {
-        // Session was completed on the prior turn — server rejects new
-        // messages. Flip to the "session complete" UI.
         setSessionComplete(true);
         return;
       }
@@ -142,20 +184,27 @@ export default function StateModuleClient({
     }
   }
 
+  const composerBusy = sending || voice.recording || voice.transcribing;
+
   return (
     <main
-      className="min-h-screen flex flex-col"
+      className="h-[100dvh] flex flex-col"
       style={{ background: PALETTE.bg, color: PALETTE.text }}
     >
-      <div className="max-w-2xl mx-auto w-full px-6 pt-6 pb-4">
-        <p
-          className="text-[11px] uppercase tracking-[0.22em] mb-2"
+      <div
+        className="max-w-2xl mx-auto w-full px-6 pt-4 pb-3 shrink-0"
+        style={{ borderBottom: `1px solid ${PALETTE.border}` }}
+      >
+        <Link
+          href="/states"
+          className="inline-flex items-center gap-1 text-[12px] mb-2"
           style={{ color: PALETTE.textMuted, fontFamily: SANS }}
         >
-          {t('kicker')}
-        </p>
+          <span aria-hidden="true">←</span>
+          <span>{t('backToStates')}</span>
+        </Link>
         <h1
-          className="text-[28px] leading-[1.2]"
+          className="text-[22px] leading-[1.2]"
           style={{ fontFamily: SERIF, fontWeight: 400 }}
         >
           {moduleName}
@@ -163,11 +212,10 @@ export default function StateModuleClient({
       </div>
 
       <div
-        ref={scrollRef}
         className="flex-1 overflow-y-auto"
-        style={{ scrollBehavior: 'smooth' }}
+        style={{ overflowAnchor: 'none' }}
       >
-        <div className="max-w-2xl mx-auto w-full px-6 py-4 space-y-6">
+        <div className="max-w-2xl mx-auto w-full px-6 py-4 space-y-5">
           {isFreshSession && (
             <div
               className="rounded-2xl p-5"
@@ -222,17 +270,45 @@ export default function StateModuleClient({
               </Link>
             </div>
           )}
+
+          <div ref={messagesEndRef} aria-hidden="true" />
         </div>
       </div>
 
       {!sessionComplete && (
         <div
-          className="border-t"
+          className="border-t shrink-0"
           style={{ borderColor: PALETTE.border, background: PALETTE.bg }}
         >
-          <div className="max-w-2xl mx-auto w-full px-6 py-4">
+          <div className="max-w-2xl mx-auto w-full px-6 py-3">
+            {voiceErrorText && (
+              <p
+                className="mb-2 text-[13px]"
+                style={{ color: '#b91c1c', fontFamily: SANS }}
+                role="alert"
+              >
+                {voiceErrorText}
+              </p>
+            )}
+            {voice.recording && (
+              <div
+                className="mb-2 text-[13px] flex items-center gap-2"
+                style={{ color: '#b91c1c', fontFamily: SANS }}
+              >
+                <span
+                  className="inline-block w-2 h-2 rounded-full animate-pulse"
+                  style={{ background: '#b91c1c' }}
+                  aria-hidden
+                />
+                <span>
+                  {formatVoiceTime(voice.recordingSeconds)} /{' '}
+                  {formatVoiceTime(MAX_RECORDING_SECONDS)}
+                </span>
+              </div>
+            )}
             <div className="flex items-end gap-3">
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -242,21 +318,91 @@ export default function StateModuleClient({
                   }
                 }}
                 placeholder={t('inputPlaceholder')}
-                disabled={sending}
-                rows={2}
+                disabled={composerBusy}
+                rows={1}
                 className="flex-1 rounded-2xl px-4 py-3 text-[15px] leading-[1.6] resize-none focus:outline-none disabled:opacity-50"
                 style={{
                   background: PALETTE.bgCard,
                   color: PALETTE.text,
                   border: `1px solid ${PALETTE.border}`,
                   fontFamily: SANS,
+                  minHeight: TEXTAREA_MIN_HEIGHT,
+                  maxHeight: TEXTAREA_MAX_HEIGHT,
                 }}
               />
+              {voice.supported && (
+                <button
+                  type="button"
+                  onClick={voice.toggle}
+                  disabled={sending || voice.transcribing}
+                  aria-label={
+                    voice.recording
+                      ? t('voice.stopAria')
+                      : t('voice.startAria')
+                  }
+                  className="h-12 w-12 shrink-0 rounded-full flex items-center justify-center disabled:cursor-not-allowed"
+                  style={{
+                    background: voice.recording ? '#b91c1c' : 'transparent',
+                    color: voice.recording ? '#fff' : PALETTE.textMuted,
+                    border: `1px solid ${voice.recording ? '#b91c1c' : PALETTE.border}`,
+                    opacity: sending || voice.transcribing ? 0.5 : 1,
+                  }}
+                >
+                  {voice.transcribing ? (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      className="animate-spin"
+                      aria-hidden
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        strokeDasharray="42"
+                        strokeDashoffset="14"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  ) : voice.recording ? (
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden
+                    >
+                      <rect x="6" y="6" width="12" height="12" rx="1.5" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <rect x="9" y="2" width="6" height="11" rx="3" />
+                      <path d="M5 10v2a7 7 0 0 0 14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="22" />
+                      <line x1="8" y1="22" x2="16" y2="22" />
+                    </svg>
+                  )}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => void send()}
-                disabled={sending || input.trim().length === 0}
-                className="rounded-full px-5 py-3 text-[14px] font-medium disabled:opacity-40"
+                disabled={composerBusy || input.trim().length === 0}
+                className="rounded-full px-5 h-12 shrink-0 text-[14px] font-medium disabled:opacity-40"
                 style={{
                   background: PALETTE.accent,
                   color: PALETTE.accentText,
@@ -268,14 +414,14 @@ export default function StateModuleClient({
             </div>
             {error && (
               <p
-                className="mt-3 text-[13px]"
+                className="mt-2 text-[13px]"
                 style={{ color: '#b91c1c', fontFamily: SANS }}
               >
                 {error}
               </p>
             )}
             <p
-              className="mt-3 text-[11px] leading-[1.6] text-center"
+              className="mt-2 text-[11px] leading-[1.5] text-center"
               style={{ color: PALETTE.textHint, fontFamily: SANS }}
             >
               {t('safetyFooter')}
@@ -319,4 +465,28 @@ function MessageBubble({
       </div>
     </div>
   );
+}
+
+function translateVoiceError(
+  code: VoiceErrorCode,
+  t: (key: string) => string,
+): string {
+  switch (code) {
+    case 'permission_denied':
+      return t('voice.errors.permissionDenied');
+    case 'no_mic':
+      return t('voice.errors.noMic');
+    case 'start_failed':
+      return t('voice.errors.startFailed');
+    case 'empty_audio':
+      return t('voice.errors.emptyAudio');
+    case 'rate_limited':
+      return t('voice.errors.rateLimited');
+    case 'unavailable':
+      return t('voice.errors.unavailable');
+    case 'transcription_failed':
+      return t('voice.errors.transcriptionFailed');
+    case 'network_error':
+      return t('voice.errors.networkError');
+  }
 }

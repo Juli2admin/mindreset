@@ -40,7 +40,22 @@
     "sending": "Sending…",
     "sessionComplete": "This session is complete. When you're ready, you can start a new one — the practices are yours to come back to any time.",
     "startAgain": "Start a new session",
-    "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line."
+    "backToStates": "States",
+    "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line.",
+    "voice": {
+      "startAria": "Start voice recording",
+      "stopAria": "Stop voice recording",
+      "errors": {
+        "permissionDenied": "Microphone permission was declined. Enable it in your browser settings to use voice input.",
+        "noMic": "No microphone found. Check that one is connected and try again.",
+        "startFailed": "Couldn't start the microphone. Try again in a moment.",
+        "emptyAudio": "Nothing was recorded — try speaking again.",
+        "rateLimited": "Too many voice requests. Try again in a moment.",
+        "unavailable": "Voice transcription is unavailable right now. Type instead.",
+        "transcriptionFailed": "Couldn't transcribe the recording. Try again or type instead.",
+        "networkError": "Network issue during transcription. Try again."
+      }
+    }
   },
   "Pilot": {
     "redeem": {
