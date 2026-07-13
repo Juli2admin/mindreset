@@ -64,6 +64,7 @@ export default function StateModuleClient({
   const voice = useVoiceInput({
     endpoint: '/api/minimind/transcribe',
     maxSeconds: MAX_RECORDING_SECONDS,
+    hintLocale: locale,
     onTranscript: (text) => {
       setInput((prev) => (prev.length > 0 ? `${prev} ${text}` : text));
       textareaRef.current?.focus();
