@@ -170,11 +170,22 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
           {t(bodyKey)}
         </p>
         {reason === 'pilot_expired' && (
-          <div className="mb-6">
+          <div className="mb-6 flex flex-col items-center gap-3">
             <PilotUpgradeButton
               label={t('pilotUpgradeCta')}
               errorLabel={t('pilotUpgradeError')}
             />
+            {process.env.PILOT_AFTER_FORM_URL && (
+              <a
+                href={process.env.PILOT_AFTER_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm underline underline-offset-4 hover:no-underline"
+                style={{ color: '#2D7A85' }}
+              >
+                {t('pilotAfterFormCta')}
+              </a>
+            )}
           </div>
         )}
         <Link

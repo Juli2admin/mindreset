@@ -436,6 +436,7 @@
     "pilotExpiredBody": "Thank you for being part of the pilot. If you'd like to continue The Journey, use your 50% discount code on the pricing page.",
     "pilotUpgradeCta": "Continuar con 50 % de descuento — £299,50 →",
     "pilotUpgradeError": "Algo salió mal al abrir el pago. Por favor inténtalo de nuevo en un momento, o escribe a support@mindreset.ai.",
+    "pilotAfterFormCta": "Fill the short After form (8 min) →",
     "pilotRevokedTitle": "Tu acceso piloto ha sido cerrado.",
     "pilotRevokedBody": "Por favor contacta con support@mindreset.ai si crees que es un error.",
     "seePricing": "Ver precios →",
