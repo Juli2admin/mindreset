@@ -33,6 +33,15 @@
     "prompts": {
       "anxiety": {
         "greeting": "I'm here with you. When you're ready, tell me what's happening — where are you on a 0–10 anxiety scale (0 = fully calm, 10 = full panic), and where you feel it in the body if you can. If you can't locate it, that's very common — we can start another way."
+      },
+      "apathy": {
+        "greeting": "I'm here. No rush. When you're ready, tell me where you are on a 0–10 energy scale (0 = feels like nothing, 10 = fully alive). And if it comes to mind, when was the last time you wanted anything, even something small. There's nothing you have to do right now."
+      },
+      "loss_of_self": {
+        "greeting": "I'm here. Let's check that you are too. When you're ready, tell me — on a 0–10 scale, how much do you feel that you exist right now (0 = not at all, 10 = fully here). And if you can, say your name to yourself. That's a good place to begin. No rush."
+      },
+      "inner_emptiness": {
+        "greeting": "I'm here, nearby. When you're ready, tell me where you are on a 0–10 aliveness scale (0 = nothing feels like anything, 10 = fully alive and colourful). And if it comes to mind, when was the last time you felt anything even a little bit good. We'll go slowly."
       }
     },
     "inputPlaceholder": "Take your time. Type what you're noticing…",
