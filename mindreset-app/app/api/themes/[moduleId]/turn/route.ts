@@ -34,6 +34,10 @@ import {
   type ThemeModuleId,
 } from '@/lib/themes/modules';
 import { assembleShameSystemPrompt } from '@/lib/themes/prompts/shame';
+import { assembleMoneySystemPrompt } from '@/lib/themes/prompts/money';
+import { assembleBodySystemPrompt } from '@/lib/themes/prompts/body';
+import { assembleFamilySystemPrompt } from '@/lib/themes/prompts/family';
+import { assembleSelfRealisationSystemPrompt } from '@/lib/themes/prompts/self_realisation';
 import { SESSION_COMPLETE_MARKER_RE } from '@/lib/states/prompts/anxiety';
 import {
   scanForStateRedFlag,
@@ -68,10 +72,18 @@ function assembleSystemPromptForTheme(
   moduleId: ThemeModuleId,
   memorySummary: string | null,
 ): string | null {
-  if (moduleId === 'shame') return assembleShameSystemPrompt(memorySummary);
-  // PR χ2/χ3 will add the other four theme prompts. Until then the
-  // catalogue tile shows Buy but the chat endpoint returns 501.
-  return null;
+  switch (moduleId) {
+    case 'shame':
+      return assembleShameSystemPrompt(memorySummary);
+    case 'money':
+      return assembleMoneySystemPrompt(memorySummary);
+    case 'body':
+      return assembleBodySystemPrompt(memorySummary);
+    case 'family':
+      return assembleFamilySystemPrompt(memorySummary);
+    case 'self_realisation':
+      return assembleSelfRealisationSystemPrompt(memorySummary);
+  }
 }
 
 function cannedStream(text: string): ReadableStream<Uint8Array> {
