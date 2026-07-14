@@ -9,9 +9,12 @@
 // if something misbehaves.
 
 import type { Metadata } from 'next';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
+import { waitUntil } from '@vercel/functions';
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 import { redeemInvitation, type RedeemResult } from '@/lib/pilot/invitations';
+import { sendPilotWelcomeEmail } from '@/lib/email/sendPilotWelcome';
 
 export const dynamic = 'force-dynamic';
 
@@ -177,6 +180,45 @@ export default async function RedeemPage({
   if (result.ok === false) {
     return <ErrorView copy={copy} reasonKey={result.reason} pricingHref={pricingHref} />;
   }
+
+  // PR ω2 (2026-07-14) — pilot welcome email. Fires exactly once per
+  // invitation via updateMany({ welcomeEmailSentAt: null }); safe to
+  // re-run on every /redeem visit. We deliberately kick it off on
+  // `alreadyRedeemedByThisUser: true` too so the tester still gets the
+  // questionnaire link if they redeemed before this PR shipped — the
+  // idempotency guard means they only ever receive it once.
+  //
+  // Email address is fetched fresh from Clerk (not from prisma.user)
+  // because Clerk is the source of truth for verified email addresses,
+  // and the User row may be behind on a very recent webhook. We look
+  // the invitation up to feed sendPilotWelcomeEmail its id.
+  waitUntil(
+    (async () => {
+      try {
+        const invitation = await prisma.pilotInvitation.findFirst({
+          where: { redeemedByUserId: userId },
+          select: { id: true },
+        });
+        if (!invitation) return;
+        const user = await clerkClient().users.getUser(userId);
+        const email =
+          user.primaryEmailAddress?.emailAddress ??
+          user.emailAddresses[0]?.emailAddress ??
+          null;
+        if (!email) {
+          console.warn('[redeem] no email for user, skipping pilot welcome', { userId });
+          return;
+        }
+        await sendPilotWelcomeEmail({
+          invitationId: invitation.id,
+          email,
+          locale: params.locale,
+        });
+      } catch (err) {
+        console.error('[redeem] pilot welcome email dispatch failed:', err);
+      }
+    })(),
+  );
 
   const dateStr = formatDate(params.locale, result.trialEndsAt);
 

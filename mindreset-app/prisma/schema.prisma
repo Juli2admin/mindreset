@@ -172,6 +172,13 @@ model PilotInvitation {
   revokedAt          DateTime?
   revokedReason      String?
 
+  // Pilot welcome email — sent once, at the moment the tester redeems.
+  // Contains the PILOT_BEFORE_FORM_URL link (Julia's questionnaire).
+  // PR ω2 (2026-07-14). Idempotency: updateMany with welcomeEmailSentAt=null
+  // atomically claims the send so multiple concurrent redeem-page renders
+  // never double-send.
+  welcomeEmailSentAt DateTime?
+
   @@index([redeemedByUserId])
 }
 
