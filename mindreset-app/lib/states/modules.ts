@@ -77,13 +77,20 @@ export function isValidStateModuleId(id: string): id is StateModuleId {
 /** Access duration granted by one purchase (30 days). */
 export const STATE_ACCESS_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** Base prices in pence (for display only — Stripe is the source of truth). */
-export const STATE_PRICE_FULL_PENCE = 5900;
-export const STATE_PRICE_SUBSCRIBER_PENCE = 2900;
+/**
+ * Price in pence shown in the UI (for display only — Stripe is the
+ * source of truth). PR χ0 (2026-07-13): flattened to a single £29 price
+ * for all buyers. Removed the £59 non-subscriber tier and the
+ * subscriber-only discount.
+ */
+export const STATE_PRICE_PENCE = 2900;
 
 /**
- * Env var holding the Stripe Coupon ID for the £30 subscriber discount.
- * Applied at checkout via `discounts: [{ coupon }]` when the buyer has
- * an active MiniMind subscription. Shared across all state modules.
+ * Env var holding the Stripe Coupon ID for the £30 module discount.
+ * PR χ0 (2026-07-13): applied to EVERY State-module checkout — the
+ * Stripe products stay at £59 face and the coupon brings the total
+ * to £29 for all buyers, so no subscriber gate remains. When Julia
+ * has time to reprice the Stripe products to £29 directly, this
+ * coupon becomes a no-op.
  */
-export const STATE_SUBSCRIBER_COUPON_ENV = 'STRIPE_COUPON_MODULE';
+export const STATE_MODULE_COUPON_ENV = 'STRIPE_COUPON_MODULE';

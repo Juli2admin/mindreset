@@ -5,7 +5,6 @@
     "kicker": "STATES",
     "h1Title": "Quick resets for the moments a wave hits.",
     "h1Subtitle": "Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe. Each module is a full 30-day access.",
-    "subscriberDiscountApplied": "MiniMind subscriber price applied — {price} per module",
     "buyCta": "Buy — {price}",
     "openCta": "Open module →",
     "signUpToBuy": "Sign up to buy",
@@ -805,7 +804,6 @@
         "modules": {
           "title": "States & Themes — indywidualne zakupy modułów",
           "priceItem": "£59 za moduł (jednorazowy zakup, stały dostęp)",
-          "subscriberDiscountItem": "Aktywni subskrybenci MiniMind (Essential lub Extended) płacą £29 za moduł — zniżka jest automatycznie naliczana podczas checkoutu po zalogowaniu na konto z aktywną subskrypcją",
           "immediateAccessItem": "Dostęp rozpoczyna się natychmiast po pomyślnym dokonaniu płatności",
           "waiverItem": "Podczas checkoutu potwierdzasz zrzeczenie się 14-dniowego prawa do anulowania zgodnie z Consumer Contracts Regulations 2013 w zamian za natychmiastowy dostęp. Jeśli nie otworzysz modułu w ciągu 14 dni od zakupu, możesz ubiegać się o pełny zwrot środków, wysyłając email na <mail>support@mindreset.ai</mail> z tematem „REFUND“",
           "openedNonRefundableItem": "<strong>Po otwarciu modułu zakup nie podlega zwrotowi</strong>"
@@ -912,7 +910,6 @@
       "modules": {
         "title": "States & Themes — indywidualne zakupy modułów",
         "priceItem": "£59 za moduł (dla użytkowników bez subskrypcji) — jednorazowy zakup z trwałym dostępem",
-        "subscriberDiscountItem": "Aktywni subskrybenci MiniMind (Essential lub Extended) płacą £29 za moduł — zniżka naliczana automatycznie podczas płatności",
         "immediateAccessItem": "Dostęp rozpoczyna się natychmiast po pomyślnym dokonaniu płatności",
         "waiverItem": "Podczas płatności potwierdzasz zrzeczenie się 14-dniowego prawa do anulowania zgodnie z Consumer Contracts Regulations 2013 w zamian za natychmiastowy dostęp. Jeśli nie otworzysz modułu w ciągu 14 dni od zakupu, możesz ubiegać się o pełny zwrot środków, wysyłając wiadomość na <mail>support@mindreset.ai</mail> z tematem „REFUND”",
         "openedNonRefundableItem": "<strong>Po otwarciu modułu zakup nie podlega zwrotowi</strong>"
