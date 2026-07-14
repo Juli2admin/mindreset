@@ -8,6 +8,7 @@
 import prisma from '@/lib/prisma';
 import { currentUserIsAdmin } from '@/lib/admin/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,10 +30,17 @@ type RowShape = {
   scaleStuck: number | null;
 };
 
-export default async function AdminPilotResponsesPage() {
+export default async function AdminPilotResponsesPage({
+  searchParams,
+}: {
+  searchParams: { invitationId?: string };
+}) {
   if (!(await currentUserIsAdmin())) redirect('/');
 
+  const filterInvitationId = searchParams.invitationId?.trim() || null;
+
   const rows = await prisma.testerResponse.findMany({
+    where: filterInvitationId ? { invitationId: filterInvitationId } : undefined,
     orderBy: [{ submittedAt: 'desc' }],
     include: {
       invitation: {
@@ -50,12 +58,25 @@ export default async function AdminPilotResponsesPage() {
         Pilot programme
       </div>
       <h1 className="text-[28px] mb-2 font-medium">Tester responses</h1>
-      <p className="text-[13px] leading-[1.65] text-neutral-700 mb-6">
+      <p className="text-[13px] leading-[1.65] text-neutral-700 mb-3">
         Raw submissions from /pilot/before and /pilot/after. The six 0–10
         scales are typed columns; everything else (consent, About You,
         Your Pattern, free text) lives in the JSON blob and renders
         below unformatted.
       </p>
+      {filterInvitationId && (
+        <div className="mb-4 flex items-center gap-3 text-[12px]">
+          <span className="px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-700">
+            Filtered to one tester
+          </span>
+          <Link
+            href="/admin/pilot/responses"
+            className="text-blue-700 hover:underline"
+          >
+            Show all
+          </Link>
+        </div>
+      )}
 
       {rows.length === 0 && (
         <p className="text-[13px] text-neutral-500">

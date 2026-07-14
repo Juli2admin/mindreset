@@ -1,5 +1,5 @@
 import { revalidatePath } from 'next/cache';
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { currentUserIsAdmin } from '@/lib/admin/auth';
 import {
@@ -9,6 +9,7 @@ import {
   deriveStatus,
   type TrackingFlag,
 } from '@/lib/pilot/invitations';
+import { sendPilotBeforeFormEmail } from '@/lib/email/sendPilotBeforeForm';
 import PilotAdminClient from './PilotAdminClient';
 
 // /admin/pilot — the tester pipeline console.
@@ -88,6 +89,62 @@ async function actionToggleFlag(formData: FormData) {
   revalidatePath('/admin/pilot');
 }
 
+// Resend the Before-form nudge to a specific tester. Clears
+// beforeFormEmailSentAt then dispatches — the idempotency guard
+// re-arms so the send fires again. Refuses if beforeFormFilled=true
+// (the tester already submitted; nudging is meaningless).
+async function actionResendBeforeNudge(formData: FormData) {
+  'use server';
+  if (!(await currentUserIsAdmin())) throw new Error('Forbidden');
+  const id = String(formData.get('id') ?? '').trim();
+  if (!id) return;
+
+  const invitation = await prisma.pilotInvitation.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      beforeFormFilled: true,
+      redeemedByUser: { select: { id: true, email: true, locale: true } },
+    },
+  });
+  if (!invitation) return;
+  if (invitation.beforeFormFilled) return;
+  if (!invitation.redeemedByUser) return;
+
+  // Re-arm the idempotency guard so sendPilotBeforeFormEmail's
+  // updateMany can claim the send slot again.
+  await prisma.pilotInvitation.update({
+    where: { id },
+    data: { beforeFormEmailSentAt: null },
+  });
+
+  // Prefer the verified Clerk email (source of truth) but fall back
+  // to the DB copy if Clerk is unreachable.
+  let email = invitation.redeemedByUser.email;
+  try {
+    const clerkUser = await clerkClient().users.getUser(
+      invitation.redeemedByUser.id,
+    );
+    email =
+      clerkUser.primaryEmailAddress?.emailAddress ??
+      clerkUser.emailAddresses[0]?.emailAddress ??
+      email;
+  } catch (err) {
+    console.warn('[admin/pilot] clerkClient.getUser failed, using DB email', {
+      id: invitation.id,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  await sendPilotBeforeFormEmail({
+    invitationId: id,
+    email,
+    locale: invitation.redeemedByUser.locale ?? 'en',
+  });
+
+  revalidatePath('/admin/pilot');
+}
+
 export default async function AdminPilotPage() {
   const rows = await prisma.pilotInvitation.findMany({
     orderBy: [{ redeemedAt: 'desc' }, { createdAt: 'desc' }],
@@ -122,6 +179,8 @@ export default async function AdminPilotPage() {
     trialStartedAt: r.redeemedByUser?.pilotTrialStartedAt?.toISOString() ?? null,
     trialEndsAt: r.redeemedByUser?.pilotTrialEndsAt?.toISOString() ?? null,
     beforeFormFilled: r.beforeFormFilled,
+    beforeFormFilledAt: r.beforeFormFilledAt?.toISOString() ?? null,
+    beforeFormEmailSentAt: r.beforeFormEmailSentAt?.toISOString() ?? null,
     afterFormFilled: r.afterFormFilled,
     followUp3mSent: r.followUp3mSent,
     quoteApproved: r.quoteApproved,
@@ -153,6 +212,7 @@ export default async function AdminPilotPage() {
         actionCreate={actionCreate}
         actionRevoke={actionRevoke}
         actionToggleFlag={actionToggleFlag}
+        actionResendBeforeNudge={actionResendBeforeNudge}
       />
     </div>
   );

@@ -163,13 +163,20 @@ model PilotInvitation {
   // In-app questionnaire lifecycle (PR ω3a, 2026-07-14). Julia's method:
   // pilot testers fill a Before form at the start of their arc and an
   // After form ~30 days later; the 6 identical Likert scales in each
-  // form are the pilot's core measurement. `beforeFormFilled` /
-  // `afterFormFilled` flip to true when the tester submits (via
-  // /api/pilot/questionnaire); the *Filled* timestamps are what the
-  // 30-day cron reads to know when to send the After email;
-  // *EmailSentAt* gates the trigger sends so the same tester never
-  // gets nudged twice. `followUp3mSent` and `quoteApproved` remain
-  // manual admin toggles.
+  // form are the pilot's core measurement.
+  //
+  // `beforeFormFilled` / `afterFormFilled` auto-flip when the tester
+  // submits via /api/pilot/questionnaire (the API stamps them + the
+  // matching *FilledAt* timestamp atomically in the same transaction).
+  // The admin surface at /admin/pilot ALSO exposes manual toggles as a
+  // fallback (e.g. to record a submission that happened outside the
+  // app, or to reset a row for a re-take) — the API and the admin
+  // toggles are both safe: neither can corrupt the response data.
+  //
+  // The *FilledAt* timestamps are what the 30-day cron will read to
+  // know when to send the After email; *EmailSentAt* gates the trigger
+  // sends so the same tester never gets nudged twice.
+  // `followUp3mSent` and `quoteApproved` remain admin-only toggles.
   beforeFormFilled       Boolean   @default(false)
   beforeFormFilledAt     DateTime?
   beforeFormEmailSentAt  DateTime?
