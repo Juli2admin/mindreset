@@ -63,6 +63,16 @@ function formatDate(iso: string | null): string {
   });
 }
 
+// Days since a stored ISO date — used to surface "27 days since Before"
+// on the admin row so Julia knows when to click "Send After nudge".
+// Returns null when iso is null.
+function daysSince(iso: string | null): number | null {
+  if (!iso) return null;
+  const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return null;
+  return Math.floor((Date.now() - then) / (24 * 60 * 60 * 1000));
+}
+
 function redeemLink(code: string): string {
   const origin =
     typeof window !== 'undefined' ? window.location.origin : 'https://mindreset.ai';
@@ -229,6 +239,11 @@ function RowView({
   const canResendBeforeNudge = hasBeenRedeemed && !row.beforeFormFilled;
   const canResendAfterNudge =
     hasBeenRedeemed && row.beforeFormFilled && !row.afterFormFilled;
+  const daysSinceBefore = daysSince(row.beforeFormFilledAt);
+  // 30 days is the standard After-nudge trigger point (four weeks of
+  // Journey work, per Julia's method). Highlight rows past that so the
+  // admin can spot at a glance who's ready for the After nudge.
+  const isAfterReady = daysSinceBefore !== null && daysSinceBefore >= 30;
 
   async function copy() {
     try {
@@ -294,6 +309,18 @@ function RowView({
             value={row.beforeFormFilled}
             actionToggleFlag={actionToggleFlag}
           />
+          {row.beforeFormFilled && daysSinceBefore !== null && !row.afterFormFilled && (
+            <div
+              className={`text-[10px] pl-5 ${
+                isAfterReady ? 'font-medium text-emerald-700' : 'text-neutral-500'
+              }`}
+              title={`Before submitted ${formatDate(row.beforeFormFilledAt)} · ${daysSinceBefore}d ago`}
+            >
+              {isAfterReady
+                ? `${daysSinceBefore}d — ready for After`
+                : `${daysSinceBefore}d since Before`}
+            </div>
+          )}
           <FlagToggle
             id={row.id}
             flag="afterFormFilled"

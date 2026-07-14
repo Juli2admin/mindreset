@@ -7,10 +7,6 @@
     {
       "path": "/api/cron/drip",
       "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/pilot-after-nudge",
-      "schedule": "0 11 * * *"
     }
   ]
 }

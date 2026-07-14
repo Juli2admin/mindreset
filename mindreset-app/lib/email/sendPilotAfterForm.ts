@@ -1,11 +1,11 @@
 // Pilot After-form nudge sender.
 //
-// PR ω3b (2026-07-14). Fires from the daily cron
-// (app/api/cron/pilot-after-nudge/route.ts) once per PilotInvitation
-// when the tester's beforeFormFilledAt is > 30 days ago and they
-// haven't submitted After yet. Idempotent via atomic updateMany on
-// afterFormEmailSentAt. Manual re-send from the admin surface
-// re-arms the guard.
+// PR ω3b (2026-07-14). Fires from the admin "Send After nudge" button
+// (see actionResendAfterNudge in /admin/pilot/page.tsx). Idempotent via
+// atomic updateMany on afterFormEmailSentAt — re-armed by the admin
+// action before each dispatch. No cron in this iteration: Julia
+// prefers to nudge manually per tester (the admin surface shows how
+// many days since Before was filled so she knows when to click).
 
 import prisma from '@/lib/prisma';
 import { getResend, FROM_ADDRESS } from './resend';
