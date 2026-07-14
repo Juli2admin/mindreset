@@ -20,11 +20,16 @@ type Props = {
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
 
-// PR χ1 — only Shame ships with a working AI. The other 4 themes have
-// Stripe products (owner can buy them at £59) but the chat endpoint
-// returns 501 until PR χ2 wires their prompts. Tag the roadmap tiles
-// so the buyer isn't surprised.
-const LIVE_THEME_IDS: readonly ThemeModuleId[] = ['shame'];
+// PR χ2 (2026-07-14) — all 5 Themes ship with working AI prompts.
+// Kept as an explicit list so a future prompt in progress can be
+// tagged "roadmap" without shipping half-baked to buyers.
+const LIVE_THEME_IDS: readonly ThemeModuleId[] = [
+  'shame',
+  'money',
+  'body',
+  'family',
+  'self_realisation',
+];
 
 function formatPricePence(pence: number): string {
   return `£${(pence / 100).toFixed(pence % 100 === 0 ? 0 : 2)}`;
