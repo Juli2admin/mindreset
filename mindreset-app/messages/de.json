@@ -37,6 +37,18 @@
     "prompts": {
       "shame": {
         "greeting": "I'm here with you. You don't have to earn being here. When you're ready, tell me what's showing up — a memory, a voice in your head, a weight in the chest. If you can, an intensity 0–10 (0 = weightless, 10 = crushing) and whose voice is doing the accusing, if you can tell. If you can't tell, that's fine — we can find it together."
+      },
+      "money": {
+        "greeting": "I'm here, and we go step by step. When you're ready, tell me where you are on a money-stress scale 0–10 (0 = calm and clear, 10 = full panic), and where it shows up in the body if you can — chest, throat, jaw, belly. Money touches survival; whatever weight you're carrying, it makes sense."
+      },
+      "body": {
+        "greeting": "We go at our own pace. You can stop at any moment. When you're ready, tell me where you are on a body-awareness scale 0–10 (0 = don't feel my body as mine, 10 = fully at home in my body), and where the disconnect or discomfort shows up if you can. Off-limits parts are welcome to stay off-limits."
+      },
+      "family": {
+        "greeting": "I'm with you. Whatever you're carrying, someone handed it to you — that's family, not moral failing. When you're ready, tell me where you are on a parental-weight scale 0–10 (0 = free and light, 10 = crushed), and whose voice is loudest if you can tell — mother, father, both, someone else. No rush."
+      },
+      "self_realisation": {
+        "greeting": "I'm here. When you're ready, tell me where you are on an interest-in-life scale 0–10 (0 = no wanting at all, 10 = fully alive with what I want). And if any moment comes to mind — from any time, even long ago — where a small YES was felt, tell me that too. The wanting-circuit isn't gone; it's just quiet."
       }
     },
     "inputPlaceholder": "Take your time. Type what you're noticing…",
