@@ -1010,6 +1010,15 @@ model ThemeSession {
 
   turnCount         Int       @default(0)
 
+  // Rolling memory summary of the whole arc so far. Regenerated via a
+  // lightweight Haiku call every ~15 turns; loaded into the system
+  // prompt on every subsequent turn so the AI has continuity even when
+  // the recent-N message window has moved past the older material.
+  // Same encryption format as ThemeMessage.contentEncrypted.
+  memorySummaryEncrypted   String?   @db.Text
+  memorySummaryUpdatedAt   DateTime?
+  memorySummaryTurnCount   Int       @default(0)
+
   messages          ThemeMessage[]
 
   // One active row per user+theme. If the user re-opens the theme after a

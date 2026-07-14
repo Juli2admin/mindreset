@@ -33,7 +33,7 @@ import {
   isValidThemeModuleId,
   type ThemeModuleId,
 } from '@/lib/themes/modules';
-import { SHAME_SYSTEM_PROMPT } from '@/lib/themes/prompts/shame';
+import { assembleShameSystemPrompt } from '@/lib/themes/prompts/shame';
 import { SESSION_COMPLETE_MARKER_RE } from '@/lib/states/prompts/anxiety';
 import {
   scanForStateRedFlag,
@@ -41,6 +41,11 @@ import {
 } from '@/lib/states/safety/red-flag';
 import { detectCompletion } from '@/lib/states/completion';
 import { recordAiUsage } from '@/lib/ai-usage/record';
+import {
+  loadThemeMemorySummary,
+  regenerateThemeMemorySummary,
+  shouldRegenerateSummary,
+} from '@/lib/themes/memory';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,14 +56,19 @@ const MODEL = 'claude-sonnet-4-6';
 // than States (1500) so the model can hold a long arc without truncating
 // closes and markers. Still within reasonable per-turn cost.
 const MAX_TOKENS = 2500;
-// Load N most recent turns. Themes are multi-session so history can grow
-// large; 60 covers typical multi-week arcs while staying within cost.
-const HISTORY_LIMIT = 60;
+// Load N most recent turns. Themes are multi-session; older material
+// beyond this window is represented via the rolling memory summary
+// (see lib/themes/memory.ts). 40 keeps recent detail sharp without
+// blowing the context on a long arc.
+const HISTORY_LIMIT = 40;
 const MAX_USER_MESSAGE_CHARS = 4000;
 const HOLDBACK_CHARS = 96;
 
-function getSystemPromptForTheme(moduleId: ThemeModuleId): string | null {
-  if (moduleId === 'shame') return SHAME_SYSTEM_PROMPT;
+function assembleSystemPromptForTheme(
+  moduleId: ThemeModuleId,
+  memorySummary: string | null,
+): string | null {
+  if (moduleId === 'shame') return assembleShameSystemPrompt(memorySummary);
   // PR χ2/χ3 will add the other four theme prompts. Until then the
   // catalogue tile shows Buy but the chat endpoint returns 501.
   return null;
@@ -87,8 +97,11 @@ export async function POST(
   if (!isValidThemeModuleId(moduleId)) {
     return NextResponse.json({ error: 'Invalid moduleId' }, { status: 400 });
   }
-  const systemPrompt = getSystemPromptForTheme(moduleId);
-  if (!systemPrompt) {
+  // Sentinel: any module we don't have a prompt for yet returns 501.
+  // The catalogue tile carries a ROADMAP badge for those. Actual prompt
+  // assembly (with the memory summary injected) happens later, once
+  // we've located the session.
+  if (assembleSystemPromptForTheme(moduleId, null) === null) {
     return NextResponse.json(
       { error: 'Theme not yet available' },
       { status: 501 },
@@ -214,6 +227,20 @@ export async function POST(
     content: decrypt(m.contentEncrypted),
   }));
 
+  // Load the rolling arc-summary (if any) and inject it into the system
+  // prompt as PRIOR ARC NOTES. On the first ~15 turns this is null and
+  // the base prompt is used unchanged.
+  const memorySummary = await loadThemeMemorySummary(sessionId);
+  const systemPrompt = assembleSystemPromptForTheme(moduleId, memorySummary);
+  if (!systemPrompt) {
+    // Should be unreachable — we sentinel-checked earlier — but if a
+    // subsequent moduleId slips through, refuse rather than crash.
+    return NextResponse.json(
+      { error: 'Theme not yet available' },
+      { status: 501 },
+    );
+  }
+
   const stream = anthropic.messages.stream({
     model: MODEL,
     max_tokens: MAX_TOKENS,
@@ -300,7 +327,7 @@ export async function POST(
               // session receives a fresh assistant turn keeps the
               // "last natural pause" semantic accurate; if the AI
               // closes again the marker will re-fire.
-              await prisma.themeSession.update({
+              const updated = await prisma.themeSession.update({
                 where: { id: sessionId },
                 data: completion.completed
                   ? {
@@ -315,7 +342,34 @@ export async function POST(
                       completedAt: null,
                       completionReason: null,
                     },
+                select: {
+                  turnCount: true,
+                  memorySummaryTurnCount: true,
+                },
               });
+
+              // Rolling arc-summary: regenerate every ~15 turns via a
+              // Haiku call. Fire-and-forget — awaited only inside
+              // waitUntil so the reader never blocks on it.
+              if (
+                shouldRegenerateSummary(
+                  updated.turnCount,
+                  updated.memorySummaryTurnCount,
+                )
+              ) {
+                try {
+                  await regenerateThemeMemorySummary(
+                    sessionId,
+                    userId,
+                    moduleId,
+                  );
+                } catch (err) {
+                  console.error(
+                    '[themes/turn] summary regeneration failed:',
+                    err,
+                  );
+                }
+              }
             } catch (err) {
               console.error(
                 '[themes/turn] persist assistant failed:',
