@@ -2,11 +2,13 @@
 //
 // Public page. Signed-out visitors see the tiles + tap-to-sign-up.
 // Signed-in visitors see per-module status: "Open" if they have active
-// access, "Buy £29 / £59" if not.
+// access, "Buy £29" (flat, 30-day) if not.
+//
+// PR χ0 (2026-07-13): dropped the isSubscriber branch — everyone pays
+// £29. See lib/states/modules.ts for the price constant.
 
 import type { Metadata } from 'next';
 import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { STATE_MODULES } from '@/lib/states/modules';
 import { checkStateModuleAccess } from '@/lib/states/access';
@@ -40,17 +42,9 @@ export default async function StatesCataloguePage({
   setRequestLocale(params.locale);
 
   const { userId } = await auth();
-  let isSubscriber = false;
   const accessMap: Record<string, boolean> = {};
 
   if (userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { currentTier: true },
-    });
-    isSubscriber =
-      user?.currentTier === 'essential' || user?.currentTier === 'extended';
-
     // Check per-module access. Parallelised — cheap read.
     await Promise.all(
       STATE_MODULES.map(async (m) => {
@@ -65,7 +59,6 @@ export default async function StatesCataloguePage({
       <TopBar sticky />
       <StatesCatalogueClient
         isSignedIn={!!userId}
-        isSubscriber={isSubscriber}
         accessMap={accessMap}
         locale={params.locale}
       />

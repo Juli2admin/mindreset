@@ -397,7 +397,6 @@ export default async function TermsPage() {
           <H4>{t('article1.section8.modules.title')}</H4>
           <UL>
             <li>{t('article1.section8.modules.priceItem')}</li>
-            <li>{t('article1.section8.modules.subscriberDiscountItem')}</li>
             <li>{t('article1.section8.modules.immediateAccessItem')}</li>
             <li>
               {t.rich('article1.section8.modules.waiverItem', {
@@ -613,7 +612,6 @@ export default async function TermsPage() {
           <H3 id="terms-refund-modules-individual">{t('refund.modules.title')}</H3>
           <UL>
             <li>{t('refund.modules.priceItem')}</li>
-            <li>{t('refund.modules.subscriberDiscountItem')}</li>
             <li>{t('refund.modules.immediateAccessItem')}</li>
             <li>
               {t.rich('refund.modules.waiverItem', {

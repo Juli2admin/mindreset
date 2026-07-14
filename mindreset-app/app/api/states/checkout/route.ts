@@ -1,9 +1,14 @@
 // State-module checkout endpoint.
 //
 // POST { moduleId } — creates a Stripe checkout session for the given
-// state module. One Stripe product per module (£59); subscribers get
-// STRIPE_COUPON_MODULE (£30 off) applied programmatically at checkout,
-// bringing them to £29.
+// state module.
+//
+// PR χ0 (2026-07-13). Flat £29 for all readers, no subscriber gate.
+// Stripe products stay at £59 (unchanged in the dashboard);
+// STRIPE_COUPON_MODULE is applied to every checkout to bring the
+// total to £29. When Julia has time to reprice the Stripe products
+// to £29 directly, the coupon call becomes a no-op and can be
+// removed; nothing else changes.
 //
 // Access-window semantics: on checkout.session.completed the Stripe
 // webhook creates a Purchase row with accessExpiresAt = now + 30 days.
@@ -20,7 +25,7 @@ import { getPriceId } from '@/lib/stripe/products';
 import {
   getStateModule,
   isValidStateModuleId,
-  STATE_SUBSCRIBER_COUPON_ENV,
+  STATE_MODULE_COUPON_ENV,
 } from '@/lib/states/modules';
 
 export const dynamic = 'force-dynamic';
@@ -53,7 +58,6 @@ export async function POST(request: NextRequest) {
     select: {
       email: true,
       stripeCustomerId: true,
-      currentTier: true,
       deletedAt: true,
     },
   });
@@ -67,23 +71,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const isSubscriber =
-    user.currentTier === 'essential' || user.currentTier === 'extended';
   const priceKey = `state_${moduleId}` as const;
 
-  // Stripe rejects `allow_promotion_codes: true` together with `discounts`,
-  // so subscribers get the coupon applied and lose the manual promo-code
-  // entry (they've already got the biggest discount we offer).
-  const subscriberCoupon = isSubscriber
-    ? process.env[STATE_SUBSCRIBER_COUPON_ENV]
-    : undefined;
-  if (isSubscriber && !subscriberCoupon) {
+  // The module coupon is applied to every buyer (£30 off → £29). Fails
+  // closed if the env var is missing so we never silently charge the
+  // £59 face price. Stripe rejects `allow_promotion_codes: true`
+  // together with `discounts`, so we lose manual promo-code entry —
+  // fine given £29 is already the intended price.
+  const moduleCoupon = process.env[STATE_MODULE_COUPON_ENV];
+  if (!moduleCoupon) {
     console.error(
-      `[states/checkout] ${STATE_SUBSCRIBER_COUPON_ENV} not set — subscriber ` +
+      `[states/checkout] ${STATE_MODULE_COUPON_ENV} not set — buyer ` +
         'would be charged the full £59. Refusing to proceed.',
     );
     return NextResponse.json(
-      { error: 'Subscriber discount not configured' },
+      { error: 'Module discount coupon not configured' },
       { status: 500 },
     );
   }
@@ -111,9 +113,7 @@ export async function POST(request: NextRequest) {
       customer: customerId,
       mode: 'payment',
       line_items: [{ price: getPriceId(priceKey), quantity: 1 }],
-      ...(subscriberCoupon
-        ? { discounts: [{ coupon: subscriberCoupon }] }
-        : { allow_promotion_codes: true }),
+      discounts: [{ coupon: moduleCoupon }],
       success_url: `${origin}/${locale}/states/${moduleId}?checkout=success`,
       cancel_url: `${origin}/${locale}/states`,
       billing_address_collection: 'required',
@@ -122,7 +122,6 @@ export async function POST(request: NextRequest) {
         clerkId: userId,
         productType: 'state_module',
         moduleId,
-        subscriberDiscount: isSubscriber ? 'true' : 'false',
       },
     });
 

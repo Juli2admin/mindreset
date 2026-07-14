@@ -5,7 +5,6 @@
     "kicker": "STATES",
     "h1Title": "Quick resets for the moments a wave hits.",
     "h1Subtitle": "Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe. Each module is a full 30-day access.",
-    "subscriberDiscountApplied": "MiniMind subscriber price applied — {price} per module",
     "buyCta": "Buy — {price}",
     "openCta": "Open module →",
     "signUpToBuy": "Sign up to buy",
@@ -805,7 +804,6 @@
         "modules": {
           "title": "States & Themes — compras individuais de módulos",
           "priceItem": "£59 por módulo (compra única, acesso permanente)",
-          "subscriberDiscountItem": "Os subscritores ativos do MiniMind (Essential ou Extended) pagam £29 por módulo — desconto aplicado automaticamente no checkout quando tem sessão iniciada com uma subscrição ativa",
           "immediateAccessItem": "O acesso começa imediatamente após a confirmação do pagamento",
           "waiverItem": "No checkout, confirma a renúncia ao direito de cancelamento de 14 dias ao abrigo do Consumer Contracts Regulations 2013, em troca de acesso imediato. Caso não abra o módulo no prazo de 14 dias após a compra, poderá solicitar um reembolso total enviando um email para <mail>support@mindreset.ai</mail> com «REFUND» no assunto",
           "openedNonRefundableItem": "<strong>Depois de aberto o módulo, a compra deixa de ser reembolsável</strong>"
@@ -912,7 +910,6 @@
       "modules": {
         "title": "States & Themes — compras individuais de módulos",
         "priceItem": "£59 por módulo (utilizadores sem subscrição) — compra única com acesso permanente",
-        "subscriberDiscountItem": "Os subscritores ativos do MiniMind (Essential ou Extended) pagam £29 por módulo — desconto aplicado automaticamente no checkout",
         "immediateAccessItem": "O acesso começa imediatamente após a confirmação do pagamento",
         "waiverItem": "No checkout, confirma a renúncia ao direito de cancelamento de 14 dias ao abrigo do Consumer Contracts Regulations 2013, em troca de acesso imediato. Caso não abra o módulo no prazo de 14 dias após a compra, poderá solicitar um reembolso total enviando um email para <mail>support@mindreset.ai</mail> com “REFUND” no assunto",
         "openedNonRefundableItem": "<strong>Depois de aberto o módulo, a compra deixa de ser reembolsável</strong>"

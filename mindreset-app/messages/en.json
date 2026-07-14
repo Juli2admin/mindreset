@@ -5,7 +5,6 @@
     "kicker": "STATES",
     "h1Title": "Quick resets for the moments a wave hits.",
     "h1Subtitle": "Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe. Each module is a full 30-day access.",
-    "subscriberDiscountApplied": "MiniMind subscriber price applied — {price} per module",
     "buyCta": "Buy — {price}",
     "openCta": "Open module →",
     "signUpToBuy": "Sign up to buy",
@@ -804,9 +803,8 @@
         },
         "modules": {
           "title": "States & Themes — individual module purchases",
-          "priceItem": "£59 per module (one-off, permanent access)",
-          "subscriberDiscountItem": "Active MiniMind subscribers (Essential or Extended) pay £29 per module — discount applied automatically at checkout when logged in with an active subscription",
-          "immediateAccessItem": "Access begins immediately upon successful payment",
+          "priceItem": "£29 per module (one-off, 30-day access from purchase)",
+          "immediateAccessItem": "Access begins immediately upon successful payment and continues for 30 days",
           "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject",
           "openedNonRefundableItem": "<strong>Once a module has been opened, the purchase is non-refundable</strong>"
         },
@@ -911,9 +909,8 @@
       },
       "modules": {
         "title": "States & Themes — individual module purchases",
-        "priceItem": "£59 per module (non-subscribers) — one-off, permanent access",
-        "subscriberDiscountItem": "Active MiniMind subscribers (Essential or Extended) pay £29 per module — discount applied automatically at checkout",
-        "immediateAccessItem": "Access begins immediately upon successful payment",
+        "priceItem": "£29 per module — one-off, 30-day access from purchase",
+        "immediateAccessItem": "Access begins immediately upon successful payment and continues for 30 days",
         "waiverItem": "At checkout, you confirm a waiver of the 14-day cancellation right under the Consumer Contracts Regulations 2013, in exchange for immediate access. If you do not open the module within 14 days of purchase, you may request a full refund by emailing <mail>support@mindreset.ai</mail> with \"REFUND\" in the subject",
         "openedNonRefundableItem": "<strong>Once a module has been opened, the purchase is non-refundable</strong>"
       },

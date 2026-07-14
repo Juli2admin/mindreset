@@ -7,14 +7,12 @@ import { TOKENS } from '@/lib/brand/colors';
 import { useTheme } from '@/lib/theme/useTheme';
 import {
   STATE_MODULES,
-  STATE_PRICE_FULL_PENCE,
-  STATE_PRICE_SUBSCRIBER_PENCE,
+  STATE_PRICE_PENCE,
   type StateModuleId,
 } from '@/lib/states/modules';
 
 type Props = {
   isSignedIn: boolean;
-  isSubscriber: boolean;
   accessMap: Record<string, boolean>;
   locale: string;
 };
@@ -28,7 +26,6 @@ function formatPricePence(pence: number): string {
 
 export default function StatesCatalogueClient({
   isSignedIn,
-  isSubscriber,
   accessMap,
   locale,
 }: Props) {
@@ -37,10 +34,6 @@ export default function StatesCatalogueClient({
   const { palette: PALETTE } = useTheme();
   const [loadingModuleId, setLoadingModuleId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const currentPrice = isSubscriber
-    ? STATE_PRICE_SUBSCRIBER_PENCE
-    : STATE_PRICE_FULL_PENCE;
 
   async function handleBuy(moduleId: StateModuleId) {
     setLoadingModuleId(moduleId);
@@ -97,21 +90,6 @@ export default function StatesCatalogueClient({
         >
           {t('h1Subtitle')}
         </p>
-
-        {isSignedIn && isSubscriber && (
-          <div
-            className="mb-8 inline-block text-[12px] px-3 py-1.5 rounded-full"
-            style={{
-              background: PALETTE.bgSubtle,
-              color: PALETTE.textMuted,
-              fontFamily: SANS,
-            }}
-          >
-            {t('subscriberDiscountApplied', {
-              price: formatPricePence(STATE_PRICE_SUBSCRIBER_PENCE),
-            })}
-          </div>
-        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {STATE_MODULES.map((mod) => {
@@ -177,7 +155,9 @@ export default function StatesCatalogueClient({
                   >
                     {isLoading
                       ? t('opening')
-                      : t('buyCta', { price: formatPricePence(currentPrice) })}
+                      : t('buyCta', {
+                          price: formatPricePence(STATE_PRICE_PENCE),
+                        })}
                   </button>
                 )}
                 <p
