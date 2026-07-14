@@ -15,6 +15,8 @@ type Row = {
   trialStartedAt: string | null;
   trialEndsAt: string | null;
   beforeFormFilled: boolean;
+  beforeFormFilledAt: string | null;
+  beforeFormEmailSentAt: string | null;
   afterFormFilled: boolean;
   followUp3mSent: boolean;
   quoteApproved: boolean;
@@ -28,6 +30,7 @@ type Props = {
   actionCreate: (fd: FormData) => Promise<void>;
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
+  actionResendBeforeNudge: (fd: FormData) => Promise<void>;
 };
 
 const STATUS_STYLE: Record<InvitationStatus, string> = {
@@ -68,6 +71,7 @@ export default function PilotAdminClient({
   actionCreate,
   actionRevoke,
   actionToggleFlag,
+  actionResendBeforeNudge,
 }: Props) {
   const [filter, setFilter] = useState<'all' | 'pending' | 'active' | 'completed'>('all');
 
@@ -190,6 +194,7 @@ export default function PilotAdminClient({
                   row={r}
                   actionRevoke={actionRevoke}
                   actionToggleFlag={actionToggleFlag}
+                  actionResendBeforeNudge={actionResendBeforeNudge}
                 />
               ))}
             </tbody>
@@ -204,13 +209,17 @@ function RowView({
   row,
   actionRevoke,
   actionToggleFlag,
+  actionResendBeforeNudge,
 }: {
   row: Row;
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
+  actionResendBeforeNudge: (fd: FormData) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
   const link = redeemLink(row.code);
+  const hasBeenRedeemed = !!row.redeemedAt && !!row.redeemedByEmail;
+  const canResendNudge = hasBeenRedeemed && !row.beforeFormFilled;
 
   async function copy() {
     try {
@@ -257,6 +266,14 @@ function RowView({
             Claimed {formatDate(row.redeemedAt)}
           </div>
         )}
+        {(row.beforeFormFilled || row.afterFormFilled) && (
+          <a
+            href={`/admin/pilot/responses?invitationId=${row.id}`}
+            className="inline-block text-[11px] text-blue-700 hover:underline mt-1"
+          >
+            View responses →
+          </a>
+        )}
       </td>
       <td className="px-3 py-3 text-neutral-700">{formatDate(row.trialEndsAt)}</td>
       <td className="px-3 py-3">
@@ -292,23 +309,47 @@ function RowView({
         </div>
       </td>
       <td className="px-3 py-3 text-right">
-        {row.status !== 'revoked' && row.status !== 'expired_invitation' && (
-          <form action={actionRevoke} className="inline-block">
-            <input type="hidden" name="id" value={row.id} />
-            <input type="hidden" name="reason" value="revoked from admin" />
-            <button
-              type="submit"
-              onClick={(e) => {
-                if (!confirm('Revoke this pilot? The tester will lose access immediately.')) {
-                  e.preventDefault();
+        <div className="flex flex-col items-end gap-1">
+          {canResendNudge && (
+            <form action={actionResendBeforeNudge}>
+              <input type="hidden" name="id" value={row.id} />
+              <button
+                type="submit"
+                onClick={(e) => {
+                  const msg = row.beforeFormEmailSentAt
+                    ? 'Re-send the Before-form nudge to this tester? The previous email was already sent.'
+                    : 'Send the Before-form nudge to this tester now?';
+                  if (!confirm(msg)) e.preventDefault();
+                }}
+                title={
+                  row.beforeFormEmailSentAt
+                    ? `Previously sent ${formatDate(row.beforeFormEmailSentAt)} — click to re-send.`
+                    : 'Send the Before-form nudge now (before the tester opens Journey).'
                 }
-              }}
-              className="text-[11px] text-red-700 hover:underline"
-            >
-              Revoke
-            </button>
-          </form>
-        )}
+                className="text-[11px] text-blue-700 hover:underline"
+              >
+                {row.beforeFormEmailSentAt ? 'Re-send Before nudge' : 'Send Before nudge'}
+              </button>
+            </form>
+          )}
+          {row.status !== 'revoked' && row.status !== 'expired_invitation' && (
+            <form action={actionRevoke}>
+              <input type="hidden" name="id" value={row.id} />
+              <input type="hidden" name="reason" value="revoked from admin" />
+              <button
+                type="submit"
+                onClick={(e) => {
+                  if (!confirm('Revoke this pilot? The tester will lose access immediately.')) {
+                    e.preventDefault();
+                  }
+                }}
+                className="text-[11px] text-red-700 hover:underline"
+              >
+                Revoke
+              </button>
+            </form>
+          )}
+        </div>
       </td>
     </tr>
   );

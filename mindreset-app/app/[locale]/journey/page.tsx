@@ -17,12 +17,14 @@
 import type { Metadata } from 'next';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { useTranslations } from 'next-intl';
+import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
 import { checkJourneyAccess } from '@/lib/journey/access';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
+import { sendPilotBeforeFormEmail } from '@/lib/email/sendPilotBeforeForm';
 import JourneyClient from './JourneyClient';
 import PilotUpgradeButton from './PilotUpgradeButton';
 
@@ -71,6 +73,55 @@ export default async function JourneyPage() {
     }
   } catch (err) {
     console.error('[journey] pilot grants failed (continuing):', err);
+  }
+
+  // Pilot Before-form nudge (PR ω3a, 2026-07-14). Fires once per
+  // pilot invitation from the tester's first Journey visit when they
+  // haven't filled the Before questionnaire yet. Idempotent via
+  // atomic updateMany({ beforeFormEmailSentAt: null, beforeFormFilled: false })
+  // — safe to run every visit; only the first eligible one sends.
+  // Fire-and-forget via waitUntil so the page render is never blocked
+  // by the email dispatch.
+  try {
+    const pilotUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        pilotInvitationId: true,
+        locale: true,
+      },
+    });
+    if (pilotUser?.pilotInvitationId) {
+      const invitation = await prisma.pilotInvitation.findUnique({
+        where: { id: pilotUser.pilotInvitationId },
+        select: { beforeFormFilled: true, beforeFormEmailSentAt: true },
+      });
+      if (
+        invitation &&
+        !invitation.beforeFormFilled &&
+        !invitation.beforeFormEmailSentAt
+      ) {
+        const clerkUser = await currentUser();
+        const email =
+          clerkUser?.emailAddresses.find(
+            (e) => e.id === clerkUser.primaryEmailAddressId,
+          )?.emailAddress ??
+          clerkUser?.emailAddresses[0]?.emailAddress ??
+          null;
+        if (email) {
+          waitUntil(
+            sendPilotBeforeFormEmail({
+              invitationId: pilotUser.pilotInvitationId,
+              email,
+              locale: pilotUser.locale ?? 'en',
+            }).catch((err) => {
+              console.error('[journey] before-form nudge failed:', err);
+            }),
+          );
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[journey] before-form nudge dispatch failed:', err);
   }
 
   // Access gate: completed Journey purchase + within 1-year window + under
