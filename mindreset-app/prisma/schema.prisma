@@ -160,19 +160,67 @@ model PilotInvitation {
   redeemedByUserId   String?   @unique
   redeemedByUser     User?
 
-  // Julia sets these manually in /admin/pilot as clinical evidence
-  // accumulates. All default false; toggled by admin action.
-  beforeFormFilled   Boolean   @default(false)
-  afterFormFilled    Boolean   @default(false)
-  followUp3mSent     Boolean   @default(false)
-  quoteApproved      Boolean   @default(false)
+  // In-app questionnaire lifecycle (PR ω3a, 2026-07-14). Julia's method:
+  // pilot testers fill a Before form at the start of their arc and an
+  // After form ~30 days later; the 6 identical Likert scales in each
+  // form are the pilot's core measurement. `beforeFormFilled` /
+  // `afterFormFilled` flip to true when the tester submits (via
+  // /api/pilot/questionnaire); the *Filled* timestamps are what the
+  // 30-day cron reads to know when to send the After email;
+  // *EmailSentAt* gates the trigger sends so the same tester never
+  // gets nudged twice. `followUp3mSent` and `quoteApproved` remain
+  // manual admin toggles.
+  beforeFormFilled       Boolean   @default(false)
+  beforeFormFilledAt     DateTime?
+  beforeFormEmailSentAt  DateTime?
+  afterFormFilled        Boolean   @default(false)
+  afterFormFilledAt      DateTime?
+  afterFormEmailSentAt   DateTime?
+  followUp3mSent         Boolean   @default(false)
+  quoteApproved          Boolean   @default(false)
 
   // Revoke — kills a tester's active pilot without deleting the row.
   // checkJourneyAccess treats revokedAt-not-null as expired.
   revokedAt          DateTime?
   revokedReason      String?
 
+  testerResponses    TesterResponse[]
+
   @@index([redeemedByUserId])
+}
+
+// =============================================================================
+// TESTER RESPONSE — the two pilot questionnaires
+// =============================================================================
+// PR ω3a (2026-07-14). One row per (invitation, formType). The 6
+// identical Likert scales are typed columns so cross-form SQL comparison
+// ("understand ↑ / stuck ↓") is trivial; everything else — consents,
+// About You radio picks, Your Pattern multi-checks, free-text — lives
+// in the `answers` JSON blob so questions can evolve without a
+// migration per iteration.
+model TesterResponse {
+  id             String           @id @default(cuid())
+  invitation     PilotInvitation  @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  invitationId   String
+  formType       String           // 'before' | 'after' | 'followup_3m'
+  submittedAt    DateTime         @default(now())
+
+  // The 6 KEY Likert 0–10 scales. Same 6 in Before and After —
+  // Julia's md: "these exact questions repeat at the end — this is
+  // the measurement."
+  scaleUnderstand   Int?
+  scaleNotice       Int?
+  scaleChoose       Int?
+  scaleHardOnSelf   Int?
+  scaleAffectsLife  Int?
+  scaleStuck        Int?
+
+  // Free-text + multi-choice answers. Shape per formType — validated by
+  // Zod at the API layer (lib/pilot/questionnaire-schema.ts).
+  answers        Json
+
+  @@unique([invitationId, formType])
+  @@index([invitationId])
 }
 
 // =============================================================================
