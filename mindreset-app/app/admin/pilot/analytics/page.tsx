@@ -127,6 +127,11 @@ export default async function AdminPilotAnalyticsPage() {
         )}
       </div>
 
+      {/* Engagement summary — filled + Journey usage. Only shown when
+          there's at least one tester with a Before response so an empty
+          cohort renders clean. */}
+      {withAnyBefore.length > 0 && <EngagementSummary pairs={withAnyBefore} />}
+
       {/* Per-tester rows */}
       <div className="flex items-center gap-3 mb-3">
         <h2 className="text-[18px] font-medium">Per-tester movement</h2>
@@ -228,6 +233,34 @@ export default async function AdminPilotAnalyticsPage() {
 // Presentational
 // ---------------------------------------------------------------------------
 
+function EngagementSummary({ pairs }: { pairs: TesterPair[] }) {
+  const total = pairs.length;
+  const neverOpened = pairs.filter((p) => p.engagement.userTurnCount === 0).length;
+  const meanTurns =
+    pairs.reduce((a, p) => a + p.engagement.userTurnCount, 0) / total;
+  const meanDaysActive =
+    pairs.reduce((a, p) => a + p.engagement.daysActive, 0) / total;
+  const withSafety = pairs.filter((p) => p.engagement.safetyEventCount > 0).length;
+  return (
+    <div className="mb-6">
+      <h2 className="text-[18px] font-medium mb-3">Journey engagement</h2>
+      <p className="text-[12px] leading-[1.6] text-neutral-500 mb-3">
+        Turn count is user messages only (assistant replies excluded to
+        avoid double-counting). Days active = distinct dates a user
+        posted at least one Journey turn. Safety events are triggered
+        when the Journey safety layer detects a red-flag phrase and
+        auto-freezes.
+      </p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <StatChip label="Never opened Journey" value={neverOpened} />
+        <StatChip label="Mean turns / tester" value={Math.round(meanTurns)} />
+        <StatChip label="Mean days active" value={Math.round(meanDaysActive)} />
+        <StatChip label="Safety events triggered" value={withSafety} />
+      </div>
+    </div>
+  );
+}
+
 function shortLabel(full: string): string {
   const map: Record<string, string> = {
     'Understand why I react': 'Und.',
@@ -293,15 +326,40 @@ function ScaleAggregateRow({ agg }: { agg: ScaleAggregate }) {
 }
 
 function TesterRow({ p }: { p: TesterPair }) {
+  const e = p.engagement;
   return (
     <>
       <tr className="border-t border-neutral-200 bg-neutral-50">
         <td className="px-2 py-1.5 font-medium" colSpan={2 + SCALES.length}>
-          <span className="text-[12px]">{p.email ?? '—'}</span>
-          <span className="text-[11px] text-neutral-500 ml-2">{p.code}</span>
-          <span className="text-[11px] text-neutral-500 ml-3">
-            Before {fmtDate(p.beforeAt)} · After {fmtDate(p.afterAt)}
-          </span>
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <span className="text-[12px]">{p.email ?? '—'}</span>
+            <span className="text-[11px] text-neutral-500">{p.code}</span>
+            <span className="text-[11px] text-neutral-500">
+              Before {fmtDate(p.beforeAt)} · After {fmtDate(p.afterAt)}
+            </span>
+            <span
+              className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                e.userTurnCount === 0
+                  ? 'bg-red-50 text-red-800 border-red-200'
+                  : 'bg-neutral-100 text-neutral-700 border-neutral-200'
+              }`}
+              title={
+                e.firstJourneyAt
+                  ? `First message ${fmtDate(e.firstJourneyAt)} · last ${fmtDate(e.lastJourneyAt)}`
+                  : 'Never opened Journey'
+              }
+            >
+              {e.userTurnCount} turns · {e.daysActive}d active
+            </span>
+            {e.safetyEventCount > 0 && (
+              <span
+                className="text-[11px] px-2 py-0.5 rounded-full border bg-amber-50 text-amber-800 border-amber-200"
+                title="Safety events triggered during the pilot arc"
+              >
+                {e.safetyEventCount} safety event{e.safetyEventCount === 1 ? '' : 's'}
+              </span>
+            )}
+          </div>
         </td>
       </tr>
       <tr className="border-b border-neutral-100">
