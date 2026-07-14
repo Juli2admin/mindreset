@@ -37,6 +37,7 @@ export const SCALES: Array<{
 
 export type TesterPair = {
   invitationId: string;
+  userId: string | null;
   code: string;
   email: string | null;
   beforeAt: Date | null;
@@ -48,6 +49,25 @@ export type TesterPair = {
   afterShifted: string | null;
   afterConfusingBoring: string | null;
   afterAnythingElse: string | null;
+  // Journey engagement — populated by attachJourneyEngagement().
+  // Absent (all zero / null) when the tester never opened the Journey.
+  engagement: JourneyEngagement;
+};
+
+export type JourneyEngagement = {
+  userTurnCount: number;
+  daysActive: number;
+  firstJourneyAt: Date | null;
+  lastJourneyAt: Date | null;
+  safetyEventCount: number;
+};
+
+const EMPTY_ENGAGEMENT: JourneyEngagement = {
+  userTurnCount: 0,
+  daysActive: 0,
+  firstJourneyAt: null,
+  lastJourneyAt: null,
+  safetyEventCount: 0,
 };
 
 export type ScaleAggregate = {
@@ -69,7 +89,8 @@ export type Summary = {
 
 /**
  * Load every pilot invitation that has at least one TesterResponse,
- * pivoted so before + after live on the same object.
+ * pivoted so before + after live on the same object. Journey
+ * engagement metrics are attached in a second pass.
  */
 export async function loadTesterPairs(): Promise<TesterPair[]> {
   const rows = await prisma.testerResponse.findMany({
@@ -78,6 +99,7 @@ export async function loadTesterPairs(): Promise<TesterPair[]> {
       invitation: {
         select: {
           code: true,
+          redeemedByUserId: true,
           redeemedByUser: { select: { email: true } },
         },
       },
@@ -90,6 +112,7 @@ export async function loadTesterPairs(): Promise<TesterPair[]> {
     if (!pair) {
       pair = {
         invitationId: r.invitationId,
+        userId: r.invitation.redeemedByUserId,
         code: r.invitation.code,
         email: r.invitation.redeemedByUser?.email ?? null,
         beforeAt: null,
@@ -107,6 +130,7 @@ export async function loadTesterPairs(): Promise<TesterPair[]> {
         afterShifted: null,
         afterConfusingBoring: null,
         afterAnythingElse: null,
+        engagement: { ...EMPTY_ENGAGEMENT },
       };
       byInvitation.set(r.invitationId, pair);
     }
@@ -152,7 +176,79 @@ export async function loadTesterPairs(): Promise<TesterPair[]> {
     }
   }
 
-  return Array.from(byInvitation.values());
+  const pairs = Array.from(byInvitation.values());
+  await attachJourneyEngagement(pairs);
+  return pairs;
+}
+
+/**
+ * Populate the `engagement` block on each pair with Journey usage
+ * metrics — user turn count, distinct days active, first / last
+ * message timestamps, and safety event count. Runs two aggregate
+ * queries scoped by userId, so O(2) queries regardless of pilot
+ * cohort size.
+ */
+async function attachJourneyEngagement(pairs: TesterPair[]): Promise<void> {
+  const userIds = Array.from(
+    new Set(pairs.map((p) => p.userId).filter((id): id is string => !!id)),
+  );
+  if (userIds.length === 0) return;
+
+  // Journey turn + timestamp aggregate. We count USER messages
+  // specifically — the assistant's replies are automatic given a
+  // user turn, so counting them double-counts engagement.
+  const journeyGrouped = await prisma.journeyMessage.groupBy({
+    by: ['userId'],
+    where: { userId: { in: userIds }, role: 'user' },
+    _count: { _all: true },
+    _min: { createdAt: true },
+    _max: { createdAt: true },
+  });
+  const journeyByUser = new Map<
+    string,
+    { count: number; first: Date | null; last: Date | null }
+  >();
+  for (const g of journeyGrouped) {
+    journeyByUser.set(g.userId, {
+      count: g._count._all,
+      first: g._min.createdAt ?? null,
+      last: g._max.createdAt ?? null,
+    });
+  }
+
+  // Distinct days active per user. Postgres DATE_TRUNC on the tz-
+  // aware timestamp; grouped by user + day, then counted. Kept as
+  // raw SQL because Prisma's groupBy can't project a computed date.
+  type DayRow = { userId: string; days_active: bigint };
+  const dayRows = await prisma.$queryRaw<DayRow[]>`
+    SELECT "userId", COUNT(DISTINCT DATE("createdAt"))::bigint AS days_active
+    FROM "JourneyMessage"
+    WHERE "userId" = ANY (${userIds}::text[]) AND "role" = 'user'
+    GROUP BY "userId"
+  `;
+  const daysByUser = new Map<string, number>();
+  for (const r of dayRows) daysByUser.set(r.userId, Number(r.days_active));
+
+  // Safety events per user.
+  const safetyGrouped = await prisma.safetyEvent.groupBy({
+    by: ['userId'],
+    where: { userId: { in: userIds } },
+    _count: { _all: true },
+  });
+  const safetyByUser = new Map<string, number>();
+  for (const g of safetyGrouped) safetyByUser.set(g.userId, g._count._all);
+
+  for (const p of pairs) {
+    if (!p.userId) continue;
+    const j = journeyByUser.get(p.userId);
+    p.engagement = {
+      userTurnCount: j?.count ?? 0,
+      daysActive: daysByUser.get(p.userId) ?? 0,
+      firstJourneyAt: j?.first ?? null,
+      lastJourneyAt: j?.last ?? null,
+      safetyEventCount: safetyByUser.get(p.userId) ?? 0,
+    };
+  }
 }
 
 /**

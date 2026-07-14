@@ -44,6 +44,13 @@ export async function GET() {
     'email',
     'before_submitted_at',
     'after_submitted_at',
+    // Journey engagement (PR ω3d) — user-turn count, distinct days
+    // active, first / last Journey timestamps, safety-event count.
+    'journey_user_turns',
+    'journey_days_active',
+    'journey_first_at',
+    'journey_last_at',
+    'safety_event_count',
     ...SCALES.flatMap((s) => [
       `${s.key}_before`,
       `${s.key}_after`,
@@ -64,6 +71,11 @@ export async function GET() {
       p.email,
       fmtDate(p.beforeAt),
       fmtDate(p.afterAt),
+      p.engagement.userTurnCount,
+      p.engagement.daysActive,
+      fmtDate(p.engagement.firstJourneyAt),
+      fmtDate(p.engagement.lastJourneyAt),
+      p.engagement.safetyEventCount,
       ...SCALES.flatMap((s) => {
         const b = p.scales[s.key].before;
         const a = p.scales[s.key].after;
