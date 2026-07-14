@@ -305,3 +305,19 @@ Match the reader's language exactly.`;
  */
 export const SESSION_COMPLETE_MARKER_RE =
   /\[\[SESSION_COMPLETE:(stabilised|red_flag|not_settled_close)\]\]/i;
+
+/**
+ * PR ψ5 (2026-07-14). Cross-session memory injection. The turn API
+ * loads StateModuleMemory for (userId, moduleId='anxiety') and hands
+ * it here; the assembler prepends a PRIOR ARC NOTES block so the AI
+ * carries continuity from earlier sessions in the same 30-day window.
+ * Returns the static prompt unchanged when no memory has been
+ * generated yet (first-ever session).
+ */
+export function assembleAnxietySystemPrompt(
+  memorySummary: string | null,
+): string {
+  if (!memorySummary) return ANXIETY_SYSTEM_PROMPT;
+  const memBlock = `# PRIOR ARC NOTES\n\nThe following is a running summary of your prior sessions with this\nreader on the Anxiety module (across the 30-day access window). Use\nit as context — you know what practice landed last time, what pattern\nkeeps returning. Do NOT read it back to the reader; do not quote it.\nRefer to it only when it helps you choose the next move.\n\n${memorySummary}\n\n---\n\n`;
+  return memBlock + ANXIETY_SYSTEM_PROMPT;
+}

@@ -304,3 +304,14 @@ before your text reaches them.
 # Language
 
 Match the reader's language exactly.`;
+
+/**
+ * PR ψ5 (2026-07-14). Cross-session memory injection.
+ */
+export function assembleLossOfSelfSystemPrompt(
+  memorySummary: string | null,
+): string {
+  if (!memorySummary) return LOSS_OF_SELF_SYSTEM_PROMPT;
+  const memBlock = `# PRIOR ARC NOTES\n\nThe following is a running summary of your prior sessions with this\nreader on the Loss of Self module (across the 30-day access window).\nUse it as context — you know whether naming or body-scan grounds\nthem best, what the dissociation shape tends to be. Do NOT read it\nback to the reader; do not quote it. Refer to it only when it helps\nyou choose the next move.\n\n${memorySummary}\n\n---\n\n`;
+  return memBlock + LOSS_OF_SELF_SYSTEM_PROMPT;
+}

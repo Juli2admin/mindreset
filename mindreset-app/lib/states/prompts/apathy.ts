@@ -308,3 +308,14 @@ before your text reaches them.
 # Language
 
 Match the reader's language exactly.`;
+
+/**
+ * PR ψ5 (2026-07-14). Cross-session memory injection.
+ */
+export function assembleApathySystemPrompt(
+  memorySummary: string | null,
+): string {
+  if (!memorySummary) return APATHY_SYSTEM_PROMPT;
+  const memBlock = `# PRIOR ARC NOTES\n\nThe following is a running summary of your prior sessions with this\nreader on the Apathy module (across the 30-day access window). Use\nit as context — you know which tiny move landed last time, what the\nshutdown depth tends to be. Do NOT read it back to the reader; do\nnot quote it. Refer to it only when it helps you choose the next\nmove.\n\n${memorySummary}\n\n---\n\n`;
+  return memBlock + APATHY_SYSTEM_PROMPT;
+}

@@ -304,3 +304,14 @@ before your text reaches them.
 # Language
 
 Match the reader's language exactly.`;
+
+/**
+ * PR ψ5 (2026-07-14). Cross-session memory injection.
+ */
+export function assembleInnerEmptinessSystemPrompt(
+  memorySummary: string | null,
+): string {
+  if (!memorySummary) return INNER_EMPTINESS_SYSTEM_PROMPT;
+  const memBlock = `# PRIOR ARC NOTES\n\nThe following is a running summary of your prior sessions with this\nreader on the Inner Emptiness module (across the 30-day access\nwindow). Use it as context — you know which micro-warmth landed\nlast time, what the grey shape tends to be. Do NOT read it back to\nthe reader; do not quote it. Refer to it only when it helps you\nchoose the next move.\n\n${memorySummary}\n\n---\n\n`;
+  return memBlock + INNER_EMPTINESS_SYSTEM_PROMPT;
+}
