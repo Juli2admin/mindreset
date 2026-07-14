@@ -9,59 +9,68 @@
 //
 // PR ψ4 (2026-07-13). The AI may also append a navigation-advisor
 // marker BEFORE the SESSION_COMPLETE marker to suggest a sibling
-// State module the reader might benefit from next:
-//   [[SUGGEST:anxiety]] | [[SUGGEST:apathy]] |
-//   [[SUGGEST:loss_of_self]] | [[SUGGEST:inner_emptiness]]
-// Only allowed values are the four live State moduleIds — anything
-// else is ignored (defence against the AI hallucinating a Theme slug
-// the app doesn't ship yet).
+// module the reader might benefit from next.
 //
-// The turn API strips BOTH markers before the text reaches the reader,
-// same pattern as Journey's <state-report> block. When present, the
-// turn API sets StateSession.completedAt + completionReason, and
-// emits a state-meta sentinel in the stream tail so the client can
-// render the suggested-module card in the session-complete UI.
+// PR χ3 (2026-07-14). The SUGGEST allowlist now accepts BOTH State
+// module IDs AND Theme module IDs — the slug spaces are disjoint so
+// we can determine `kind` from the slug alone.
+//   [[SUGGEST:anxiety]] | [[SUGGEST:apathy]] |
+//   [[SUGGEST:loss_of_self]] | [[SUGGEST:inner_emptiness]]   (state)
+//   [[SUGGEST:shame]] | [[SUGGEST:money]] | [[SUGGEST:body]] |
+//   [[SUGGEST:family]] | [[SUGGEST:self_realisation]]        (theme)
+//
+// The turn API strips BOTH markers before the text reaches the reader.
 
 import { SESSION_COMPLETE_MARKER_RE } from './prompts/anxiety';
 import { STATE_MODULE_IDS, type StateModuleId } from './modules';
+import { THEME_MODULE_IDS, type ThemeModuleId } from '@/lib/themes/modules';
 
 export type StateCompletionReason =
   | 'stabilised'
   | 'red_flag'
   | 'not_settled_close';
 
+export type SuggestedModule =
+  | { kind: 'state'; moduleId: StateModuleId }
+  | { kind: 'theme'; moduleId: ThemeModuleId };
+
 export type StateCompletionResult =
   | {
       completed: false;
       visibleText: string;
-      suggestedModuleId: StateModuleId | null;
+      suggestedModule: SuggestedModule | null;
     }
   | {
       completed: true;
       reason: StateCompletionReason;
       visibleText: string;
-      suggestedModuleId: StateModuleId | null;
+      suggestedModule: SuggestedModule | null;
     };
 
 const SUGGEST_MARKER_RE = /\[\[SUGGEST:([a-z_]+)\]\]/i;
 
-function extractSuggestion(text: string): StateModuleId | null {
+function extractSuggestion(text: string): SuggestedModule | null {
   const match = text.match(SUGGEST_MARKER_RE);
   if (!match) return null;
   const raw = match[1].toLowerCase();
-  return (STATE_MODULE_IDS as readonly string[]).includes(raw)
-    ? (raw as StateModuleId)
-    : null;
+  if ((STATE_MODULE_IDS as readonly string[]).includes(raw)) {
+    return { kind: 'state', moduleId: raw as StateModuleId };
+  }
+  if ((THEME_MODULE_IDS as readonly string[]).includes(raw)) {
+    return { kind: 'theme', moduleId: raw as ThemeModuleId };
+  }
+  return null;
 }
 
 /**
  * Scan a fully-streamed assistant message for the completion marker
  * and the optional suggestion marker. Returns the visibleText with
  * both markers stripped, the completion reason if the session ended,
- * and the suggested next module if the AI included a valid one.
+ * and the suggested next module (state OR theme) if the AI included
+ * a valid one.
  */
 export function detectCompletion(assistantText: string): StateCompletionResult {
-  const suggestedModuleId = extractSuggestion(assistantText);
+  const suggestedModule = extractSuggestion(assistantText);
   const completionMatch = assistantText.match(SESSION_COMPLETE_MARKER_RE);
 
   // Strip BOTH markers from what the reader sees.
@@ -71,9 +80,9 @@ export function detectCompletion(assistantText: string): StateCompletionResult {
     .trimEnd();
 
   if (!completionMatch) {
-    return { completed: false, visibleText, suggestedModuleId };
+    return { completed: false, visibleText, suggestedModule };
   }
 
   const reason = completionMatch[1].toLowerCase() as StateCompletionReason;
-  return { completed: true, reason, visibleText, suggestedModuleId };
+  return { completed: true, reason, visibleText, suggestedModule };
 }

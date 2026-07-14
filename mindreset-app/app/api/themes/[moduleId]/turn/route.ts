@@ -296,15 +296,16 @@ export async function POST(
         const streamCompletion = detectCompletion(fullText);
         if (
           streamCompletion.completed ||
-          streamCompletion.suggestedModuleId
+          streamCompletion.suggestedModule
         ) {
           const meta = JSON.stringify({
             completed: streamCompletion.completed,
             ...(streamCompletion.completed && {
               reason: streamCompletion.reason,
             }),
-            ...(streamCompletion.suggestedModuleId && {
-              suggested: streamCompletion.suggestedModuleId,
+            ...(streamCompletion.suggestedModule && {
+              suggested: streamCompletion.suggestedModule.moduleId,
+              suggestedKind: streamCompletion.suggestedModule.kind,
             }),
           });
           controller.enqueue(encoder.encode(`\n\n<<<STATE_META:${meta}>>>`));

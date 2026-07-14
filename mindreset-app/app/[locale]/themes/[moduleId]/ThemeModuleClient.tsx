@@ -20,10 +20,8 @@ import {
   formatVoiceTime,
   type VoiceErrorCode,
 } from '@/lib/voice/useVoiceInput';
-import {
-  isValidStateModuleId,
-  type StateModuleId,
-} from '@/lib/states/modules';
+import { isValidStateModuleId } from '@/lib/states/modules';
+import { isValidThemeModuleId } from '@/lib/themes/modules';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -31,27 +29,48 @@ const TEXTAREA_MIN_HEIGHT = 48;
 const TEXTAREA_MAX_HEIGHT = 168;
 const MAX_RECORDING_SECONDS = 120;
 
-// Meta sentinel emitted at end of stream by /api/themes/[moduleId]/turn
-// when the AI closes a session or included a valid SUGGEST marker.
+// Meta sentinel emitted at end of stream by /api/themes/[moduleId]/turn.
+// PR χ3 — sentinel now carries suggestedKind so the reader can be sent
+// to either /states/<slug> or /themes/<slug>.
 const STATE_META_RE = /\n*<<<STATE_META:(\{[^>]*\})>>>\n*/g;
+
+type ParsedSuggestion =
+  | { kind: 'state'; moduleId: string }
+  | { kind: 'theme'; moduleId: string }
+  | null;
 
 function extractStateMeta(text: string): {
   cleanedText: string;
-  suggestedModuleId: StateModuleId | null;
+  suggestion: ParsedSuggestion;
 } {
-  let suggestedModuleId: StateModuleId | null = null;
+  let suggestion: ParsedSuggestion = null;
   const cleanedText = text.replace(STATE_META_RE, (_full, jsonStr) => {
     try {
-      const parsed: { suggested?: string } = JSON.parse(jsonStr);
-      if (parsed.suggested && isValidStateModuleId(parsed.suggested)) {
-        suggestedModuleId = parsed.suggested;
+      const parsed: { suggested?: string; suggestedKind?: string } =
+        JSON.parse(jsonStr);
+      if (parsed.suggested) {
+        if (
+          parsed.suggestedKind === 'theme' &&
+          isValidThemeModuleId(parsed.suggested)
+        ) {
+          suggestion = { kind: 'theme', moduleId: parsed.suggested };
+        } else if (
+          parsed.suggestedKind === 'state' &&
+          isValidStateModuleId(parsed.suggested)
+        ) {
+          suggestion = { kind: 'state', moduleId: parsed.suggested };
+        } else if (isValidStateModuleId(parsed.suggested)) {
+          suggestion = { kind: 'state', moduleId: parsed.suggested };
+        } else if (isValidThemeModuleId(parsed.suggested)) {
+          suggestion = { kind: 'theme', moduleId: parsed.suggested };
+        }
       }
     } catch {
       // Malformed sentinel — swallow.
     }
     return '';
   });
-  return { cleanedText, suggestedModuleId };
+  return { cleanedText, suggestion };
 }
 
 export type HistoryMessage = {
@@ -76,14 +95,14 @@ export default function ThemeModuleClient({
   locale,
 }: Props) {
   const t = useTranslations('Themes');
+  const tStates = useTranslations('States');
   const tErr = useTranslations('Errors');
   const { palette: PALETTE } = useTheme();
 
   const [messages, setMessages] = useState<UIMessage[]>(history);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [suggestedModuleId, setSuggestedModuleId] =
-    useState<StateModuleId | null>(null);
+  const [suggestion, setSuggestion] = useState<ParsedSuggestion>(null);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -132,7 +151,7 @@ export default function ThemeModuleClient({
     voice.clearError();
     // A new message resumes the arc — clear any prior suggestion card
     // so it doesn't linger from a previous session close.
-    setSuggestedModuleId(null);
+    setSuggestion(null);
 
     const userMsgId = crypto.randomUUID();
     const assistantMsgId = crypto.randomUUID();
@@ -182,9 +201,7 @@ export default function ThemeModuleClient({
             if (m.id !== assistantMsgId) return m;
             const combined = m.content + chunk;
             const meta = extractStateMeta(combined);
-            if (meta.suggestedModuleId) {
-              setSuggestedModuleId(meta.suggestedModuleId);
-            }
+            if (meta.suggestion) setSuggestion(meta.suggestion);
             return { ...m, content: meta.cleanedText };
           }),
         );
@@ -262,46 +279,18 @@ export default function ThemeModuleClient({
             />
           ))}
 
-          {suggestedModuleId && (
-            <div
-              className="rounded-2xl p-5"
-              style={{
-                background: PALETTE.bgCard,
-                border: `1px solid ${PALETTE.border}`,
-              }}
-            >
-              <p
-                className="text-[11px] uppercase tracking-[0.22em] mb-2"
-                style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-              >
-                {t('suggestedKicker')}
-              </p>
-              <p
-                className="text-[14px] leading-[1.6] mb-3"
-                style={{ color: PALETTE.text, fontFamily: SANS }}
-              >
-                {t(`suggestedIntro.${suggestedModuleId}` as
-                  | 'suggestedIntro.anxiety'
-                  | 'suggestedIntro.apathy'
-                  | 'suggestedIntro.loss_of_self'
-                  | 'suggestedIntro.inner_emptiness')}
-              </p>
-              <Link
-                href={`/states/${suggestedModuleId}`}
-                className="inline-flex items-center gap-1 text-[13px] font-medium"
-                style={{ color: PALETTE.accent, fontFamily: SANS }}
-              >
-                <span>
-                  {t(`suggestedName.${suggestedModuleId}` as
-                    | 'suggestedName.anxiety'
-                    | 'suggestedName.apathy'
-                    | 'suggestedName.loss_of_self'
-                    | 'suggestedName.inner_emptiness')}
-                </span>
-                <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          )}
+          {suggestion &&
+            !(
+              suggestion.kind === 'theme' &&
+              suggestion.moduleId === moduleId
+            ) && (
+              <SuggestionCard
+                suggestion={suggestion}
+                t={t}
+                tStates={tStates}
+                palette={PALETTE}
+              />
+            )}
 
           <div ref={messagesEndRef} aria-hidden="true" />
         </div>
@@ -460,6 +449,72 @@ export default function ThemeModuleClient({
         </div>
       </div>
     </main>
+  );
+}
+
+function SuggestionCard({
+  suggestion,
+  t,
+  tStates,
+  palette,
+}: {
+  suggestion: NonNullable<ParsedSuggestion>;
+  t: ReturnType<typeof useTranslations<'Themes'>>;
+  tStates: ReturnType<typeof useTranslations<'States'>>;
+  palette: ReturnType<typeof useTheme>['palette'];
+}) {
+  const isState = suggestion.kind === 'state';
+  const href = isState
+    ? (`/states/${suggestion.moduleId}` as const)
+    : (`/themes/${suggestion.moduleId}` as const);
+  const moduleName = isState
+    ? tStates(`modules.${suggestion.moduleId}.name` as
+        | 'modules.anxiety.name'
+        | 'modules.apathy.name'
+        | 'modules.loss_of_self.name'
+        | 'modules.inner_emptiness.name')
+    : t(`modules.${suggestion.moduleId}.name` as
+        | 'modules.shame.name'
+        | 'modules.money.name'
+        | 'modules.body.name'
+        | 'modules.family.name'
+        | 'modules.self_realisation.name');
+  const intro = isState
+    ? t(`suggestedIntro.${suggestion.moduleId}` as
+        | 'suggestedIntro.anxiety'
+        | 'suggestedIntro.apathy'
+        | 'suggestedIntro.loss_of_self'
+        | 'suggestedIntro.inner_emptiness')
+    : t('suggestedThemeIntro', { moduleName });
+  return (
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: palette.bgCard,
+        border: `1px solid ${palette.border}`,
+      }}
+    >
+      <p
+        className="text-[11px] uppercase tracking-[0.22em] mb-2"
+        style={{ color: palette.textMuted, fontFamily: SANS }}
+      >
+        {t('suggestedKicker')}
+      </p>
+      <p
+        className="text-[14px] leading-[1.6] mb-3"
+        style={{ color: palette.text, fontFamily: SANS }}
+      >
+        {intro}
+      </p>
+      <Link
+        href={href}
+        className="inline-flex items-center gap-1 text-[13px] font-medium"
+        style={{ color: palette.accent, fontFamily: SANS }}
+      >
+        <span>{moduleName}</span>
+        <span aria-hidden="true">→</span>
+      </Link>
+    </div>
   );
 }
 

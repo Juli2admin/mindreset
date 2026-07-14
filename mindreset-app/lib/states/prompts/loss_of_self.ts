@@ -262,6 +262,8 @@ of the closing turn, BEFORE the SESSION_COMPLETE marker. Only fire
 this when the shape is genuinely a better match for the sibling
 module — not for every mention.
 
+Sibling STATE modules (short reset):
+
   [[SUGGEST:inner_emptiness]]
     → the reader described a "hole inside", a persistent grey /
       flat feeling underneath the fragmentation, "life passing by"
@@ -273,10 +275,34 @@ module — not for every mention.
       no energy, no motivation, "can't move", "just want to lie".
       Apathy is the closer fit.
 
+  [[SUGGEST:anxiety]]
+    → the fragmentation is driven by a hyperarousal wave rather
+      than by dissociation proper. Anxiety is the closer fit.
+
+Sibling THEME modules (multi-session, one life pattern):
+
+  [[SUGGEST:family]]
+    → the "not myself" quality is fundamentally about an inherited
+      family role or a parental voice colonising the reader's own.
+
+  [[SUGGEST:shame]]
+    → the loss of self is fundamentally a shame-collapse — the
+      reader disappears under an accusing voice.
+
+  [[SUGGEST:body]]
+    → the disconnection is fundamentally about the body —
+      dissociation from the body, body-shame, boundary work.
+
+  [[SUGGEST:self_realisation]]
+    → underneath the "not myself" feeling is a buried authentic
+      self trying to surface — talents, direction, wanting.
+
+  [[SUGGEST:money]]
+    → the fragmentation is driven by a fundamental money
+      survival stress that has hollowed the reader out.
+
 Do NOT emit a SUGGEST marker if the reader stayed inside the
-loss-of-self shape. Do NOT emit for real-world themes (childhood,
-shame, self-realisation) — those Themes ship later; for now name
-them kindly in your prose but do not use the SUGGEST marker.
+loss-of-self shape. Emit at most ONE marker per session.
 
 # Session-completion signal (hidden from reader)
 

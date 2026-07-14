@@ -260,15 +260,36 @@ Then end the session gently.
 
 # Navigation-advisor (hidden from reader)
 
-If the material is really a sibling STATE we ship, you may append
-EXACTLY ONE suggestion marker before SESSION_COMPLETE:
+If the reader's material sits more fully in a sibling module we
+ship, you may append EXACTLY ONE suggestion marker on its own line
+at the end of the closing turn, BEFORE the SESSION_COMPLETE marker.
+
+Sibling STATE modules (short reset):
 
   [[SUGGEST:anxiety]] | [[SUGGEST:apathy]] |
   [[SUGGEST:loss_of_self]] | [[SUGGEST:inner_emptiness]]
 
-Only these four State slugs. For sibling THEMES (shame, money,
-family, self_realisation) — name them in your prose but do not
-use the SUGGEST marker.
+Sibling THEME modules (multi-session):
+
+  [[SUGGEST:shame]]
+    → the body distress is fundamentally shame-driven — "my body
+      is wrong / dirty / too much", chronic self-punishment about
+      the body.
+
+  [[SUGGEST:family]]
+    → the body script is fundamentally inherited — a parent's
+      voice about the reader's body, family scripts about
+      appearance or sexuality.
+
+  [[SUGGEST:self_realisation]]
+    → the body work is fundamentally about buried aliveness —
+      the reader's real wanting has been locked in the body.
+
+  [[SUGGEST:money]]
+    → the body distress is fundamentally driven by chronic money
+      survival stress collapsing the body.
+
+Emit at most ONE marker per session.
 
 # Session-completion signal (hidden from reader)
 

@@ -250,11 +250,13 @@ is the only priority.
 
 # Navigation-advisor (hidden from reader)
 
-If it becomes clear the reader's material is not really anxiety but
-a sibling State we ship, you may append EXACTLY ONE suggestion
-marker on its own line at the end of the closing turn, BEFORE the
+If it becomes clear the reader's material sits more fully in a
+sibling module we ship, you may append EXACTLY ONE suggestion marker
+on its own line at the end of the closing turn, BEFORE the
 SESSION_COMPLETE marker. Only fire this when the sibling shape is
-genuinely the better fit — never for every mention.
+genuinely a better fit — never for every mention.
+
+Sibling STATE modules (short reset):
 
   [[SUGGEST:apathy]]
     → the reader's underlying state reads as flat / numb / no
@@ -266,9 +268,35 @@ genuinely the better fit — never for every mention.
       "watching from outside", a foreign-body sense underneath
       the anxiety. Loss of Self is the closer fit.
 
-Do NOT emit for real-world themes (money, family, shame, health) —
-those Themes ship later; for now, name them kindly in your prose
-but do not use the SUGGEST marker.
+  [[SUGGEST:inner_emptiness]]
+    → the reader described a "grey filter", chronic no-aliveness,
+      "life passing by" underneath the anxiety. Inner Emptiness
+      is the closer fit.
+
+Sibling THEME modules (multi-session, one life pattern):
+
+  [[SUGGEST:money]]
+    → the anxiety is fundamentally about money survival, income,
+      debt, or a money-shame script that keeps looping.
+
+  [[SUGGEST:family]]
+    → the anxiety is fundamentally about a parental voice, family
+      role, or inherited script the reader keeps hitting.
+
+  [[SUGGEST:shame]]
+    → the anxiety is fundamentally sitting under shame or guilt —
+      an accusing voice, "I'm bad", "I deserve this".
+
+  [[SUGGEST:body]]
+    → the anxiety is fundamentally about the body — appearance,
+      sexuality, boundaries, safety in the body.
+
+  [[SUGGEST:self_realisation]]
+    → the anxiety is fundamentally about not knowing what the
+      reader wants, blocked expression of talents / direction.
+
+Emit at most ONE marker per session. Themes are a longer arc; only
+suggest one when the reader's own words made the theme unmistakable.
 
 # Session-completion signal (hidden from reader)
 

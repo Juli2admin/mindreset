@@ -311,15 +311,20 @@ export async function POST(
         const streamCompletion = detectCompletion(fullText);
         if (
           streamCompletion.completed ||
-          streamCompletion.suggestedModuleId
+          streamCompletion.suggestedModule
         ) {
+          // Sentinel payload. PR χ3 (2026-07-14) — the reader can now
+          // be sent to either a sibling State (`/states/<slug>`) or
+          // a Theme (`/themes/<slug>`). The kind is authoritative;
+          // the client reads it to build the correct href.
           const meta = JSON.stringify({
             completed: streamCompletion.completed,
             ...(streamCompletion.completed && {
               reason: streamCompletion.reason,
             }),
-            ...(streamCompletion.suggestedModuleId && {
-              suggested: streamCompletion.suggestedModuleId,
+            ...(streamCompletion.suggestedModule && {
+              suggested: streamCompletion.suggestedModule.moduleId,
+              suggestedKind: streamCompletion.suggestedModule.kind,
             }),
           });
           controller.enqueue(encoder.encode(`\n\n<<<STATE_META:${meta}>>>`));

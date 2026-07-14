@@ -18,10 +18,12 @@ const SERIF = TOKENS.serif;
 // drives render: 'open' = Open badge + link, 'sub' = annual/monthly price
 // line, 'oneOff' = single price line.
 //
-// States, Themes and The Journey are rendered as separate sections beneath
-// the MiniMind tier grid (mirrors /home dashboard structure). Each module
-// shows title + price + "available soon" badge until PR3 wires per-module
-// Stripe checkout; price IDs for those 11 products do not exist yet.
+// The Journey is rendered as its own section beneath the MiniMind tier
+// grid with a two-button buy row (one-off / installment). States and
+// Themes each get a single catalogue card that points at the dedicated
+// /states and /themes pages where the per-module buy flow lives — the
+// grid used to live here too, but it duplicated the catalogues and made
+// copy edits land in two places.
 type TierData =
   | { id: 'freeTaster'; kind: 'open'; href: '/minimind' }
   | { id: 'miniMindEssential' | 'miniMindExtended'; kind: 'sub'; monthly: number; annual: number }
@@ -33,10 +35,6 @@ const TIERS: TierData[] = [
   { id: 'miniMindExtended', kind: 'sub', monthly: 24.99, annual: 209 },
   { id: 'topUp', kind: 'oneOff', price: 4.99 },
 ];
-
-// Mirrors HomeClient — same module IDs resolve same titles via Home namespace.
-const STATE_IDS = ['anxiety', 'lowEnergy', 'comeBack', 'empty'] as const;
-const THEME_IDS = ['money', 'body', 'family', 'shame', 'selfRealisation'] as const;
 
 type Props = {
   currentTier: string | null;
@@ -461,141 +459,95 @@ export default function PricingClient({
           </div>
         </div>
 
-        {/* Coming soon — wrapper around States & Themes, in-development
-            sections whose content delivery is Block C. The Journey used
-            to sit here too but was moved above this wrapper on 2026-07-03
-            because it is buyable now. Visually understated to keep the
-            actively-buyable tiers above the fold and signal these are not
-            yet open without making the page look unfinished. */}
-        <div
-          className="mt-24 pt-10 opacity-90"
-          style={{ borderTop: `1px solid ${PALETTE.border}` }}
-        >
-          <h2
-            className="text-[14px] uppercase tracking-[0.22em] mb-2"
-            style={{ color: PALETTE.textHint, fontWeight: 500, fontFamily: SANS }}
-          >
-            {t('comingSoon')}
-          </h2>
-          <p
-            className="text-[13px] leading-[1.65] mb-10"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-          >
-            {t('comingSoonIntro')}
-          </p>
-
-        {/* Your States — 4 individually-priced modules. Cards are
-            informational until PR3 wires per-module Stripe checkout. */}
-        <div className="mb-10">
-          <div
-            className="text-[11px] uppercase tracking-[0.22em] mb-3"
-            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
-          >
-            {tHome('states.kicker')}
-          </div>
-          <p
-            className="text-[14px] leading-[1.65] mb-6"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-          >
-            {tHome('states.intro')}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {STATE_IDS.map((id) => (
-              <div
-                key={id}
-                className="rounded-lg p-5"
+        {/* States & Themes — both catalogues are live (Block B webhooks +
+            per-module chat pages ship). The old "Coming soon" wrapper was
+            removed in PR χ3 (2026-07-14) once every module became buyable.
+            /pricing now points at the dedicated catalogues where the buy
+            flow lives — one card per section instead of duplicating the
+            grid, so a copy edit only lands in one place. */}
+        <div className="mt-24 pt-10" style={{ borderTop: `1px solid ${PALETTE.border}` }}>
+          {/* States catalogue card */}
+          <div className="mb-6">
+            <div
+              className="text-[11px] uppercase tracking-[0.22em] mb-3"
+              style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+            >
+              {tHome('states.kicker')}
+            </div>
+            <div
+              className="rounded-lg p-6"
+              style={{
+                background: PALETTE.bgCard,
+                border: `1px solid ${PALETTE.border}`,
+              }}
+            >
+              <h3
+                className="text-[20px] leading-[1.25] mb-2"
+                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+              >
+                {t('states.cardTitle')}
+              </h3>
+              <p
+                className="text-[13px] leading-[1.65] mb-4"
+                style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+              >
+                {t('states.cardBody')}
+              </p>
+              <Link
+                href="/states"
+                className="inline-block text-[13px]"
                 style={{
-                  background: PALETTE.bgCard,
-                  border: `1px solid ${PALETTE.border}`,
+                  color: PALETTE.accent,
+                  fontFamily: SANS,
+                  fontWeight: 500,
                 }}
               >
-                <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3
-                    className="text-[16px] leading-[1.3]"
-                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-                  >
-                    {tHome(`states.modules.${id}` as 'states.modules.anxiety')}
-                  </h3>
-                  <span
-                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                    style={{
-                      background: PALETTE.bgSubtle,
-                      color: PALETTE.textHint,
-                      border: `1px solid ${PALETTE.border}`,
-                      fontFamily: SANS,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {tHome('availableSoon')}
-                  </span>
-                </div>
-                <p
-                  className="text-[12px]"
-                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-                >
-                  {tHome('modulePriceFormat')}
-                </p>
-              </div>
-            ))}
+                {t('states.cardCta')}
+              </Link>
+            </div>
           </div>
-        </div>
 
-        {/* Your Themes — 5 individually-priced modules. */}
-        <div className="mb-10">
-          <div
-            className="text-[11px] uppercase tracking-[0.22em] mb-3"
-            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
-          >
-            {tHome('themes.kicker')}
-          </div>
-          <p
-            className="text-[14px] leading-[1.65] mb-6"
-            style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-          >
-            {tHome('themes.intro')}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {THEME_IDS.map((id) => (
-              <div
-                key={id}
-                className="rounded-lg p-5"
+          {/* Themes catalogue card */}
+          <div className="mb-6">
+            <div
+              className="text-[11px] uppercase tracking-[0.22em] mb-3"
+              style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+            >
+              {tHome('themes.kicker')}
+            </div>
+            <div
+              className="rounded-lg p-6"
+              style={{
+                background: PALETTE.bgCard,
+                border: `1px solid ${PALETTE.border}`,
+              }}
+            >
+              <h3
+                className="text-[20px] leading-[1.25] mb-2"
+                style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
+              >
+                {t('themes.cardTitle')}
+              </h3>
+              <p
+                className="text-[13px] leading-[1.65] mb-4"
+                style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+              >
+                {t('themes.cardBody')}
+              </p>
+              <Link
+                href="/themes"
+                className="inline-block text-[13px]"
                 style={{
-                  background: PALETTE.bgCard,
-                  border: `1px solid ${PALETTE.border}`,
+                  color: PALETTE.accent,
+                  fontFamily: SANS,
+                  fontWeight: 500,
                 }}
               >
-                <div className="flex items-start justify-between gap-3 mb-1">
-                  <h3
-                    className="text-[16px] leading-[1.3]"
-                    style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
-                  >
-                    {tHome(`themes.modules.${id}` as 'themes.modules.money')}
-                  </h3>
-                  <span
-                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                    style={{
-                      background: PALETTE.bgSubtle,
-                      color: PALETTE.textHint,
-                      border: `1px solid ${PALETTE.border}`,
-                      fontFamily: SANS,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {tHome('availableSoon')}
-                  </span>
-                </div>
-                <p
-                  className="text-[12px]"
-                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-                >
-                  {tHome('modulePriceFormat')}
-                </p>
-              </div>
-            ))}
+                {t('themes.cardCta')}
+              </Link>
+            </div>
           </div>
         </div>
-
-        </div>{/* /Coming soon wrapper */}
 
         {checkoutError && (
           <p
