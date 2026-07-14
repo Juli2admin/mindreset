@@ -27,16 +27,24 @@ const PRICE_ENV_VARS = {
   // cadence (Journey pricing v3, PR #204).
   journeyInstallment: ['STRIPE_PRICE_JOURNEY_INSTALLMENT', 'STRIPE_PRICE_JOURNEY_WEEKLY'],
 
-  // State modules — 30-day access, £59 non-subscriber / £29 subscriber.
-  // ONE product per state; subscribers get STRIPE_COUPON_MODULE (£30 off)
-  // applied at checkout. Env-var slugs mirror the Stripe dashboard product
-  // names, which differ from the code-side moduleId (apathy → LOW_ENERGY,
-  // loss_of_self → COME_BACK, inner_emptiness → EMPTY). See
-  // lib/states/modules.ts::STATE_MODULES for the mapping.
+  // State modules — 30-day access, £29 flat (PR χ0, 2026-07-13).
+  // Stripe products stay at £59 face; STRIPE_COUPON_MODULE is applied
+  // for every buyer at checkout. Env-var slugs mirror the Stripe
+  // dashboard product names, which differ from the code-side moduleId
+  // (apathy → LOW_ENERGY, loss_of_self → COME_BACK, inner_emptiness →
+  // EMPTY). See lib/states/modules.ts::STATE_MODULES.
   state_anxiety:         ['STRIPE_PRICE_STATE_ANXIETY'],
   state_apathy:          ['STRIPE_PRICE_STATE_LOW_ENERGY'],
   state_loss_of_self:    ['STRIPE_PRICE_STATE_COME_BACK'],
   state_inner_emptiness: ['STRIPE_PRICE_STATE_EMPTY'],
+
+  // Theme modules — 30-day access, £59 flat (no coupon applied).
+  // One product per theme; env-var slugs mirror Stripe dashboard.
+  theme_shame:            ['STRIPE_PRICE_THEME_SHAME'],
+  theme_money:            ['STRIPE_PRICE_THEME_MONEY'],
+  theme_body:             ['STRIPE_PRICE_THEME_BODY'],
+  theme_family:           ['STRIPE_PRICE_THEME_FAMILY'],
+  theme_self_realisation: ['STRIPE_PRICE_THEME_SELF_REALISATION'],
 } as const;
 
 /**

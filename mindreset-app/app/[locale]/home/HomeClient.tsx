@@ -22,6 +22,20 @@ const SERIF = TOKENS.serif;
 const STATE_IDS = ['anxiety', 'lowEnergy', 'comeBack', 'empty'] as const;
 const THEME_IDS = ['money', 'body', 'family', 'shame', 'selfRealisation'] as const;
 
+// Display tile ID → code-side moduleId slug (matches lib/themes/modules.ts).
+// PR χ1 (2026-07-13). All 5 tiles link into /themes/{moduleId}; the
+// server route redirects to the /themes catalogue when the user
+// doesn't have access (Buy CTA lives there). Only Shame has a working
+// prompt today — the other 4 catalogue tiles carry a Roadmap badge so
+// buyers aren't surprised until PR χ2 wires the other prompts.
+const THEME_TILE_TO_MODULE_ID: Record<(typeof THEME_IDS)[number], string> = {
+  money: 'money',
+  body: 'body',
+  family: 'family',
+  shame: 'shame',
+  selfRealisation: 'self_realisation',
+};
+
 // Display-side tile IDs (used for i18n lookup + STATE_IDS above) don't
 // match the code-side moduleId slugs the /states/{moduleId} route expects
 // (apathy / loss_of_self / inner_emptiness). This map bridges the two.
@@ -399,9 +413,10 @@ export default function HomeClient({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {THEME_IDS.map((id) => (
-              <div
+              <Link
                 key={id}
-                className="rounded-lg p-5"
+                href={`/themes/${THEME_TILE_TO_MODULE_ID[id]}`}
+                className="rounded-lg p-5 block hover:opacity-90 transition-opacity"
                 style={{
                   background: PALETTE.bgCard,
                   border: `1px solid ${PALETTE.border}`,
@@ -415,16 +430,11 @@ export default function HomeClient({
                     {t(`themes.modules.${id}` as 'themes.modules.money')}
                   </h3>
                   <span
-                    className="text-[10px] uppercase tracking-[0.15em] h-6 px-3 rounded-full inline-flex items-center whitespace-nowrap shrink-0"
-                    style={{
-                      background: PALETTE.bgSubtle,
-                      color: PALETTE.textHint,
-                      border: `1px solid ${PALETTE.border}`,
-                      fontFamily: SANS,
-                      fontWeight: 500,
-                    }}
+                    className="text-[16px] leading-none shrink-0"
+                    style={{ color: PALETTE.accent, fontFamily: SANS }}
+                    aria-hidden="true"
                   >
-                    {t('availableSoon')}
+                    →
                   </span>
                 </div>
                 <p
@@ -433,7 +443,7 @@ export default function HomeClient({
                 >
                   {t('modulePriceFormat')}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
