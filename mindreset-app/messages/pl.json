@@ -1,4 +1,77 @@
 {
+  "Themes": {
+    "metaTitle": "Themes — deep work on the patterns that matter · MindReset.ai",
+    "metaDescription": "Multi-session deep modules for shame, money, body, family scripts, and self-realisation. Trauma-informed, self-guided, 30-day access per theme.",
+    "kicker": "THEMES",
+    "h1Title": "One life pattern at a time.",
+    "h1Subtitle": "Deeper than a quick reset — multi-session work on the patterns that repeat. Same AI depth as The Journey, focused on the one theme you're ready to look at. Each theme is a full 30-day arc.",
+    "buyCta": "Buy — {price}",
+    "openCta": "Open module →",
+    "signUpToBuy": "Sign up to buy",
+    "opening": "Opening…",
+    "accessNote": "30 days of access. Come back as often as you need.",
+    "roadmapBadge": "ROADMAP",
+    "safetyNote": "These modules are self-help wellbeing tools — not therapy, not a crisis service. If you are in immediate distress, please contact your local emergency service or a national helpline in your country.",
+    "modules": {
+      "shame": {
+        "name": "Shame and Guilt",
+        "tagline": "Ease the self-punishment. Restore a felt sense of worth."
+      },
+      "money": {
+        "name": "Money and Abundance",
+        "tagline": "Rewrite the scripts around money. Steady the body around it."
+      },
+      "body": {
+        "name": "Body and Sexuality",
+        "tagline": "Reconcile with the body. Safe pleasure. Real boundaries."
+      },
+      "family": {
+        "name": "Parents and Family Scripts",
+        "tagline": "Gently rewrite what you inherited. Keep the good, return the rest."
+      },
+      "self_realisation": {
+        "name": "Self-Realisation",
+        "tagline": "Find your strengths. Take one real step toward your talents."
+      }
+    },
+    "prompts": {
+      "shame": {
+        "greeting": "I'm here with you. You don't have to earn being here. When you're ready, tell me what's showing up — a memory, a voice in your head, a weight in the chest. If you can, an intensity 0–10 (0 = weightless, 10 = crushing) and whose voice is doing the accusing, if you can tell. If you can't tell, that's fine — we can find it together."
+      }
+    },
+    "inputPlaceholder": "Take your time. Type what you're noticing…",
+    "send": "Send",
+    "sending": "Sending…",
+    "backToThemes": "Themes",
+    "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line.",
+    "suggestedKicker": "YOU MAY ALSO FIND THIS HELPFUL",
+    "suggestedIntro": {
+      "anxiety": "Underneath the shame, an anxious wave surfaced. When you're ready, our Anxiety module holds space for that.",
+      "apathy": "Underneath the shame, a flat / shutdown quality surfaced. When you're ready, our Apathy module holds space for that.",
+      "loss_of_self": "Underneath the shame, a sense of not being fully here surfaced. When you're ready, our Loss of Self module holds space for that.",
+      "inner_emptiness": "Underneath the shame, a grey / empty quality surfaced. When you're ready, our Inner Emptiness module holds space for that."
+    },
+    "suggestedName": {
+      "anxiety": "Anxiety",
+      "apathy": "Apathy",
+      "loss_of_self": "Loss of self",
+      "inner_emptiness": "Inner emptiness"
+    },
+    "voice": {
+      "startAria": "Start voice recording",
+      "stopAria": "Stop voice recording",
+      "errors": {
+        "permissionDenied": "Microphone permission was declined. Enable it in your browser settings to use voice input.",
+        "noMic": "No microphone found. Check that one is connected and try again.",
+        "startFailed": "Couldn't start the microphone. Try again in a moment.",
+        "emptyAudio": "Nothing was recorded — try speaking again.",
+        "rateLimited": "Too many voice requests. Try again in a moment.",
+        "unavailable": "Voice transcription is unavailable right now. Type instead.",
+        "transcriptionFailed": "Couldn't transcribe the recording. Try again or type instead.",
+        "networkError": "Network issue during transcription. Try again."
+      }
+    }
+  },
   "States": {
     "metaTitle": "States — quick resets for the moments a wave hits · MindReset.ai",
     "metaDescription": "Short structured modules for anxiety, apathy, loss of self, and inner emptiness. Trauma-informed, self-guided, 30-day access per module.",

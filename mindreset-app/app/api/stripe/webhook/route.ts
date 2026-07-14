@@ -518,6 +518,44 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       return;
     }
 
+    // Theme module purchase (PR χ1, 2026-07-13). Same shape as
+    // state_module — 30-day access, idempotent on stripeSessionId.
+    // Non-refundable after 14 days or first open.
+    if (session.metadata?.productType === 'theme_module') {
+      const moduleId = session.metadata?.moduleId;
+      if (!moduleId) {
+        console.error(
+          '[webhook] theme_module purchase without moduleId in metadata',
+          { sessionId: session.id },
+        );
+        throw new Error(`theme_module purchase missing moduleId on session ${session.id}`);
+      }
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      try {
+        await prisma.purchase.create({
+          data: {
+            userId: user.id,
+            productType: 'theme_module',
+            productId: moduleId,
+            amount: session.amount_total ?? 0,
+            currency: (session.currency ?? 'gbp').toUpperCase(),
+            stripeSessionId: session.id,
+            status: 'completed',
+            completedAt: now,
+            accessExpiresAt: expiresAt,
+          },
+        });
+      } catch (err) {
+        if (isP2002(err)) {
+          console.log('[webhook] theme_module purchase already recorded:', session.id);
+          return;
+        }
+        throw err;
+      }
+      return;
+    }
+
     if (priceKey !== 'topUp') {
       // Pre-launch audit fix H9 (2026-07-11). Old behaviour fell back
       // to topUp on unknown priceKey — silently granting +200 credits

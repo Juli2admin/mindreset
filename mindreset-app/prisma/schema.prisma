@@ -111,6 +111,7 @@ model User {
   journeyMessages        JourneyMessage[]
   // States & Themes — state module sessions.
   stateSessions          StateSession[]
+  themeSessions          ThemeSession[]
   // AI usage rows (per Anthropic call — token counts + cost). Nullable
   // relation because internal admin / support-categorise calls may not
   // be attributable to a single user.
@@ -971,6 +972,68 @@ model StateMessage {
   role             String    // 'user' | 'assistant'
   // User's message OR assistant reply, both encrypted at rest (same
   // pattern as JourneyMessage.contentEncrypted).
+  contentEncrypted String    @db.Text
+
+  createdAt        DateTime  @default(now())
+
+  @@index([sessionId, createdAt])
+}
+
+// =============================================================================
+// THEMES — deep thematic modules
+// =============================================================================
+// PR χ1 (2026-07-13). Multi-session: unlike StateSession (fresh conversation
+// per visit), Theme work is a continuing arc within the 30-day access window.
+// One ThemeSession per (userId, moduleId) — the reader picks up where they
+// left off across visits. If the user re-buys after expiry, the same session
+// resumes (their prior work is not thrown away).
+//
+// The three-level structure (surface / middle / deep-refer) is prompt-driven,
+// not encoded in the schema — the AI decides adaptively per Julia's decision
+// (2026-07-13).
+model ThemeSession {
+  id                String    @id @default(cuid())
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+
+  // Slug of the theme: 'shame' | 'money' | 'body' | 'family' | 'self_realisation'
+  // Kept as string (not enum) so adding a new theme is a code-only change.
+  moduleId          String
+
+  startedAt         DateTime  @default(now())
+  lastActiveAt      DateTime  @default(now())
+  // Set when the AI's SESSION_COMPLETE marker fires OR safety triggers.
+  // Themes can be re-opened after "completion" — the marker is more like
+  // "you've reached a natural checkpoint" than a hard terminal state.
+  completedAt       DateTime?
+  completionReason  String?
+
+  turnCount         Int       @default(0)
+
+  // Rolling memory summary of the whole arc so far. Regenerated via a
+  // lightweight Haiku call every ~15 turns; loaded into the system
+  // prompt on every subsequent turn so the AI has continuity even when
+  // the recent-N message window has moved past the older material.
+  // Same encryption format as ThemeMessage.contentEncrypted.
+  memorySummaryEncrypted   String?   @db.Text
+  memorySummaryUpdatedAt   DateTime?
+  memorySummaryTurnCount   Int       @default(0)
+
+  messages          ThemeMessage[]
+
+  // One active row per user+theme. If the user re-opens the theme after a
+  // gap, the same row is loaded (multi-session continuity).
+  @@unique([userId, moduleId])
+  @@index([userId, lastActiveAt])
+}
+
+model ThemeMessage {
+  id               String    @id @default(cuid())
+  session          ThemeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId        String
+
+  role             String    // 'user' | 'assistant'
+  // Encrypted at rest, same enc:v1: format as JourneyMessage / StateMessage.
   contentEncrypted String    @db.Text
 
   createdAt        DateTime  @default(now())
