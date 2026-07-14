@@ -16,6 +16,7 @@ export type CallSite =
   | 'journey_turn'
   | 'minimind_chat'
   | 'states_turn'
+  | 'states_memory_summary'
   | 'themes_turn'
   | 'themes_memory_summary'
   | 'verifier_journey'

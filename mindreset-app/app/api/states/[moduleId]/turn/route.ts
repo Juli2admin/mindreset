@@ -28,12 +28,16 @@ import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkStateModuleAccess } from '@/lib/states/access';
 import { isValidStateModuleId, type StateModuleId } from '@/lib/states/modules';
 import {
-  ANXIETY_SYSTEM_PROMPT,
+  assembleAnxietySystemPrompt,
   SESSION_COMPLETE_MARKER_RE,
 } from '@/lib/states/prompts/anxiety';
-import { APATHY_SYSTEM_PROMPT } from '@/lib/states/prompts/apathy';
-import { LOSS_OF_SELF_SYSTEM_PROMPT } from '@/lib/states/prompts/loss_of_self';
-import { INNER_EMPTINESS_SYSTEM_PROMPT } from '@/lib/states/prompts/inner_emptiness';
+import { assembleApathySystemPrompt } from '@/lib/states/prompts/apathy';
+import { assembleLossOfSelfSystemPrompt } from '@/lib/states/prompts/loss_of_self';
+import { assembleInnerEmptinessSystemPrompt } from '@/lib/states/prompts/inner_emptiness';
+import {
+  loadStateModuleMemory,
+  regenerateStateModuleMemory,
+} from '@/lib/states/memory';
 import {
   scanForStateRedFlag,
   getStateCrisisResponseForLocale,
@@ -59,16 +63,19 @@ const MAX_USER_MESSAGE_CHARS = 4000;
 // its own newline / whitespace.
 const HOLDBACK_CHARS = 96;
 
-function getSystemPromptForModule(moduleId: StateModuleId): string | null {
+function assembleSystemPromptForModule(
+  moduleId: StateModuleId,
+  memorySummary: string | null,
+): string {
   switch (moduleId) {
     case 'anxiety':
-      return ANXIETY_SYSTEM_PROMPT;
+      return assembleAnxietySystemPrompt(memorySummary);
     case 'apathy':
-      return APATHY_SYSTEM_PROMPT;
+      return assembleApathySystemPrompt(memorySummary);
     case 'loss_of_self':
-      return LOSS_OF_SELF_SYSTEM_PROMPT;
+      return assembleLossOfSelfSystemPrompt(memorySummary);
     case 'inner_emptiness':
-      return INNER_EMPTINESS_SYSTEM_PROMPT;
+      return assembleInnerEmptinessSystemPrompt(memorySummary);
   }
 }
 
@@ -95,13 +102,10 @@ export async function POST(
   if (!isValidStateModuleId(moduleId)) {
     return NextResponse.json({ error: 'Invalid moduleId' }, { status: 400 });
   }
-  const systemPrompt = getSystemPromptForModule(moduleId);
-  if (!systemPrompt) {
-    return NextResponse.json(
-      { error: 'Module not yet available' },
-      { status: 501 },
-    );
-  }
+  // System prompt is assembled AFTER auth (below), because it depends
+  // on the cross-session memory summary keyed to (userId, moduleId).
+  // Sentinel: every valid moduleId has an assembler; unknown moduleIds
+  // are rejected by isValidStateModuleId above.
 
   let body: { message?: string; sessionId?: string; locale?: string };
   try {
@@ -243,6 +247,13 @@ export async function POST(
     content: decrypt(m.contentEncrypted),
   }));
 
+  // Cross-session memory summary (PR ψ5, 2026-07-14). Loaded per turn;
+  // null on the reader's first-ever session on this module. The
+  // assembler prepends it as PRIOR ARC NOTES so the AI knows what
+  // landed in earlier sessions.
+  const memorySummary = await loadStateModuleMemory(userId, moduleId);
+  const systemPrompt = assembleSystemPromptForModule(moduleId, memorySummary);
+
   const stream = anthropic.messages.stream({
     model: MODEL,
     max_tokens: MAX_TOKENS,
@@ -348,6 +359,26 @@ export async function POST(
                     }
                   : { turnCount: { increment: 1 } },
               });
+
+              // Cross-session memory regen (PR ψ5, 2026-07-14). Fire
+              // when the session closed naturally — stabilised or
+              // not_settled_close. Skip red_flag: safety events are
+              // not clinical progress; the last stabilised memory
+              // stays authoritative across a crisis session.
+              if (
+                completion.completed &&
+                (completion.reason === 'stabilised' ||
+                  completion.reason === 'not_settled_close')
+              ) {
+                try {
+                  await regenerateStateModuleMemory(userId, moduleId);
+                } catch (err) {
+                  console.error(
+                    '[states/turn] memory regen failed:',
+                    err,
+                  );
+                }
+              }
             } catch (err) {
               console.error('[states/turn] persist assistant failed:', err);
             }

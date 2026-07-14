@@ -111,6 +111,7 @@ model User {
   journeyMessages        JourneyMessage[]
   // States & Themes — state module sessions.
   stateSessions          StateSession[]
+  stateModuleMemories    StateModuleMemory[]
   themeSessions          ThemeSession[]
   // AI usage rows (per Anthropic call — token counts + cost). Nullable
   // relation because internal admin / support-categorise calls may not
@@ -1032,6 +1033,33 @@ model StateMessage {
   createdAt        DateTime  @default(now())
 
   @@index([sessionId, createdAt])
+}
+
+// PR ψ5 (2026-07-14). Cross-session memory for state modules.
+// StateSession is one-shot: each visit starts fresh, completes, archives.
+// StateModuleMemory carries a running summary of "what worked / what
+// keeps coming up" ACROSS sessions within the 30-day access window so
+// session #3 knows session #1's 4-7-8 breath landed. Regenerated via
+// a Haiku call in the turn API's waitUntil block on SESSION_COMPLETE
+// (skipping red_flag closes). Same enc:v1 format as StateMessage.
+model StateModuleMemory {
+  id                     String    @id @default(cuid())
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                 String
+
+  moduleId               String    // 'anxiety' | 'apathy' | 'loss_of_self' | 'inner_emptiness'
+
+  memorySummaryEncrypted String    @db.Text
+  memorySummaryUpdatedAt DateTime
+  // Aggregate turn count across all sessions on this module at the
+  // moment the summary was last generated. Used only as a lightweight
+  // "when was this last refreshed?" indicator for admin / debug.
+  memorySummaryTurnCount Int       @default(0)
+
+  createdAt              DateTime  @default(now())
+
+  @@unique([userId, moduleId])
+  @@index([userId])
 }
 
 // =============================================================================
