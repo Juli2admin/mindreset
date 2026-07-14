@@ -108,9 +108,18 @@ rationale.
 - **MiniMind Extended** — £24.99/month or £209/year — 800–1,200 msgs/cycle
 - **Message top-up** — £4.99 one-off — +200 msgs to current cycle, expires at reset
 
-### States & Themes (Block B — billing wired, content delivery Block C)
-- **S&T module (non-subscriber)** — £59 per module, one-off, permanent access
-- **S&T module (subscriber)** — £29 per module (discount auto-applied at checkout)
+### States (Block B — billing wired, content live)
+- **State module** — **£29 per module, one-off, 30 days of access.** Flat price for
+  everyone, no subscriber gate. Implementation: Stripe product stays at £59 in the
+  dashboard; the State-checkout route applies `STRIPE_COUPON_MODULE` (a £30-off Once
+  coupon) on every session to bring the total to £29. When Julia has time to reprice
+  the Stripe products to £29 directly, the coupon call becomes a no-op and can be
+  removed. See `app/api/states/checkout/route.ts`.
+
+### Themes (Block B — billing wired, content live)
+- **Theme module** — **£59 per module, one-off, 30 days of access.** Flat price for
+  everyone, no subscriber discount. Priced directly at £59 in Stripe; no coupon
+  applied at checkout. See `app/api/themes/checkout/route.ts`.
 - **S&T All Access subscription — DROPPED.** Does not exist. Do not create in Stripe.
 
 ### The Journey (Block B — billing wired, content delivery Block C)
