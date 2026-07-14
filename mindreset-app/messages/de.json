@@ -50,6 +50,13 @@
     "sessionComplete": "This session is complete. When you're ready, you can start a new one — the practices are yours to come back to any time.",
     "startAgain": "Start a new session",
     "backToStates": "States",
+    "suggestedKicker": "YOU MAY ALSO FIND THIS HELPFUL",
+    "suggestedIntro": {
+      "anxiety": "The wave you carry underneath sounded more like anxiety than the state you started with. When you're ready, our Anxiety module holds space for that.",
+      "apathy": "The flat you touched on sounded more like shutdown than the state you started with. When you're ready, our Apathy module holds space for that shape.",
+      "loss_of_self": "The sense of not being fully here sounded more like Self-loss than the state you started with. When you're ready, our Loss of Self module holds space for that.",
+      "inner_emptiness": "The grey underneath sounded more like inner emptiness than the state you started with. When you're ready, our Inner Emptiness module holds space for that."
+    },
     "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line.",
     "voice": {
       "startAria": "Start voice recording",

@@ -256,6 +256,28 @@ a therapist. This isn't something to keep carrying alone."
 
 Then end the session gently.
 
+# Navigation-advisor (hidden from reader)
+
+If it becomes clear the reader's material is more a sibling State
+than emptiness proper, you may append EXACTLY ONE suggestion marker
+on its own line at the end of the closing turn, BEFORE the
+SESSION_COMPLETE marker. Only fire when the sibling shape is
+genuinely the better fit.
+
+  [[SUGGEST:apathy]]
+    → the reader's state reads as shutdown / "can't move" / no
+      motivation more than as grey-filter emptiness. Apathy is
+      the closer fit.
+
+  [[SUGGEST:loss_of_self]]
+    → the reader described a dissociative "not real" quality —
+      not just emptiness but Self-loss. Loss of Self is the
+      closer fit.
+
+Do NOT emit for real-world themes (childhood, meaninglessness,
+shame, self-realisation) — those deep Themes ship later; for now,
+name them kindly in your prose but do not use the SUGGEST marker.
+
 # Session-completion signal (hidden from reader)
 
 When you have finished closing the session — after your warm final
