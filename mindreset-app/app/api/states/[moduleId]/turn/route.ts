@@ -31,6 +31,9 @@ import {
   ANXIETY_SYSTEM_PROMPT,
   SESSION_COMPLETE_MARKER_RE,
 } from '@/lib/states/prompts/anxiety';
+import { APATHY_SYSTEM_PROMPT } from '@/lib/states/prompts/apathy';
+import { LOSS_OF_SELF_SYSTEM_PROMPT } from '@/lib/states/prompts/loss_of_self';
+import { INNER_EMPTINESS_SYSTEM_PROMPT } from '@/lib/states/prompts/inner_emptiness';
 import {
   scanForStateRedFlag,
   getStateCrisisResponseForLocale,
@@ -57,11 +60,16 @@ const MAX_USER_MESSAGE_CHARS = 4000;
 const HOLDBACK_CHARS = 96;
 
 function getSystemPromptForModule(moduleId: StateModuleId): string | null {
-  if (moduleId === 'anxiety') return ANXIETY_SYSTEM_PROMPT;
-  // PR ψ3 will add apathy / loss_of_self / inner_emptiness system prompts
-  // following the same shape. Until then the catalogue tile is visible
-  // but the chat endpoint returns 501.
-  return null;
+  switch (moduleId) {
+    case 'anxiety':
+      return ANXIETY_SYSTEM_PROMPT;
+    case 'apathy':
+      return APATHY_SYSTEM_PROMPT;
+    case 'loss_of_self':
+      return LOSS_OF_SELF_SYSTEM_PROMPT;
+    case 'inner_emptiness':
+      return INNER_EMPTINESS_SYSTEM_PROMPT;
+  }
 }
 
 function cannedStream(text: string): ReadableStream<Uint8Array> {
