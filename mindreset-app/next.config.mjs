@@ -24,6 +24,11 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/api/journey/turn': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
       '/api/journey/start': ['./docs/journey/**/*.md', './docs/journey/runtime/**/*.md'],
+      // Theme prompts (PR χ1) reuse the Practice Generation Algorithm
+      // from docs/journey/ via lib/journey/prompts/load-spec.ts. Without
+      // this entry, the theme turn bundle omits the .md file and
+      // fs.readFileSync throws ENOENT at first request.
+      '/api/themes/[moduleId]/turn': ['./docs/journey/**/*.md'],
     },
   },
 };
