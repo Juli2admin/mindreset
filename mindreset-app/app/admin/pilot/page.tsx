@@ -10,6 +10,7 @@ import {
   type TrackingFlag,
 } from '@/lib/pilot/invitations';
 import { sendPilotBeforeFormEmail } from '@/lib/email/sendPilotBeforeForm';
+import { sendPilotAfterFormEmail } from '@/lib/email/sendPilotAfterForm';
 import PilotAdminClient from './PilotAdminClient';
 
 // /admin/pilot — the tester pipeline console.
@@ -145,6 +146,62 @@ async function actionResendBeforeNudge(formData: FormData) {
   revalidatePath('/admin/pilot');
 }
 
+// Manual After-form nudge — same shape as actionResendBeforeNudge.
+// Fires regardless of the 30-day cron gate (Julia may want to nudge
+// early for a fast mover, or late for someone the cron already
+// picked up but who missed the email). Refuses if afterFormFilled or
+// if the tester hasn't filled Before yet (the After has nothing to
+// compare against).
+async function actionResendAfterNudge(formData: FormData) {
+  'use server';
+  if (!(await currentUserIsAdmin())) throw new Error('Forbidden');
+  const id = String(formData.get('id') ?? '').trim();
+  if (!id) return;
+
+  const invitation = await prisma.pilotInvitation.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      beforeFormFilled: true,
+      afterFormFilled: true,
+      redeemedByUser: { select: { id: true, email: true, locale: true } },
+    },
+  });
+  if (!invitation) return;
+  if (invitation.afterFormFilled) return;
+  if (!invitation.beforeFormFilled) return;
+  if (!invitation.redeemedByUser) return;
+
+  await prisma.pilotInvitation.update({
+    where: { id },
+    data: { afterFormEmailSentAt: null },
+  });
+
+  let email = invitation.redeemedByUser.email;
+  try {
+    const clerkUser = await clerkClient().users.getUser(
+      invitation.redeemedByUser.id,
+    );
+    email =
+      clerkUser.primaryEmailAddress?.emailAddress ??
+      clerkUser.emailAddresses[0]?.emailAddress ??
+      email;
+  } catch (err) {
+    console.warn('[admin/pilot] clerkClient.getUser failed, using DB email', {
+      id: invitation.id,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  await sendPilotAfterFormEmail({
+    invitationId: id,
+    email,
+    locale: invitation.redeemedByUser.locale ?? 'en',
+  });
+
+  revalidatePath('/admin/pilot');
+}
+
 export default async function AdminPilotPage() {
   const rows = await prisma.pilotInvitation.findMany({
     orderBy: [{ redeemedAt: 'desc' }, { createdAt: 'desc' }],
@@ -182,6 +239,8 @@ export default async function AdminPilotPage() {
     beforeFormFilledAt: r.beforeFormFilledAt?.toISOString() ?? null,
     beforeFormEmailSentAt: r.beforeFormEmailSentAt?.toISOString() ?? null,
     afterFormFilled: r.afterFormFilled,
+    afterFormFilledAt: r.afterFormFilledAt?.toISOString() ?? null,
+    afterFormEmailSentAt: r.afterFormEmailSentAt?.toISOString() ?? null,
     followUp3mSent: r.followUp3mSent,
     quoteApproved: r.quoteApproved,
     revokedAt: r.revokedAt?.toISOString() ?? null,
@@ -213,6 +272,7 @@ export default async function AdminPilotPage() {
         actionRevoke={actionRevoke}
         actionToggleFlag={actionToggleFlag}
         actionResendBeforeNudge={actionResendBeforeNudge}
+        actionResendAfterNudge={actionResendAfterNudge}
       />
     </div>
   );

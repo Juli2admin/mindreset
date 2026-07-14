@@ -18,6 +18,8 @@ type Row = {
   beforeFormFilledAt: string | null;
   beforeFormEmailSentAt: string | null;
   afterFormFilled: boolean;
+  afterFormFilledAt: string | null;
+  afterFormEmailSentAt: string | null;
   followUp3mSent: boolean;
   quoteApproved: boolean;
   revokedAt: string | null;
@@ -31,6 +33,7 @@ type Props = {
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
   actionResendBeforeNudge: (fd: FormData) => Promise<void>;
+  actionResendAfterNudge: (fd: FormData) => Promise<void>;
 };
 
 const STATUS_STYLE: Record<InvitationStatus, string> = {
@@ -60,6 +63,16 @@ function formatDate(iso: string | null): string {
   });
 }
 
+// Days since a stored ISO date — used to surface "27 days since Before"
+// on the admin row so Julia knows when to click "Send After nudge".
+// Returns null when iso is null.
+function daysSince(iso: string | null): number | null {
+  if (!iso) return null;
+  const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return null;
+  return Math.floor((Date.now() - then) / (24 * 60 * 60 * 1000));
+}
+
 function redeemLink(code: string): string {
   const origin =
     typeof window !== 'undefined' ? window.location.origin : 'https://mindreset.ai';
@@ -72,6 +85,7 @@ export default function PilotAdminClient({
   actionRevoke,
   actionToggleFlag,
   actionResendBeforeNudge,
+  actionResendAfterNudge,
 }: Props) {
   const [filter, setFilter] = useState<'all' | 'pending' | 'active' | 'completed'>('all');
 
@@ -195,6 +209,7 @@ export default function PilotAdminClient({
                   actionRevoke={actionRevoke}
                   actionToggleFlag={actionToggleFlag}
                   actionResendBeforeNudge={actionResendBeforeNudge}
+                  actionResendAfterNudge={actionResendAfterNudge}
                 />
               ))}
             </tbody>
@@ -210,16 +225,25 @@ function RowView({
   actionRevoke,
   actionToggleFlag,
   actionResendBeforeNudge,
+  actionResendAfterNudge,
 }: {
   row: Row;
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
   actionResendBeforeNudge: (fd: FormData) => Promise<void>;
+  actionResendAfterNudge: (fd: FormData) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
   const link = redeemLink(row.code);
   const hasBeenRedeemed = !!row.redeemedAt && !!row.redeemedByEmail;
-  const canResendNudge = hasBeenRedeemed && !row.beforeFormFilled;
+  const canResendBeforeNudge = hasBeenRedeemed && !row.beforeFormFilled;
+  const canResendAfterNudge =
+    hasBeenRedeemed && row.beforeFormFilled && !row.afterFormFilled;
+  const daysSinceBefore = daysSince(row.beforeFormFilledAt);
+  // 30 days is the standard After-nudge trigger point (four weeks of
+  // Journey work, per Julia's method). Highlight rows past that so the
+  // admin can spot at a glance who's ready for the After nudge.
+  const isAfterReady = daysSinceBefore !== null && daysSinceBefore >= 30;
 
   async function copy() {
     try {
@@ -285,6 +309,18 @@ function RowView({
             value={row.beforeFormFilled}
             actionToggleFlag={actionToggleFlag}
           />
+          {row.beforeFormFilled && daysSinceBefore !== null && !row.afterFormFilled && (
+            <div
+              className={`text-[10px] pl-5 ${
+                isAfterReady ? 'font-medium text-emerald-700' : 'text-neutral-500'
+              }`}
+              title={`Before submitted ${formatDate(row.beforeFormFilledAt)} · ${daysSinceBefore}d ago`}
+            >
+              {isAfterReady
+                ? `${daysSinceBefore}d — ready for After`
+                : `${daysSinceBefore}d since Before`}
+            </div>
+          )}
           <FlagToggle
             id={row.id}
             flag="afterFormFilled"
@@ -310,7 +346,7 @@ function RowView({
       </td>
       <td className="px-3 py-3 text-right">
         <div className="flex flex-col items-end gap-1">
-          {canResendNudge && (
+          {canResendBeforeNudge && (
             <form action={actionResendBeforeNudge}>
               <input type="hidden" name="id" value={row.id} />
               <button
@@ -329,6 +365,28 @@ function RowView({
                 className="text-[11px] text-blue-700 hover:underline"
               >
                 {row.beforeFormEmailSentAt ? 'Re-send Before nudge' : 'Send Before nudge'}
+              </button>
+            </form>
+          )}
+          {canResendAfterNudge && (
+            <form action={actionResendAfterNudge}>
+              <input type="hidden" name="id" value={row.id} />
+              <button
+                type="submit"
+                onClick={(e) => {
+                  const msg = row.afterFormEmailSentAt
+                    ? 'Re-send the After-form nudge to this tester? The previous email was already sent.'
+                    : 'Send the After-form nudge to this tester now? (Bypasses the 30-day cron gate.)';
+                  if (!confirm(msg)) e.preventDefault();
+                }}
+                title={
+                  row.afterFormEmailSentAt
+                    ? `Previously sent ${formatDate(row.afterFormEmailSentAt)} — click to re-send.`
+                    : "Send the After-form nudge now, ahead of the 30-day cron."
+                }
+                className="text-[11px] text-blue-700 hover:underline"
+              >
+                {row.afterFormEmailSentAt ? 'Re-send After nudge' : 'Send After nudge'}
               </button>
             </form>
           )}
