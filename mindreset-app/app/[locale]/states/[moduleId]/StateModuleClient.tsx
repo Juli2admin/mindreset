@@ -18,6 +18,38 @@ import {
   formatVoiceTime,
   type VoiceErrorCode,
 } from '@/lib/voice/useVoiceInput';
+import {
+  isValidStateModuleId,
+  type StateModuleId,
+} from '@/lib/states/modules';
+
+// PR ψ4 (2026-07-13). Meta sentinel emitted at the end of the stream
+// by /api/states/[moduleId]/turn when the AI included a valid
+// [[SUGGEST:<slug>]] marker. Client extracts + strips before display.
+const STATE_META_RE = /\n*<<<STATE_META:(\{[^>]*\})>>>\n*/g;
+
+function extractStateMeta(text: string): {
+  cleanedText: string;
+  completed: boolean;
+  suggestedModuleId: StateModuleId | null;
+} {
+  let completed = false;
+  let suggestedModuleId: StateModuleId | null = null;
+  const cleanedText = text.replace(STATE_META_RE, (_full, jsonStr) => {
+    try {
+      const parsed: { completed?: boolean; suggested?: string } =
+        JSON.parse(jsonStr);
+      if (parsed.completed === true) completed = true;
+      if (parsed.suggested && isValidStateModuleId(parsed.suggested)) {
+        suggestedModuleId = parsed.suggested;
+      }
+    } catch {
+      // Malformed sentinel — swallow and drop from visible text.
+    }
+    return '';
+  });
+  return { cleanedText, completed, suggestedModuleId };
+}
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -57,6 +89,8 @@ export default function StateModuleClient({
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [suggestedModuleId, setSuggestedModuleId] =
+    useState<StateModuleId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -158,16 +192,26 @@ export default function StateModuleClient({
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
+      let streamCompletedByMeta = false;
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
         setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMsgId
-              ? { ...m, content: m.content + chunk }
-              : m,
-          ),
+          prev.map((m) => {
+            if (m.id !== assistantMsgId) return m;
+            // Extract the STATE_META sentinel from the growing content
+            // on every update — the sentinel may be split across
+            // chunks so we always run the regex on the accumulated
+            // text. Match strips it from what the reader sees.
+            const combined = m.content + chunk;
+            const meta = extractStateMeta(combined);
+            if (meta.suggestedModuleId) {
+              setSuggestedModuleId(meta.suggestedModuleId);
+            }
+            if (meta.completed) streamCompletedByMeta = true;
+            return { ...m, content: meta.cleanedText };
+          }),
         );
       }
 
@@ -176,7 +220,7 @@ export default function StateModuleClient({
           m.id === assistantMsgId ? { ...m, streaming: false } : m,
         ),
       );
-      if (willBeComplete) setSessionComplete(true);
+      if (willBeComplete || streamCompletedByMeta) setSessionComplete(true);
     } catch (err) {
       console.error('[states] send failed:', err);
       setError(tErr('networkError'));
@@ -245,31 +289,73 @@ export default function StateModuleClient({
           ))}
 
           {sessionComplete && (
-            <div
-              className="rounded-2xl p-5 text-center"
-              style={{
-                background: PALETTE.bgSubtle,
-                border: `1px solid ${PALETTE.border}`,
-              }}
-            >
-              <p
-                className="text-[14px] leading-[1.6] mb-4"
-                style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-              >
-                {t('sessionComplete')}
-              </p>
-              <Link
-                href={`/states/${moduleId}`}
-                className="inline-block text-[14px] font-medium py-2 px-6 rounded-full"
+            <>
+              <div
+                className="rounded-2xl p-5 text-center"
                 style={{
-                  background: PALETTE.accent,
-                  color: PALETTE.accentText,
-                  fontFamily: SANS,
+                  background: PALETTE.bgSubtle,
+                  border: `1px solid ${PALETTE.border}`,
                 }}
               >
-                {t('startAgain')}
-              </Link>
-            </div>
+                <p
+                  className="text-[14px] leading-[1.6] mb-4"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {t('sessionComplete')}
+                </p>
+                <Link
+                  href={`/states/${moduleId}`}
+                  className="inline-block text-[14px] font-medium py-2 px-6 rounded-full"
+                  style={{
+                    background: PALETTE.accent,
+                    color: PALETTE.accentText,
+                    fontFamily: SANS,
+                  }}
+                >
+                  {t('startAgain')}
+                </Link>
+              </div>
+              {suggestedModuleId && suggestedModuleId !== moduleId && (
+                <div
+                  className="rounded-2xl p-5"
+                  style={{
+                    background: PALETTE.bgCard,
+                    border: `1px solid ${PALETTE.border}`,
+                  }}
+                >
+                  <p
+                    className="text-[11px] uppercase tracking-[0.22em] mb-2"
+                    style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                  >
+                    {t('suggestedKicker')}
+                  </p>
+                  <p
+                    className="text-[14px] leading-[1.6] mb-3"
+                    style={{ color: PALETTE.text, fontFamily: SANS }}
+                  >
+                    {t(`suggestedIntro.${suggestedModuleId}` as
+                      | 'suggestedIntro.anxiety'
+                      | 'suggestedIntro.apathy'
+                      | 'suggestedIntro.loss_of_self'
+                      | 'suggestedIntro.inner_emptiness')}
+                  </p>
+                  <Link
+                    href={`/states/${suggestedModuleId}`}
+                    className="inline-flex items-center gap-1 text-[13px] font-medium"
+                    style={{ color: PALETTE.accent, fontFamily: SANS }}
+                  >
+                    <span>
+                      {t(`modules.${suggestedModuleId}.name` as
+                        | 'modules.anxiety.name'
+                        | 'modules.apathy.name'
+                        | 'modules.loss_of_self.name'
+                        | 'modules.inner_emptiness.name')}
+                    </span>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              )}
+            </>
           )}
 
           <div ref={messagesEndRef} aria-hidden="true" />

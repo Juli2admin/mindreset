@@ -276,11 +276,42 @@ export async function POST(
             }
           }
         }
+        // Strip BOTH the completion marker and the (optional)
+        // navigation-advisor suggestion marker from what the reader
+        // sees. detectCompletion runs on `fullText` so it decides
+        // completion + suggestion; here we just make sure neither
+        // marker's raw text reaches the visible tail.
         const cleanedTail = buffer
           .replace(SESSION_COMPLETE_MARKER_RE, '')
+          .replace(/\[\[SUGGEST:[a-z_]+\]\]/gi, '')
           .trimEnd();
         if (cleanedTail.length > 0) {
           controller.enqueue(encoder.encode(cleanedTail));
+        }
+
+        // PR ψ4 (2026-07-13). If the AI closed the session — with or
+        // without a sibling-State suggestion — emit a client-parseable
+        // meta sentinel as the LAST chunk. The client extracts the
+        // JSON, strips this control sequence from the visible message,
+        // and flips into the session-complete UI (with a "Related
+        // module" card when `suggested` is set). Format is intentionally
+        // distinct from the AI's own [[…]] markers so a stray
+        // hallucination can't emit one.
+        const streamCompletion = detectCompletion(fullText);
+        if (
+          streamCompletion.completed ||
+          streamCompletion.suggestedModuleId
+        ) {
+          const meta = JSON.stringify({
+            completed: streamCompletion.completed,
+            ...(streamCompletion.completed && {
+              reason: streamCompletion.reason,
+            }),
+            ...(streamCompletion.suggestedModuleId && {
+              suggested: streamCompletion.suggestedModuleId,
+            }),
+          });
+          controller.enqueue(encoder.encode(`\n\n<<<STATE_META:${meta}>>>`));
         }
       } catch (err) {
         console.error('[states/turn] stream error', err);
