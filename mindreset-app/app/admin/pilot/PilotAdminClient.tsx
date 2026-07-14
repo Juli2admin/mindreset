@@ -18,6 +18,8 @@ type Row = {
   beforeFormFilledAt: string | null;
   beforeFormEmailSentAt: string | null;
   afterFormFilled: boolean;
+  afterFormFilledAt: string | null;
+  afterFormEmailSentAt: string | null;
   followUp3mSent: boolean;
   quoteApproved: boolean;
   revokedAt: string | null;
@@ -31,6 +33,7 @@ type Props = {
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
   actionResendBeforeNudge: (fd: FormData) => Promise<void>;
+  actionResendAfterNudge: (fd: FormData) => Promise<void>;
 };
 
 const STATUS_STYLE: Record<InvitationStatus, string> = {
@@ -72,6 +75,7 @@ export default function PilotAdminClient({
   actionRevoke,
   actionToggleFlag,
   actionResendBeforeNudge,
+  actionResendAfterNudge,
 }: Props) {
   const [filter, setFilter] = useState<'all' | 'pending' | 'active' | 'completed'>('all');
 
@@ -195,6 +199,7 @@ export default function PilotAdminClient({
                   actionRevoke={actionRevoke}
                   actionToggleFlag={actionToggleFlag}
                   actionResendBeforeNudge={actionResendBeforeNudge}
+                  actionResendAfterNudge={actionResendAfterNudge}
                 />
               ))}
             </tbody>
@@ -210,16 +215,20 @@ function RowView({
   actionRevoke,
   actionToggleFlag,
   actionResendBeforeNudge,
+  actionResendAfterNudge,
 }: {
   row: Row;
   actionRevoke: (fd: FormData) => Promise<void>;
   actionToggleFlag: (fd: FormData) => Promise<void>;
   actionResendBeforeNudge: (fd: FormData) => Promise<void>;
+  actionResendAfterNudge: (fd: FormData) => Promise<void>;
 }) {
   const [copied, setCopied] = useState(false);
   const link = redeemLink(row.code);
   const hasBeenRedeemed = !!row.redeemedAt && !!row.redeemedByEmail;
-  const canResendNudge = hasBeenRedeemed && !row.beforeFormFilled;
+  const canResendBeforeNudge = hasBeenRedeemed && !row.beforeFormFilled;
+  const canResendAfterNudge =
+    hasBeenRedeemed && row.beforeFormFilled && !row.afterFormFilled;
 
   async function copy() {
     try {
@@ -310,7 +319,7 @@ function RowView({
       </td>
       <td className="px-3 py-3 text-right">
         <div className="flex flex-col items-end gap-1">
-          {canResendNudge && (
+          {canResendBeforeNudge && (
             <form action={actionResendBeforeNudge}>
               <input type="hidden" name="id" value={row.id} />
               <button
@@ -329,6 +338,28 @@ function RowView({
                 className="text-[11px] text-blue-700 hover:underline"
               >
                 {row.beforeFormEmailSentAt ? 'Re-send Before nudge' : 'Send Before nudge'}
+              </button>
+            </form>
+          )}
+          {canResendAfterNudge && (
+            <form action={actionResendAfterNudge}>
+              <input type="hidden" name="id" value={row.id} />
+              <button
+                type="submit"
+                onClick={(e) => {
+                  const msg = row.afterFormEmailSentAt
+                    ? 'Re-send the After-form nudge to this tester? The previous email was already sent.'
+                    : 'Send the After-form nudge to this tester now? (Bypasses the 30-day cron gate.)';
+                  if (!confirm(msg)) e.preventDefault();
+                }}
+                title={
+                  row.afterFormEmailSentAt
+                    ? `Previously sent ${formatDate(row.afterFormEmailSentAt)} — click to re-send.`
+                    : "Send the After-form nudge now, ahead of the 30-day cron."
+                }
+                className="text-[11px] text-blue-700 hover:underline"
+              >
+                {row.afterFormEmailSentAt ? 'Re-send After nudge' : 'Send After nudge'}
               </button>
             </form>
           )}
