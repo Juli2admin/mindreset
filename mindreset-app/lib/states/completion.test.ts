@@ -12,7 +12,7 @@ describe('detectCompletion', () => {
     expect(r.visibleText).toBe(
       "Let's try one cycle of the 4-7-8 breath. Notice how it lands.",
     );
-    expect(r.suggestedModuleId).toBe(null);
+    expect(r.suggestedModule).toBe(null);
   });
 
   it('detects stabilised completion + strips the marker', () => {
@@ -77,62 +77,79 @@ describe('detectCompletion', () => {
   });
 });
 
-describe('detectCompletion — suggested next module (PR ψ4)', () => {
-  it('extracts a valid State moduleId from the SUGGEST marker + strips it', () => {
+describe('detectCompletion — suggested next module (PR ψ4 / χ3)', () => {
+  it('extracts a valid State moduleId + returns kind=state', () => {
     const raw =
       'You noticed the flat under the anxiety. When you have some room, our Apathy module holds space for that shape.\n[[SUGGEST:apathy]]\n[[SESSION_COMPLETE:stabilised]]';
     const r = detectCompletion(raw);
     expect(r.completed).toBe(true);
     if (r.completed) {
       expect(r.reason).toBe('stabilised');
-      expect(r.suggestedModuleId).toBe('apathy');
+      expect(r.suggestedModule).toEqual({ kind: 'state', moduleId: 'apathy' });
       expect(r.visibleText).not.toContain('SUGGEST');
       expect(r.visibleText).not.toContain('SESSION_COMPLETE');
     }
   });
 
-  it('accepts loss_of_self as a suggestion', () => {
+  it('extracts a valid Theme moduleId + returns kind=theme (PR χ3)', () => {
     const raw =
-      'The unreal feeling under the emptiness deserves its own care.\n[[SUGGEST:loss_of_self]]\n[[SESSION_COMPLETE:stabilised]]';
-    const r = detectCompletion(raw);
-    if (r.completed) expect(r.suggestedModuleId).toBe('loss_of_self');
-  });
-
-  it('rejects a Theme slug that does not correspond to a live module', () => {
-    // Themes ship later — hallucinated theme_money slug must be ignored.
-    const raw =
-      'Money worries came up today.\n[[SUGGEST:theme_money]]\n[[SESSION_COMPLETE:stabilised]]';
+      'The shame under your anxiety deserves its own arc.\n[[SUGGEST:shame]]\n[[SESSION_COMPLETE:stabilised]]';
     const r = detectCompletion(raw);
     expect(r.completed).toBe(true);
     if (r.completed) {
-      expect(r.suggestedModuleId).toBe(null);
-      // The marker is stripped even when rejected, so the reader never
-      // sees stray suggestion markup.
-      expect(r.visibleText).not.toContain('SUGGEST');
+      expect(r.suggestedModule).toEqual({ kind: 'theme', moduleId: 'shame' });
+    }
+  });
+
+  it('recognises all 4 State slugs', () => {
+    for (const slug of ['anxiety', 'apathy', 'loss_of_self', 'inner_emptiness']) {
+      const r = detectCompletion(
+        `Close.\n[[SUGGEST:${slug}]]\n[[SESSION_COMPLETE:stabilised]]`,
+      );
+      expect(r.completed).toBe(true);
+      if (r.completed) {
+        expect(r.suggestedModule).toEqual({ kind: 'state', moduleId: slug });
+      }
+    }
+  });
+
+  it('recognises all 5 Theme slugs (PR χ3)', () => {
+    for (const slug of ['shame', 'money', 'body', 'family', 'self_realisation']) {
+      const r = detectCompletion(
+        `Close.\n[[SUGGEST:${slug}]]\n[[SESSION_COMPLETE:stabilised]]`,
+      );
+      expect(r.completed).toBe(true);
+      if (r.completed) {
+        expect(r.suggestedModule).toEqual({ kind: 'theme', moduleId: slug });
+      }
     }
   });
 
   it('rejects an unknown / malformed slug', () => {
-    const raw = 'Close.\n[[SUGGEST:not_a_module]]\n[[SESSION_COMPLETE:stabilised]]';
-    const r = detectCompletion(raw);
-    if (r.completed) expect(r.suggestedModuleId).toBe(null);
+    const r = detectCompletion(
+      'Close.\n[[SUGGEST:not_a_module]]\n[[SESSION_COMPLETE:stabilised]]',
+    );
+    if (r.completed) expect(r.suggestedModule).toBe(null);
   });
 
   it('returns null suggestion when the SUGGEST marker is absent', () => {
     const raw = 'Warm close.\n[[SESSION_COMPLETE:stabilised]]';
     const r = detectCompletion(raw);
-    if (r.completed) expect(r.suggestedModuleId).toBe(null);
+    if (r.completed) expect(r.suggestedModule).toBe(null);
   });
 
   it('does not activate a suggestion mid-session even if AI appends the marker prematurely', () => {
-    // Absence of SESSION_COMPLETE means the session is NOT ending —
-    // whatever the AI did with the SUGGEST marker, the reader isn't
-    // done yet. We still surface the suggestion (client may want to
-    // preview) but completed is false.
     const raw = 'Just a thought.\n[[SUGGEST:apathy]]';
     const r = detectCompletion(raw);
     expect(r.completed).toBe(false);
-    expect(r.suggestedModuleId).toBe('apathy');
+    expect(r.suggestedModule).toEqual({ kind: 'state', moduleId: 'apathy' });
+    expect(r.visibleText).not.toContain('SUGGEST');
+  });
+
+  it('strips the SUGGEST marker even when the slug is invalid', () => {
+    const r = detectCompletion(
+      'Close.\n[[SUGGEST:bogus]]\n[[SESSION_COMPLETE:stabilised]]',
+    );
     expect(r.visibleText).not.toContain('SUGGEST');
   });
 });

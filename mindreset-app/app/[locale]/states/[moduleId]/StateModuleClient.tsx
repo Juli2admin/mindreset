@@ -20,35 +20,61 @@ import {
 } from '@/lib/voice/useVoiceInput';
 import {
   isValidStateModuleId,
-  type StateModuleId,
 } from '@/lib/states/modules';
+import { isValidThemeModuleId } from '@/lib/themes/modules';
 
-// PR ψ4 (2026-07-13). Meta sentinel emitted at the end of the stream
-// by /api/states/[moduleId]/turn when the AI included a valid
-// [[SUGGEST:<slug>]] marker. Client extracts + strips before display.
+// PR ψ4 / χ3 — Meta sentinel emitted at the end of the stream by
+// /api/states/[moduleId]/turn. Carries session completion + optional
+// suggested module (state OR theme). Client extracts + strips before
+// display.
 const STATE_META_RE = /\n*<<<STATE_META:(\{[^>]*\})>>>\n*/g;
+
+type ParsedSuggestion =
+  | { kind: 'state'; moduleId: string }
+  | { kind: 'theme'; moduleId: string }
+  | null;
 
 function extractStateMeta(text: string): {
   cleanedText: string;
   completed: boolean;
-  suggestedModuleId: StateModuleId | null;
+  suggestion: ParsedSuggestion;
 } {
   let completed = false;
-  let suggestedModuleId: StateModuleId | null = null;
+  let suggestion: ParsedSuggestion = null;
   const cleanedText = text.replace(STATE_META_RE, (_full, jsonStr) => {
     try {
-      const parsed: { completed?: boolean; suggested?: string } =
-        JSON.parse(jsonStr);
+      const parsed: {
+        completed?: boolean;
+        suggested?: string;
+        suggestedKind?: string;
+      } = JSON.parse(jsonStr);
       if (parsed.completed === true) completed = true;
-      if (parsed.suggested && isValidStateModuleId(parsed.suggested)) {
-        suggestedModuleId = parsed.suggested;
+      if (parsed.suggested) {
+        // Prefer the server's authoritative kind hint; fall back to
+        // slug-based detection so older messages / hand-edited data
+        // still resolve.
+        if (
+          parsed.suggestedKind === 'theme' &&
+          isValidThemeModuleId(parsed.suggested)
+        ) {
+          suggestion = { kind: 'theme', moduleId: parsed.suggested };
+        } else if (
+          parsed.suggestedKind === 'state' &&
+          isValidStateModuleId(parsed.suggested)
+        ) {
+          suggestion = { kind: 'state', moduleId: parsed.suggested };
+        } else if (isValidStateModuleId(parsed.suggested)) {
+          suggestion = { kind: 'state', moduleId: parsed.suggested };
+        } else if (isValidThemeModuleId(parsed.suggested)) {
+          suggestion = { kind: 'theme', moduleId: parsed.suggested };
+        }
       }
     } catch {
       // Malformed sentinel — swallow and drop from visible text.
     }
     return '';
   });
-  return { cleanedText, completed, suggestedModuleId };
+  return { cleanedText, completed, suggestion };
 }
 
 const SANS = TOKENS.sans;
@@ -82,6 +108,7 @@ export default function StateModuleClient({
   locale,
 }: Props) {
   const t = useTranslations('States');
+  const tThemes = useTranslations('Themes');
   const tErr = useTranslations('Errors');
   const { palette: PALETTE } = useTheme();
 
@@ -89,8 +116,7 @@ export default function StateModuleClient({
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
-  const [suggestedModuleId, setSuggestedModuleId] =
-    useState<StateModuleId | null>(null);
+  const [suggestion, setSuggestion] = useState<ParsedSuggestion>(null);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -206,9 +232,7 @@ export default function StateModuleClient({
             // text. Match strips it from what the reader sees.
             const combined = m.content + chunk;
             const meta = extractStateMeta(combined);
-            if (meta.suggestedModuleId) {
-              setSuggestedModuleId(meta.suggestedModuleId);
-            }
+            if (meta.suggestion) setSuggestion(meta.suggestion);
             if (meta.completed) streamCompletedByMeta = true;
             return { ...m, content: meta.cleanedText };
           }),
@@ -315,46 +339,18 @@ export default function StateModuleClient({
                   {t('startAgain')}
                 </Link>
               </div>
-              {suggestedModuleId && suggestedModuleId !== moduleId && (
-                <div
-                  className="rounded-2xl p-5"
-                  style={{
-                    background: PALETTE.bgCard,
-                    border: `1px solid ${PALETTE.border}`,
-                  }}
-                >
-                  <p
-                    className="text-[11px] uppercase tracking-[0.22em] mb-2"
-                    style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-                  >
-                    {t('suggestedKicker')}
-                  </p>
-                  <p
-                    className="text-[14px] leading-[1.6] mb-3"
-                    style={{ color: PALETTE.text, fontFamily: SANS }}
-                  >
-                    {t(`suggestedIntro.${suggestedModuleId}` as
-                      | 'suggestedIntro.anxiety'
-                      | 'suggestedIntro.apathy'
-                      | 'suggestedIntro.loss_of_self'
-                      | 'suggestedIntro.inner_emptiness')}
-                  </p>
-                  <Link
-                    href={`/states/${suggestedModuleId}`}
-                    className="inline-flex items-center gap-1 text-[13px] font-medium"
-                    style={{ color: PALETTE.accent, fontFamily: SANS }}
-                  >
-                    <span>
-                      {t(`modules.${suggestedModuleId}.name` as
-                        | 'modules.anxiety.name'
-                        | 'modules.apathy.name'
-                        | 'modules.loss_of_self.name'
-                        | 'modules.inner_emptiness.name')}
-                    </span>
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              )}
+              {suggestion &&
+                !(
+                  suggestion.kind === 'state' &&
+                  suggestion.moduleId === moduleId
+                ) && (
+                  <SuggestionCard
+                    suggestion={suggestion}
+                    t={t}
+                    tThemes={tThemes}
+                    palette={PALETTE}
+                  />
+                )}
             </>
           )}
 
@@ -517,6 +513,72 @@ export default function StateModuleClient({
         </div>
       )}
     </main>
+  );
+}
+
+function SuggestionCard({
+  suggestion,
+  t,
+  tThemes,
+  palette,
+}: {
+  suggestion: NonNullable<ParsedSuggestion>;
+  t: ReturnType<typeof useTranslations<'States'>>;
+  tThemes: ReturnType<typeof useTranslations<'Themes'>>;
+  palette: ReturnType<typeof useTheme>['palette'];
+}) {
+  const isState = suggestion.kind === 'state';
+  const href = isState
+    ? (`/states/${suggestion.moduleId}` as const)
+    : (`/themes/${suggestion.moduleId}` as const);
+  const moduleName = isState
+    ? t(`modules.${suggestion.moduleId}.name` as
+        | 'modules.anxiety.name'
+        | 'modules.apathy.name'
+        | 'modules.loss_of_self.name'
+        | 'modules.inner_emptiness.name')
+    : tThemes(`modules.${suggestion.moduleId}.name` as
+        | 'modules.shame.name'
+        | 'modules.money.name'
+        | 'modules.body.name'
+        | 'modules.family.name'
+        | 'modules.self_realisation.name');
+  const intro = isState
+    ? t(`suggestedIntro.${suggestion.moduleId}` as
+        | 'suggestedIntro.anxiety'
+        | 'suggestedIntro.apathy'
+        | 'suggestedIntro.loss_of_self'
+        | 'suggestedIntro.inner_emptiness')
+    : t('suggestedThemeIntro', { moduleName });
+  return (
+    <div
+      className="rounded-2xl p-5"
+      style={{
+        background: palette.bgCard,
+        border: `1px solid ${palette.border}`,
+      }}
+    >
+      <p
+        className="text-[11px] uppercase tracking-[0.22em] mb-2"
+        style={{ color: palette.textMuted, fontFamily: SANS }}
+      >
+        {t('suggestedKicker')}
+      </p>
+      <p
+        className="text-[14px] leading-[1.6] mb-3"
+        style={{ color: palette.text, fontFamily: SANS }}
+      >
+        {intro}
+      </p>
+      <Link
+        href={href}
+        className="inline-flex items-center gap-1 text-[13px] font-medium"
+        style={{ color: palette.accent, fontFamily: SANS }}
+      >
+        <span>{moduleName}</span>
+        <span aria-hidden="true">→</span>
+      </Link>
+    </div>
   );
 }
 

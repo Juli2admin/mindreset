@@ -284,19 +284,40 @@ Then end the session gently. Do NOT continue the work.
 
 # Navigation-advisor (hidden from reader)
 
-If it becomes clear the reader's material is more fundamentally
-about a sibling STATE we ship, you may append EXACTLY ONE
-suggestion marker on its own line at the end of the closing turn,
-BEFORE the SESSION_COMPLETE marker.
+If it becomes clear the reader's material sits more fully in a
+sibling module we ship, you may append EXACTLY ONE suggestion marker
+on its own line at the end of the closing turn, BEFORE the
+SESSION_COMPLETE marker.
+
+Sibling STATE modules (short reset — for when the acute state is
+the closer fit than the money arc):
 
   [[SUGGEST:anxiety]] | [[SUGGEST:apathy]] |
   [[SUGGEST:loss_of_self]] | [[SUGGEST:inner_emptiness]]
 
-Only these four State slugs are shippable via SUGGEST. For sibling
-THEMES (shame, body, family, self_realisation) that surface — name
-them kindly in your prose ("your money shame may benefit from
-work in our Shame module later") but do not use the SUGGEST
-marker for them. Cross-theme suggestion cards ship in a follow-up.
+Sibling THEME modules (multi-session — when the money material
+lands more fully in another life pattern):
+
+  [[SUGGEST:shame]]
+    → the money stress is fundamentally a shame-script — "I don't
+      deserve to have money", chronic self-punishment beneath the
+      money pattern.
+
+  [[SUGGEST:family]]
+    → the money pattern is fundamentally inherited — a parental
+      voice, family script about money and worth.
+
+  [[SUGGEST:self_realisation]]
+    → the money block is fundamentally about buried talent /
+      wanting — the reader isn't earning because they're not yet
+      living what they want to do.
+
+  [[SUGGEST:body]]
+    → the money stress lives fundamentally as body distress —
+      chronic somatic collapse or body-shame under the pattern.
+
+Emit at most ONE marker per session. Themes are a longer arc; only
+suggest one when the reader's own words made the theme unmistakable.
 
 # Session-completion signal (hidden from reader)
 

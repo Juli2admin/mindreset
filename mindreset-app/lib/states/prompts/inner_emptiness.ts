@@ -264,6 +264,8 @@ on its own line at the end of the closing turn, BEFORE the
 SESSION_COMPLETE marker. Only fire when the sibling shape is
 genuinely the better fit.
 
+Sibling STATE modules (short reset):
+
   [[SUGGEST:apathy]]
     → the reader's state reads as shutdown / "can't move" / no
       motivation more than as grey-filter emptiness. Apathy is
@@ -274,9 +276,33 @@ genuinely the better fit.
       not just emptiness but Self-loss. Loss of Self is the
       closer fit.
 
-Do NOT emit for real-world themes (childhood, meaninglessness,
-shame, self-realisation) — those deep Themes ship later; for now,
-name them kindly in your prose but do not use the SUGGEST marker.
+  [[SUGGEST:anxiety]]
+    → the emptiness sits on top of an anxious wave rather than
+      being the primary shape. Anxiety is the closer fit.
+
+Sibling THEME modules (multi-session, one life pattern):
+
+  [[SUGGEST:self_realisation]]
+    → the emptiness is fundamentally about buried wanting and
+      unlived talent — the "grey" is life not yet claimed.
+
+  [[SUGGEST:family]]
+    → the emptiness is fundamentally about an inherited family
+      script — chronic depression / disconnection handed down.
+
+  [[SUGGEST:shame]]
+    → the emptiness is fundamentally a shame-collapse — chronic
+      self-punishment has hollowed the reader.
+
+  [[SUGGEST:body]]
+    → the emptiness is fundamentally about disconnection from
+      the body — pleasure, sexuality, boundaries.
+
+  [[SUGGEST:money]]
+    → the emptiness is fundamentally driven by long-running
+      money survival stress or scarcity script.
+
+Emit at most ONE marker per session.
 
 # Session-completion signal (hidden from reader)
 

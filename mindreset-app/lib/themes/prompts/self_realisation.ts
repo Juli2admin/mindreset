@@ -252,13 +252,34 @@ Then end the session gently.
 
 # Navigation-advisor (hidden from reader)
 
-If the material is really a sibling STATE:
+If the reader's material sits more fully in a sibling module we
+ship, you may append EXACTLY ONE suggestion marker on its own line
+at the end of the closing turn, BEFORE the SESSION_COMPLETE marker.
+
+Sibling STATE modules (short reset):
 
   [[SUGGEST:anxiety]] | [[SUGGEST:apathy]] |
   [[SUGGEST:loss_of_self]] | [[SUGGEST:inner_emptiness]]
 
-Only these four. For sibling THEMES — name them in prose but do
-not use the SUGGEST marker.
+Sibling THEME modules (multi-session):
+
+  [[SUGGEST:family]]
+    → the block on wanting is fundamentally an inherited family
+      script — parental voice, "you don't get to want that".
+
+  [[SUGGEST:shame]]
+    → the block is fundamentally shame — "I don't deserve to
+      want", chronic self-punishment shutting down the wanting.
+
+  [[SUGGEST:money]]
+    → the block is fundamentally about money survival — the
+      reader can't reach for talent while under money stress.
+
+  [[SUGGEST:body]]
+    → the block is fundamentally embodied — buried aliveness
+      lives in the body and can't yet come up through language.
+
+Emit at most ONE marker per session.
 
 # Session-completion signal (hidden from reader)
 

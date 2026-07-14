@@ -63,6 +63,7 @@
       "loss_of_self": "Underneath the shame, a sense of not being fully here surfaced. When you're ready, our Loss of Self module holds space for that.",
       "inner_emptiness": "Underneath the shame, a grey / empty quality surfaced. When you're ready, our Inner Emptiness module holds space for that."
     },
+    "suggestedThemeIntro": "The pattern you touched today may benefit from focused work in our {moduleName} module — a longer arc, one topic.",
     "suggestedName": {
       "anxiety": "Anxiety",
       "apathy": "Apathy",
@@ -141,6 +142,7 @@
       "loss_of_self": "The sense of not being fully here sounded more like Self-loss than the state you started with. When you're ready, our Loss of Self module holds space for that.",
       "inner_emptiness": "The grey underneath sounded more like inner emptiness than the state you started with. When you're ready, our Inner Emptiness module holds space for that."
     },
+    "suggestedThemeIntro": "The pattern under what surfaced today may benefit from focused work in our {moduleName} module — a longer arc, one topic.",
     "safetyFooter": "A self-help companion — not a therapist or crisis service. If you're in immediate distress, call 999 (UK), 112 (EU), 911 (US/Canada), or your local emergency line.",
     "voice": {
       "startAria": "Start voice recording",
@@ -194,10 +196,18 @@
   "Pricing": {
     "h1Title": "Scegli come vuoi cominciare.",
     "h1Subtitle": "MiniMind inizia con un assaggio gratuito di 50 messaggi — senza carta.",
-    "comingSoon": "Prossimamente",
-    "comingSoonIntro": "Moduli in sviluppo. Li apriremo man mano che ognuno è pronto.",
     "tierOpen": "Aperto",
     "tierActive": "Attivo",
+    "states": {
+      "cardTitle": "Four State modules, ready now.",
+      "cardBody": "Short structured resets for anxiety, apathy, loss of self, and inner emptiness. £59 one-off per module (£29 for MiniMind subscribers), 30 days of access, unlimited fresh sessions in that window.",
+      "cardCta": "Browse States →"
+    },
+    "themes": {
+      "cardTitle": "Five Theme modules, ready now.",
+      "cardBody": "Longer arcs for the patterns underneath — money, body, family scripts, shame and guilt, self-realisation. £59 one-off per theme (£29 for MiniMind subscribers), 30 days of access.",
+      "cardCta": "Browse Themes →"
+    },
     "tiers": {
       "freeTaster": {
         "title": "Assaggio gratuito",

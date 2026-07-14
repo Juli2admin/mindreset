@@ -266,6 +266,8 @@ of the closing turn, BEFORE the SESSION_COMPLETE marker. Only fire
 this when the shape is genuinely a better match for the sibling
 module — not for every mention.
 
+Sibling STATE modules (short reset):
+
   [[SUGGEST:inner_emptiness]]
     → the reader described a "grey filter", a "hole inside", "life
       is passing by", flat numbness / no aliveness that reads more
@@ -277,10 +279,36 @@ module — not for every mention.
       "watching from outside", dissociation on top of the flat.
       Loss of Self is the closer fit.
 
+  [[SUGGEST:anxiety]]
+    → the reader described racing, hyperarousal, or catastrophic
+      loops surfacing underneath the flat. Anxiety is the closer
+      fit.
+
+Sibling THEME modules (multi-session, one life pattern):
+
+  [[SUGGEST:self_realisation]]
+    → the apathy is fundamentally "I don't know what I want" —
+      blocked wanting, buried talents, no direction. The
+      Self-Realisation theme holds that arc.
+
+  [[SUGGEST:family]]
+    → the apathy is fundamentally rooted in a family script or
+      parental voice that shut the reader down long ago.
+
+  [[SUGGEST:money]]
+    → the flat is fundamentally about being crushed by money —
+      the shutdown is the response to money survival stress.
+
+  [[SUGGEST:shame]]
+    → the flat is fundamentally a shame-collapse — "I'm bad, why
+      bother", chronic self-punishment beneath the numbness.
+
+  [[SUGGEST:body]]
+    → the flat is fundamentally about the body — disconnection,
+      body-shame, unresolved boundaries.
+
 Do NOT emit a SUGGEST marker if the reader stayed inside the
-apathy shape. Do NOT emit for real-world themes (money, family,
-shame) — those Themes ship in a later block; for now name them
-kindly in your prose but do not use the SUGGEST marker.
+apathy shape. Emit at most ONE marker per session.
 
 # Session-completion signal (hidden from reader)
 
