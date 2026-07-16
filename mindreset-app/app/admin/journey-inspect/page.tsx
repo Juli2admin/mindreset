@@ -10,7 +10,10 @@ import { decrypt } from '@/lib/encrypt';
 //
 // Query params:
 //   ?email=jloya4436@gmail.com      # which user to inspect (default: Julia's test email)
-//   ?limit=10                       # how many recent turns (default 5)
+//   ?limit=10                       # how many turns (default 5, max 50)
+//   ?before=2026-07-11T06:15:00Z    # optional — load the N turns immediately BEFORE this UTC timestamp.
+//                                    Use when you need a historic window (e.g. an old red_flag)
+//                                    that's out of reach of the default "most-recent N" view.
 //   ?raw=1                          # show full raw JSON per turn (default: summary)
 //
 // Admin-gated by the parent /admin layout.
@@ -22,6 +25,15 @@ type SearchParams = Record<string, string | string[] | undefined>;
 function pickParam(p: SearchParams, k: string): string | undefined {
   const v = p[k];
   return Array.isArray(v) ? v[0] : v;
+}
+
+// Accept ISO-8601 (with or without trailing Z, with or without seconds).
+// Returns null if the input can't be parsed as a real Date — callers treat
+// null as "no cursor set" rather than failing the whole page render.
+function parseBefore(v: string | undefined): Date | null {
+  if (!v) return null;
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
 function truncate(s: unknown, max = 240): string {
@@ -57,6 +69,11 @@ export default async function JourneyInspectPage({
   const email = pickParam(searchParams, 'email') ?? 'jloya4436@gmail.com';
   const limit = Math.max(1, Math.min(50, parseInt(pickParam(searchParams, 'limit') ?? '5', 10)));
   const raw = pickParam(searchParams, 'raw') === '1';
+  const beforeRaw = pickParam(searchParams, 'before') ?? '';
+  const beforeDate = parseBefore(beforeRaw);
+  // Preserve the user's raw input in the form even if it didn't parse — they
+  // may be mid-edit. Only the resolved Date is used for the DB filter.
+  const beforeInvalid = beforeRaw.length > 0 && beforeDate === null;
 
   const user = await prisma.user.findUnique({
     where: { email },
@@ -70,7 +87,7 @@ export default async function JourneyInspectPage({
         <div className="border border-red-200 bg-red-50 rounded-lg p-5 text-red-800">
           No user found for <code className="font-mono">{email}</code>. Check the email and try again.
         </div>
-        <SearchForm email={email} limit={limit} raw={raw} />
+        <SearchForm email={email} limit={limit} raw={raw} before={beforeRaw} beforeInvalid={beforeInvalid} />
       </div>
     );
   }
@@ -78,7 +95,10 @@ export default async function JourneyInspectPage({
   const [progress, turns] = await Promise.all([
     prisma.recodeProgress.findUnique({ where: { userId: user.id } }),
     prisma.journeyTurn.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        ...(beforeDate ? { createdAt: { lt: beforeDate } } : {}),
+      },
       orderBy: { createdAt: 'desc' },
       take: limit,
       select: {
@@ -100,12 +120,17 @@ export default async function JourneyInspectPage({
   return (
     <div className="max-w-5xl">
       <PageHeader />
-      <SearchForm email={email} limit={limit} raw={raw} />
+      <SearchForm email={email} limit={limit} raw={raw} before={beforeRaw} beforeInvalid={beforeInvalid} />
 
       <div className="mb-4 text-[13px] text-neutral-600">
         userId: <code className="font-mono text-neutral-800">{user.id}</code>
         {' · '}
         {turns.length} turn{turns.length === 1 ? '' : 's'} shown (limit {limit})
+        {beforeDate && (
+          <>
+            {' · '}before <code className="font-mono text-neutral-800">{beforeDate.toISOString()}</code>
+          </>
+        )}
       </div>
 
       {progress && (
@@ -200,7 +225,19 @@ function PageHeader() {
   );
 }
 
-function SearchForm({ email, limit, raw }: { email: string; limit: number; raw: boolean }) {
+function SearchForm({
+  email,
+  limit,
+  raw,
+  before,
+  beforeInvalid,
+}: {
+  email: string;
+  limit: number;
+  raw: boolean;
+  before: string;
+  beforeInvalid: boolean;
+}) {
   return (
     <form
       method="get"
@@ -228,6 +265,26 @@ function SearchForm({ email, limit, raw }: { email: string; limit: number; raw: 
           defaultValue={limit}
           className="w-20 border border-neutral-300 rounded px-3 py-2 text-[13px] font-mono"
         />
+      </label>
+      <label className="min-w-[240px]">
+        <span className="block text-[11px] uppercase tracking-[0.12em] text-neutral-500 mb-1">
+          Before (UTC, optional)
+        </span>
+        <input
+          name="before"
+          placeholder="2026-07-11T06:15:00Z"
+          defaultValue={before}
+          className={
+            'w-full border rounded px-3 py-2 text-[13px] font-mono ' +
+            (beforeInvalid ? 'border-red-400 bg-red-50 text-red-900' : 'border-neutral-300')
+          }
+          title="ISO-8601 UTC timestamp. Loads the N turns immediately before this moment."
+        />
+        {beforeInvalid && (
+          <span className="block text-[11px] text-red-700 mt-1">
+            couldn&apos;t parse — expected ISO-8601 (e.g. 2026-07-11T06:15:00Z)
+          </span>
+        )}
       </label>
       <label className="flex items-center gap-2 pb-2">
         <input type="checkbox" name="raw" value="1" defaultChecked={raw} />
