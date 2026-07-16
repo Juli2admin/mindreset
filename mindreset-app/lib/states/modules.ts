@@ -1,12 +1,11 @@
 // State module registry.
 //
 // Each state is a short single-topic reset conversation. Bought individually
-// (£59 non-subscriber / £29 subscriber), 30-day access, unlimited fresh
+// (£29 flat, no subscriber discount), 30-day access, unlimited fresh
 // sessions in that window.
 //
-// Stripe architecture: ONE product per module (£59). Subscribers get a
-// shared £30 coupon (STRIPE_COUPON_MODULE) applied programmatically at
-// checkout, bringing them to £29. See app/api/states/checkout/route.ts.
+// Stripe architecture: ONE product per module, priced £29 directly. See
+// app/api/states/checkout/route.ts.
 //
 // Adding a new state module: append to STATE_MODULES + create the matching
 // Stripe product + env var. No migration required — moduleId is a string
@@ -22,9 +21,7 @@ export type StateModule = {
   /** One-line description shown on the catalogue tile. */
   tagline: string;
   /**
-   * Env var holding the single Stripe Price ID for this module (£59).
-   * Subscribers get the STRIPE_COUPON_MODULE discount applied at checkout;
-   * there is no separate subscriber price.
+   * Env var holding the single Stripe Price ID for this module (£29).
    *
    * Note the DB slug and env-var name can diverge: `apathy` in code maps
    * to `STRIPE_PRICE_STATE_LOW_ENERGY`, `loss_of_self` → `_COME_BACK`,
@@ -85,12 +82,3 @@ export const STATE_ACCESS_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
  */
 export const STATE_PRICE_PENCE = 2900;
 
-/**
- * Env var holding the Stripe Coupon ID for the £30 module discount.
- * PR χ0 (2026-07-13): applied to EVERY State-module checkout — the
- * Stripe products stay at £59 face and the coupon brings the total
- * to £29 for all buyers, so no subscriber gate remains. When Julia
- * has time to reprice the Stripe products to £29 directly, this
- * coupon becomes a no-op.
- */
-export const STATE_MODULE_COUPON_ENV = 'STRIPE_COUPON_MODULE';
