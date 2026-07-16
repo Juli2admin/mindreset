@@ -110,11 +110,11 @@ rationale.
 
 ### States (Block B — billing wired, content live)
 - **State module** — **£29 per module, one-off, 30 days of access.** Flat price for
-  everyone, no subscriber gate. Implementation: Stripe product stays at £59 in the
-  dashboard; the State-checkout route applies `STRIPE_COUPON_MODULE` (a £30-off Once
-  coupon) on every session to bring the total to £29. When Julia has time to reprice
-  the Stripe products to £29 directly, the coupon call becomes a no-op and can be
-  removed. See `app/api/states/checkout/route.ts`.
+  everyone, no subscriber discount. Priced directly at £29 in Stripe; no coupon
+  applied at checkout. See `app/api/states/checkout/route.ts`.
+  (Historical note: PR χ0 shipped this as a £59 product + £30-off `STRIPE_COUPON_MODULE`
+  applied at checkout. PR χ4 removed the coupon apply; owner then repriced the four
+  Stripe products from £59 to £29 directly.)
 
 ### Themes (Block B — billing wired, content live)
 - **Theme module** — **£59 per module, one-off, 30 days of access.** Flat price for

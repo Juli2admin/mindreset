@@ -362,11 +362,11 @@
       "seePlans": "See plans",
       "browsePlans": "Browse all plans →"
     },
-    "modulePriceFormat": "£59 (£29 subscribers)",
     "moduleBuyButton": "Get this module →",
     "states": {
       "kicker": "YOUR STATES",
       "intro": "Quick resets for the moments a wave hits. Short structured modules you can reach for in real time — grounding, body-aware, and paced to feel safe.",
+      "priceFormat": "£29 · 30-day access",
       "modules": {
         "anxiety": "Calm an anxious moment",
         "lowEnergy": "Find energy when you have none",
@@ -377,6 +377,7 @@
     "themes": {
       "kicker": "YOUR THEMES",
       "intro": "Deeper work, at your own pace. Sustained modules to unwind the patterns underneath — money, body, family, shame, the life you want to live.",
+      "priceFormat": "£59 · 30-day access",
       "modules": {
         "money": "Money & Abundance",
         "body": "Body & Sexuality",

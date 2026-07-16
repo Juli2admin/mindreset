@@ -362,11 +362,11 @@
       "seePlans": "Tarife ansehen",
       "browsePlans": "Alle Pläne ansehen →"
     },
-    "modulePriceFormat": "£59 (£29 für Abonnenten)",
     "moduleBuyButton": "Modul öffnen →",
     "states": {
       "kicker": "DEINE ZUSTÄNDE",
       "intro": "Schnelle Reset-Momente, wenn eine Welle dich trifft. Kurze, strukturierte Module, nach denen du in Echtzeit greifen kannst — Erdung, Körperbewusstsein, in einem Tempo, das sich sicher anfühlt.",
+      "priceFormat": "£29 · 30-day access",
       "modules": {
         "anxiety": "Angst beruhigen",
         "lowEnergy": "Energie wiederfinden",
@@ -377,6 +377,7 @@
     "themes": {
       "kicker": "TIEFERE THEMEN",
       "intro": "Tiefere innere Arbeit — in deinem eigenen Tempo. Länger angelegte Module, um die zugrunde liegenden Muster zu entwirren: Geld, Körper, Familie, Scham und das Leben, das du wirklich leben möchtest.",
+      "priceFormat": "£59 · 30-day access",
       "modules": {
         "money": "Beziehung zu Geld",
         "body": "Körper und Sexualität",

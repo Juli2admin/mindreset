@@ -362,11 +362,11 @@
       "seePlans": "Vedere i piani",
       "browsePlans": "Vedi tutti i piani →"
     },
-    "modulePriceFormat": "£59 (£29 abbonati)",
     "moduleBuyButton": "Apri il modulo →",
     "states": {
       "kicker": "I TUOI STATI",
       "intro": "Rapidi reset per i momenti in cui un'onda arriva. Moduli brevi e strutturati a portata di mano in tempo reale — radicamento, consapevolezza del corpo, a un ritmo che si senta sicuro.",
+      "priceFormat": "£29 · 30-day access",
       "modules": {
         "anxiety": "Calmare l’ansia",
         "lowEnergy": "Ritrovare energia",
@@ -377,6 +377,7 @@
     "themes": {
       "kicker": "TEMI PROFONDI",
       "intro": "Un lavoro interiore più profondo, al tuo ritmo. Moduli immersivi per sciogliere i pattern profondi — denaro, corpo, famiglia, vergogna e la vita che desideri davvero vivere.",
+      "priceFormat": "£59 · 30-day access",
       "modules": {
         "money": "Denaro e abbondanza",
         "body": "Corpo e sessualità",

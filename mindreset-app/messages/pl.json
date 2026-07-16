@@ -362,11 +362,11 @@
       "seePlans": "Zobacz plany",
       "browsePlans": "Zobacz wszystkie plany →"
     },
-    "modulePriceFormat": "£59 (£29 dla subskrybentów)",
     "moduleBuyButton": "Otwórz moduł →",
     "states": {
       "kicker": "TWOJE STANY",
       "intro": "Szybkie resety na chwile, gdy uderza fala. Krótkie, ustrukturyzowane moduły, po które możesz sięgnąć w czasie rzeczywistym — uziemienie, świadomość ciała, w tempie, które daje poczucie bezpieczeństwa.",
+      "priceFormat": "£29 · 30-day access",
       "modules": {
         "anxiety": "Wyciszyć moment lęku",
         "lowEnergy": "Odzyskać siły",
@@ -377,6 +377,7 @@
     "themes": {
       "kicker": "GŁĘBOKIE TEMATY",
       "intro": "Głębsza wewnętrzna praca — we własnym tempie. Rozbudowane moduły pomagające rozplątać ukryte wzorce: pieniądze, ciało, rodzina, wstyd i życie, które naprawdę chcesz tworzyć.",
+      "priceFormat": "£59 · 30-day access",
       "modules": {
         "money": "Pieniądze i obfitość",
         "body": "Ciało i seksualność",
