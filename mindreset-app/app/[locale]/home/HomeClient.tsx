@@ -390,7 +390,7 @@ export default function HomeClient({
                   className="text-[12px]"
                   style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
-                  {t('modulePriceFormat')}
+                  {t('states.priceFormat')}
                 </p>
               </Link>
             ))}
@@ -441,7 +441,7 @@ export default function HomeClient({
                   className="text-[12px]"
                   style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
-                  {t('modulePriceFormat')}
+                  {t('themes.priceFormat')}
                 </p>
               </Link>
             ))}
