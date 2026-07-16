@@ -3,12 +3,13 @@
 // POST { moduleId } — creates a Stripe checkout session for the given
 // state module.
 //
-// PR χ0 (2026-07-13). Flat £29 for all readers, no subscriber gate.
-// Stripe products stay at £59 (unchanged in the dashboard);
-// STRIPE_COUPON_MODULE is applied to every checkout to bring the
-// total to £29. When Julia has time to reprice the Stripe products
-// to £29 directly, the coupon call becomes a no-op and can be
-// removed; nothing else changes.
+// PR χ4 (2026-07-14). Flat £29 for all readers is now enforced by the
+// Stripe price directly — the STRIPE_COUPON_MODULE coupon-apply that
+// PR χ0 used as a transitional discount is gone. IMPORTANT: this code
+// must land BEFORE the four State Stripe prices are dropped from £59
+// to £29, or the coupon would still apply and the total would clamp
+// to £0. Owner (Julia) does the Stripe reprice immediately after this
+// deploys.
 //
 // Access-window semantics: on checkout.session.completed the Stripe
 // webhook creates a Purchase row with accessExpiresAt = now + 30 days.
@@ -25,7 +26,6 @@ import { getPriceId } from '@/lib/stripe/products';
 import {
   getStateModule,
   isValidStateModuleId,
-  STATE_MODULE_COUPON_ENV,
 } from '@/lib/states/modules';
 
 export const dynamic = 'force-dynamic';
@@ -73,23 +73,6 @@ export async function POST(request: NextRequest) {
 
   const priceKey = `state_${moduleId}` as const;
 
-  // The module coupon is applied to every buyer (£30 off → £29). Fails
-  // closed if the env var is missing so we never silently charge the
-  // £59 face price. Stripe rejects `allow_promotion_codes: true`
-  // together with `discounts`, so we lose manual promo-code entry —
-  // fine given £29 is already the intended price.
-  const moduleCoupon = process.env[STATE_MODULE_COUPON_ENV];
-  if (!moduleCoupon) {
-    console.error(
-      `[states/checkout] ${STATE_MODULE_COUPON_ENV} not set — buyer ` +
-        'would be charged the full £59. Refusing to proceed.',
-    );
-    return NextResponse.json(
-      { error: 'Module discount coupon not configured' },
-      { status: 500 },
-    );
-  }
-
   const origin =
     request.headers.get('origin') ??
     process.env.NEXT_PUBLIC_APP_URL ??
@@ -113,7 +96,6 @@ export async function POST(request: NextRequest) {
       customer: customerId,
       mode: 'payment',
       line_items: [{ price: getPriceId(priceKey), quantity: 1 }],
-      discounts: [{ coupon: moduleCoupon }],
       success_url: `${origin}/${locale}/states/${moduleId}?checkout=success`,
       cancel_url: `${origin}/${locale}/states`,
       billing_address_collection: 'required',
