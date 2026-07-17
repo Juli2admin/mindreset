@@ -368,6 +368,14 @@ function TesterRow({ p }: { p: TesterPair }) {
                 {e.safetyEventCount} safety event{e.safetyEventCount === 1 ? '' : 's'}
               </span>
             )}
+            {p.userId && (
+              <Link
+                href={`/admin/pilot/tester/${p.userId}`}
+                className="text-[11px] text-blue-700 hover:underline ml-auto"
+              >
+                View progress →
+              </Link>
+            )}
           </div>
         </td>
       </tr>
