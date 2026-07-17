@@ -15,11 +15,13 @@ import { currentUserIsAdmin } from '@/lib/admin/auth';
 import {
   loadSummary,
   loadTesterPairs,
+  loadMethodEfficacy,
   aggregateScales,
   scaleVerdict,
   SCALES,
   type TesterPair,
   type ScaleAggregate,
+  type MethodEfficacy,
 } from '@/lib/pilot/analytics';
 
 export const dynamic = 'force-dynamic';
@@ -64,9 +66,10 @@ const VERDICT_LABEL: Record<
 export default async function AdminPilotAnalyticsPage() {
   if (!(await currentUserIsAdmin())) redirect('/');
 
-  const [summary, pairs] = await Promise.all([
+  const [summary, pairs, efficacy] = await Promise.all([
     loadSummary(),
     loadTesterPairs(),
+    loadMethodEfficacy(),
   ]);
   const scaleAggs = aggregateScales(pairs);
 
@@ -131,6 +134,12 @@ export default async function AdminPilotAnalyticsPage() {
           there's at least one tester with a Before response so an empty
           cohort renders clean. */}
       {withAnyBefore.length > 0 && <EngagementSummary pairs={withAnyBefore} />}
+
+      {/* Method efficacy — aggregate Journey-data view built for future
+          certification evidence. Six metrics from unencrypted operational
+          fields (JourneyTurn / JourneyPracticeRun / RecodeProgress /
+          SafetyEvent). Cohort scope = pilot invitees only. */}
+      {efficacy.cohortSize > 0 && <MethodEfficacyBlock efficacy={efficacy} />}
 
       {/* Per-tester rows */}
       <div className="flex items-center gap-3 mb-3">
@@ -446,6 +455,286 @@ function Quote({
       >
         {body}
       </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Method efficacy — six metric tables from Journey data (unencrypted).
+// ---------------------------------------------------------------------------
+
+function MethodEfficacyBlock({ efficacy }: { efficacy: MethodEfficacy }) {
+  return (
+    <div className="mb-8">
+      <h2 className="text-[18px] font-medium mb-1">Method efficacy</h2>
+      <p className="text-[12px] leading-[1.6] text-neutral-500 mb-5">
+        Aggregate certification-evidence view built from Journey state
+        reports (unencrypted operational fields only). Cohort:{' '}
+        {efficacy.cohortSize} pilot tester
+        {efficacy.cohortSize === 1 ? '' : 's'}. Session = a run of
+        JourneyTurn rows with no gap longer than 30 minutes — same
+        definition used in the Journey Inspector diagnostics.
+      </p>
+
+      <MetricBlock
+        title="Cohort session activity — weekly"
+        note="Sessions started + distinct active testers per ISO week. Watch: engagement climbing = readers finding it useful. Falling = drop-off happening (find where)."
+      >
+        {efficacy.weekly.length === 0 ? (
+          <EmptyRow message="No Journey sessions started yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Week starting</th>
+                <th className="px-3 py-2 font-medium text-right">Sessions</th>
+                <th className="px-3 py-2 font-medium text-right">Active testers</th>
+                <th className="px-3 py-2 font-medium text-right">Sessions / active</th>
+              </tr>
+            </thead>
+            <tbody>
+              {efficacy.weekly.map((w) => (
+                <tr
+                  key={w.weekStart.toISOString()}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-3 py-2">{fmtDate(w.weekStart)}</td>
+                  <td className="px-3 py-2 text-right">{w.sessions}</td>
+                  <td className="px-3 py-2 text-right">{w.activeTesters}</td>
+                  <td className="px-3 py-2 text-right text-neutral-600">
+                    {w.activeTesters > 0
+                      ? (w.sessions / w.activeTesters).toFixed(1)
+                      : '—'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+
+      <MetricBlock
+        title="Intensity trajectory — by session number in each tester's arc"
+        note="Median CLOSING intensity, aggregated across all testers, per Nth session in their arc. Method working = later sessions close at lower intensity than earlier ones. N = distinct testers who reached that session number."
+      >
+        {efficacy.intensityByOrdinal.length === 0 ? (
+          <EmptyRow message="No closing-intensity data yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Session #</th>
+                <th className="px-3 py-2 font-medium text-right">N testers</th>
+                <th className="px-3 py-2 font-medium text-right">Median closing intensity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {efficacy.intensityByOrdinal.map((r) => (
+                <tr
+                  key={r.sessionNo}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-3 py-2">Session {r.sessionNo}</td>
+                  <td className="px-3 py-2 text-right">{r.nSessions}</td>
+                  <td className="px-3 py-2 text-right font-medium">
+                    {r.medianClosingIntensity === null
+                      ? '—'
+                      : r.medianClosingIntensity.toFixed(1)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+
+      <MetricBlock
+        title="Closing intensity distribution — monthly"
+        note="How readers left each session, bucketed. Calm (≤ 3) + Neutral (4-5) = safe close. Activated (6-7) + Overwhelmed (8-10) = session did not land. Trend calm % up over months for certification."
+      >
+        {efficacy.closingIntensityByMonth.length === 0 ? (
+          <EmptyRow message="No closing data yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Month</th>
+                <th className="px-3 py-2 font-medium text-right">N sessions</th>
+                <th className="px-3 py-2 font-medium text-right">Calm ≤3</th>
+                <th className="px-3 py-2 font-medium text-right">Neutral 4-5</th>
+                <th className="px-3 py-2 font-medium text-right">Activated 6-7</th>
+                <th className="px-3 py-2 font-medium text-right">Overwhelmed 8-10</th>
+              </tr>
+            </thead>
+            <tbody>
+              {efficacy.closingIntensityByMonth.map((r) => (
+                <tr
+                  key={r.month}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-3 py-2">{r.month}</td>
+                  <td className="px-3 py-2 text-right">{r.nSessions}</td>
+                  <td className="px-3 py-2 text-right text-emerald-700">
+                    {r.calmPct.toFixed(0)}%
+                  </td>
+                  <td className="px-3 py-2 text-right text-neutral-700">
+                    {r.neutralPct.toFixed(0)}%
+                  </td>
+                  <td className="px-3 py-2 text-right text-amber-700">
+                    {r.activatedPct.toFixed(0)}%
+                  </td>
+                  <td className="px-3 py-2 text-right text-red-700">
+                    {r.overwhelmedPct.toFixed(0)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+
+      <MetricBlock
+        title="Stage distribution — snapshot"
+        note="Where the cohort is on the arc right now. Movement over time is captured naturally as testers advance stages (higher stages fill up as pilot matures)."
+      >
+        {efficacy.stageDistribution.length === 0 ? (
+          <EmptyRow message="No stage data yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Current stage</th>
+                <th className="px-3 py-2 font-medium text-right">Testers</th>
+                <th className="px-3 py-2 font-medium text-right">% of cohort</th>
+              </tr>
+            </thead>
+            <tbody>
+              {efficacy.stageDistribution.map((r) => (
+                <tr
+                  key={r.stage}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-3 py-2">Stage {r.stage}</td>
+                  <td className="px-3 py-2 text-right">{r.testers}</td>
+                  <td className="px-3 py-2 text-right text-neutral-600">
+                    {((r.testers / efficacy.cohortSize) * 100).toFixed(0)}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+
+      <MetricBlock
+        title="Practice completion — all-time"
+        note="How practices ran across all pilot sessions. Aborts declining over time = AI + reader tuning to each other. High started/mid without completed = practice not landing to close."
+      >
+        {efficacy.practiceOutcomes.length === 0 ? (
+          <EmptyRow message="No practices run yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Status</th>
+                <th className="px-3 py-2 font-medium text-right">Count</th>
+                <th className="px-3 py-2 font-medium text-right">% of runs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                const total = efficacy.practiceOutcomes.reduce(
+                  (a, r) => a + r.count,
+                  0,
+                );
+                return efficacy.practiceOutcomes.map((r) => (
+                  <tr
+                    key={r.status}
+                    className="border-b border-neutral-100 last:border-0"
+                  >
+                    <td className="px-3 py-2">{r.status}</td>
+                    <td className="px-3 py-2 text-right">{r.count}</td>
+                    <td className="px-3 py-2 text-right text-neutral-600">
+                      {total > 0 ? ((r.count / total) * 100).toFixed(0) : 0}%
+                    </td>
+                  </tr>
+                ));
+              })()}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+
+      <MetricBlock
+        title="Safety event rate — monthly"
+        note="Safety events triggered per 100 sessions. Certification-grade: how often does the safety net fire? Trending toward zero as method matures = fewer readers reaching red-flag territory."
+      >
+        {efficacy.safetyByMonth.length === 0 ? (
+          <EmptyRow message="No sessions in the window yet." />
+        ) : (
+          <table className="w-full text-[13px]">
+            <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-600">
+              <tr className="text-left">
+                <th className="px-3 py-2 font-medium">Month</th>
+                <th className="px-3 py-2 font-medium text-right">Sessions</th>
+                <th className="px-3 py-2 font-medium text-right">Safety events</th>
+                <th className="px-3 py-2 font-medium text-right">Rate per 100 sessions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {efficacy.safetyByMonth.map((r) => (
+                <tr
+                  key={r.month}
+                  className="border-b border-neutral-100 last:border-0"
+                >
+                  <td className="px-3 py-2">{r.month}</td>
+                  <td className="px-3 py-2 text-right">{r.sessions}</td>
+                  <td
+                    className={`px-3 py-2 text-right ${
+                      r.safetyEvents > 0 ? 'text-amber-800 font-medium' : ''
+                    }`}
+                  >
+                    {r.safetyEvents}
+                  </td>
+                  <td className="px-3 py-2 text-right text-neutral-600">
+                    {r.ratePer100Sessions === null
+                      ? '—'
+                      : r.ratePer100Sessions.toFixed(1)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </MetricBlock>
+    </div>
+  );
+}
+
+function MetricBlock({
+  title,
+  note,
+  children,
+}: {
+  title: string;
+  note: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-6">
+      <h3 className="text-[14px] font-medium mb-1">{title}</h3>
+      <p className="text-[11px] leading-[1.55] text-neutral-500 mb-2">{note}</p>
+      <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function EmptyRow({ message }: { message: string }) {
+  return (
+    <div className="p-5 text-center text-[13px] text-neutral-500">
+      {message}
     </div>
   );
 }

@@ -320,3 +320,387 @@ export function scaleVerdict(agg: ScaleAggregate): 'good' | 'bad' | 'flat' | nul
   if (agg.expected === 'up') return agg.meanDelta > 0 ? 'good' : 'bad';
   return agg.meanDelta < 0 ? 'good' : 'bad';
 }
+
+// ===========================================================================
+// METHOD EFFICACY — aggregate cohort view from Journey data (unencrypted
+// fields only). Six metrics, each a plain table on the analytics page.
+// Certification-grade evidence built from what the AI already emits every
+// turn.
+//
+// Cohort scope: pilot invitees only. `PilotInvitation.redeemedByUserId`
+// where the invitation is not revoked. This mirrors the existing
+// Journey-engagement scope; the Method Efficacy section does not include
+// non-pilot Journey users.
+//
+// Session definition (shared across metrics): a session is a run of
+// consecutive JourneyTurn rows for one user with no more than 30 min
+// gap between adjacent turns. First turn of every session is marked; the
+// last is the closing turn. Same definition Julia used in her diagnostic
+// SQL — keeps the numbers consistent between Method Efficacy and the
+// per-user Inspector view.
+// ===========================================================================
+
+export type WeeklySessionRow = {
+  weekStart: Date; // Monday of the ISO week
+  sessions: number;
+  activeTesters: number;
+};
+
+export type IntensityByOrdinalRow = {
+  sessionNo: number;
+  nSessions: number;
+  medianClosingIntensity: number | null;
+};
+
+export type ClosingIntensityBucketRow = {
+  month: string; // 'YYYY-MM'
+  nSessions: number;
+  calmPct: number; // closing intensity ≤ 3
+  neutralPct: number; // 4-5
+  activatedPct: number; // 6-7
+  overwhelmedPct: number; // 8-10
+};
+
+export type StageDistributionRow = {
+  stage: number;
+  testers: number;
+};
+
+export type PracticeOutcomeRow = {
+  status: string; // completed | mid | started | aborted_*
+  count: number;
+};
+
+export type SafetyRateRow = {
+  month: string; // 'YYYY-MM'
+  sessions: number;
+  safetyEvents: number;
+  ratePer100Sessions: number | null;
+};
+
+export type MethodEfficacy = {
+  cohortSize: number;
+  weekly: WeeklySessionRow[];
+  intensityByOrdinal: IntensityByOrdinalRow[];
+  closingIntensityByMonth: ClosingIntensityBucketRow[];
+  stageDistribution: StageDistributionRow[];
+  practiceOutcomes: PracticeOutcomeRow[];
+  safetyByMonth: SafetyRateRow[];
+};
+
+/**
+ * Compute the six Method Efficacy metrics in one pass. Six raw SQL
+ * queries (one per metric) all scoped by a CTE naming the cohort. This
+ * runs read-only against the operational fields on JourneyTurn /
+ * JourneyPracticeRun / RecodeProgress / SafetyEvent — no encrypted data
+ * touched.
+ */
+export async function loadMethodEfficacy(): Promise<MethodEfficacy> {
+  const cohortRows = await prisma.pilotInvitation.findMany({
+    where: { redeemedByUserId: { not: null }, revokedAt: null },
+    select: { redeemedByUserId: true },
+  });
+  const cohortUserIds = cohortRows
+    .map((r) => r.redeemedByUserId)
+    .filter((id): id is string => !!id);
+  const cohortSize = cohortUserIds.length;
+
+  if (cohortSize === 0) {
+    return {
+      cohortSize: 0,
+      weekly: [],
+      intensityByOrdinal: [],
+      closingIntensityByMonth: [],
+      stageDistribution: [],
+      practiceOutcomes: [],
+      safetyByMonth: [],
+    };
+  }
+
+  const [
+    weekly,
+    intensityByOrdinal,
+    closingIntensityByMonth,
+    stageDistribution,
+    practiceOutcomes,
+    safetyByMonth,
+  ] = await Promise.all([
+    queryWeekly(cohortUserIds),
+    queryIntensityByOrdinal(cohortUserIds),
+    queryClosingIntensityByMonth(cohortUserIds),
+    queryStageDistribution(cohortUserIds),
+    queryPracticeOutcomes(cohortUserIds),
+    querySafetyByMonth(cohortUserIds),
+  ]);
+
+  return {
+    cohortSize,
+    weekly,
+    intensityByOrdinal,
+    closingIntensityByMonth,
+    stageDistribution,
+    practiceOutcomes,
+    safetyByMonth,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Individual metric queries. Each takes a userId list and returns typed
+// rows. Kept small and separately-testable — the composite loader above
+// just Promise.all's them.
+// ---------------------------------------------------------------------------
+
+async function queryWeekly(userIds: string[]): Promise<WeeklySessionRow[]> {
+  type Row = {
+    week_start: Date;
+    sessions: bigint;
+    active_testers: bigint;
+  };
+  const rows = await prisma.$queryRaw<Row[]>`
+    WITH turns AS (
+      SELECT
+        "userId",
+        "createdAt",
+        LAG("createdAt") OVER (
+          PARTITION BY "userId" ORDER BY "createdAt"
+        ) AS prev_at
+      FROM "JourneyTurn"
+      WHERE "userId" = ANY (${userIds}::text[])
+    ),
+    starts AS (
+      SELECT
+        "userId",
+        DATE_TRUNC('week', "createdAt") AS week_start
+      FROM turns
+      WHERE prev_at IS NULL
+         OR EXTRACT(EPOCH FROM ("createdAt" - prev_at)) > 1800
+    )
+    SELECT
+      week_start,
+      COUNT(*)::bigint AS sessions,
+      COUNT(DISTINCT "userId")::bigint AS active_testers
+    FROM starts
+    GROUP BY week_start
+    ORDER BY week_start DESC
+    LIMIT 20
+  `;
+  return rows.map((r) => ({
+    weekStart: r.week_start,
+    sessions: Number(r.sessions),
+    activeTesters: Number(r.active_testers),
+  }));
+}
+
+async function queryIntensityByOrdinal(
+  userIds: string[],
+): Promise<IntensityByOrdinalRow[]> {
+  type Row = {
+    session_no: number;
+    n_sessions: bigint;
+    median_intensity: number | null;
+  };
+  // For every (user, session_no), pick the CLOSING turn's intensity.
+  // Then per session_no across cohort, compute the median. Bounded to
+  // the first 20 sessions per user so the arc curve stays readable.
+  const rows = await prisma.$queryRaw<Row[]>`
+    WITH turns AS (
+      SELECT
+        "userId",
+        "createdAt",
+        "intensityReported",
+        LAG("createdAt") OVER (
+          PARTITION BY "userId" ORDER BY "createdAt"
+        ) AS prev_at
+      FROM "JourneyTurn"
+      WHERE "userId" = ANY (${userIds}::text[])
+    ),
+    tagged AS (
+      SELECT
+        "userId",
+        "createdAt",
+        "intensityReported",
+        SUM(
+          CASE
+            WHEN prev_at IS NULL
+              OR EXTRACT(EPOCH FROM ("createdAt" - prev_at)) > 1800
+            THEN 1 ELSE 0
+          END
+        ) OVER (PARTITION BY "userId" ORDER BY "createdAt") AS session_no
+      FROM turns
+    ),
+    closes AS (
+      SELECT DISTINCT ON ("userId", session_no)
+        "userId", session_no, "intensityReported"
+      FROM tagged
+      ORDER BY "userId", session_no, "createdAt" DESC
+    )
+    SELECT
+      session_no::int,
+      COUNT(*)::bigint AS n_sessions,
+      PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY "intensityReported")::float AS median_intensity
+    FROM closes
+    WHERE "intensityReported" IS NOT NULL AND session_no <= 20
+    GROUP BY session_no
+    ORDER BY session_no
+  `;
+  return rows.map((r) => ({
+    sessionNo: r.session_no,
+    nSessions: Number(r.n_sessions),
+    medianClosingIntensity: r.median_intensity,
+  }));
+}
+
+async function queryClosingIntensityByMonth(
+  userIds: string[],
+): Promise<ClosingIntensityBucketRow[]> {
+  type Row = {
+    month: string;
+    n_sessions: bigint;
+    calm: bigint;
+    neutral: bigint;
+    activated: bigint;
+    overwhelmed: bigint;
+  };
+  const rows = await prisma.$queryRaw<Row[]>`
+    WITH turns AS (
+      SELECT
+        "userId",
+        "createdAt",
+        "intensityReported",
+        LAG("createdAt") OVER (
+          PARTITION BY "userId" ORDER BY "createdAt"
+        ) AS prev_at
+      FROM "JourneyTurn"
+      WHERE "userId" = ANY (${userIds}::text[])
+    ),
+    tagged AS (
+      SELECT
+        "userId",
+        "createdAt",
+        "intensityReported",
+        SUM(
+          CASE
+            WHEN prev_at IS NULL
+              OR EXTRACT(EPOCH FROM ("createdAt" - prev_at)) > 1800
+            THEN 1 ELSE 0
+          END
+        ) OVER (PARTITION BY "userId" ORDER BY "createdAt") AS session_no
+      FROM turns
+    ),
+    closes AS (
+      SELECT DISTINCT ON ("userId", session_no)
+        "userId", session_no, "intensityReported", "createdAt"
+      FROM tagged
+      ORDER BY "userId", session_no, "createdAt" DESC
+    )
+    SELECT
+      TO_CHAR("createdAt", 'YYYY-MM') AS month,
+      COUNT(*)::bigint AS n_sessions,
+      SUM(CASE WHEN "intensityReported" <= 3 THEN 1 ELSE 0 END)::bigint AS calm,
+      SUM(CASE WHEN "intensityReported" BETWEEN 4 AND 5 THEN 1 ELSE 0 END)::bigint AS neutral,
+      SUM(CASE WHEN "intensityReported" BETWEEN 6 AND 7 THEN 1 ELSE 0 END)::bigint AS activated,
+      SUM(CASE WHEN "intensityReported" >= 8 THEN 1 ELSE 0 END)::bigint AS overwhelmed
+    FROM closes
+    WHERE "intensityReported" IS NOT NULL
+    GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
+    ORDER BY month DESC
+    LIMIT 12
+  `;
+  return rows.map((r) => {
+    const n = Number(r.n_sessions);
+    return {
+      month: r.month,
+      nSessions: n,
+      calmPct: n > 0 ? (Number(r.calm) / n) * 100 : 0,
+      neutralPct: n > 0 ? (Number(r.neutral) / n) * 100 : 0,
+      activatedPct: n > 0 ? (Number(r.activated) / n) * 100 : 0,
+      overwhelmedPct: n > 0 ? (Number(r.overwhelmed) / n) * 100 : 0,
+    };
+  });
+}
+
+async function queryStageDistribution(
+  userIds: string[],
+): Promise<StageDistributionRow[]> {
+  const rows = await prisma.recodeProgress.groupBy({
+    by: ['currentStage'],
+    where: { userId: { in: userIds } },
+    _count: { _all: true },
+    orderBy: { currentStage: 'asc' },
+  });
+  return rows.map((r) => ({
+    stage: r.currentStage,
+    testers: r._count._all,
+  }));
+}
+
+async function queryPracticeOutcomes(
+  userIds: string[],
+): Promise<PracticeOutcomeRow[]> {
+  const rows = await prisma.journeyPracticeRun.groupBy({
+    by: ['status'],
+    where: { userId: { in: userIds } },
+    _count: { _all: true },
+  });
+  return rows
+    .map((r) => ({ status: r.status, count: r._count._all }))
+    .sort((a, b) => b.count - a.count);
+}
+
+async function querySafetyByMonth(
+  userIds: string[],
+): Promise<SafetyRateRow[]> {
+  // Session count per month.
+  type SessRow = { month: string; sessions: bigint };
+  const sessRows = await prisma.$queryRaw<SessRow[]>`
+    WITH turns AS (
+      SELECT
+        "userId",
+        "createdAt",
+        LAG("createdAt") OVER (
+          PARTITION BY "userId" ORDER BY "createdAt"
+        ) AS prev_at
+      FROM "JourneyTurn"
+      WHERE "userId" = ANY (${userIds}::text[])
+    ),
+    starts AS (
+      SELECT
+        TO_CHAR("createdAt", 'YYYY-MM') AS month
+      FROM turns
+      WHERE prev_at IS NULL
+         OR EXTRACT(EPOCH FROM ("createdAt" - prev_at)) > 1800
+    )
+    SELECT month, COUNT(*)::bigint AS sessions
+    FROM starts
+    GROUP BY month
+  `;
+  const sessionsByMonth = new Map<string, number>();
+  for (const r of sessRows) sessionsByMonth.set(r.month, Number(r.sessions));
+
+  // Safety events per month.
+  type SafRow = { month: string; events: bigint };
+  const safRows = await prisma.$queryRaw<SafRow[]>`
+    SELECT TO_CHAR("createdAt", 'YYYY-MM') AS month, COUNT(*)::bigint AS events
+    FROM "SafetyEvent"
+    WHERE "userId" = ANY (${userIds}::text[])
+    GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
+  `;
+  const eventsByMonth = new Map<string, number>();
+  for (const r of safRows) eventsByMonth.set(r.month, Number(r.events));
+
+  const months = new Set<string>();
+  sessionsByMonth.forEach((_v, k) => months.add(k));
+  eventsByMonth.forEach((_v, k) => months.add(k));
+  const rows = Array.from(months).map((month) => {
+    const sessions = sessionsByMonth.get(month) ?? 0;
+    const events = eventsByMonth.get(month) ?? 0;
+    return {
+      month,
+      sessions,
+      safetyEvents: events,
+      ratePer100Sessions: sessions > 0 ? (events / sessions) * 100 : null,
+    };
+  });
+  rows.sort((a, b) => b.month.localeCompare(a.month));
+  return rows.slice(0, 12);
+}
