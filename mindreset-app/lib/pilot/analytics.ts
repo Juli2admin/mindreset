@@ -677,13 +677,17 @@ async function querySafetyByMonth(
   const sessionsByMonth = new Map<string, number>();
   for (const r of sessRows) sessionsByMonth.set(r.month, Number(r.sessions));
 
-  // Safety events per month.
+  // Safety events per month. SafetyEvent uses `triggeredAt` (per its
+  // Prisma model), NOT `createdAt` — the original queryByMonth queries
+  // above use JourneyTurn/JourneyMessage which do have `createdAt`,
+  // but SafetyEvent is different. Column-name mismatch was the cause
+  // of the pilot analytics 500 (Postgres error 42703).
   type SafRow = { month: string; events: bigint };
   const safRows = await prisma.$queryRaw<SafRow[]>`
-    SELECT TO_CHAR("createdAt", 'YYYY-MM') AS month, COUNT(*)::bigint AS events
+    SELECT TO_CHAR("triggeredAt", 'YYYY-MM') AS month, COUNT(*)::bigint AS events
     FROM "SafetyEvent"
     WHERE "userId" = ANY (${userIds}::text[])
-    GROUP BY TO_CHAR("createdAt", 'YYYY-MM')
+    GROUP BY TO_CHAR("triggeredAt", 'YYYY-MM')
   `;
   const eventsByMonth = new Map<string, number>();
   for (const r of safRows) eventsByMonth.set(r.month, Number(r.events));
