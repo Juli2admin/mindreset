@@ -7,7 +7,7 @@ import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
 import { pageAlternates } from '@/lib/seo/alternates';
 import Footer from '@/components/Footer';
-import TopBar from '@/components/TopBar';
+import MarketingTopBar from '@/components/MarketingTopBar';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -145,7 +145,7 @@ export default async function TermsPage() {
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-3xl mx-auto px-6 py-4">
-        <TopBar showMarketingNav />
+        <MarketingTopBar />
       </div>
       <div className="max-w-3xl mx-auto px-6 pb-12 sm:pb-16">
         {/* ─── Document metadata ───────────────────────────────── */}

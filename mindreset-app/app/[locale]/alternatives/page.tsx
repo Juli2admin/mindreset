@@ -19,7 +19,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { setRequestLocale } from 'next-intl/server';
-import TopBar from '@/components/TopBar';
+import MarketingTopBar from '@/components/MarketingTopBar';
 import Footer from '@/components/Footer';
 import { Link } from '@/i18n/navigation';
 import { pageAlternates } from '@/lib/seo/alternates';
@@ -73,7 +73,7 @@ export default async function AlternativesPage({
   return (
     <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar showMarketingNav />
+        <MarketingTopBar />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         {/* Kicker */}
