@@ -66,12 +66,26 @@ const VERDICT_LABEL: Record<
 export default async function AdminPilotAnalyticsPage() {
   if (!(await currentUserIsAdmin())) redirect('/');
 
-  const [summary, pairs, efficacy] = await Promise.all([
+  // loadSummary + loadTesterPairs are the original always-work queries the
+  // pilot analytics page was built on. loadMethodEfficacy is the newer
+  // (PR #310) aggregate. If it throws for any reason, we keep the page
+  // usable and surface the failure in a small red banner so the owner
+  // knows to look at server logs — better than a full-page 500.
+  const [summary, pairs] = await Promise.all([
     loadSummary(),
     loadTesterPairs(),
-    loadMethodEfficacy(),
   ]);
   const scaleAggs = aggregateScales(pairs);
+  let efficacy: MethodEfficacy | null = null;
+  let efficacyError: string | null = null;
+  try {
+    efficacy = await loadMethodEfficacy();
+  } catch (err) {
+    // Serverless env — this hits Vercel logs where you can grep by
+    // '[pilot analytics] loadMethodEfficacy failed' for the stack.
+    console.error('[pilot analytics] loadMethodEfficacy failed:', err);
+    efficacyError = err instanceof Error ? err.message : String(err);
+  }
 
   const withAnyBefore = pairs.filter((p) => p.beforeAt !== null);
   const withBoth = pairs.filter(
@@ -138,8 +152,30 @@ export default async function AdminPilotAnalyticsPage() {
       {/* Method efficacy — aggregate Journey-data view built for future
           certification evidence. Six metrics from unencrypted operational
           fields (JourneyTurn / JourneyPracticeRun / RecodeProgress /
-          SafetyEvent). Cohort scope = pilot invitees only. */}
-      {efficacy.cohortSize > 0 && <MethodEfficacyBlock efficacy={efficacy} />}
+          SafetyEvent). Cohort scope = pilot invitees only. If the query
+          throws, we hide the block and surface the error inline so the
+          page still loads. */}
+      {efficacyError && (
+        <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-[13px] text-red-900">
+          <div className="font-medium mb-1">
+            Method efficacy section is unavailable
+          </div>
+          <div className="text-[12px] font-mono break-words">
+            {efficacyError}
+          </div>
+          <div className="mt-2 text-[12px]">
+            Rest of the page loaded fine — this is only the aggregate
+            certification-evidence view. Check Vercel logs for
+            <code className="ml-1 px-1 bg-red-100 rounded">
+              [pilot analytics] loadMethodEfficacy failed
+            </code>{' '}
+            for the full stack.
+          </div>
+        </div>
+      )}
+      {efficacy && efficacy.cohortSize > 0 && (
+        <MethodEfficacyBlock efficacy={efficacy} />
+      )}
 
       {/* Per-tester rows */}
       <div className="flex items-center gap-3 mb-3">
