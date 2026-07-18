@@ -151,6 +151,15 @@ function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
   lines.push('');
+  // PR M1 (2026-07-18) — clinical attention priority. The state block
+  // that follows contains both LIVE session signals (top) and HISTORICAL
+  // context (bottom, capped). This one line tells the AI where its
+  // attention primarily belongs. Not a procedural rule — a reminder about
+  // the memory that follows.
+  lines.push(
+    "**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**",
+  );
+  lines.push('');
   // PR λ (2026-07-11) — the router's current bookkeeping label, not a
   // capability gate. All 8 stage specs are in the AI's canon block above;
   // the AI reaches for whichever stage's methodology fits the turn.
@@ -257,6 +266,26 @@ function renderStateBlock(state: JourneyState): string {
     lines.push(`> ${state.adultSelfQualities}`);
   }
 
+  // PR M1 (2026-07-18) — historical context section header. Placed once
+  // above the accumulated captures (parts / foreign / patterns / images
+  // / continuity note) so the AI reads a clear boundary between live
+  // session state (above) and stored formulation (below). Not a
+  // procedural rule; a framing marker.
+  const hasHistoricalContent =
+    state.parts.length > 0 ||
+    state.foreignFiles.length > 0 ||
+    state.patterns.length > 0 ||
+    state.signatureImages.length > 0 ||
+    Boolean(state.continuityNote);
+  if (hasHistoricalContent) {
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+    lines.push(
+      '**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user\'s live signal.',
+    );
+  }
+
   if (state.parts.length > 0) {
     lines.push('');
     lines.push('**Inner parts the user has met (each in their own words):**');
@@ -295,7 +324,11 @@ function renderStateBlock(state: JourneyState): string {
   //     the AI's choice — this is a state-block instruction, never
   //     recited verbatim to the user.
   if (state.patterns.length > 0) {
-    const renderedPatterns = state.patterns.slice(0, 10);
+    // PR M1 (2026-07-18) — load.ts now caps patterns at 5. The slice
+    // that was here (0..10) is a no-op post-cap but kept for defensive
+    // safety in case a caller ever hands a pre-capped state through
+    // this render path.
+    const renderedPatterns = state.patterns.slice(0, 5);
     const hasReconfirmSignal =
       state.isSessionResume &&
       renderedPatterns.some(
@@ -337,8 +370,33 @@ function renderStateBlock(state: JourneyState): string {
 
   if (state.continuityNote) {
     lines.push('');
-    lines.push('**Case formulation across sessions (your running model — internal, never recited to user):**');
-    lines.push(`> ${state.continuityNote}`);
+    // PR M1 (2026-07-18) — reframed from "your running model" to
+    // "prior session notes (context, not truth)". Same field; less
+    // authorial weight. The AI's Trap 11 (riding the case formulation)
+    // is easier to honour when the note itself isn't labelled as a
+    // running model of the user.
+    lines.push(
+      '**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**',
+    );
+    // Head-and-tail truncation per M0 finding: the head of the note
+    // consistently holds the current-session summary; the tail holds
+    // "Next session:" directives. The middle is where accumulated
+    // material (and past errors) sediments. Preserving both ends drops
+    // the risky middle while keeping operational continuity intact.
+    // Threshold and slice sizes tuned to keep total rendered content
+    // near 750 chars including the ellipsis marker.
+    const note = state.continuityNote;
+    if (note.length <= 800) {
+      lines.push(`> ${note}`);
+    } else {
+      const head = note.slice(0, 400).trim();
+      const tail = note.slice(-300).trim();
+      lines.push(`> ${head}`);
+      lines.push('>');
+      lines.push('> [...older material in the middle omitted — see Journey Inspector for the full note]');
+      lines.push('>');
+      lines.push(`> ${tail}`);
+    }
   }
 
   if (state.frozenForReview) {
