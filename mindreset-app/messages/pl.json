@@ -644,7 +644,7 @@
     "brand": "MindReset",
     "tagline": "Towarzysz samopomocy i dobrostanu — nie terapia, nie służba kryzysowa.",
     "introTitle": "Zanim zaczniemy",
-    "introBody": "Ta krótka ankieta pomaga nam zrozumieć, czy MindReset jest dla Pani odpowiedni w tym momencie. Zajmuje około pięciu minut. Niektóre pytania są bezpośrednie — proszę odpowiadać szczerze. Jeśli coś stanie się za dużo, można zamknąć tę kartę w dowolnej chwili.",
+    "introBody": "Ta krótka ankieta pomaga nam zrozumieć, czy MindReset jest dla ciebie odpowiedni w tym momencie. Zajmuje około pięciu minut. Niektóre pytania są bezpośrednie — odpowiadaj szczerze. Jeśli coś stanie się za dużo, możesz zamknąć tę kartę w dowolnej chwili.",
     "ageGate": "Potwierdzam, że mam co najmniej 18 lat.",
     "notMedical": "Rozumiem, że nie jest to leczenie medyczne ani psychiatryczne.",
     "begin": "Zacznij",
@@ -655,28 +655,28 @@
     "submitLoadingKicker": "Chwila",
     "submitLoading": "Zapisywanie odpowiedzi…",
     "submitErrorTitle": "Nie udało się zapisać",
-    "submitErrorBody": "Odpowiedzi dotarły, ale nie udało się ich zapisać — proszę odświeżyć stronę i spróbować ponownie.",
+    "submitErrorBody": "Odpowiedzi dotarły, ale nie udało się ich zapisać — odśwież stronę i spróbuj ponownie.",
     "retryButton": "Spróbuj ponownie",
-    "selectAll": "Proszę zaznaczyć wszystko, co dotyczy Pani teraz.",
+    "selectAll": "Zaznacz wszystko, co dotyczy ciebie teraz.",
     "rateScaleHigh": "0 = wcale, 5 = bardzo silnie",
     "rateScaleLow": "0 = nieobecne, 5 = bardzo obecne",
-    "pickOne": "Proszę wybrać tę, która najlepiej Panią opisuje.",
+    "pickOne": "Wybierz tę, która najlepiej cię opisuje.",
     "yes": "Tak",
     "no": "Nie",
     "progress": "Krok",
     "of": "z",
     "secExclusion": "Najpierw coś ważnego",
-    "secFunctionality": "Jak Pani funkcjonuje na co dzień",
+    "secFunctionality": "Jak funkcjonujesz na co dzień",
     "secEmotional": "Aktualny stan emocjonalny",
     "secTrauma": "Rany z przeszłości",
     "secCognitive": "Sprawy praktyczne",
     "secConsent": "Zgoda",
-    "exclusionTitle": "Czy któreś z poniższych jest prawdą w tym okresie Pani życia?",
-    "functionalityTitle": "Na ile każde z poniższych pasuje do Pani obecnego życia?",
-    "emotionalTitle": "Jak bardzo każde z poniższych jest obecne dla Pani teraz?",
-    "traumaTitle": "Które z poniższych jest najbliższe temu, jak Pani odczuwa swoją przeszłość?",
+    "exclusionTitle": "Czy któreś z poniższych jest prawdą w tym okresie twojego życia?",
+    "functionalityTitle": "Na ile każde z poniższych pasuje do twojego obecnego życia?",
+    "emotionalTitle": "Jak bardzo każde z poniższych jest obecne dla ciebie teraz?",
+    "traumaTitle": "Które z poniższych jest najbliższe temu, jak odczuwasz swoją przeszłość?",
     "cognitiveTitle": "Kilka szybkich sprawdzeń.",
-    "consentTitle": "Zanim Pani przejdzie dalej, proszę potwierdzić, że rozumie:",
+    "consentTitle": "Zanim przejdziesz dalej, potwierdź, że rozumiesz:",
     "exclusion": [
       "Aktualne myśli samobójcze, z zamiarem lub planem",
       "Próba samobójcza w ciągu ostatnich 12 miesięcy",
@@ -694,22 +694,22 @@
       "Daję radę z codziennymi sprawami — myć się, jeść, pracować, podstawowe zadania",
       "Potrafię się skupić w rozmowie przez co najmniej 10 minut",
       "Czuję się bezpiecznie w swoim domu",
-      "Potrafię się regulować, przynajmniej częściowo, gdy jestem rozstrojona",
+      "Potrafię się regulować, przynajmniej częściowo, gdy jestem rozstrojony/-a",
       "Potrafię odczuwać podstawowe emocje, zamiast całkowitego odrętwienia",
       "Potrafię opisać uczucia prostymi słowami"
     ],
     "emotional": [
-      "Czuję się stale przytłoczona",
+      "Czuję się stale przytłoczony/-a",
       "Mam częste ataki paniki",
       "Często zamykam się emocjonalnie (zamarzam)",
-      "Dysocjuję — czuję się nierealnie, odłączona",
+      "Dysocjuję — czuję się nierealnie, odłączony/-a",
       "Wybucha we mnie reakcja nagle i tracę kontrolę"
     ],
     "trauma": [
       "Mam łagodne emocjonalne rany, ale funkcjonuję normalnie",
       "Mam nierozwiązane sprawy z przeszłości, ale potrafię zachować stabilność",
       "Trauma z przeszłości regularnie mnie przytłacza",
-      "Nie potrafię pozostać emocjonalnie bezpieczna, gdy wspominam przeszłość"
+      "Nie potrafię pozostać emocjonalnie bezpieczny/-a, gdy wspominam przeszłość"
     ],
     "cognitive": [
       "Potrafię wykonywać instrukcje krok po kroku",
@@ -719,7 +719,7 @@
     "consent": [
       "MindReset nie jest leczeniem medycznym ani psychiatrycznym",
       "MindReset nie może wesprzeć w kryzysie, stanie samobójczym ani psychozie",
-      "Będę szczera co do swoich objawów w każdej sesji",
+      "Będę szczery/-a co do swoich objawów w każdej sesji",
       "Przerwę proces, jeśli nie poczuję się bezpiecznie",
       "AI może przerwać proces ze względów bezpieczeństwa, i to akceptuję",
       "Biorę odpowiedzialność za swoje decyzje i zmiany w życiu",
@@ -727,8 +727,8 @@
       "Wyrażam dobrowolną zgodę, by kontynuować"
     ],
     "redKicker": "Proszę się tu zatrzymać",
-    "redTitle": "MindReset nie jest dla Pani odpowiedni w tym momencie",
-    "redBody": "To, co Pani opisuje, wymaga więcej, niż towarzysz AI może bezpiecznie zaoferować. To nie jest porażka — to znaczy tylko, że żywy człowiek, z odpowiednim wykształceniem, jest właściwym kolejnym krokiem. Proszę skontaktować się dziś, nie jutro.",
+    "redTitle": "MindReset nie jest dla ciebie odpowiedni w tym momencie",
+    "redBody": "To, co opisujesz, wymaga więcej, niż towarzysz AI może bezpiecznie zaoferować. To nie jest porażka — to znaczy tylko, że żywy człowiek, z odpowiednim wykształceniem, jest właściwym kolejnym krokiem. Skontaktuj się dziś, nie jutro.",
     "redResourcesTitle": "Gdzie się zwrócić teraz",
     "redResources": [
       {
@@ -740,33 +740,33 @@
         "detail": "Naciśnij opcję 2, aby uzyskać linię zdrowia psychicznego"
       },
       {
-        "name": "Pani GP",
+        "name": "Twój lekarz rodzinny (GP)",
         "detail": "Poproś o pilną wizytę tego samego dnia"
       },
       {
         "name": "A&E lub 999",
-        "detail": "Jeśli teraz Pani nie czuje się bezpiecznie"
+        "detail": "Jeśli teraz nie czujesz się bezpiecznie"
       }
     ],
-    "redFooter": "W tym momencie nie jesteśmy odpowiednią usługą, ale osoby powyżej są. Zasługuje Pani na to, by zostać wysłuchana przez kogoś, kto naprawdę może pomóc.",
+    "redFooter": "W tym momencie nie jesteśmy odpowiednią usługą, ale osoby wymienione powyżej są. Zasługujesz na to, aby cię wysłuchały te osoby, które naprawdę mogą pomóc.",
     "yellowKicker": "Ostrożna ścieżka",
     "yellowTitle": "MindReset może pomóc, ale delikatnie",
-    "yellowBody": "Pani odpowiedzi mówią nam, że układ nerwowy niesie teraz dużo. Głębsze moduły MindReset jeszcze by Pani nie posłużyły — mogłyby utrudnić, a nie ułatwić. Właściwym punktem wyjścia jest praca stabilizacyjna, skupiona wyłącznie na przywróceniu równowagi przed pójściem dalej.",
+    "yellowBody": "Twoje odpowiedzi mówią nam, że układ nerwowy niesie teraz dużo. Głębsze moduły MindReset jeszcze by ci nie posłużyły — mogłyby utrudnić, a nie ułatwić. Właściwym punktem wyjścia jest praca stabilizacyjna, skupiona wyłącznie na przywróceniu równowagi przed pójściem dalej.",
     "yellowNextTitle": "Co sugerujemy",
     "yellowNext": [
-      "Proszę zacząć od MiniMind — towarzysza AI z codziennymi rozmowami i krótkimi praktykami uziemiającymi",
+      "Zacznij od MiniMind — towarzysza AI z codziennymi rozmowami i krótkimi praktykami uziemiającymi",
       "Bez głębokich modułów, bez pracy z częściami, bez ćwiczeń skupionych na przeszłości, dopóki codzienne funkcjonowanie nie będzie bardziej stabilne",
-      "Jeśli czuje Pani potrzebę dodatkowego wsparcia, zachęcamy do szukania specjalisty pracującego w podejściu trauma-informed."
+      "Jeśli czujesz potrzebę dodatkowego wsparcia, zachęcamy do szukania specjalisty pracującego w podejściu trauma-informed."
     ],
-    "yellowCta": "Kiedy będzie Pani gotowa",
+    "yellowCta": "Kiedy będziesz gotowy/-a",
     "greenKicker": "Witamy",
-    "greenTitle": "Jest Pani gotowa zacząć",
-    "greenBody": "Pani odpowiedzi sugerują, że MindReset jest dla Pani odpowiedni w tym momencie. Poniżej, czego się spodziewać i jaki jest następny krok.",
+    "greenTitle": "Jesteś gotowy/-a zacząć",
+    "greenBody": "Twoje odpowiedzi sugerują, że MindReset jest dla ciebie odpowiedni w tym momencie. Poniżej, czego się spodziewać i jaki jest następny krok.",
     "greenNextTitle": "Co się stanie dalej",
     "greenNext": [
-      "Utworzy Pani konto przy użyciu adresu e-mail",
-      "Przed każdym modułem zobaczy Pani krótkie wprowadzenie wyjaśniające, czego się spodziewać",
-      "Na początku każdej sesji AI pyta, jak się Pani czuje — nigdy nie ma presji, by iść dalej, niż wydaje się właściwe",
+      "Utworzysz konto przy użyciu adresu e-mail",
+      "Przed każdym modułem zobaczysz krótkie wprowadzenie wyjaśniające, czego się spodziewać",
+      "Na początku każdej sesji AI pyta, jak się czujesz — nigdy nie ma presji, by iść dalej, niż wydaje się właściwe",
       "Można w każdej chwili zrobić pauzę, zwolnić lub przerwać"
     ],
     "greenCta": "Dalej → Utwórz konto",
