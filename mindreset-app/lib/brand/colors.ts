@@ -7,7 +7,14 @@ export const PALETTE = {
     bgSubtle: '#EAE5D8',
     text: '#393939',
     textMuted: '#6A6A6A',
-    textHint: '#9D9788',
+    // Bumped from #9D9788 (~2.6:1 on bg) to hit WCAG AA 4.5:1 on the
+    // day background. `textHint` was previously used on 20+ text
+    // surfaces (bylines, legal captions, wordmark suffix, kickers) —
+    // any of them 13-15px, all failing AA. Warm tan preserved so the
+    // token still reads distinct from the neutral `textMuted`, but the
+    // luminance is now close enough to `textMuted` that hierarchy has
+    // to come from font weight/size/register, not paleness.
+    textHint: '#787260',
     border: '#D9D2C2',
     borderStrong: '#B9AE99',
     accent: '#2D7A85',
@@ -23,7 +30,9 @@ export const PALETTE = {
     bgSubtle: '#2F2F2F',
     text: '#F4F1EA',
     textMuted: '#C0BAA8',
-    textHint: '#8A8478',
+    // Bumped from #8A8478 (~3.1:1 on bg) to hit WCAG AA 4.5:1 on the
+    // night background. Same rationale as the day textHint above.
+    textHint: '#B8B2A0',
     border: '#4D4D4D',
     borderStrong: '#6A6A6A',
     accent: '#7AC5D2',
