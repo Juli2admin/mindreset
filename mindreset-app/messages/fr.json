@@ -1261,7 +1261,9 @@
   },
   "TopBar": {
     "wordmarkAria": "Accueil MindReset",
-    "primaryNavAria": "Navigation principale"
+    "primaryNavAria": "Navigation principale",
+    "account": "Account",
+    "signIn": "Sign in"
   },
   "About": {
     "metaTitle": "À propos — MindReset",

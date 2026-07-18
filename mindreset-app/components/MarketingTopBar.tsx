@@ -2,34 +2,42 @@
 
 // Marketing-surface TopBar wrapper. Public pages (about, faq, terms,
 // privacy, journal, alternatives, vs/*, share-your-story) are server
-// components that can't call useUser() directly. This thin client shim
-// lets each of them render an auth-aware right slot:
-//   - signed-in visitor → <UserButton /> so they can jump to Manage
-//     account / Sign out (same as /home / chat surfaces).
-//   - signed-out visitor → nothing (marketing nav + wordmark cover the
-//     conversion path; adding a "Sign in" text link here would triple
-//     the CTA count next to the marketing nav).
+// components that can't call useUser() directly, so this thin client
+// shim adds an auth-aware right slot:
+//   - signed-in visitor → "Account" link → /home
+//   - signed-out visitor → "Sign in" link → /sign-in
 //
-// Matches the same pattern PricingClient already uses inline:
-//   <TopBar showMarketingNav right={isSignedIn ? <UserButton /> : null} />
-// so this is not a new visual pattern, just a shared implementation.
+// Mirrors the pattern Landing's bespoke Header (components/Landing.jsx)
+// already uses — text link only, no UserButton. The reason we don't drop
+// the plain <UserButton /> here (as PricingClient does today) is that its
+// popover only offers "Manage account" / "Sign out" — no direct route to
+// /home. On a marketing page a signed-in visitor's primary need is to
+// get back to their space in one click; the text link delivers that,
+// and account management can happen from /home where UserButton lives.
 
-import { UserButton, useUser } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
+import { useUser } from '@clerk/nextjs';
+import { Link } from '@/i18n/navigation';
+import { TOKENS } from '@/lib/brand/colors';
+import { useTheme } from '@/lib/theme/useTheme';
 import TopBar from './TopBar';
 
-type Props = {
-  /** Forwards to TopBar.showTreeMark. Landing has its own bespoke Header
-   *  so this stays off by default; marketing pages currently pass nothing. */
-  showTreeMark?: boolean;
-};
-
-export default function MarketingTopBar({ showTreeMark = false }: Props) {
-  const { isSignedIn } = useUser();
-  return (
-    <TopBar
-      showTreeMark={showTreeMark}
-      showMarketingNav
-      right={isSignedIn ? <UserButton /> : null}
-    />
-  );
+export default function MarketingTopBar() {
+  const t = useTranslations('TopBar');
+  const { palette: PALETTE } = useTheme();
+  const { isLoaded, isSignedIn } = useUser();
+  // isLoaded gate avoids the pre-hydration "Sign in" flash when the user is
+  // in fact signed in. Renders nothing until Clerk resolves; on marketing
+  // surfaces the right slot briefly being empty is quieter than swapping
+  // link text after mount.
+  const authLink = isLoaded ? (
+    <Link
+      href={isSignedIn ? '/home' : '/sign-in'}
+      className="text-[13px] transition-colors hover:underline underline-offset-2"
+      style={{ fontFamily: TOKENS.sans, color: PALETTE.textMuted }}
+    >
+      {isSignedIn ? t('account') : t('signIn')}
+    </Link>
+  ) : null;
+  return <TopBar showMarketingNav right={authLink} />;
 }

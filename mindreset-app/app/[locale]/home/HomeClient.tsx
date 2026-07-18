@@ -169,10 +169,14 @@ export default function HomeClient({
       {/* Sticky header — /home is a long scroll (welcome + billing +
           settings + States grid + Themes grid + Journey card + footer),
           and users kept losing the wordmark / UserButton mid-scroll.
-          Same treatment MiniMind + Journey got in PR #258/#259: a
-          full-width sticky wrapper with palette bg + border-bottom, so
-          the centered max-w-2xl inner TopBar keeps its layout while the
-          bar itself spans the viewport for a clean visual band. */}
+          Mirrors MiniMindClient's wrapper pattern from PR #258/#259: a
+          full-width sticky div with palette bg + border-bottom, so the
+          centered max-w-2xl inner TopBar keeps its layout while the bar
+          itself spans the viewport for a clean visual band. Journey uses
+          the built-in <TopBar sticky /> prop instead — same intent, but
+          edge-to-edge without the border. /home wants the border so the
+          long card grid below doesn't visually merge into the header
+          on scroll. */}
       <div
         className="sticky top-0 z-40"
         style={{
