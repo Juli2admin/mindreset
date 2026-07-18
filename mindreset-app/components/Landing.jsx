@@ -113,7 +113,7 @@ function SectionTitle({ text, large = false }) {
 // ============================================================================
 // Sections
 // ============================================================================
-function Hero({ onBegin }) {
+function Hero({ onBegin, signedIn }) {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   const heroBody = t.raw('heroBody');
@@ -161,7 +161,7 @@ function Hero({ onBegin }) {
           color: c.accentText,
         }}
       >
-        {t('heroCta')}
+        {t(signedIn ? 'openMinimindCta' : 'heroCta')}
         <ArrowRight size={14} />
       </button>
 
@@ -459,7 +459,7 @@ function Different() {
   );
 }
 
-function ClosingCTA({ onBegin, sectionRef }) {
+function ClosingCTA({ onBegin, sectionRef, signedIn }) {
   const { palette: c } = useTheme();
   const t = useTranslations('Landing');
   return (
@@ -484,7 +484,7 @@ function ClosingCTA({ onBegin, sectionRef }) {
           color: c.accentText,
         }}
       >
-        {t('closingCta')}
+        {t(signedIn ? 'openMinimindCta' : 'closingCta')}
         <ArrowRight size={14} />
       </button>
     </section>
@@ -631,7 +631,7 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
     <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
       <div className="max-w-2xl mx-auto px-6">
         <Header />
-        <Hero onBegin={onBegin} />
+        <Hero onBegin={onBegin} signedIn={signedIn} />
         <WhatIs />
         <WhoFor />
         <Safety />
@@ -640,7 +640,7 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
         <Different />
         {testimonialsSlot}
         <NewsletterSignup />
-        <ClosingCTA onBegin={onBegin} sectionRef={closingCtaRef} />
+        <ClosingCTA onBegin={onBegin} sectionRef={closingCtaRef} signedIn={signedIn} />
         {/* Phase 1d.2 — Landing-only crisis-resource block + safety
             disclaimer, rendered above the shared Footer. Footer arrives
             as a server-rendered slot from [locale]/page.tsx. */}
