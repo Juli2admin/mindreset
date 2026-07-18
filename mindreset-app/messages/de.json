@@ -1262,8 +1262,8 @@
   "TopBar": {
     "wordmarkAria": "MindReset-Startseite",
     "primaryNavAria": "Hauptnavigation",
-    "account": "Account",
-    "signIn": "Sign in"
+    "account": "Konto",
+    "signIn": "Anmelden"
   },
   "About": {
     "metaTitle": "Über uns — MindReset",
