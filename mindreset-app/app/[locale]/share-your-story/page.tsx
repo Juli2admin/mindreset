@@ -4,7 +4,7 @@ import { TOKENS } from '@/lib/brand/colors';
 import { getServerPalette } from '@/lib/theme/server';
 import { pageAlternates } from '@/lib/seo/alternates';
 import Footer from '@/components/Footer';
-import TopBar from '@/components/TopBar';
+import MarketingTopBar from '@/components/MarketingTopBar';
 import ShareYourStoryClient from './ShareYourStoryClient';
 
 const SANS = TOKENS.sans;
@@ -30,7 +30,7 @@ export default async function ShareYourStoryPage() {
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar showMarketingNav />
+        <MarketingTopBar />
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         <div className="mt-8 mb-10">

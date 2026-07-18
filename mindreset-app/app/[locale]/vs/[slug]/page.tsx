@@ -25,7 +25,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import TopBar from '@/components/TopBar';
+import MarketingTopBar from '@/components/MarketingTopBar';
 import Footer from '@/components/Footer';
 import { pageAlternates, SITE_URL } from '@/lib/seo/alternates';
 import {
@@ -124,7 +124,7 @@ export default async function VsPage({
       />
 
       <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar showMarketingNav />
+        <MarketingTopBar />
       </div>
 
       <article className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">

@@ -166,8 +166,27 @@ export default function HomeClient({
 
   return (
     <main className="min-h-screen" style={{ background: PALETTE.bg }}>
-      <div className="max-w-2xl mx-auto px-6 py-4">
-        <TopBar right={<UserButton />} />
+      {/* Sticky header — /home is a long scroll (welcome + billing +
+          settings + States grid + Themes grid + Journey card + footer),
+          and users kept losing the wordmark / UserButton mid-scroll.
+          Mirrors MiniMindClient's wrapper pattern from PR #258/#259: a
+          full-width sticky div with palette bg + border-bottom, so the
+          centered max-w-2xl inner TopBar keeps its layout while the bar
+          itself spans the viewport for a clean visual band. Journey uses
+          the built-in <TopBar sticky /> prop instead — same intent, but
+          edge-to-edge without the border. /home wants the border so the
+          long card grid below doesn't visually merge into the header
+          on scroll. */}
+      <div
+        className="sticky top-0 z-40"
+        style={{
+          background: PALETTE.bg,
+          borderBottom: `1px solid ${PALETTE.border}`,
+        }}
+      >
+        <div className="max-w-2xl mx-auto px-6 py-4">
+          <TopBar right={<UserButton />} />
+        </div>
       </div>
       <div className="max-w-2xl mx-auto px-6 pb-12 sm:pb-16">
         {/* Welcome section */}

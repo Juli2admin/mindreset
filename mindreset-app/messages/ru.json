@@ -1261,7 +1261,9 @@
   },
   "TopBar": {
     "wordmarkAria": "MindReset главная",
-    "primaryNavAria": "Основная навигация"
+    "primaryNavAria": "Основная навигация",
+    "account": "Аккаунт",
+    "signIn": "Войти"
   },
   "About": {
     "metaTitle": "О проекте — MindReset",
