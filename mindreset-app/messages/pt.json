@@ -693,23 +693,23 @@
     "functionality": [
       "Consigo fazer as coisas do dia-a-dia — lavar-me, comer, trabalhar, tarefas básicas",
       "Consigo concentrar-me numa conversa durante pelo menos 10 minutos",
-      "Sinto-me seguro no meu ambiente doméstico",
-      "Consigo regular-me, pelo menos em parte, quando estou perturbado",
+      "Sinto-me seguro(a) no meu ambiente doméstico",
+      "Consigo regular-me, pelo menos em parte, quando estou perturbado(a)",
       "Consigo sentir emoções básicas, em vez de um entorpecimento total",
       "Consigo descrever os meus sentimentos com palavras simples"
     ],
     "emotional": [
-      "Sinto-me sobrecarregado de forma constante",
+      "Sinto-me sobrecarregado(a) de forma constante",
       "Tenho ataques de pânico frequentes",
       "Fecho-me emocionalmente (congelamento) com frequência",
-      "Dissocio — sinto-me irreal, desligado",
-      "Sou activado de repente e perco o controlo"
+      "Dissocio — sinto-me irreal, desligado(a)",
+      "Sou activado(a) de repente e perco o controlo"
     ],
     "trauma": [
       "Tenho feridas emocionais ligeiras mas funciono normalmente",
       "Tenho assuntos não resolvidos do passado mas consigo manter-me estável",
       "O meu trauma do passado sobrecarrega-me regularmente",
-      "Não consigo manter-me emocionalmente seguro ao lembrar-me do passado"
+      "Não consigo manter-me emocionalmente seguro(a) ao lembrar-me do passado"
     ],
     "cognitive": [
       "Consigo seguir instruções passo a passo",
@@ -719,8 +719,8 @@
     "consent": [
       "MindReset não é um tratamento médico nem psiquiátrico",
       "MindReset não pode acompanhar uma crise, um estado suicida ou uma psicose",
-      "Serei honesto sobre os meus sintomas em cada sessão",
-      "Interromperei o processo se não me sentir seguro",
+      "Serei honesto(a) sobre os meus sintomas em cada sessão",
+      "Interromperei o processo se não me sentir seguro(a)",
       "A IA pode interromper o processo por razões de segurança, e aceito-o",
       "Assumo a responsabilidade pelas minhas decisões e mudanças de vida",
       "Compreendo que MindReset só funciona se eu participar activamente",
@@ -748,7 +748,7 @@
         "detail": "Se não se sentir seguro neste momento"
       }
     ],
-    "redFooter": "Não somos o serviço certo para este momento, mas as pessoas acima são. Merece ser ouvido por alguém que possa realmente ajudar.",
+    "redFooter": "Não somos o serviço certo para este momento, mas as pessoas acima são. Merece ser ouvido(a) por alguém que possa realmente ajudar.",
     "yellowKicker": "Caminho de cautela",
     "yellowTitle": "MindReset pode ajudar, mas com suavidade",
     "yellowBody": "As suas respostas dizem-nos que o seu sistema nervoso está a carregar muito neste momento. Os módulos mais profundos de MindReset ainda não lhe serviriam bem — poderiam tornar as coisas mais difíceis, não mais fáceis. O ponto de partida certo é um trabalho de estabilização, focado apenas em devolver o equilíbrio ao seu sistema antes de seguir.",
@@ -758,7 +758,7 @@
       "Sem módulos profundos, sem trabalho com as partes, sem exercícios focados no passado até que o seu funcionamento diário esteja mais estável",
       "Se sentir necessidade de apoio adicional, encorajamo-lo a procurar um especialista que trabalhe numa abordagem trauma-informada."
     ],
-    "yellowCta": "Quando estiver pronto",
+    "yellowCta": "Quando estiver pronto(a)",
     "greenKicker": "Bem-vindo",
     "greenTitle": "Está pronto para começar",
     "greenBody": "As suas respostas sugerem que MindReset lhe corresponde neste momento. Em seguida, o que pode esperar e o próximo passo.",

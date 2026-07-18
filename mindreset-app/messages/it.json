@@ -694,15 +694,15 @@
       "Riesco a fare le cose quotidiane — lavarmi, mangiare, lavorare, le mansioni di base",
       "Riesco a concentrarmi in una conversazione per almeno 10 minuti",
       "Mi sento al sicuro nel mio ambiente domestico",
-      "Riesco a regolarmi, almeno in parte, quando sono turbato",
-      "Riesco a sentire emozioni di base, anziché essere completamente intorpidito",
+      "Riesco a regolarmi, almeno in parte, quando sono turbato/a",
+      "Riesco a sentire emozioni di base, anziché essere completamente intorpidito/a",
       "Riesco a descrivere i miei sentimenti con parole semplici"
     ],
     "emotional": [
-      "Mi sento costantemente sopraffatto",
+      "Mi sento costantemente sopraffatto/a",
       "Ho frequenti attacchi di panico",
       "Mi blocco emotivamente (freeze) spesso",
-      "Dissocio — mi sento irreale, disconnesso",
+      "Dissocio — mi sento irreale, disconnesso/a",
       "Mi attivo improvvisamente e perdo il controllo"
     ],
     "trauma": [
@@ -719,7 +719,7 @@
     "consent": [
       "MindReset non è un trattamento medico né psichiatrico",
       "MindReset non può accompagnare una crisi, uno stato suicidario o una psicosi",
-      "Sarò sincero sui miei sintomi in ogni sessione",
+      "Sarò sincero/a sui miei sintomi in ogni sessione",
       "Interromperò il processo se non mi sento al sicuro",
       "L’IA può interrompere il processo per motivi di sicurezza, e lo accetto",
       "Mi assumo la responsabilità delle mie decisioni e dei cambiamenti di vita",
@@ -748,7 +748,7 @@
         "detail": "Se non si sente al sicuro in questo momento"
       }
     ],
-    "redFooter": "Non siamo il servizio giusto per questo momento, ma le persone qui sopra lo sono. Merita di essere ascoltato da qualcuno che possa davvero aiutare.",
+    "redFooter": "Non siamo il servizio giusto per questo momento, ma le persone qui sopra lo sono. Merita di essere ascoltato/a da qualcuno che possa davvero aiutare.",
     "yellowKicker": "Via cauta",
     "yellowTitle": "MindReset può aiutare, ma con dolcezza",
     "yellowBody": "Le Sue risposte ci dicono che il Suo sistema nervoso sta portando molto in questo momento. I moduli più profondi di MindReset non Le sarebbero utili adesso — potrebbero rendere le cose più difficili, non più facili. Il giusto punto di partenza è un lavoro di stabilizzazione, focalizzato solo sul riportare il Suo sistema in equilibrio prima di andare oltre.",
@@ -758,7 +758,7 @@
       "Nessun modulo profondo, nessun lavoro sulle parti, nessun esercizio focalizzato sul passato finché il Suo funzionamento quotidiano non sarà più stabile",
       "Se sente di aver bisogno di un sostegno aggiuntivo, La incoraggiamo a rivolgersi a uno specialista che lavori con un approccio trauma-informato."
     ],
-    "yellowCta": "Quando si sente pronto",
+    "yellowCta": "Quando si sente pronto/a",
     "greenKicker": "Benvenuto",
     "greenTitle": "È pronto per iniziare",
     "greenBody": "Le Sue risposte suggeriscono che MindReset è adatto a Lei in questo momento. Di seguito cosa aspettarsi, e il prossimo passo.",
