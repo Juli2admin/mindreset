@@ -10,11 +10,18 @@ export const PALETTE = {
     // Bumped from #9D9788 (~2.6:1 on bg) to hit WCAG AA 4.5:1 on the
     // day background. `textHint` was previously used on 20+ text
     // surfaces (bylines, legal captions, wordmark suffix, kickers) —
-    // any of them 13-15px, all failing AA. Warm tan preserved so the
-    // token still reads distinct from the neutral `textMuted`, but the
-    // luminance is now close enough to `textMuted` that hierarchy has
-    // to come from font weight/size/register, not paleness.
-    textHint: '#787260',
+    // any of them 13-15px, all failing AA. #706A58 on #F4F1EA computes
+    // to ~4.78:1, comfortably over the 4.5:1 floor. Warm tan preserved
+    // so the token still reads distinct from the neutral `textMuted`,
+    // but the luminance is now close to `textMuted` — visual hierarchy
+    // comes from font weight/size/register, not from paleness.
+    // Known-unfixed: on `bgSubtle` (day #EAE5D8) this pairing only
+    // reaches ~4.3:1. One consumer today —
+    // `themes/ThemesCatalogueClient.tsx` roadmap badge, 10px — hits
+    // that surface. Fixing the badge fully needs either a dedicated
+    // `textHintOnSubtle` token or a per-site swap to `textMuted`,
+    // both out of scope for this token-value bump.
+    textHint: '#706A58',
     border: '#D9D2C2',
     borderStrong: '#B9AE99',
     accent: '#2D7A85',
