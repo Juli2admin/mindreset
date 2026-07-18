@@ -590,6 +590,12 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
   // Global theme + matchMedia auto-detection are owned by ThemeProvider
   // in [locale]/layout.tsx now. Landing just reads the current palette.
   const { palette: c } = useTheme();
+  // Signed-in state drives Hero + ClosingCTA routing below. Header and
+  // StickyTryFreeCTA already call useUser() themselves, so this doesn't
+  // add a new dependency to the tree — same Clerk state, read once here
+  // for the top-level CTAs.
+  const { isLoaded, isSignedIn } = useUser();
+  const signedIn = isLoaded && isSignedIn;
   // Ref on the ClosingCTA section so the StickyTryFreeCTA can hide itself
   // when that section is in view (avoids two primary CTAs stacked at the
   // bottom).
@@ -610,8 +616,16 @@ export default function LandingPage({ footerSlot, testimonialsSlot }) {
     }
   }, []);
 
-  // Locale-aware navigation: from /ru/ this pushes to /ru/screening.
-  const onBegin = () => { router.push('/screening'); };
+  // Locale-aware navigation. Signed-out visitors go through /screening
+  // (the free-taster funnel starts with the legal gate); signed-in
+  // returners jump straight into /minimind. Same routing rule the
+  // StickyTryFreeCTA already applies to its own click — without this
+  // the big Hero / ClosingCTA buttons unconditionally sent returning
+  // signed-in users back through screening again, inconsistent with
+  // the sticky button on the same page.
+  const onBegin = () => {
+    router.push(signedIn ? '/minimind' : '/screening');
+  };
 
   return (
     <div className="min-h-screen transition-colors duration-500" style={{ background: c.bg, ...sansStyle }}>
