@@ -316,7 +316,12 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
     expect(stateText).toContain('context: ageTag: 9');
   });
 
-  it('caps the render at 10 patterns even when more exist', () => {
+  it('caps the render at 5 patterns even when more exist (PR M1)', () => {
+    // PR M1 (2026-07-18) — render cap reduced from 10 to 5 as part of
+    // the Journey memory attention-optimisation. Load cap is 5 in
+    // load.ts so a defensive slice at 5 in the render matches. If a
+    // caller ever hands the render more than 5 patterns via a fixture,
+    // the extra ones are dropped at render time.
     const many = Array.from({ length: 15 }, (_, i) => ({
       id: `p${i}`,
       category: `pattern_${i}`,
@@ -330,9 +335,98 @@ describe('renderStateBlock — unresolved patterns (Journey polish PR 5)', () =>
     const blocks = assembleSystemPromptBlocks(makeState({ patterns: many }));
     const stateText = blocks[STATE_BLOCK_INDEX].text;
     expect(stateText).toContain('`pattern_0`');
-    expect(stateText).toContain('`pattern_9`');
-    expect(stateText).not.toContain('`pattern_10`');
+    expect(stateText).toContain('`pattern_4`');
+    expect(stateText).not.toContain('`pattern_5`');
     expect(stateText).not.toContain('`pattern_14`');
+  });
+});
+
+describe('renderStateBlock — M1 memory attention framing (2026-07-18)', () => {
+  it("adds the priority framing line at the top of the state block", () => {
+    const blocks = assembleSystemPromptBlocks(makeState());
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain(
+      "Your primary signal is the user's current message",
+    );
+    expect(stateText).toContain('historical notes further down');
+  });
+
+  it('does NOT render the historical context divider when no historical content is loaded', () => {
+    // Brand-new user — no parts, no foreign, no patterns, no images, no note.
+    const blocks = assembleSystemPromptBlocks(makeState());
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).not.toContain('Historical context — not fact');
+  });
+
+  it('renders the historical context divider when any capture family is present', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        signatureImages: [
+          {
+            id: 'img_1',
+            userDescription: 'the cliff',
+            context: null,
+            createdAt: new Date('2026-07-01'),
+          },
+        ],
+      }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('Historical context — not fact');
+    expect(stateText).toContain('verify against the user');
+  });
+
+  it('reframes the continuity note label away from "running model"', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ continuityNote: 'A short note.' }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    // The previous label was "Case formulation across sessions (your
+    // running model — internal, never recited to user)". That framing
+    // implicitly told the AI to treat the note as canonical truth. M1
+    // reframes to "context, not truth".
+    expect(stateText).not.toContain('running model');
+    expect(stateText).toContain(
+      'Prior session notes (may be incomplete, outdated, or mistaken',
+    );
+  });
+
+  it('renders a short continuity note verbatim without truncation', () => {
+    const short = 'A summary that fits well under 800 chars.';
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ continuityNote: short }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain(short);
+    expect(stateText).not.toContain('older material in the middle omitted');
+  });
+
+  it('truncates a long continuity note head-and-tail with an omission marker in the middle', () => {
+    // Construct a note that has a distinctive HEAD, a much larger MIDDLE
+    // (contains a marker word we should mostly NOT see rendered), and a
+    // distinctive TAIL. Chose SEDIMENT.repeat(300) so head-slice + tail-
+    // slice only touch a small fraction of the middle content — makes
+    // the head-and-tail truncation guarantee measurable.
+    const head =
+      'HEAD_MARKER Session 42 close. Reader named the pattern herself. ';
+    const middleFill = 'SEDIMENT '.repeat(300); // ~2700 chars of middle
+    const tail = 'TAIL_MARKER Next session: watch for the isolation loop.';
+    const note = head + middleFill + tail;
+    expect(note.length).toBeGreaterThan(800);
+
+    const blocks = assembleSystemPromptBlocks(
+      makeState({ continuityNote: note }),
+    );
+    const stateText = blocks[STATE_BLOCK_INDEX].text;
+    expect(stateText).toContain('HEAD_MARKER');
+    expect(stateText).toContain('TAIL_MARKER');
+    expect(stateText).toContain('older material in the middle omitted');
+    // The full note has 300 SEDIMENT occurrences. Truncation renders
+    // ~400 head + ~300 tail chars — the SEDIMENT tokens that survive
+    // are bounded to what fits in those two slices (roughly ~78
+    // combined). Much less than the 300 originals.
+    const occurrences = (stateText.match(/SEDIMENT/g) || []).length;
+    expect(occurrences).toBeLessThan(100);
   });
 });
 

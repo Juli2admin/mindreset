@@ -155,17 +155,45 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
 
   const [partsRows, foreignFilesRows, signatureImagesRows, patternsRows, recentTurns] =
     await Promise.all([
-      prisma.journeyPart.findMany({ where: { userId, active: true } }),
-      prisma.journeyForeignFile.findMany({ where: { userId } }),
-      prisma.journeySignatureImage.findMany({ where: { userId } }),
-      // Journey polish PR 5 — active unresolved patterns, most-recently
-      // confirmed first. Cap load to the top 20 so a long-term user with
-      // many patterns doesn't bloat the state block. State rendering
-      // caps further based on the prompt's token budget.
+      // PR M1 (2026-07-18) — Journey memory redesign. Runtime caps on
+      // captured landscape so long-running users don't drown the AI's
+      // fresh reading in accumulated formulation. Full archive stays
+      // in the DB; only what loads into the prompt is capped.
+      //
+      // Parts: 5 most-recently-touched. `updatedAt` DESC so a part met
+      // in an old session but recently re-touched stays in view;
+      // untouched-for-months parts drop out until the reader references
+      // them again (which would re-touch and re-lift into the window).
+      prisma.journeyPart.findMany({
+        where: { userId, active: true },
+        orderBy: { updatedAt: 'desc' },
+        take: 5,
+      }),
+      // Foreign files: 3 most-recent by identification date. Foreign
+      // material is typically one-shot (identified, later released,
+      // done); recency of identification is the right freshness signal.
+      prisma.journeyForeignFile.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: 3,
+      }),
+      // Signature images: 5 most-recent. Was previously unbounded — the
+      // single biggest source of memory bloat on long-running users
+      // (~2000 tokens on a 67-image user). Older images stay retrievable
+      // via the Inspector.
+      prisma.journeySignatureImage.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      }),
+      // Patterns: 5 most-recently-confirmed active unresolved patterns.
+      // (Was 20 loaded / 10 rendered before PR M1.) A pattern that
+      // hasn't been re-confirmed drops out of the window; the AI can
+      // still capture it fresh if the user shows it today.
       prisma.journeyPattern.findMany({
         where: { userId, active: true },
         orderBy: { lastConfirmedAt: 'desc' },
-        take: 20,
+        take: 5,
       }),
       // Pull all turn timestamps for this user — needed for sessionCount
       // and daysEngaged. Plain int column queries are cheap; this is the
