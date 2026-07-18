@@ -27,7 +27,8 @@ import {
   type Article,
   type ProductLink,
 } from '@/lib/journal/articles';
-import { TOKENS } from '@/lib/brand/colors';
+import { TOKENS, type PaletteColors } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -99,6 +100,7 @@ function buildJsonLd(article: Article): string {
 function renderTextWithLinks(
   text: string,
   links: ProductLink[],
+  palette: PaletteColors,
 ): React.ReactNode[] {
   if (links.length === 0) return [text];
   // Sort once so the inner loop always picks the longest-token match
@@ -131,7 +133,7 @@ function renderTextWithLinks(
         key={`pl-${keyCounter++}`}
         href={matched.href}
         className="underline underline-offset-4 hover:no-underline"
-        style={{ color: '#2D7A85', fontWeight: 500 }}
+        style={{ color: palette.accent, fontWeight: 500 }}
       >
         {matched.token}
       </Link>,
@@ -148,16 +150,18 @@ function renderTextWithLinks(
 function ClosingParagraph({
   text,
   links,
+  palette,
 }: {
   text: string;
   links: ProductLink[];
+  palette: PaletteColors;
 }) {
   return (
     <p
       className="text-[17px] leading-[1.7]"
-      style={{ color: '#393939', fontFamily: SANS }}
+      style={{ color: palette.text, fontFamily: SANS }}
     >
-      {renderTextWithLinks(text, links)}
+      {renderTextWithLinks(text, links, palette)}
     </p>
   );
 }
@@ -178,9 +182,14 @@ export default async function ArticlePage({
     month: 'long',
     year: 'numeric',
   });
+  // Per-request palette from the mr_theme cookie — matches every other
+  // themed server surface. Audit M2: this whole page was hardcoded to
+  // day-mode cream/dark values and gave night-mode readers a jarring
+  // bright page against an otherwise-dark app.
+  const PALETTE = getServerPalette();
 
   return (
-    <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
+    <main className="min-h-screen" style={{ background: PALETTE.bg, color: PALETTE.text }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: buildJsonLd(article) }}
@@ -195,7 +204,7 @@ export default async function ArticlePage({
         <Link
           href="/journal"
           className="inline-block text-[13px] mb-8 hover:underline underline-offset-4"
-          style={{ color: '#6A6A6A', fontFamily: SANS }}
+          style={{ color: PALETTE.textMuted, fontFamily: SANS }}
         >
           ← Journal
         </Link>
@@ -203,7 +212,7 @@ export default async function ArticlePage({
         {/* H1 */}
         <h1
           className="text-[32px] sm:text-[40px] leading-[1.1] -tracking-[0.02em] mb-5"
-          style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
         >
           {article.title}
         </h1>
@@ -211,7 +220,7 @@ export default async function ArticlePage({
         {/* Byline */}
         <div
           className="text-[13px] mb-12"
-          style={{ color: '#888', fontFamily: SANS }}
+          style={{ color: PALETTE.textHint, fontFamily: SANS }}
         >
           {article.author.name} · {publishedDisplay}
         </div>
@@ -227,7 +236,7 @@ export default async function ArticlePage({
                   : 'text-[17px] leading-[1.7] mb-5'
               }
               style={{
-                color: '#393939',
+                color: PALETTE.text,
                 fontFamily: i === 0 ? SERIF : SANS,
                 fontWeight: i === 0 ? 400 : 400,
               }}
@@ -242,7 +251,7 @@ export default async function ArticlePage({
           <section key={si} className="mb-12">
             <h2
               className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5 mt-2"
-              style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+              style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
             >
               {section.heading}
             </h2>
@@ -252,9 +261,9 @@ export default async function ArticlePage({
                   <p
                     key={pi}
                     className="text-[17px] leading-[1.7] mb-5"
-                    style={{ color: '#393939', fontFamily: SANS }}
+                    style={{ color: PALETTE.text, fontFamily: SANS }}
                   >
-                    <strong style={{ color: '#222', fontWeight: 600 }}>
+                    <strong style={{ color: PALETTE.text, fontWeight: 600 }}>
                       {para.lead}
                     </strong>{' '}
                     {para.body}
@@ -265,7 +274,7 @@ export default async function ArticlePage({
                 <p
                   key={pi}
                   className="text-[17px] leading-[1.7] mb-5"
-                  style={{ color: '#393939', fontFamily: SANS }}
+                  style={{ color: PALETTE.text, fontFamily: SANS }}
                 >
                   {para}
                 </p>
@@ -280,12 +289,12 @@ export default async function ArticlePage({
             default for articles that don't override. */}
         <section
           className="pt-10 mt-6 mb-10"
-          style={{ borderTop: `1px solid #D4D0C5` }}
+          style={{ borderTop: `1px solid ${PALETTE.border}` }}
         >
           {article.closingHeading && (
             <h2
               className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5"
-              style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+              style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
             >
               {article.closingHeading}
             </h2>
@@ -295,6 +304,7 @@ export default async function ArticlePage({
               <ClosingParagraph
                 text={p}
                 links={article.productLinks ?? DEFAULT_PRODUCT_LINKS}
+                palette={PALETTE}
               />
             </div>
           ))}

@@ -22,6 +22,7 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { Link } from '@/i18n/navigation';
 import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import { checkJourneyAccess } from '@/lib/journey/access';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
 import { sendPilotBeforeFormEmail } from '@/lib/email/sendPilotBeforeForm';
@@ -193,6 +194,12 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
   // pointing to the 50%-off continuation offer. Falls back to the general
   // "no purchase" copy.
   const t = useTranslations('Journey');
+  // Per-request palette from the mr_theme cookie — matches every other
+  // themed server surface (Terms, Privacy, FAQ, About, etc.). Without
+  // this, night-mode users hitting this "no access" page got a jarring
+  // bright-cream screen because the whole view was hardcoded to
+  // #F4F1EA / #393939 / #2D7A85. (Audit item M2.)
+  const PALETTE = getServerPalette();
   const titleKey =
     reason === 'expired' ? 'expiredTitle' :
     reason === 'cap_reached' ? 'capReachedTitle' :
@@ -208,7 +215,7 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-6"
-      style={{ background: '#F4F1EA', color: '#393939' }}
+      style={{ background: PALETTE.bg, color: PALETTE.text }}
     >
       <div className="max-w-md text-center">
         <h1
@@ -217,7 +224,7 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
         >
           {t(titleKey)}
         </h1>
-        <p className="mb-6 text-base leading-relaxed" style={{ color: '#6A6A6A' }}>
+        <p className="mb-6 text-base leading-relaxed" style={{ color: PALETTE.textMuted }}>
           {t(bodyKey)}
         </p>
         {reason === 'pilot_expired' && (
@@ -232,7 +239,7 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm underline underline-offset-4 hover:no-underline"
-                style={{ color: '#2D7A85' }}
+                style={{ color: PALETTE.accent }}
               >
                 {t('pilotAfterFormCta')}
               </a>
@@ -242,7 +249,7 @@ function NoAccessInner({ reason }: { reason: NoAccessReason }) {
         <Link
           href="/pricing"
           className="inline-block underline underline-offset-4 hover:no-underline"
-          style={{ color: '#2D7A85' }}
+          style={{ color: PALETTE.accent }}
         >
           {t('seePricing')}
         </Link>

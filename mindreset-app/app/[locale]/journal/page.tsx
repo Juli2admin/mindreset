@@ -13,6 +13,7 @@ import Footer from '@/components/Footer';
 import { pageAlternates } from '@/lib/seo/alternates';
 import { getArticlesNewestFirst } from '@/lib/journal/articles';
 import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -37,9 +38,15 @@ export default async function JournalIndexPage({
 }) {
   setRequestLocale(params.locale);
   const articles = getArticlesNewestFirst();
+  // Per-request palette from the mr_theme cookie — matches every other
+  // themed server surface (Terms, Privacy, FAQ, About, etc.). Audit M2:
+  // this page was hardcoded #F4F1EA / #393939 / #222 / #555 / #6A6A6A /
+  // #888 / #2D7A85 / #D4D0C5 and gave night-mode readers a bright-cream
+  // page against an otherwise-dark app.
+  const PALETTE = getServerPalette();
 
   return (
-    <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
+    <main className="min-h-screen" style={{ background: PALETTE.bg, color: PALETTE.text }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
         <MarketingTopBar />
       </div>
@@ -47,7 +54,7 @@ export default async function JournalIndexPage({
         {/* Kicker */}
         <div
           className="text-[11px] uppercase tracking-[0.22em] mb-6"
-          style={{ color: '#2D7A85', fontWeight: 500, fontFamily: SANS }}
+          style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
         >
           JOURNAL
         </div>
@@ -55,7 +62,7 @@ export default async function JournalIndexPage({
         {/* H1 */}
         <h1
           className="text-[36px] sm:text-[44px] leading-[1.05] -tracking-[0.018em] mb-6"
-          style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
         >
           Notes on the slower work.
         </h1>
@@ -63,7 +70,7 @@ export default async function JournalIndexPage({
         {/* Intro */}
         <p
           className="text-[16px] leading-[1.65] mb-12 max-w-[36rem]"
-          style={{ color: '#555', fontFamily: SANS }}
+          style={{ color: PALETTE.textMuted, fontFamily: SANS }}
         >
           Long-form pieces from Julia Loya — patterns, practices, and small
           honest moments from the work of midlife.
@@ -75,24 +82,24 @@ export default async function JournalIndexPage({
             <article
               key={article.slug}
               className="pt-8"
-              style={{ borderTop: `1px solid #D4D0C5` }}
+              style={{ borderTop: `1px solid ${PALETTE.border}` }}
             >
               <Link href={`/journal/${article.slug}`} className="block group">
                 <h2
                   className="text-[24px] sm:text-[28px] leading-[1.2] mb-3 -tracking-[0.01em] group-hover:underline underline-offset-4"
-                  style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+                  style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
                 >
                   {article.title}
                 </h2>
                 <p
                   className="text-[15px] leading-[1.6] mb-3"
-                  style={{ color: '#6A6A6A', fontFamily: SANS }}
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
                   {article.metaDescription}
                 </p>
                 <div
                   className="text-[13px]"
-                  style={{ color: '#888', fontFamily: SANS }}
+                  style={{ color: PALETTE.textHint, fontFamily: SANS }}
                 >
                   {article.author.name} ·{' '}
                   {new Date(article.publishedAt).toLocaleDateString('en-GB', {

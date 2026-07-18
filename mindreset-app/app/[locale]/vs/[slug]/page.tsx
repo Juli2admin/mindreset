@@ -34,6 +34,7 @@ import {
   type CompetitorComparison,
 } from '@/lib/competitors';
 import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 
 const SANS = TOKENS.sans;
 const SERIF = TOKENS.serif;
@@ -115,9 +116,12 @@ export default async function VsPage({
     notFound();
   }
   const t = await getTranslations('Vs');
+  // Per-request palette — audit M2. Was hardcoded #F4F1EA / #393939 /
+  // #222 / #6A6A6A / #888 / #2D7A85, jarring in night mode.
+  const PALETTE = getServerPalette();
 
   return (
-    <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
+    <main className="min-h-screen" style={{ background: PALETTE.bg, color: PALETTE.text }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: buildJsonLd(comparison) }}
@@ -132,7 +136,7 @@ export default async function VsPage({
         <Link
           href="/alternatives"
           className="inline-block text-[13px] mb-8 hover:underline underline-offset-4"
-          style={{ color: '#6A6A6A', fontFamily: SANS }}
+          style={{ color: PALETTE.textMuted, fontFamily: SANS }}
         >
           ← {t('backToAlternatives')}
         </Link>
@@ -140,7 +144,7 @@ export default async function VsPage({
         {/* Kicker */}
         <div
           className="text-[11px] uppercase tracking-[0.22em] mb-5"
-          style={{ color: '#2D7A85', fontWeight: 500, fontFamily: SANS }}
+          style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
         >
           {t('kicker')}
         </div>
@@ -148,7 +152,7 @@ export default async function VsPage({
         {/* H1 — uses .ai TLD for disambiguation */}
         <h1
           className="text-[32px] sm:text-[40px] leading-[1.1] -tracking-[0.02em] mb-3"
-          style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
         >
           {t('h1Pattern', { competitor: comparison.name })}
         </h1>
@@ -156,7 +160,7 @@ export default async function VsPage({
         {/* Byline — locks founder + geography for entity-grounding */}
         <p
           className="text-[13px] mb-12"
-          style={{ color: '#888', fontFamily: SANS }}
+          style={{ color: PALETTE.textHint, fontFamily: SANS }}
         >
           {t('byline')}
         </p>
@@ -172,7 +176,7 @@ export default async function VsPage({
                   : 'text-[17px] leading-[1.7] mb-5'
               }
               style={{
-                color: '#393939',
+                color: PALETTE.text,
                 fontFamily: i === 0 ? SERIF : SANS,
                 fontWeight: 400,
               }}
@@ -186,13 +190,13 @@ export default async function VsPage({
         <section className="mb-12">
           <h2
             className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {t('whatTheyAreHeading', { competitor: comparison.name })}
           </h2>
           <p
             className="text-[17px] leading-[1.7]"
-            style={{ color: '#393939', fontFamily: SANS }}
+            style={{ color: PALETTE.text, fontFamily: SANS }}
           >
             {comparison.whatTheyAre}
           </p>
@@ -202,7 +206,7 @@ export default async function VsPage({
         <section className="mb-12">
           <h2
             className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {t('whatMindResetIsHeading')}
           </h2>
@@ -210,7 +214,7 @@ export default async function VsPage({
             <p
               key={i}
               className="text-[17px] leading-[1.7] mb-5"
-              style={{ color: '#393939', fontFamily: SANS }}
+              style={{ color: PALETTE.text, fontFamily: SANS }}
             >
               {p}
             </p>
@@ -221,7 +225,7 @@ export default async function VsPage({
         <section className="mb-10">
           <h2
             className="text-[20px] sm:text-[22px] leading-[1.25] mb-4"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {t('theyFitWhenHeading', { competitor: comparison.name })}
           </h2>
@@ -230,7 +234,7 @@ export default async function VsPage({
               <li
                 key={i}
                 className="text-[16px] leading-[1.65]"
-                style={{ color: '#393939', fontFamily: SANS }}
+                style={{ color: PALETTE.text, fontFamily: SANS }}
               >
                 {item}
               </li>
@@ -242,7 +246,7 @@ export default async function VsPage({
         <section className="mb-12">
           <h2
             className="text-[20px] sm:text-[22px] leading-[1.25] mb-4"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {t('mindresetFitsWhenHeading')}
           </h2>
@@ -251,7 +255,7 @@ export default async function VsPage({
               <li
                 key={i}
                 className="text-[16px] leading-[1.65]"
-                style={{ color: '#393939', fontFamily: SANS }}
+                style={{ color: PALETTE.text, fontFamily: SANS }}
               >
                 {item}
               </li>
@@ -263,7 +267,7 @@ export default async function VsPage({
         <section className="mb-12">
           <h2
             className="text-[24px] sm:text-[26px] leading-[1.25] -tracking-[0.01em] mb-5"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {t('honestOverlapHeading')}
           </h2>
@@ -271,7 +275,7 @@ export default async function VsPage({
             <p
               key={i}
               className="text-[17px] leading-[1.7] mb-5"
-              style={{ color: '#393939', fontFamily: SANS }}
+              style={{ color: PALETTE.text, fontFamily: SANS }}
             >
               {p}
             </p>
@@ -281,13 +285,13 @@ export default async function VsPage({
         {/* Closing + CTAs */}
         <section
           className="pt-10 mt-6 mb-10"
-          style={{ borderTop: `2px solid #2D7A85` }}
+          style={{ borderTop: `2px solid ${PALETTE.accent}` }}
         >
           {comparison.closing.map((p, i) => (
             <p
               key={i}
               className="text-[17px] leading-[1.7] mb-6"
-              style={{ color: '#393939', fontFamily: SANS }}
+              style={{ color: PALETTE.text, fontFamily: SANS }}
             >
               {p}
             </p>
@@ -299,8 +303,8 @@ export default async function VsPage({
               style={{
                 fontFamily: SANS,
                 fontWeight: 500,
-                background: '#2D7A85',
-                color: '#F4F1EA',
+                background: PALETTE.accent,
+                color: PALETTE.accentText,
               }}
             >
               {t('ctaTryFree')}
@@ -312,8 +316,8 @@ export default async function VsPage({
                 fontFamily: SANS,
                 fontWeight: 500,
                 background: 'transparent',
-                color: '#2D7A85',
-                border: '1px solid #2D7A85',
+                color: PALETTE.accent,
+                border: `1px solid ${PALETTE.accent}`,
               }}
             >
               {t('ctaReadMore')}
