@@ -24,6 +24,7 @@ import Footer from '@/components/Footer';
 import { Link } from '@/i18n/navigation';
 import { pageAlternates } from '@/lib/seo/alternates';
 import { TOKENS } from '@/lib/brand/colors';
+import { getServerPalette } from '@/lib/theme/server';
 import { COMPARISONS } from '@/lib/competitors';
 
 /**
@@ -69,9 +70,12 @@ export default async function AlternativesPage({
   const introParagraphs = t.raw('introParagraphs') as string[];
   const competitors = t.raw('competitors') as Competitor[];
   const mindreset = t.raw('mindresetBlock') as Omit<Competitor, 'name'> & { name: string };
+  // Per-request palette — audit M2. Was hardcoded #F4F1EA / #393939 /
+  // #222 / #555 / #6A6A6A / #2D7A85 / #D4D0C5, jarring in night mode.
+  const PALETTE = getServerPalette();
 
   return (
-    <main className="min-h-screen" style={{ background: '#F4F1EA', color: '#393939' }}>
+    <main className="min-h-screen" style={{ background: PALETTE.bg, color: PALETTE.text }}>
       <div className="max-w-2xl mx-auto px-6 py-4">
         <MarketingTopBar />
       </div>
@@ -79,7 +83,7 @@ export default async function AlternativesPage({
         {/* Kicker */}
         <div
           className="text-[11px] uppercase tracking-[0.22em] mb-6"
-          style={{ color: '#2D7A85', fontWeight: 500, fontFamily: SANS }}
+          style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
         >
           {t('kicker')}
         </div>
@@ -87,7 +91,7 @@ export default async function AlternativesPage({
         {/* H1 */}
         <h1
           className="text-[36px] sm:text-[44px] leading-[1.05] -tracking-[0.018em] mb-10"
-          style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
         >
           {t('pageTitle')}
         </h1>
@@ -98,7 +102,7 @@ export default async function AlternativesPage({
             <p
               key={i}
               className="text-[16px] leading-[1.65]"
-              style={{ color: '#555', fontFamily: SANS }}
+              style={{ color: PALETTE.textMuted, fontFamily: SANS }}
             >
               {p}
             </p>
@@ -108,23 +112,23 @@ export default async function AlternativesPage({
         {/* MindReset's own block at top — Best for + MiniMind+Journey line + CTA */}
         <section
           className="mb-16 pt-8"
-          style={{ borderTop: `2px solid #2D7A85` }}
+          style={{ borderTop: `2px solid ${PALETTE.accent}` }}
         >
           <h2
             className="text-[24px] sm:text-[28px] mb-3 -tracking-[0.01em]"
-            style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
           >
             {mindreset.name}
           </h2>
           <p
             className="text-[15px] leading-[1.6] mb-3"
-            style={{ color: '#2D7A85', fontFamily: SANS, fontWeight: 500 }}
+            style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
           >
             {mindreset.bestFor}
           </p>
           <p
             className="text-[16px] leading-[1.65] mb-6 max-w-[36rem]"
-            style={{ color: '#393939', fontFamily: SANS }}
+            style={{ color: PALETTE.text, fontFamily: SANS }}
           >
             {mindreset.description}
           </p>
@@ -134,8 +138,8 @@ export default async function AlternativesPage({
             style={{
               fontFamily: SANS,
               fontWeight: 500,
-              background: '#2D7A85',
-              color: '#F4F1EA',
+              background: PALETTE.accent,
+              color: PALETTE.accentText,
             }}
           >
             {t('ctaTryFree')}
@@ -145,7 +149,7 @@ export default async function AlternativesPage({
         {/* Listing header */}
         <h2
           className="text-[24px] sm:text-[28px] mb-8 -tracking-[0.01em]"
-          style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+          style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
         >
           {t('listingHeader')}
         </h2>
@@ -163,23 +167,23 @@ export default async function AlternativesPage({
               <div
                 key={c.name}
                 className="pt-8"
-                style={{ borderTop: `1px solid #D4D0C5` }}
+                style={{ borderTop: `1px solid ${PALETTE.border}` }}
               >
                 <h3
                   className="text-[20px] sm:text-[22px] mb-3"
-                  style={{ fontFamily: SERIF, fontWeight: 500, color: '#222' }}
+                  style={{ fontFamily: SERIF, fontWeight: 500, color: PALETTE.text }}
                 >
                   {c.name}
                 </h3>
                 <p
                   className="text-[14px] leading-[1.6] mb-3"
-                  style={{ color: '#6A6A6A', fontFamily: SANS }}
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
                   {c.bestFor}
                 </p>
                 <p
                   className="text-[15px] leading-[1.65] mb-3"
-                  style={{ color: '#555', fontFamily: SANS }}
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
                 >
                   {c.description}
                 </p>
@@ -187,7 +191,7 @@ export default async function AlternativesPage({
                   <Link
                     href={`/vs/${compareSlug}`}
                     className="inline-block text-[14px] hover:no-underline underline underline-offset-4"
-                    style={{ color: '#2D7A85', fontFamily: SANS, fontWeight: 500 }}
+                    style={{ color: PALETTE.accent, fontFamily: SANS, fontWeight: 500 }}
                   >
                     {t('readFullComparison', { competitor: c.name })}
                   </Link>
@@ -200,17 +204,17 @@ export default async function AlternativesPage({
         {/* Closing block */}
         <section
           className="pt-10 pb-6"
-          style={{ borderTop: `2px solid #2D7A85` }}
+          style={{ borderTop: `2px solid ${PALETTE.accent}` }}
         >
           <h2
             className="text-[28px] sm:text-[32px] leading-[1.15] mb-5 -tracking-[0.01em]"
-            style={{ fontFamily: SERIF, fontWeight: 400, color: '#222' }}
+            style={{ fontFamily: SERIF, fontWeight: 400, color: PALETTE.text }}
           >
             {t('closingTitle')}
           </h2>
           <p
             className="text-[16px] leading-[1.65] mb-8 max-w-[36rem]"
-            style={{ color: '#393939', fontFamily: SANS }}
+            style={{ color: PALETTE.text, fontFamily: SANS }}
           >
             {t('closingBody')}
           </p>
@@ -221,8 +225,8 @@ export default async function AlternativesPage({
               style={{
                 fontFamily: SANS,
                 fontWeight: 500,
-                background: '#2D7A85',
-                color: '#F4F1EA',
+                background: PALETTE.accent,
+                color: PALETTE.accentText,
               }}
             >
               {t('ctaTryFree')}
@@ -234,8 +238,8 @@ export default async function AlternativesPage({
                 fontFamily: SANS,
                 fontWeight: 500,
                 background: 'transparent',
-                color: '#2D7A85',
-                border: '1px solid #2D7A85',
+                color: PALETTE.accent,
+                border: `1px solid ${PALETTE.accent}`,
               }}
             >
               {t('ctaReadMore')}
