@@ -693,23 +693,23 @@
     "functionality": [
       "Puedo hacer las cosas diarias — asearme, comer, trabajar, tareas básicas",
       "Puedo concentrarme en una conversación durante al menos 10 minutos",
-      "Me siento seguro en mi entorno doméstico",
+      "Me siento seguro/a en mi entorno doméstico",
       "Puedo regularme, al menos parcialmente, cuando me altero",
       "Puedo sentir emociones básicas, en vez de un entumecimiento total",
       "Puedo describir mis sentimientos con palabras sencillas"
     ],
     "emotional": [
-      "Me siento desbordado de forma constante",
+      "Me siento desbordado/a de forma constante",
       "Tengo ataques de pánico frecuentes",
       "Me cierro emocionalmente (me bloqueo) con frecuencia",
-      "Disocio — me siento irreal, desconectado",
+      "Disocio — me siento irreal, desconectado/a",
       "Se me activa algo de repente y pierdo el control"
     ],
     "trauma": [
       "Tengo heridas emocionales leves pero funciono con normalidad",
       "Tengo asuntos no resueltos del pasado pero puedo mantenerme estable",
       "Mi trauma pasado me desborda con regularidad",
-      "No puedo mantenerme emocionalmente seguro al recordar el pasado"
+      "No puedo mantenerme emocionalmente seguro/a al recordar el pasado"
     ],
     "cognitive": [
       "Puedo seguir instrucciones paso a paso",
@@ -719,8 +719,8 @@
     "consent": [
       "MindReset no es un tratamiento médico ni psiquiátrico",
       "MindReset no puede acompañar una crisis, un estado suicida o una psicosis",
-      "Seré honesto sobre mis síntomas en cada sesión",
-      "Detendré el proceso si no me siento seguro",
+      "Seré honesto/a sobre mis síntomas en cada sesión",
+      "Detendré el proceso si no me siento seguro/a",
       "La IA puede detener el proceso por motivos de seguridad, y lo acepto",
       "Asumo la responsabilidad de mis decisiones y cambios de vida",
       "Entiendo que MindReset solo funciona si participo activamente",
@@ -748,7 +748,7 @@
         "detail": "Si no se siente seguro en este momento"
       }
     ],
-    "redFooter": "No somos el servicio adecuado para este momento, pero las personas de arriba sí lo son. Merece ser escuchado por alguien que pueda ayudarle de verdad.",
+    "redFooter": "No somos el servicio adecuado para este momento, pero las personas de arriba sí lo son. Merece ser escuchado/a por alguien que pueda ayudarle de verdad.",
     "yellowKicker": "Camino de prudencia",
     "yellowTitle": "MindReset puede ayudar, pero con suavidad",
     "yellowBody": "Sus respuestas nos dicen que su sistema nervioso está cargando mucho en este momento. Los módulos más profundos de MindReset no le servirían bien todavía — podrían hacer las cosas más difíciles, no más fáciles. El punto de partida adecuado es un trabajo de estabilización, centrado únicamente en devolver el equilibrio a su sistema antes de seguir.",
@@ -758,7 +758,7 @@
       "Sin módulos profundos, sin trabajo con partes, sin ejercicios centrados en el pasado hasta que su funcionamiento diario sea más estable",
       "Si siente que necesita apoyo adicional, le animamos a buscar a un profesional que trabaje con un enfoque trauma-informado."
     ],
-    "yellowCta": "Cuando se sienta listo",
+    "yellowCta": "Cuando se sienta listo/a",
     "greenKicker": "Bienvenido",
     "greenTitle": "Está listo para comenzar",
     "greenBody": "Sus respuestas sugieren que MindReset es adecuado para usted en este momento. A continuación, lo que puede esperar y el siguiente paso.",

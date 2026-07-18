@@ -694,16 +694,16 @@
       "Je peux assurer les choses du quotidien — me laver, manger, travailler, les tâches de base",
       "Je peux me concentrer dans une conversation pendant au moins 10 minutes",
       "Je me sens en sécurité dans mon environnement domestique",
-      "Je peux me réguler, au moins partiellement, lorsque je suis bouleversé",
-      "Je peux ressentir des émotions de base, plutôt que d’être complètement engourdi",
+      "Je peux me réguler, au moins partiellement, lorsque je suis bouleversé(e)",
+      "Je peux ressentir des émotions de base, plutôt que d’être complètement engourdi(e)",
       "Je peux décrire mes ressentis avec des mots simples"
     ],
     "emotional": [
-      "Je me sens dépassé en permanence",
+      "Je me sens dépassé(e) en permanence",
       "J'ai des crises de panique fréquentes",
       "Je me coupe émotionnellement (figement) souvent",
-      "Je dissocie — je me sens irréel, déconnecté",
-      "Je suis activé brutalement et je perds le contrôle"
+      "Je dissocie — je me sens irréel(le), déconnecté(e)",
+      "Je suis activé(e) brutalement et je perds le contrôle"
     ],
     "trauma": [
       "J’ai des blessures émotionnelles légères mais je fonctionne normalement",
@@ -748,7 +748,7 @@
         "detail": "Si vous ne vous sentez pas en sécurité en ce moment"
       }
     ],
-    "redFooter": "Nous ne sommes pas le bon service pour ce moment, mais les personnes ci-dessus le sont. Vous méritez d’être entendu par quelqu’un qui peut vraiment aider.",
+    "redFooter": "Nous ne sommes pas le bon service pour ce moment, mais les personnes ci-dessus le sont. Vous méritez d’être entendu(e) par quelqu’un qui peut vraiment aider.",
     "yellowKicker": "Voie de prudence",
     "yellowTitle": "MindReset peut aider, mais en douceur",
     "yellowBody": "Vos réponses nous indiquent que votre système nerveux porte beaucoup en ce moment. Les modules plus profonds de MindReset ne vous serviraient pas bien encore — ils pourraient rendre les choses plus difficiles, pas plus simples. Le bon point de départ est un travail de stabilisation, centré uniquement sur le rééquilibrage de votre système avant d’aller plus loin.",
