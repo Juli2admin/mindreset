@@ -150,6 +150,10 @@ export default async function JourneyInspectPage({
             <Row k="adultSelfQualities" v={truncate(tryDecrypt(progress.adultSelfQualitiesEncrypted) ?? '- (not set)')} />
             <Row k="continuityNote" v={truncate(tryDecrypt(progress.continuityNoteEncrypted) ?? '- (not set)', 800)} span={2} />
             <Row k="mii" v={truncate(JSON.stringify(progress.mii))} span={2} />
+            {/* Journey remediation 2026-07-19 — stored task contract +
+                durable working preferences (observability, Phase 10). */}
+            <Row k="taskContract" v={truncate(tryDecrypt(progress.taskContractEncrypted) ?? '- (not captured)', 800)} span={2} />
+            <Row k="workingPreferences" v={truncate(tryDecrypt(progress.workingPreferencesEncrypted) ?? '- (none)', 800)} span={2} />
           </dl>
         </section>
       )}
@@ -363,6 +367,20 @@ const CAPTURE_FIELDS = [
   'userImagesCaptured',
   'partsTouched',
   'foreignFilesTouched',
+  // Journey remediation 2026-07-19 — task contract, durable preferences,
+  // release semantics, and sensitivity-layer routing fields (Phase 10
+  // observability). Rendered as JSON in "captures set" when emitted.
+  'taskContract',
+  'workingPreferenceNoted',
+  'workingPreferenceCleared',
+  'releaseConfirmed',
+  'releaseInvalidated',
+  'therapeuticMode',
+  'nextBestMode',
+  'cycleStatus',
+  'cycleCanClose',
+  'modalityRejected',
+  'channelShiftDetected',
 ];
 
 function StateSummary({ sr }: { sr: StateReport }) {
@@ -378,6 +396,7 @@ function StateSummary({ sr }: { sr: StateReport }) {
         depth?: string;
         triggeredBy?: string;
         userImages?: string;
+        outcome?: string;
       }
     | undefined;
   const stability = sr.stabilityCheck as
@@ -439,6 +458,7 @@ function StateSummary({ sr }: { sr: StateReport }) {
         ) : (
           <span className="font-mono">
             {practice.kind}/{practice.family ?? '-'} &quot;{practice.name ?? '-'}&quot; status={practice.status ?? '-'}
+            {practice.outcome ? ` outcome=${practice.outcome}` : ''}
             {practice.depth ? ` depth=${practice.depth}` : ''}
             {practice.triggeredBy ? ` · triggeredBy: ${practice.triggeredBy}` : ''}
             {practice.userImages ? ` · userImages: ${truncate(practice.userImages)}` : ''}

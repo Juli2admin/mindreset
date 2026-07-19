@@ -74,17 +74,28 @@ export function loadStageSpec(stage: number): string {
 // Engineered runtime prompts — docs/journey/runtime/stage-NN.md
 // ---------------------------------------------------------------------------
 
-// Extract the prompt content between the first ```...``` code fence.
+// Extract the prompt content between the OUTER ```...``` code fence.
 // The .md file wraps the prompt in a code block so it renders cleanly on
 // GitHub with a metadata header. Runtime gets only what's inside.
+//
+// Journey remediation 2026-07-19 — CRITICAL FIX. The previous
+// implementation closed at the FIRST ``` after the opening fence. The
+// master prompt legitimately contains inner ``` fences (the "Output order
+// every turn" example, the state-report emission example), so the loader
+// silently truncated the runtime prompt at the first inner fence — the
+// Therapeutic Sensitivity Layer's five silent questions, ALL hard
+// behaviour rules (modality rejection, body-activation switching, cycle
+// close conditions), and the worked failure-mode example NEVER reached
+// the model in production. The outer close is the LAST ``` in the file
+// (inner fences come in pairs); close there instead.
 function extractCodeBlock(md: string): string | null {
   const openIdx = md.indexOf('```');
   if (openIdx < 0) return null;
   // Skip the opening fence line (which may carry a language tag).
   const afterOpenLine = md.indexOf('\n', openIdx);
   if (afterOpenLine < 0) return null;
-  const closeIdx = md.indexOf('```', afterOpenLine + 1);
-  if (closeIdx < 0) return null;
+  const closeIdx = md.lastIndexOf('```');
+  if (closeIdx <= afterOpenLine) return null;
   return md.slice(afterOpenLine + 1, closeIdx).trim();
 }
 
