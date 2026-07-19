@@ -27,6 +27,7 @@ import { encrypt, decrypt } from '@/lib/encrypt';
 import { loadJourneyState } from '@/lib/journey/state/load';
 import { applyStateReportToProgress } from '@/lib/journey/state/save';
 import { assembleSystemPromptBlocks } from '@/lib/journey/prompts/assemble';
+import { appendEmissionReminder } from '@/lib/journey/prompts/emission-reminder';
 import { getModelForStage } from '@/lib/journey/model';
 import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport/parse';
 import type { StateReport } from '@/lib/journey/stateReport/schema';
@@ -372,19 +373,28 @@ export async function POST(request: NextRequest) {
   // internal marker before feeding the model. Prevents legacy DB rows
   // from priming the current turn into repeating the same failure.
   // User messages are never inspected — they are the user's own words.
-  const messages: Anthropic.MessageParam[] = decryptedHistory.map((m) => {
-    if (m.role === 'assistant') {
-      const check = detectLeak(m.content);
-      if (check.leaked) {
-        console.warn('[journey/turn] history mask — leaked assistant row', {
-          userId,
-          pattern: check.pattern,
-        });
-        return { role: 'assistant', content: LEAK_HISTORY_MASK };
+  const maskedHistory: { role: 'user' | 'assistant'; content: string }[] =
+    decryptedHistory.map((m) => {
+      if (m.role === 'assistant') {
+        const check = detectLeak(m.content);
+        if (check.leaked) {
+          console.warn('[journey/turn] history mask — leaked assistant row', {
+            userId,
+            pattern: check.pattern,
+          });
+          return { role: 'assistant', content: LEAK_HISTORY_MASK };
+        }
       }
-    }
-    return { role: m.role, content: m.content };
-  });
+      return { role: m.role, content: m.content };
+    });
+
+  // State-report emission reminder (2026-07-19). Appended to the final
+  // user message of the OUTBOUND call only — the user's message was
+  // persisted before history assembly, so the note is never stored and
+  // never compounds across turns. See lib/journey/prompts/emission-
+  // reminder.ts for the AiUsage-backed diagnosis (mid-session turns
+  // dropping to reply-only output, 18 consecutive report-less turns).
+  const messages: Anthropic.MessageParam[] = appendEmissionReminder(maskedHistory);
 
   const stream = anthropic.messages.stream({
     model,
