@@ -96,6 +96,15 @@ function standardGuards(
 // doing real work. 'red_flag' still blocks (and triggers freeze separately).
 // Owner has reserved the right to tighten to canon-strict (A) later via a
 // one-line change.
+//
+// ANCHOR RULE (remediation 2026-07-19, owner-directed; audit findings
+// RC6/SM7): the anchor is a clinically indicated intervention (freeze, loss
+// of self, numbness, disconnection, destabilisation, lack of internal
+// support), NOT a universal requirement. The `anchorText`-set and
+// `anchor_identified`-token checks are removed from this gate so a stable
+// cognitive/narrative user is never blocked by the absence of an anchor.
+// This aligns code with the 2026-07-02 stage-spec revision (§10) and the
+// master prompt; the Clinical Manual carries the matching revision note.
 export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons: string[] = [];
 
@@ -110,15 +119,11 @@ export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateRe
     reasons.push('ai_did_not_recommend_advance');
   }
 
-  if (!state.anchorText) reasons.push('anchor_not_set');
-
-  // Canon §10's three readiness tokens.
+  // Canon §10's readiness tokens (anchor token removed per Anchor rule).
   const hasToken = (regex: RegExp): boolean =>
     turns.some((t) =>
       (t.report.readinessTouched ?? []).some((r) => regex.test(r)),
     );
-  const anchorIdentified = hasToken(/anchor[_-]?identified/i);
-  if (!anchorIdentified) reasons.push('anchor_identified_token_missing');
   // Canon: "one emotion-or-body-state named" — either token counts.
   const emotionOrBody = hasToken(/emotion[_-]?named|body[_-]?located/i);
   if (!emotionOrBody) reasons.push('no_emotion_or_body_state_named');

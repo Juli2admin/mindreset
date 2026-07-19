@@ -100,7 +100,7 @@ The AI may detect a mixed type. It adapts to whichever channel is most alive in 
 
 **Revised 2026-07-02.** Previously this section framed anchor identification as the load-bearing signature practice of Stage 1. That created a gate-shaped attractor: the AI would run a scripted anatomy to elicit an anchor and stamp *"this is your anchor"* onto material that didn't qualify, in order to close the stage. Live testing showed this landed as clinical box-ticking and broke user trust.
 
-The revised role of the anchor:
+The revised role of the anchor (extended 2026-07-19, owner-directed — the anchor is **clinically indicated, not universally required**; it is specifically valuable for freeze, loss of self, emotional numbness, severe disconnection, destabilisation, and lack of internal support; a stable cognitive or narrative user needs no anchor and its absence never blocks progression):
 - **NOT a stabilising intervention.** Regulation, somatic, and grounding practices from the master prompt's practice generation logic are what settle the user in Block 1. Anchor is not what the AI reaches for when the user destabilises.
 - **NOT a session-close move.** Sessions close on a fitting practice, not on anchor recall (see master prompt Closing protocol and Shared Core §10).
 - **NOT a load-bearing Stage 1 gate.** The `anchorText`-set requirement and the `anchor_identified` readiness token are dropped from the Stage 1 code gate (§10).
