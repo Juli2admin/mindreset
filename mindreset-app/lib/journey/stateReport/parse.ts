@@ -381,6 +381,29 @@ export function parseStateReport(raw: string | null): StateReport {
 
   copyStringField(obj, 'continuityNote', report);
 
+  // Journey P1 (2026-07-19) — release confirmation / invalidation (A8).
+  const rc = obj.releaseConfirmed;
+  if (rc && typeof rc === 'object') {
+    const d = (rc as Record<string, unknown>).description;
+    if (typeof d === 'string' && d.trim().length > 0) {
+      report.releaseConfirmed = { description: d.trim() };
+    }
+  }
+  const ri = obj.releaseInvalidated;
+  if (ri && typeof ri === 'object') {
+    const d = (ri as Record<string, unknown>).description;
+    if (typeof d === 'string' && d.trim().length > 0) {
+      const entry: { description: string; reason?: string } = {
+        description: d.trim(),
+      };
+      const reason = (ri as Record<string, unknown>).reason;
+      if (typeof reason === 'string' && reason.trim().length > 0) {
+        entry.reason = reason.trim().slice(0, 200);
+      }
+      report.releaseInvalidated = entry;
+    }
+  }
+
   return report;
 }
 

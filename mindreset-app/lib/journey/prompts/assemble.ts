@@ -303,7 +303,14 @@ function renderStateBlock(state: JourneyState): string {
     lines.push('');
     lines.push("**Foreign material identified or released (in user's words):**");
     for (const f of state.foreignFiles) {
-      const phase = f.releasedAt ? 'released' : 'identified';
+      // Journey P1 (2026-07-19, audit A8): provisional vs confirmed release.
+      // A claimed release stays PROVISIONAL until the user confirms it held
+      // across time; treat provisional releases as open hypotheses.
+      const phase = f.releasedAt
+        ? 'released (confirmed by user across time)'
+        : f.releaseClaimedAt
+          ? 'release claimed (PROVISIONAL — not yet confirmed; the next user response can invalidate it)'
+          : 'identified';
       const origin = f.originDescription ? ` (origin: "${f.originDescription}")` : '';
       lines.push(`- "${f.userDescription}"${origin} — ${phase}`);
     }

@@ -225,6 +225,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     honouringPhrase: decryptOrNull(f.honouringPhraseEncrypted),
     whatStaysAsMine: decryptOrNull(f.whatStaysAsMineEncrypted),
     identifiedAt: f.identifiedAt,
+    releaseClaimedAt: f.releaseClaimedAt,
     releasedAt: f.releasedAt,
   }));
 

@@ -218,10 +218,18 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
     }
   }
 
-  // Stage 5 — Symbolic Return of the Burden. Match an existing
-  // JourneyForeignFile by description, set releasedAt + the returned-to,
-  // honouring-phrase, and what-stays-as-mine fields. This is what closes
-  // Block 5's completion gate.
+  // Stage 5 — Symbolic Return of the Burden.
+  //
+  // Journey P1 (2026-07-19, audit A8/B6): the AI's release emission is a
+  // PROVISIONAL claim. It stamps releaseClaimedAt — never releasedAt.
+  // releasedAt (which the Stage 5 gate reads) is set only by the separate
+  // releaseConfirmed emission on a LATER turn, when the user has confirmed
+  // the release held across time. releaseInvalidated reopens the file
+  // (clears both stamps), so the next user response can always invalidate
+  // the release hypothesis. `claimedThisCall` enforces the later-turn rule
+  // in code: a claim and a confirmation for the same material in one state
+  // report can never confirm same-turn.
+  const claimedThisCall = new Set<string>();
   if (report.foreignFileReleased?.description) {
     const all = await prisma.journeyForeignFile.findMany({
       where: { userId, releasedAt: null },
@@ -241,11 +249,12 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
         // ignore
       }
     }
+    claimedThisCall.add(report.foreignFileReleased.description);
     if (matchId) {
       await prisma.journeyForeignFile.update({
         where: { id: matchId },
         data: {
-          releasedAt: new Date(),
+          releaseClaimedAt: new Date(),
           returnedToEncrypted: report.foreignFileReleased.returnedTo
             ? encrypt(report.foreignFileReleased.returnedTo)
             : null,
@@ -258,14 +267,14 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
         },
       });
     } else {
-      // No prior identification — insert as released immediately. Rare but
+      // No prior identification — insert with the claim only. Rare but
       // possible if the user named and released foreign material in one move.
       await prisma.journeyForeignFile.create({
         data: {
           userId,
           userDescriptionEncrypted: encrypt(report.foreignFileReleased.description),
           identifiedAt: new Date(),
-          releasedAt: new Date(),
+          releaseClaimedAt: new Date(),
           returnedToEncrypted: report.foreignFileReleased.returnedTo
             ? encrypt(report.foreignFileReleased.returnedTo)
             : null,
@@ -277,6 +286,60 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
             : null,
         },
       });
+    }
+  }
+
+  // Journey P1 — release CONFIRMATION. Only a file with a standing
+  // provisional claim from an EARLIER turn can be confirmed; confirmation
+  // stamps releasedAt, which is what the Stage 5 gate counts. The
+  // claimedThisCall guard makes same-turn claim+confirm a no-op.
+  if (
+    report.releaseConfirmed?.description &&
+    !claimedThisCall.has(report.releaseConfirmed.description)
+  ) {
+    const claimed = await prisma.journeyForeignFile.findMany({
+      where: { userId, releasedAt: null, releaseClaimedAt: { not: null } },
+      select: { id: true, userDescriptionEncrypted: true },
+    });
+    for (const row of claimed) {
+      try {
+        if (decrypt(row.userDescriptionEncrypted) === report.releaseConfirmed.description) {
+          await prisma.journeyForeignFile.update({
+            where: { id: row.id },
+            data: { releasedAt: new Date() },
+          });
+          break;
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  // Journey P1 — release INVALIDATION. The user's response contradicted the
+  // release (feels worse, material reactivated): reopen the file immediately
+  // — clear both the claim and any confirmation so unresolved activation
+  // reopens the process. Applies even to a previously-confirmed release.
+  if (report.releaseInvalidated?.description) {
+    const candidates = await prisma.journeyForeignFile.findMany({
+      where: {
+        userId,
+        OR: [{ releaseClaimedAt: { not: null } }, { releasedAt: { not: null } }],
+      },
+      select: { id: true, userDescriptionEncrypted: true },
+    });
+    for (const row of candidates) {
+      try {
+        if (decrypt(row.userDescriptionEncrypted) === report.releaseInvalidated.description) {
+          await prisma.journeyForeignFile.update({
+            where: { id: row.id },
+            data: { releaseClaimedAt: null, releasedAt: null },
+          });
+          break;
+        }
+      } catch {
+        // ignore
+      }
     }
   }
 

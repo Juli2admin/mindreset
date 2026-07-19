@@ -812,6 +812,15 @@ model JourneyForeignFile {
   userId                          String
   createdAt                       DateTime       @default(now())
   identifiedAt                    DateTime?
+  // Journey P1 (2026-07-19) — release-semantics split (audit A8/B6).
+  // releaseClaimedAt = the AI reported a symbolic release (PROVISIONAL claim).
+  // releasedAt       = release CONFIRMED by the user across time (relief that
+  //                    held, stable next check-in). Only releasedAt counts
+  //                    toward the Stage 5 gate. releaseInvalidated clears both,
+  //                    reopening the work. Historical rows with releasedAt set
+  //                    are grandfathered as confirmed (recorded under the old
+  //                    semantics; retro-demoting would erase real progress).
+  releaseClaimedAt                DateTime?
   releasedAt                      DateTime?
 
   userDescriptionEncrypted        String         // "I must always be useful" (encrypted)
