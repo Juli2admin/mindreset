@@ -1,216 +1,201 @@
-# SESSION HANDOFF — 2026-06-28
+# SESSION HANDOFF — 2026-07-19
 
 **Read this BEFORE CLAUDE.md.** Most recent operational state.
-Supersedes the prior handoff (2026-06-04, which itself superseded the
-2026-05-22 one — both archived in git).
+Supersedes the prior handoff (2026-06-28, which itself superseded
+2026-06-04). Both archived in git.
 
 ---
 
 ## TL;DR — where we are
 
-**The Journey 8-stage canon §10 audit is complete.** Eight small, focused
-PRs landed today (#177–#184) — one per stage. Every stage gate in
-`lib/journey/router/stage-gates.ts` now matches the documented method
-in `docs/journey/0X-stage-*.md §10`. All 151 tests pass.
+**M1 (Journey memory attention optimisation) is shipped, evaluated, and
+working.** PR merged (#322, commit `ebfb01f`). Runtime caps (5 parts /
+3 foreign / 5 sig images / 5 patterns) + reframed historical continuity.
+Owner's own Journey session on 2026-07-19 confirmed method fires cleanly
+under M1: foreign material released, clean identity statement landed,
+deep landscape practice completed, intensity descent 5→5→3→3→2 with
+appropriate safety-flag relaxation. Zero clinical prompt changes shipped.
+**Close M1 evaluation. Do not touch it further.**
 
-Owner ran two test sessions against the previous (buggy) gates and got
-stuck at Stage 1 across 67 turns / 2 sessions because the code required
-`formulation_confirmed` — a milestone invented in the master prompt's
-`<assessment_phase>` but NOT in canon §10. That whole class of false-
-negative gate is gone, plus seven other stage-specific tightening fixes.
+**Full pilot cohort audit is complete** and captured in
+`mindreset-app/docs/pilot/tester-audit-2026-07-18.md`. 4 pilot testers +
+quin55 (allowlisted early). Findings summary is in that doc.
 
-**Next move: owner runs a fresh live test against the aligned gates.**
-SQL to wipe Journey state (kept MiniMind untouched) was provided in chat
-and is repeated under "Wipe SQL" below.
+**Owner's strategic read from the audit:**
+- The Journey clinical method works for the right user profile — proven
+  by owner's own arc and quin55's somatic practice sequence.
+- The method cannot help wrong-profile users (abstract-existential,
+  single-shot-answer-expecting, pessimistic-at-intake). Sergei is the
+  type example.
+- **The failure is upstream of the AI, not inside it.** Users self-route
+  into the wrong surface with no expectation-setting or triage.
+- 2 of 4 pilot testers went straight to MiniMind and never opened
+  Journey. Svetlana is the most engaged user in the cohort (98
+  messages) and she's on MiniMind.
+- Owner's verdict: stop tuning the AI. Fix the funnel.
 
----
+**Next work track (owner's direction):** funnel + product surfaces, not
+AI methodology. Three candidates identified in the last exchange:
+1. Journey onboarding + expectation-setting (biggest lever, self-contained
+   UI+copy)
+2. User-facing "your journey so far" progress surface (Sergei's explicit
+   ask; all arc data is admin-only today)
+3. Journey session-close rewrite — warm-companion register → clinician-
+   close register. Small prompt change to the close-move section only.
 
-## What is working (verified by tests this session)
-
-- **Stage 1 gate** (`checkStage1Gate`) — canon's 3 readiness tokens
-  (anchor-identified, emotion-or-body-state-named, orientation-present)
-  + looser safety guard (red_flag only blocks, watch passes per owner
-  sign-off Option B).
-- **Stage 2 gate** — three distinct conditions: emotion-named,
-  emotion-located, soft-why-asked. Previous single-regex shortcut gone.
-- **Stage 3 gate** — wired `adultSelfAnchorLinked` and
-  `heldEmotionInAdultSelf` (existed in schema since PR 4, never gated).
-- **Stage 4 gate (MII)** — MII-5 fallback now reads
-  `partSecured.adultSelfOffering` (canon-named) instead of Stage 3's
-  `adultSelfQualities` (wrong field).
-- **Stage 5 gate** — wired `somaticRelease: true` and `bodyConfirmation`
-  requirements. Without these the release / clean-identity statement
-  were head-only and still passed.
-- **Stage 6 gate** — adult self ≥ 70% across last 3 sessions added.
-  Uses two new session helpers (4-hour boundary).
-- **Stage 7 gate** — `safetyReorientation` tightened from "≥ 2 in window"
-  to "present in EACH of last 2 sessions" (canon: every Stage 7
-  session). Adult-self 70% across last 3 sessions added.
-- **Stage 8 gate (Discharge)** — Identity Reinforcement Check-In wired:
-  `adultSelfThisWeek` captured in each of last 4 sessions + "close" or
-  "steady" in ≥ 3 of them.
-- **Stage 8 unreachability bug fixed** — `standardGuards` was forcing
-  `recommendedAction === 'advance'`; Stage 8 emits `'discharge'`. The
-  gate was unreachable. Now `standardGuards` takes an `expectedAction`
-  parameter.
-
-All 151 vitest tests pass:
-`cd mindreset-app && npm test`.
+Owner will pick which piece to start with. Await direction on first
+message.
 
 ---
 
-## What is broken / unverified
+## Full context tree
 
-- **Live test of the new gates is the next step.** Tests pass; real
-  session behaviour has not been verified yet. Owner about to run.
-- **safetyFlag floor at intensity ≥ 7** — small follow-up identified
-  but not built. The AI can currently emit `intensity: 8` with
-  `safetyFlag: 'none'`. The schema doesn't enforce the obvious
-  invariant. Worth a tiny PR.
-- **`I lost my thread` parse error** — recurring bug across sessions,
-  root cause not identified. Owner's previous test logs likely have
-  reproductions. Investigate when convenient.
-- **Family selection still drifting toward `regulation`** — partial fix
-  in PR 8. Last test session showed 3 distinct families in Part 2; not
-  yet a clean balanced distribution.
-- **Practice ratio still low** — AI selectively emits `practiceRun`;
-  some practices conducted in conversation don't get logged. PR 6
-  emission mandate partially working.
+### What shipped in this session
+- **PR M1** — Journey memory attention optimisation. Merged.
+- **Pilot cohort audit doc** — `mindreset-app/docs/pilot/tester-audit-
+  2026-07-18.md` (committed 2026-07-19).
+- **This handoff doc** — updated 2026-07-19.
+
+### What did NOT ship (and shouldn't in the next session either)
+- **No changes to Journey master prompt** — held under M1 constraint;
+  owner explicitly rules out touching the clinician for now.
+- **No safety-verifier tuning** — flagged as candidate but not touched.
+- **No MiniMind changes** — audit thread opened then closed at owner's
+  direction ("MiniMind and Journey are two different prompts. I ask
+  MiniMind only.").
+- **No MiniMind → Journey referral logic** — cross-wired suggestion was
+  explicitly rejected by owner.
+
+### Pilot cohort snapshot (as of 2026-07-19)
+
+| Tester | Locale | Surface | Journey turns | MiniMind msgs | Status |
+|---|---|---|---|---|---|
+| vmelentev2003@gmail.com | (en?) | Journey | 104 | 0 | last active 16 Jul |
+| sergecrim@hotmail.com | en | Journey | 39 | 5 | silent 13+ hrs after unsatisfactory Journey session; likely dropout |
+| quin55@mail.ru | ru | Journey | 26 | 7 | silent 4 days; got 11 practices, 2 completed |
+| svetlana.morozova@inbox.lv | ru | MiniMind | 0 | 98 | most engaged; still active |
+| 9020240320@mail.ru | ru | MiniMind | 0 | 19 | last active 15 Jul |
+
+### Sergei's explicit product asks (queue these)
+1. **Personal progress metrics visible in-app.** All arc data (patterns,
+   parts, foreign material, practices, stage progression) is admin-only.
+2. **Better onboarding expectation-setting** before first Journey message.
+
+### Owner's UX flag from her own session
+- Journey session-close style reads as warm-companion ("иди отогревайся"),
+  not clinician. For an experienced user this feels warm; for a Sergei
+  it likely reads as unprofessional. Fixable independently.
 
 ---
 
-## Today's PRs (chronological, all merged)
+## Constraints still in force
 
-| PR | Stage | Title |
-|---|---|---|
-| #177 | 1 | Stage 1 gate — align with canon §10, remove invented `formulation_confirmed` |
-| #178 | 2 | Stage 2 gate — require all three distinct canon conditions |
-| #179 | 3 | Stage 3 gate — wire `adultSelfAnchorLinked` + `heldEmotionInAdultSelf` |
-| #180 | 4 | Stage 4 MII-5 — read `partSecured.adultSelfOffering`, not Stage 3 `adultSelfQualities` |
-| #181 | 5 | Stage 5 gate — require `somaticRelease` + `bodyConfirmation` |
-| #182 | 6 | Stage 6 gate — require adult self ≥ 70% across last 3 sessions |
-| #183 | 7 | Stage 7 gate — tighten `safetyReorientation` to every recent session + adult-self 70% |
-| #184 | 8 | Stage 8 gate — wire Identity Reinforcement Check-In + fix unreachable gate |
-
-`main` is at `2c91919` after #184.
+Per `CLAUDE.md`:
+- **Never push to `main`.** Feature branch this session:
+  `claude/gallant-pasteur-sRyXA`. Next session uses a fresh branch.
+- **Never run `prisma migrate dev / deploy / db push`.** Owner runs
+  migrations manually in Supabase.
+- **MiniMind v2.3 prompt dual-source** — `lib/minimind/prompt.ts` +
+  `docs/minimind/MiniMind_System_Prompt_v2.3.md` must stay byte-identical
+  in the same commit.
+- **Journey master prompt is frozen** — do not modify without explicit
+  owner approval on wording. Was reverted once (PR #308 → #309) after
+  an identity-sentence experiment caused rupture-handling regression.
+- **8 locales, en+ru native, other 6 placeholders** — run
+  `npm run i18n:sync` after adding new copy in en.json.
+- **GitHub MCP owner param**: `Juli2admin` with capital J.
+- **Stripe surfaces language**: forbidden words listed in CLAUDE.md.
 
 ---
 
-## Wipe SQL (owner uses this before fresh test)
+## Environment / deployment (unchanged from prior handoff)
 
-Run in Supabase SQL editor. Keeps MiniMind chat untouched (it lives on a
-separate data path; The Journey reads `JourneyTurn`, not MiniMind
-conversations).
+- `mindreset.ai` still not connected to Vercel.
+- Production URL is whatever Vercel is serving.
+- Preview URLs are NOT whitelisted in Clerk.
+- Vercel Deployment Protection must stay OFF (Stripe webhook depends
+  on that state).
+- Stripe webhook URL uses `x-vercel-protection-bypass` token workaround.
+
+---
+
+## Testing / eval status
+
+- **M1 tests**: 608 passing after M1 shipped. Nothing new added.
+- **Owner's Journey test session on 2026-07-19**: successful, captured
+  in the current session's chat log. Deep Layer symbolic release,
+  clean close, intensity 2.
+- **Sergei's Journey session on 2026-07-18**: analyzed extensively via
+  SQL. Documented in the pilot audit doc.
+- **No CI failures known.**
+
+---
+
+## SQL — Sergei check-back query
+
+For quick re-check of whether Sergei returned:
 
 ```sql
-BEGIN;
-DELETE FROM "JourneyPracticeRun"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyMessage"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyTurn"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyPart"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyForeignFile"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneySignatureImage" WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "RecodeProgress"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-COMMIT;
+SELECT
+  (SELECT COUNT(*) FROM "JourneyTurn"
+    WHERE "userId" = 'user_3GgUr4RqfyoqK73gZk6u61l53XD'
+      AND "createdAt" > '2026-07-18 20:02:16.28'::timestamp)  AS new_j_turns_since_dropout,
+  (SELECT MAX("createdAt") FROM "JourneyMessage"
+    WHERE "userId" = 'user_3GgUr4RqfyoqK73gZk6u61l53XD')       AS j_last,
+  ROUND(EXTRACT(EPOCH FROM (NOW() -
+    (SELECT MAX("createdAt") FROM "JourneyMessage"
+      WHERE "userId" = 'user_3GgUr4RqfyoqK73gZk6u61l53XD')))/3600, 1) AS hours_silent;
 ```
 
-After this owner is back to Stage 1 with no parts, no foreign material,
-no audit log. `RecodeProgress` is recreated on next Journey turn.
+Sergei's userId: `user_3GgUr4RqfyoqK73gZk6u61l53XD`.
+Julia's userId: `user_3EfVFP02L8njKj2T36EvDAB0Z07`.
+quin55's userId: `user_3GM8L40KFQA0ElWIQpLG6YjHM7g`.
+Svetlana's userId: look up via `SELECT id FROM "User" WHERE email='svetlana.morozova@inbox.lv'`.
 
 ---
 
-## Deferred canon §10 items (each needs a schema field + emit instruction)
+## Where to find things (map for the next session)
 
-These were noted in the PR descriptions but not built. Each is its own
-small PR — schema add → master prompt emit instruction → save.ts wire →
-gate check → tests.
-
-**Stage 6**
-- `feltLikeMyself: string` — canon §10: "I feel like myself" on ≥ 2
-  different days. No field exists. Currently implicit in
-  `internalConsensus`.
-
-**Stage 7**
-- `identityAnchorRecalled: boolean` — canon §10: identity anchor recalled
-  at least once per Stage 7 session. No field exists.
-
-**Stage 8**
-- `identityAnchorWeeklyUse: boolean` (or count) — canon §10: identity
-  anchor used between sessions ≥ 1×/week. No field exists.
-- `feelLikeMyselfAndKnowHowToLive: string` — canon §10: "I feel like
-  myself, and I know how to live from here" on ≥ 2 different days. No
-  field exists.
-- `foreignMaterialReactivated: boolean` — canon §10: no active foreign
-  material reactivation. No field exists.
-- `partSeparatedInLastFourSessions: boolean` — canon §10: no part
-  flagged as separate / unseen in last 4 sessions. No field exists.
-
-The deferred items are NOT blocking for the live test. Without them the
-gates are looser than canon in these specific ways, but the structural
-"stuck at Stage 1" class of bug is fully fixed.
+- **Full pilot audit findings** — `mindreset-app/docs/pilot/tester-audit-2026-07-18.md`
+- **Journey master prompt** (frozen) — `mindreset-app/lib/journey/prompts/`
+  (do NOT touch without owner approval)
+- **MiniMind prompt** — `mindreset-app/lib/minimind/prompt.ts` +
+  `mindreset-app/docs/minimind/MiniMind_System_Prompt_v2.3.md`
+- **Journey state loading** — `mindreset-app/lib/journey/state/load.ts`
+  (M1 caps live here; do NOT change without owner approval)
+- **Pilot analytics** — `mindreset-app/lib/pilot/analytics.ts`
+- **Per-tester admin page** — `mindreset-app/app/admin/pilot/tester/[userId]/page.tsx`
+- **Journey Inspector** — `mindreset-app/app/admin/journey-inspect/page.tsx`
+- **Screening flow** (for onboarding work) — `mindreset-app/app/[locale]/screening/`
+- **Journey landing** (for expectation-setting work) — look under
+  `mindreset-app/app/[locale]/journey/` and `/home` tiles
+- **Home tiles** (surface routing) — search for `LiveThemeTiles` /
+  `StateTile` / Journey card component
+- **Account page** (for progress surface) — `mindreset-app/app/[locale]/account/`
+- **Locked decisions log** — `mindreset-app/docs/decisions/locked-decisions.md`
 
 ---
 
-## What next session should know
+## Recommended first move for the next session
 
-### What owner most likely wants
-1. **First, ask if she's done the live test** and what happened. The
-   live test is the deliverable — code is ready, behaviour is not yet
-   confirmed.
-2. **If a real bug surfaced**: fix that. Don't propose deferred-item
-   work until the live test is working cleanly.
-3. **If live test is clean**: the safetyFlag-floor-at-7 PR is the next
-   small high-value item. Then optionally the deferred §10 items above.
+1. **Read this doc, then read `mindreset-app/docs/pilot/tester-audit-
+   2026-07-18.md`** — owner's audit findings and stated product read.
+2. **Wait for owner's first task assignment.** Owner is about to give
+   the next session a specific piece of work (from the funnel-fix
+   candidates listed above, or something else).
+3. **Ask before making assumptions about scope.** Owner has repeatedly
+   corrected scope creep this session — respect narrow assignments.
 
-### Operating norms (load-bearing)
-- Owner = Julia (`jloya4436@gmail.com` for testing,
-  `loyayulia@gmail.com` for admin).
-- GitHub MCP owner param is `Juli2admin` (capital J), repo `mindreset`.
-- Owner says "merge" → agent clicks merge via
-  `mcp__github__merge_pull_request`, squash. Then `git checkout main &&
-  git pull && git branch -D <merged-branch>` and create next branch.
-- **One PR per change**, small and focused. Do NOT bundle multiple
-  stages, schema additions, or features into one PR. Owner explicitly
-  prefers many small PRs over one big one.
-- **No `git add -A`** — always specify files explicitly.
-- **Migrations are manual** — never run `prisma migrate` against any env.
-  If schema changes, propose the SQL in the PR body for owner to run.
+---
 
-### Working directory gotchas
-- `npm test` MUST be run from `/home/user/mindreset/mindreset-app`,
-  not the repo root. From repo root, prefix with `cd mindreset-app &&`.
-- `git` commands run from `/home/user/mindreset` (repo root); file
-  paths in `git add` are then `mindreset-app/lib/journey/...`.
+## Tone signals to carry forward
 
-### Key files for The Journey
-- Gates: `mindreset-app/lib/journey/router/stage-gates.ts`
-- Helpers: `mindreset-app/lib/journey/router/history.ts` (added today:
-  `lastNSessionsTurns`, `countSessions`, `groupSessions`)
-- Schema: `mindreset-app/lib/journey/stateReport/schema.ts`
-- Persist: `mindreset-app/lib/journey/state/save.ts`
-- Load: `mindreset-app/lib/journey/state/load.ts`
-- Router: `mindreset-app/lib/journey/router/router.ts`
-- Master prompt: `mindreset-app/docs/journey/runtime/journey-master.md`
-- Canon §10 source of truth: `mindreset-app/docs/journey/0X-stage-*.md`
-
-### Pattern for follow-up alignment PRs
-The 8 PRs today all follow the same shape — repeat it:
-1. Read canon §10 in the stage's doc.
-2. Diff against `checkStageXGate` in `stage-gates.ts`.
-3. Add missing canonical requirement(s) inline. Document the alignment
-   in the function's docstring.
-4. Write `stageX-gate.test.ts` with passing path + regression guard
-   per new check + failure cases for existing checks.
-5. Run `npm test` from `mindreset-app/`. All pass.
-6. Commit + push + PR with the "Why / What changed / Tests / Migration"
-   body.
-7. Wait for owner "merge".
-
-### Tone with this owner
-- Tight. No multi-paragraph explanations. Short user-facing updates only.
-- She's direct and reads diffs herself — don't over-explain code.
-- She has caught me before being biased toward "easy work" and toward
-  patches over solid fixes. If proposing the simpler of two options,
-  call out why it's simpler-on-merits, not simpler-for-me.
-- She will tell you when something is wrong. Take it directly, don't
-  defend.
+- Owner values honesty over reassurance. When findings are unfavourable,
+  say so.
+- Owner corrects scope creep quickly ("you cross-wired them") — listen.
+- Owner prefers one SQL at a time when auditing data, step-by-step
+  results back.
+- Owner runs SQL manually in Supabase SQL editor.
+- Owner prefers to review proposed prompt/code changes before shipping.
+- Owner asks for handoff when a session gets long — this is one of
+  those moments. Session ended honestly; next session picks up clean.
