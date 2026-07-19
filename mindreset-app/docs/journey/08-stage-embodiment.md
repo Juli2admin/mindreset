@@ -108,7 +108,7 @@ If at any layer emotional flooding or severe destabilisation occurs, return to e
 
 ## 6. Forbidden Moves in This Stage (additional to universal prohibitions and earlier-stage prohibitions still in force)
 
-- Do not endorse a major life decision, even now.
+- Do not endorse a major life decision, even now — never prescribe an option or present your judgement as the right choice. *(Scoped 2026-07-19 per Shared Core §4: structured examination of a decision the user brings, and small reversible experiments, are legitimate Stage 8 work; the choice is always the user's.)*
 - Do not treat a setback as regression. Frame it neutrally.
 - Do not cheerlead a successful CAL — receive cleanly, mirror, anchor.
 - Do not push the timeline. The user moves at their pace.

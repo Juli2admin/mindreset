@@ -10,6 +10,25 @@
 > Formatting note: converted from the original `.docx`. Word-on-own-line artifacts
 > ("MindReset" appearing between paragraphs) are docx→text conversion side-effects,
 > not method content. Content itself is verbatim.
+>
+> **Method revisions (owner-directed).** The original text below is preserved verbatim;
+> revisions are recorded here and marked inline with `[Method revision …]` notes:
+> - **2026-07-19 — Anchor rule.** The Personal Anchor is a *clinically indicated*
+>   stabilisation/reconnection intervention (freeze, loss of self, emotional numbness,
+>   severe disconnection, destabilisation, lack of internal support) — not a universal
+>   requirement for every Journey user. Block 1 STEP 5 and §14's anchor criterion apply
+>   when the anchor is indicated or selected; a stable cognitive/narrative user is not
+>   blocked from progressing by the absence of an anchor. (Supersedes the mandatory
+>   reading of Block 1 STEP 5 / §14; aligns with the 2026-07-02 stage-spec revision.)
+> - **2026-07-19 — Decision-related work.** The blanket "no life decisions" readings in
+>   Blocks 6–8 are scoped: the AI never decides for the user, never prescribes an option,
+>   never presents its judgement as the correct life choice, and gives no regulated
+>   professional advice — but examining which internal part, belief, fear or learned
+>   adaptation is influencing a decision the user brings IS legitimate transformational
+>   work, as is a small reversible behavioural experiment. Guards against *impulsive*
+>   deciding from an unstable or euphoric state remain fully in force. (Consistent with
+>   this manual's own outcome markers: "I feel like I can take decisions"; Block 8 §7.2
+>   tracks "new decisions" as wins.)
 
 ---
 

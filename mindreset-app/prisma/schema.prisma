@@ -728,6 +728,18 @@ model RecodeProgress {
   // close. Loaded fresh on every turn — gives cross-session continuity without
   // replaying every prior message.
   continuityNoteEncrypted      String?
+
+  // Journey remediation 2026-07-19 (audit RC2) — session task contract.
+  // JSON: { presentingRequest, expectedHelp, currentFocus, completionCriterion }
+  // in the user's own words. Merged field-wise (non-empty values only) so a
+  // sparse or generic model emission never erases a valid contract.
+  taskContractEncrypted        String?
+
+  // Journey remediation 2026-07-19 (audit RC4/A7/RC11) — durable working
+  // preferences and refusals ("no imagery", "structured questions work",
+  // "cannot feel body"). JSON array of { text, kind, notedAt }. Revisable
+  // working preferences, not personality labels; survive session boundaries.
+  workingPreferencesEncrypted  String?
 }
 
 // =============================================================================
@@ -779,6 +791,10 @@ model JourneyPracticeRun {
   status                   String         // started | mid | completed | aborted_user_request | aborted_overwhelm
   modalitySwitchedFrom     String?
   modalitySwitchedTo       String?
+  // Journey remediation 2026-07-19 — user response to the practice, as read
+  // by the AI on the same or a following turn: helped | did_not_help | unclear.
+  // Feeds the practice-history block so the clinician can see what it tried.
+  outcome                  String?
 
   @@index([userId])
 }
@@ -812,6 +828,12 @@ model JourneyForeignFile {
   userId                          String
   createdAt                       DateTime       @default(now())
   identifiedAt                    DateTime?
+  // Journey remediation 2026-07-19 (audit A8/B6) — release semantics split.
+  // releaseClaimedAt = the AI reported a symbolic release (PROVISIONAL claim).
+  // releasedAt       = release CONFIRMED by the user across time (relief that
+  //                    held, next-session stability). Only releasedAt counts
+  //                    toward the Stage 5 gate. releaseInvalidated clears both.
+  releaseClaimedAt                DateTime?
   releasedAt                      DateTime?
 
   userDescriptionEncrypted        String         // "I must always be useful" (encrypted)

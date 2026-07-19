@@ -92,7 +92,7 @@ The AI uses the regulation-style channel detected in Stage 1, refined per turn.
 
 - **Visual** — symbolic imagery is permitted (colour, shape, container, *"if this feeling were a weather, what would it be?"*). Externalisation is welcome if it arises from the user.
 - **Somatic** — stay primarily in the body. *"Where do you feel this? How big is the area? Does it have a temperature, a weight, a movement?"* Imagery offered only lightly.
-- **Cognitive** — start with reflective inquiry. *"What word feels closest?"* / *"If you could describe this in one sentence, what would you say?"* Then gently drop into body: *"And where, if anywhere, does this live in you?"*
+- **Cognitive** — start with reflective inquiry. *"What word feels closest?"* / *"If you could describe this in one sentence, what would you say?"* A body-location invitation (*"And where, if anywhere, does this live in you?"*) may follow ONCE if it fits — reflective inquiry alone is a complete Stage 2 entry for this user; do not insist on a body answer, and honour a "nowhere / I don't know" fully.
 - **Emotional overflow** — permission and witnessing are primary. *"It's allowed. You don't have to do anything with it. I'm here."* Anchor recalled often. Containment offered: *"If it helps, you can imagine placing this in a warm, safe container for a moment — just so it doesn't have to be carried by all of you at once."*
 - **Verbal** — let the user speak. The AI mirrors back the key word the user used, then anchors it: *"You said it feels 'heavy'. Heavy where, in you?"*
 - **Mixed** — the AI follows whichever channel is most alive right now and adjusts as the user moves.

@@ -139,8 +139,12 @@ const CHANNEL_FAMILY_GUIDANCE: Record<string, string> = {
     'Prefer somatic-family practices (body scan, hand-on-body, locating sensation, micro-movement). Reach for regulation only if safety needs grounding.',
   emotional:
     'Prefer compassion-family practices (self-hug, warm phrase, "I am with you") or affect labelling. Reach for regulation only if safety needs grounding.',
+  // Journey remediation 2026-07-19 (RC4/B2/SM4): the former "invite body
+  // location so the work does not stay in the head" tail was a Block-1
+  // stabilisation tactic promoted into a standing all-stage rule — removed.
+  // Cognition is a valid primary working mode, not a corridor to the body.
   cognitive:
-    'Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.',
+    'Cognitive processing is a valid primary mode of work — structured reflection, belief examination, sentence deconstruction, pattern comparison, values/identity clarification are complete work in themselves (narrative family). Offer a body location at most once, and only when the user shows live somatic activation; drop it on refusal.',
   verbal:
     'Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — user is working through words.',
   mixed:
@@ -160,6 +164,44 @@ function renderStateBlock(state: JourneyState): string {
     "**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**",
   );
   lines.push('');
+
+  // Journey remediation 2026-07-19 (RC2) — session task contract, rendered
+  // FIRST so it is available before intervention selection and checked
+  // before closure. Emerging material may shift currentFocus; it must never
+  // silently replace presentingRequest.
+  if (state.taskContract) {
+    const tc = state.taskContract;
+    lines.push("**Session task contract (the user's ask — in their words):**");
+    if (tc.presentingRequest) lines.push(`- Presenting request: "${tc.presentingRequest}"`);
+    if (tc.expectedHelp) lines.push(`- Expected help: "${tc.expectedHelp}"`);
+    if (tc.currentFocus) lines.push(`- Current working focus: "${tc.currentFocus}"`);
+    if (tc.completionCriterion) lines.push(`- What "addressed" looks like: "${tc.completionCriterion}"`);
+    lines.push(
+      '_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user\'s words revise it._',
+    );
+    lines.push('');
+  } else {
+    lines.push(
+      "**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.",
+    );
+    lines.push('');
+  }
+
+  // Journey remediation 2026-07-19 (RC4/A7) — durable working preferences.
+  // These survive session boundaries; only an explicit user revision clears
+  // them (workingPreferenceCleared).
+  if (state.workingPreferences.length > 0) {
+    lines.push(
+      '**Working preferences and refusals (durable — honour across sessions; revisable, not personality labels):**',
+    );
+    for (const p of state.workingPreferences) {
+      lines.push(`- [${p.kind}] "${p.text}"`);
+    }
+    lines.push(
+      '_Do not re-offer refused modalities without an explicit user invitation. If the user revises a preference, emit `workingPreferenceCleared`._',
+    );
+    lines.push('');
+  }
   // PR λ (2026-07-11) — the router's current bookkeeping label, not a
   // capability gate. All 8 stage specs are in the AI's canon block above;
   // the AI reaches for whichever stage's methodology fits the turn.
@@ -303,9 +345,35 @@ function renderStateBlock(state: JourneyState): string {
     lines.push('');
     lines.push("**Foreign material identified or released (in user's words):**");
     for (const f of state.foreignFiles) {
-      const phase = f.releasedAt ? 'released' : 'identified';
+      // Journey remediation 2026-07-19 (A8): provisional vs confirmed release.
+      // A claimed release stays PROVISIONAL until the user confirms it held
+      // across time; treat provisional releases as open hypotheses.
+      const phase = f.releasedAt
+        ? 'released (confirmed by user across time)'
+        : f.releaseClaimedAt
+          ? 'release claimed (PROVISIONAL — not yet confirmed; the next user response can invalidate it)'
+          : 'identified';
       const origin = f.originDescription ? ` (origin: "${f.originDescription}")` : '';
       lines.push(`- "${f.userDescription}"${origin} — ${phase}`);
+    }
+  }
+
+  // Journey remediation 2026-07-19 — recent practice/intervention history so
+  // the clinician can see what it already tried and how the user responded,
+  // and decide: repeat, adapt, deepen, abandon, change channel, or return to
+  // assessment. Compact; full archive stays in the Inspector.
+  if (state.practiceHistory.length > 0) {
+    lines.push('');
+    lines.push('**Recent practices/interventions (most recent first — use to avoid blind repetition):**');
+    for (const p of state.practiceHistory) {
+      const bits: string[] = [`- ${p.name}`];
+      if (p.family) bits.push(`(${p.family})`);
+      bits.push(p.daysAgo === 0 ? 'today' : `${p.daysAgo}d ago`);
+      bits.push(`— ${p.status}`);
+      if (p.outcome) bits.push(`— ${p.outcome.replace(/_/g, ' ')}`);
+      if (p.status === 'aborted_user_request') bits.push('(user declined — do not re-offer without invitation)');
+      if (p.status === 'aborted_overwhelm') bits.push('(overwhelmed — needs containment before any repeat)');
+      lines.push(bits.join(' '));
     }
   }
 

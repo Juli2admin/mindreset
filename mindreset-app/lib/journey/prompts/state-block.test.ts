@@ -44,6 +44,9 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
+    workingPreferences: [],
+    practiceHistory: [],
     ...overrides,
   };
 }
@@ -217,14 +220,16 @@ describe('renderStateBlock — channel-family guidance (Journey polish PR 3)', (
     expect(stateText).toContain('affect labelling');
   });
 
-  it('renders narrative-family + body-location invitation for a cognitive channel', () => {
+  it('FIXTURE A (remediation 2026-07-19): cognitive channel is a valid primary mode — no standing body-location redirect', () => {
     const blocks = assembleSystemPromptBlocks(
       makeState({ processingChannel: 'cognitive' }),
     );
     const stateText = blocks[STATE_BLOCK_INDEX].text;
     expect(stateText).toContain('Processing channel detected: cognitive');
-    expect(stateText).toContain('Prefer narrative-family practices');
-    expect(stateText).toContain('invite body location');
+    expect(stateText).toContain('valid primary mode of work');
+    expect(stateText).not.toContain('does not stay in the head');
+    // Body work is conditional, not a standing corrective.
+    expect(stateText).toContain('only when the user shows live somatic activation');
   });
 
   it('renders narrative-family preference for a verbal channel', () => {

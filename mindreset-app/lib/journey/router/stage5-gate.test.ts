@@ -30,6 +30,7 @@ function makeFile(overrides: Partial<JourneyForeignFile> = {}): JourneyForeignFi
     honouringPhrase: 'I see what this was',
     whatStaysAsMine: 'I love making things',
     identifiedAt: new Date('2026-06-15'),
+    releaseClaimedAt: new Date('2026-06-19'),
     releasedAt: new Date('2026-06-20'),
     ...overrides,
   };
@@ -72,6 +73,9 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
+    workingPreferences: [],
+    practiceHistory: [],
     ...overrides,
   };
 }

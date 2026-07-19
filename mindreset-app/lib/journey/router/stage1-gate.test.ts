@@ -7,12 +7,13 @@
 // "nearly, maybe" is the realistic shape of confirmation, never the
 // explicit "yes, that's me" the master prompt's share-back demanded.
 //
-// Canon §10 actual requirements:
-//   - anchorText set
+// Canon §10 requirements (anchor removed per the 2026-07-02 stage-spec
+// revision + the 2026-07-19 owner-directed Anchor rule: the anchor is
+// clinically indicated, never a universal progression requirement):
 //   - Last 2 intensities ≤ 5
 //   - Last 3 turns' safetyFlag — code uses LOOSER rule (red_flag only blocks)
-//   - readinessTouched includes anchor-identified, one emotion-or-body-state
-//     named, basic orientation present
+//   - readinessTouched includes one emotion-or-body-state named, basic
+//     orientation present
 //   - recommendedAction: advance
 //   - No frozen_for_review
 
@@ -59,6 +60,9 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
+    workingPreferences: [],
+    practiceHistory: [],
     ...overrides,
   };
 }
@@ -119,7 +123,7 @@ describe('checkStage1Gate — canon-aligned advancement', () => {
     expect(result.passed).toBe(true);
   });
 
-  it('fails when anchor_identified token is missing from all turns', () => {
+  it('ANCHOR RULE (2026-07-19): passes without anchor_identified token — anchor is clinically indicated, not required', () => {
     const turns: AuditTurn[] = [
       makeTurn(3, { readinessTouched: ['emotion_named'] }),
       makeTurn(2, { readinessTouched: ['body_located'] }),
@@ -129,8 +133,7 @@ describe('checkStage1Gate — canon-aligned advancement', () => {
       }),
     ];
     const result = checkStage1Gate(makeState(), turns);
-    expect(result.passed).toBe(false);
-    expect(result.reasons).toContain('anchor_identified_token_missing');
+    expect(result.passed).toBe(true);
   });
 
   it('fails when neither emotion_named nor body_located has been touched', () => {
@@ -169,13 +172,13 @@ describe('checkStage1Gate — canon-aligned advancement', () => {
     expect(result.reasons).not.toContain('formulation_not_confirmed_with_user');
   });
 
-  it('fails without anchor set', () => {
+  it('ANCHOR RULE (2026-07-19): passes without anchorText set — a stable user with no anchor is never blocked (fixture G)', () => {
     const result = checkStage1Gate(
       makeState({ anchorText: null }),
       TURNS_WITH_CANON_TOKENS,
     );
-    expect(result.passed).toBe(false);
-    expect(result.reasons).toContain('anchor_not_set');
+    expect(result.passed).toBe(true);
+    expect(result.reasons).not.toContain('anchor_not_set');
   });
 
   it('fails when AI did not recommend advance on the last turn', () => {

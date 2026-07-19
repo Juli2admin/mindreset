@@ -100,7 +100,7 @@ If at any layer emotional flooding occurs — return to Surface Layer, Anchor, a
 - Do not analyse old identity residues archaeologically (the *"why this formed"* work belongs to earlier stages and is done).
 - Do not write the user's adult statements for them. The reframing comes from the user.
 - Do not impose a Future-Self image or description.
-- Do not invite the user to make any life decisions (no quitting, no leaving, no confronting, no moving).
+- Do not invite the user to make any life decisions (no quitting, no leaving, no confronting, no moving). *(Scoped 2026-07-19: examining the parts, beliefs and fears inside a decision the user brings is permitted per Shared Core §4; what stays out is committing to major action from this stage.)*
 - Do not require behavioural change — only invite the user to notice one small identity-aligned thing they could do.
 - Do not let the new identity feel "fake" or "performed" without addressing it (return to felt-sense work).
 - Do not skip the Identity Anchoring Ritual — it is load-bearing for completion.

@@ -13,6 +13,10 @@ import type {
   ModalityRejected,
   CycleStatus,
   NextBestMode,
+  TaskContract,
+  WorkingPreferenceNote,
+  WorkingPreferenceKind,
+  PracticeOutcome,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
@@ -22,6 +26,7 @@ import {
   MODALITIES_REJECTED,
   CYCLE_STATUSES,
   NEXT_BEST_MODES,
+  WORKING_PREFERENCE_KINDS,
 } from './schema';
 import type {
   JourneyChannel,
@@ -381,7 +386,110 @@ export function parseStateReport(raw: string | null): StateReport {
 
   copyStringField(obj, 'continuityNote', report);
 
+  // Journey remediation 2026-07-19 — session task contract (RC2).
+  const contract = parseTaskContract(obj.taskContract);
+  if (contract) report.taskContract = contract;
+
+  // Journey remediation 2026-07-19 — durable working preferences (RC4/A7).
+  const prefsNoted = parseWorkingPreferenceNoted(obj.workingPreferenceNoted);
+  if (prefsNoted) report.workingPreferenceNoted = prefsNoted;
+  if (Array.isArray(obj.workingPreferenceCleared)) {
+    const cleared = obj.workingPreferenceCleared
+      .filter((v): v is string => typeof v === 'string' && v.trim().length > 0)
+      .map((v) => v.trim().slice(0, 200))
+      .slice(0, 10);
+    if (cleared.length > 0) report.workingPreferenceCleared = cleared;
+  }
+
+  // Journey remediation 2026-07-19 — release confirmation semantics (A8).
+  const rc = obj.releaseConfirmed;
+  if (rc && typeof rc === 'object') {
+    const d = (rc as Record<string, unknown>).description;
+    if (typeof d === 'string' && d.trim().length > 0) {
+      report.releaseConfirmed = { description: d.trim() };
+    }
+  }
+  const ri = obj.releaseInvalidated;
+  if (ri && typeof ri === 'object') {
+    const d = (ri as Record<string, unknown>).description;
+    if (typeof d === 'string' && d.trim().length > 0) {
+      const entry: { description: string; reason?: string } = {
+        description: d.trim(),
+      };
+      const reason = (ri as Record<string, unknown>).reason;
+      if (typeof reason === 'string' && reason.trim().length > 0) {
+        entry.reason = reason.trim().slice(0, 200);
+      }
+      report.releaseInvalidated = entry;
+    }
+  }
+
   return report;
+}
+
+// ---------------------------------------------------------------------------
+// Journey remediation 2026-07-19 — task-contract validation (RC2).
+//
+// Rules:
+//   - Each field must be a non-empty string of 3..300 chars after trim
+//     (truncated at 300, not rejected).
+//   - Generic/placeholder values are DROPPED so they can never overwrite a
+//     valid stored contract at merge time ("none", "n/a", "unknown",
+//     "not clear yet", "tbd", "-", "...").
+//   - Returns undefined when no field survives — absent field, not an empty
+//     object, so save-layer merge is a no-op.
+// ---------------------------------------------------------------------------
+const TASK_CONTRACT_FIELDS = [
+  'presentingRequest',
+  'expectedHelp',
+  'currentFocus',
+  'completionCriterion',
+] as const;
+const GENERIC_CONTRACT_VALUE_RE =
+  /^(none|n\/a|na|unknown|unclear|not\s+(yet\s+)?(clear|known|sure)|tbd|todo|-+|\.+|\?+|null|nothing)$/i;
+const MAX_CONTRACT_FIELD_CHARS = 300;
+
+export function parseTaskContract(v: unknown): TaskContract | undefined {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
+  const obj = v as Record<string, unknown>;
+  const out: TaskContract = {};
+  for (const field of TASK_CONTRACT_FIELDS) {
+    const raw = obj[field];
+    if (typeof raw !== 'string') continue;
+    const trimmed = raw.trim();
+    if (trimmed.length < 3) continue;
+    if (GENERIC_CONTRACT_VALUE_RE.test(trimmed)) continue;
+    out[field] = trimmed.slice(0, MAX_CONTRACT_FIELD_CHARS);
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+// Journey remediation 2026-07-19 — working-preference parsing (RC4/A7).
+// Each note: non-empty text (trimmed, capped 200 chars) + a known kind
+// (defaults to 'preference' when missing/unknown). Cap 10 per turn.
+const MAX_PREFERENCE_TEXT_CHARS = 200;
+const MAX_PREFERENCES_PER_TURN = 10;
+
+export function parseWorkingPreferenceNoted(
+  v: unknown,
+): WorkingPreferenceNote[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const out: WorkingPreferenceNote[] = [];
+  for (const item of v) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const obj = item as Record<string, unknown>;
+    const text = typeof obj.text === 'string' ? obj.text.trim() : '';
+    if (text.length < 3) continue;
+    const kind = (
+      typeof obj.kind === 'string' &&
+      (WORKING_PREFERENCE_KINDS as readonly string[]).includes(obj.kind)
+        ? obj.kind
+        : 'preference'
+    ) as WorkingPreferenceKind;
+    out.push({ text: text.slice(0, MAX_PREFERENCE_TEXT_CHARS), kind });
+    if (out.length >= MAX_PREFERENCES_PER_TURN) break;
+  }
+  return out.length > 0 ? out : undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -433,6 +541,12 @@ function parsePracticeRun(v: unknown): PracticeRun | undefined {
   if (typeof obj.name === 'string') run.name = obj.name;
   const family = pickEnumOptional(obj.family, PRACTICE_FAMILIES);
   if (family) run.family = family;
+  const outcome = pickEnumOptional(obj.outcome, [
+    'helped',
+    'did_not_help',
+    'unclear',
+  ] as PracticeOutcome[]);
+  if (outcome) run.outcome = outcome;
   if (typeof obj.triggeredBy === 'string') run.triggeredBy = obj.triggeredBy;
   if (typeof obj.userImages === 'string') run.userImages = obj.userImages;
   const depth = pickEnumOptional(obj.depth, DEPTHS);
