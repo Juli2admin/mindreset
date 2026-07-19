@@ -214,13 +214,26 @@ export type StateReport = {
     adultSelfOffering?: string; // user's exact words for what the Adult Self offered
   };
   // Stage 5 — Symbolic Return of the Burden. Released a previously-identified
-  // foreign file. Code marks releasedAt on the matching JourneyForeignFile row.
+  // foreign file. Journey P1 (2026-07-19, audit A8): this emission is a
+  // PROVISIONAL claim — code stamps releaseClaimedAt, NOT releasedAt. The
+  // release becomes confirmed (releasedAt — what the Stage 5 gate counts)
+  // only via releaseConfirmed below, on a later turn.
   foreignFileReleased?: {
     description: string;     // user's exact words — matches an existing JourneyForeignFile
     returnedTo?: string;     // user's exact words
     honouringPhrase?: string;// user's exact words
     whatStaysAsMine?: string;// user's exact words
   };
+  // Journey P1 (2026-07-19, audit A8/B6) — release confirmation and
+  // invalidation. releaseConfirmed: emit ONLY when the user has confirmed
+  // the release held across time (relief persisted, stable check-in) —
+  // never on the same turn as the release itself; code also enforces the
+  // same-turn rule. releaseInvalidated: emit the moment the user's response
+  // contradicts a claimed or confirmed release (feels worse, material
+  // reactivated) — code reopens the file (clears claim + confirmation) so
+  // the next user response can always invalidate the release hypothesis.
+  releaseConfirmed?: { description: string };
+  releaseInvalidated?: { description: string; reason?: string };
 
   // Stage-specific captures (named per the specs)
   anchorIdentified?: string; // Stage 1 — set once

@@ -30,6 +30,7 @@ function makeFile(overrides: Partial<JourneyForeignFile> = {}): JourneyForeignFi
     honouringPhrase: 'I see what this was',
     whatStaysAsMine: 'I love making things',
     identifiedAt: new Date('2026-06-15'),
+    releaseClaimedAt: new Date('2026-06-19'),
     releasedAt: new Date('2026-06-20'),
     ...overrides,
   };
@@ -157,7 +158,20 @@ describe('checkStage5Gate — canon-aligned advancement', () => {
 
   it('fails when foreign file has not been released yet', () => {
     const state = makeState({
-      foreignFiles: [makeFile({ releasedAt: null })],
+      foreignFiles: [makeFile({ releaseClaimedAt: null, releasedAt: null })],
+    });
+    const result = checkStage5Gate(state, PASSING_TURNS);
+    expect(result.passed).toBe(false);
+    expect(result.reasons).toContain('no_symbolic_return_completed');
+  });
+
+  it('P1: a provisional release claim (releaseClaimedAt set, releasedAt null) does NOT satisfy the gate', () => {
+    // Journey P1 (2026-07-19) — release semantics. The AI reporting
+    // foreignFileReleased stamps releaseClaimedAt only; releasedAt is
+    // stamped when the release is confirmed on a later turn. A claim
+    // that was never confirmed must not open Stage 5 → 6.
+    const state = makeState({
+      foreignFiles: [makeFile({ releaseClaimedAt: new Date('2026-06-20'), releasedAt: null })],
     });
     const result = checkStage5Gate(state, PASSING_TURNS);
     expect(result.passed).toBe(false);

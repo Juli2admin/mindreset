@@ -86,6 +86,9 @@ export type JourneyForeignFile = {
   honouringPhrase: string | null;
   whatStaysAsMine: string | null;
   identifiedAt: Date | null;
+  // Journey P1 (2026-07-19): releaseClaimedAt = provisional (AI reported a
+  // release); releasedAt = confirmed by the user across time.
+  releaseClaimedAt: Date | null;
   releasedAt: Date | null;
 };
 

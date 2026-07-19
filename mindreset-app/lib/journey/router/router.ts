@@ -66,6 +66,15 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
   const last = turns[turns.length - 1];
   const action = last.report.recommendedAction;
 
+  // Journey P1 (2026-07-19, audit RC5) — open-cycle guard. A therapeutic
+  // cycle the AI itself reports as open (parts contact, foreign-material
+  // work, somatic activation mid-process) means unresolved activation: no
+  // advancement or discharge may fire from this turn, on either lane.
+  // Regression and stay are unaffected — stepping back with an open cycle
+  // is legitimate clinical movement. Only the LAST turn is read, so a
+  // stale 'open' from an earlier turn self-heals on the next report.
+  const openCycleOnLastTurn = last.report.cycleStatus === 'open';
+
   // Handle regression first — code honours the AI's "step back" signal even
   // if the user is otherwise stable. The accumulated landscape is preserved.
   if (action === 'regress_to_grounding') {
@@ -83,12 +92,20 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
 
   // Discharge gate at Stage 8
   if (state.currentStage === 8) {
+    if (openCycleOnLastTurn) {
+      return { kind: 'stay', reasons: ['open_cycle_blocks_discharge'] };
+    }
     const stage8StartedAt = await loadStage8StartedAt(state.userId);
     const gate = checkStage8Gate(state, turns, stage8StartedAt);
     if (gate.passed && action === 'discharge') {
       return { kind: 'discharge', from: 8, gateReasons: [] };
     }
     return { kind: 'stay', reasons: gate.reasons };
+  }
+
+  // Open cycle → no advancement this turn, either lane (see guard above).
+  if (openCycleOnLastTurn) {
+    return { kind: 'stay', reasons: ['open_cycle_blocks_advance'] };
   }
 
   // Advancement check — classic per-stage gate first.
