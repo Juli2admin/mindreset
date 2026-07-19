@@ -1,0 +1,344 @@
+{
+  "audit": "runtime-clinical-decision-pathway",
+  "date": "2026-07-19",
+  "companion_document": "audit-2026-07-19-runtime-clinical-decision-pathway.md",
+  "severity_scale": ["critical", "high", "medium", "low", "info"],
+  "confidence_scale": ["confirmed_in_code", "high", "medium", "low"],
+  "evidence_types": ["code", "canon", "prompt", "absence", "owner_report"],
+  "findings": [
+    {
+      "id": "RC1",
+      "category": "repertoire",
+      "severity": "critical",
+      "evidence_type": "canon",
+      "files": [
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/docs/journey/PRACTICE_GENERATION_ALGORITHM.md",
+        "mindreset-app/docs/journey/00-shared-core.md",
+        "mindreset-app/docs/journey/01-stage-stabilisation.md",
+        "mindreset-app/docs/journey/CLINICAL_MANUAL.md"
+      ],
+      "symbols_or_sections": ["<method> 8 moves", "5 practice families", "generation hierarchy items 1-10", "CANONICAL_MOVES"],
+      "observed_behaviour": "Every operational intervention is a station on the image-pattern-release arc; existential, decision, life-mapping, writing, structured cognitive work are name-only, absent, or prohibited (repertoire matrix: 8 fully operational families, all arc-shaped).",
+      "causal_mechanism": "The clinician selects freely from a menu that contains one route; narrowing is the deterministic output of the corpus, not model drift. Zero occurrences of 'existential' across ~10K lines including CLINICAL_MANUAL.md.",
+      "affected_users": ["cognitive", "practical_decision", "existential", "numb", "narrative", "writing-oriented"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "authored_clinical_canon",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC2",
+      "category": "formulation_and_contract",
+      "severity": "critical",
+      "evidence_type": "absence",
+      "files": [
+        "mindreset-app/lib/journey/stateReport/schema.ts",
+        "mindreset-app/lib/journey/state/types.ts",
+        "mindreset-app/docs/journey/runtime/journey-master.md"
+      ],
+      "symbols_or_sections": ["StateReport", "JourneyState", "continuityNote", "<clinical_reading>"],
+      "observed_behaviour": "No field or instruction captures what the user is asking for, the session objective, or a completion criterion; continuityNote is optional free prose consumed by no code and truncated in the middle (assemble.ts:388-399).",
+      "causal_mechanism": "The clinician cannot check its route against a contract that is never captured; gates, practice hierarchy and closure never read any formulation object.",
+      "affected_users": ["all"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt_then_state_model",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC3",
+      "category": "evidence_pressure",
+      "severity": "high",
+      "evidence_type": "prompt",
+      "files": ["mindreset-app/docs/journey/runtime/journey-master.md"],
+      "symbols_or_sections": ["Block 1 checklist lines 747-764", "practice emission mandate lines 305-321", "share-back mandate lines 223-231"],
+      "observed_behaviour": "Non-negotiable per-turn checklist demands emotion_named/body_located tokens 'on nearly every turn'; emission mandates shape conversational moves into loggable arc anatomies.",
+      "causal_mechanism": "The model is instructed to produce gate evidence every turn, which materialises as emotion/body interrogation of users who did not bring emotional requests.",
+      "affected_users": ["cognitive", "practical_decision", "numb"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC4",
+      "category": "channel_system",
+      "severity": "high",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/lib/journey/prompts/assemble.ts",
+        "mindreset-app/lib/journey/state/save.ts",
+        "mindreset-app/lib/journey/stateReport/schema.ts",
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/docs/journey/01-stage-stabilisation.md"
+      ],
+      "symbols_or_sections": ["CHANNEL_FAMILY_GUIDANCE (assemble.ts:135-148, cognitive at :143)", "save.ts:39,105 last-write-wins", "NEXT_BEST_MODES (schema.ts:126-137)", "master line 264", "stage 1 section 7 line 90"],
+      "observed_behaviour": "Cognitive channel carries a standing 'invite body location so the work does not stay in the head' directive; channel is one last-write-wins value presented as a stable finding; NEXT_BEST_MODES has no stay-cognitive option; refusals wiped each session.",
+      "causal_mechanism": "Perception modality is conflated with method of work, and cognition is operationally treated as a bridge to the body rather than a valid primary mode.",
+      "affected_users": ["cognitive", "practical_decision", "numb"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "prompt_assembly_and_master_prompt_then_enums",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC5",
+      "category": "closure_and_progression",
+      "severity": "high",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/lib/journey/router/stage-gates.ts",
+        "mindreset-app/lib/journey/router/router.ts",
+        "mindreset-app/lib/journey/router/move-based-advance.ts",
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/docs/journey/00-shared-core.md"
+      ],
+      "symbols_or_sections": ["all checkStageNGate", "decideRoute regress branch (router.ts:71-82)", "cycle rules (master 803, 819-826)", "Shared Core section 10 line 273"],
+      "observed_behaviour": "Progression is measured only in arc artifacts; regression is honoured on the AI's word alone (downward bias); session closure has no code representation and the prompt's closure conditions are release-shaped (body softened, image positive, relief confirmed) with no request check.",
+      "causal_mechanism": "A successful release satisfies every closure condition in the corpus, so sessions end when the ritual completes rather than when the request is addressed; six premature-closure pathways identified (P1-P6).",
+      "affected_users": ["all"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt_then_closure_logic",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC6",
+      "category": "canon_code_contradiction",
+      "severity": "high",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/lib/journey/router/stage-gates.ts",
+        "mindreset-app/docs/journey/01-stage-stabilisation.md",
+        "mindreset-app/docs/journey/runtime/journey-master.md"
+      ],
+      "symbols_or_sections": ["checkStage1Gate lines 113,120-121", "stage 1 section 10 lines 146-158 (anchor dropped 2026-07-02)", "master line 730 ('being retired')"],
+      "observed_behaviour": "Stage 1 classic gate still hard-requires anchorText set AND anchor_identified token although canon removed both from the gate on 2026-07-02.",
+      "causal_mechanism": "Users without qualifying anchor material are held in Stage 1 by code canon disowned, sustaining anchor-hunting pressure; only the move-based lane can bypass.",
+      "affected_users": ["new_users_without_anchor_material"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "progression_logic",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC7",
+      "category": "prompt_code_drift",
+      "severity": "medium",
+      "evidence_type": "prompt",
+      "files": [
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/lib/journey/router/stage-gates.ts"
+      ],
+      "symbols_or_sections": ["assessment_phase lines 223-231", "checklist item 10 line 758", "checkStage1Gate (no formulation_confirmed read since PR #177)"],
+      "observed_behaviour": "Master prompt still states 'Without all three, the Block 1 to Block 2 gate will not fire' for formulation_confirmed; the gate stopped reading that token in PR #177.",
+      "causal_mechanism": "The model is pressed to extract a confirmation ritual the code no longer needs, adding scripted behaviour with no routing effect.",
+      "affected_users": ["block_1_users"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC8",
+      "category": "memory",
+      "severity": "medium",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/app/api/journey/turn/route.ts",
+        "mindreset-app/lib/journey/prompts/assemble.ts"
+      ],
+      "symbols_or_sections": ["HISTORY_LIMIT=30 (route.ts:61)", "continuityNote head/tail truncation (assemble.ts:388-399)"],
+      "observed_behaviour": "The opening request leaves raw working memory after ~15 exchanges; the continuity note's middle is dropped beyond 800 chars; nothing instructs the model to preserve the request in the surviving head.",
+      "causal_mechanism": "Request loss over session length; task contract survives only by accident.",
+      "affected_users": ["all_long_sessions"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "prompt_assembly_and_memory",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC9",
+      "category": "vocabulary_invisibility",
+      "severity": "medium",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/lib/journey/stateReport/parse.ts",
+        "mindreset-app/lib/journey/stateReport/schema.ts",
+        "mindreset-app/lib/journey/router/move-based-advance.ts"
+      ],
+      "symbols_or_sections": ["enum whitelists (parse.ts:97-117)", "silent drop of unknown moves (parse.ts:495-519)", "stage-scoped-only credit (move-based-advance.ts:47-51)"],
+      "observed_behaviour": "Work outside the 38-move / 5-family / 6-channel vocabulary is silently dropped at parse time and never logged; only stage_N arc moves count toward move-based advancement.",
+      "causal_mechanism": "Non-arc work cannot be recorded, credited, or observed; the system is blind to exactly the behaviour the correction seeks.",
+      "affected_users": ["all"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "enums_constants_and_observability",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC10",
+      "category": "onboarding",
+      "severity": "low",
+      "evidence_type": "prompt",
+      "files": ["mindreset-app/messages/en.json"],
+      "symbols_or_sections": ["Journey.opener"],
+      "observed_behaviour": "The user-facing opener frames the product as pattern/parts work and closes with 'tell me how you are feeling today', priming affect disclosure rather than request statement.",
+      "causal_mechanism": "First-turn material is pre-shaped toward the arc's entry signals; no intake of what the user wants from the work.",
+      "affected_users": ["all_new_users"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "authored_copy",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "RC11",
+      "category": "session_boundary_amnesia",
+      "severity": "medium",
+      "evidence_type": "code",
+      "files": ["mindreset-app/lib/journey/state/load.ts"],
+      "symbols_or_sections": ["deriveSensitivitySignals isSessionResume early-return (load.ts:380)", "sessionRejectedModalities current-session-only (load.ts:325-334)"],
+      "observed_behaviour": "Open therapeutic cycles and modality refusals are wiped at every 4-hour session boundary; unresolved work and user resistance must be rediscovered each session.",
+      "causal_mechanism": "Unresolved-material and refusal signals do not persist, enabling premature-closure pathway P4 and refusal re-offers.",
+      "affected_users": ["all_multi_session"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "state_model_and_memory",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "A3",
+      "category": "router_asymmetry",
+      "severity": "medium",
+      "evidence_type": "code",
+      "files": [
+        "mindreset-app/lib/journey/router/router.ts",
+        "mindreset-app/lib/journey/stateReport/parse.ts"
+      ],
+      "symbols_or_sections": ["decideRoute regress branches (router.ts:71-82)", "DEFENSIVE_DEFAULT stay/watch (parse.ts:90-94)"],
+      "observed_behaviour": "Regression fires on the AI's advisory alone; advancement requires arc-artifact proof; malformed reports default to stay/watch.",
+      "causal_mechanism": "Structural hold-at-early-stages bias concentrates users in Blocks 1-2 where the permitted repertoire is narrowest (interaction with B4), so most pilot users only met the reduced menu.",
+      "affected_users": ["early_journey_users"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "progression_logic",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "A8",
+      "category": "release_recorded_as_fact",
+      "severity": "low",
+      "evidence_type": "code",
+      "files": ["mindreset-app/lib/journey/state/save.ts"],
+      "symbols_or_sections": ["foreignFileReleased handling (save.ts:225-281)"],
+      "observed_behaviour": "releasedAt is stamped whenever the model emits foreignFileReleased, including release-without-prior-identification; the Stage 5 gate and the every-turn archive treat the release as fact.",
+      "causal_mechanism": "Model claims become durable clinical facts without user confirmation, reinforcing release-completes semantics.",
+      "affected_users": ["stage_5_users"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "state_model",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "A10",
+      "category": "scripted_stage_open",
+      "severity": "low",
+      "evidence_type": "code",
+      "files": ["mindreset-app/lib/journey/prompts/assemble.ts"],
+      "symbols_or_sections": ["stageJustAdvanced injection (assemble.ts:218-223)"],
+      "observed_behaviour": "On the first turn after stage advancement, the state block instructs 'run [the canonical opener] now' regardless of what the user brings.",
+      "causal_mechanism": "Premature-closure/displacement pathway P6: scripted ritual supersedes the user's material at stage transitions.",
+      "affected_users": ["all_at_stage_transitions"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "prompt_assembly",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "B2",
+      "category": "cognition_as_avoidance",
+      "severity": "high",
+      "evidence_type": "prompt",
+      "files": [
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/docs/journey/01-stage-stabilisation.md",
+        "mindreset-app/lib/journey/prompts/assemble.ts"
+      ],
+      "symbols_or_sections": ["Example 3 (master 466-474)", "stage 1 section 7 line 90", "CHANNEL_FAMILY_GUIDANCE cognitive"],
+      "observed_behaviour": "Worked example teaches converting a user's self-analysis into parts work ('opens parts territory through their analytical door'); stage guidance shifts analytic users from thought to body.",
+      "causal_mechanism": "Prompt wording treats cognition and analysis as defence or incompleteness, making the body/emotion the preferred source of truth.",
+      "affected_users": ["cognitive", "practical_decision"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt_and_stage_specs",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "B3",
+      "category": "trigger_reflexes",
+      "severity": "high",
+      "evidence_type": "prompt",
+      "files": ["mindreset-app/docs/journey/runtime/journey-master.md"],
+      "symbols_or_sections": ["generation hierarchy items 5-6 (lines 249-258)", "proactive triggers (lines 323-334)"],
+      "observed_behaviour": "Any parental/critical sentence routes to foreign-material identification; any offered visual scene routes to a landscape practice, in the same turn, proactively.",
+      "causal_mechanism": "The pattern-search and image-capture reflexes observed in the pilot are verbatim instructions.",
+      "affected_users": ["all"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "B4",
+      "category": "block1_restriction",
+      "severity": "high",
+      "evidence_type": "prompt",
+      "files": ["mindreset-app/docs/journey/runtime/journey-master.md"],
+      "symbols_or_sections": ["assessment_phase practice whitelist (lines 201-213)"],
+      "observed_behaviour": "Block 1 permits only anchor-observation, light regulation/grounding, light self-compassion; everything deeper is on a 'Do NOT offer' list.",
+      "causal_mechanism": "Combined with the router hold-bias (A3), most pilot users experienced exactly the narrow practice set testers reported (breathing, grounding, feet, warmth, affirmation).",
+      "affected_users": ["early_journey_users"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt_and_authored_canon",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "B6",
+      "category": "release_shaped_closure",
+      "severity": "high",
+      "evidence_type": "prompt",
+      "files": [
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/lib/journey/prompts/assemble.ts",
+        "mindreset-app/docs/journey/00-shared-core.md"
+      ],
+      "symbols_or_sections": ["cycle definition (master 803)", "hard rules 6-7 (master 819-826)", "open-cycle injection (assemble.ts:231-239)", "closing practice constraint (shared core section 10 line 273)"],
+      "observed_behaviour": "Cycles are defined as parts/foreign/somatic arcs; closure requires body softened, charge reduced, image shifted positively, relief confirmed; sessions must close on a regulation/somatic/grounding practice.",
+      "causal_mechanism": "Successful release is the operational definition of done; identity statements and releases function as termini regardless of the original request.",
+      "affected_users": ["all"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "master_prompt_then_closure_logic",
+      "implementation_status": "not_started"
+    },
+    {
+      "id": "T8",
+      "category": "missing_evidence",
+      "severity": "info",
+      "evidence_type": "absence",
+      "files": ["mindreset-app/lib/encrypt.ts", "mindreset-app/lib/journey/audit/log.ts"],
+      "symbols_or_sections": ["MESSAGE_ENCRYPTION_KEY absent in audit sandbox", "JourneyTurn stores userMessageHash only"],
+      "observed_behaviour": "Conversation-level evidence could not be gathered: no DATABASE_URL or MESSAGE_ENCRYPTION_KEY in the audit environment; transcripts require the authorised-admin export procedure documented in the companion report section 10.",
+      "causal_mechanism": "not_applicable",
+      "affected_users": [],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "analytics_observability",
+      "implementation_status": "blocked_pending_export"
+    },
+    {
+      "id": "DF1",
+      "category": "decision_facilitation_scope",
+      "severity": "high",
+      "evidence_type": "canon",
+      "files": [
+        "mindreset-app/docs/journey/00-shared-core.md",
+        "mindreset-app/docs/journey/runtime/journey-master.md",
+        "mindreset-app/docs/journey/06-stage-integration.md",
+        "mindreset-app/docs/journey/07-stage-new-identity.md",
+        "mindreset-app/docs/journey/08-stage-embodiment.md",
+        "mindreset-app/lib/journey/router/stage-gates.ts"
+      ],
+      "symbols_or_sections": ["shared core section 4 line 94", "master trap 2 line 352 and example 9", "06 lines 61,103,249", "07 lines 19,58-65,99,105-116,245", "08 lines 67,110-111", "checkStage7Gate urgency lines 502-505"],
+      "observed_behaviour": "Blanket prohibition wording bans the whole decision territory; per the 2026-07-19 product rule, decision facilitation is now in scope while advice/prescription remains banned. Replacement wording proposed per location in companion report section 13.4; canon not yet changed.",
+      "causal_mechanism": "Prohibition written broader than its intent (no advice) forecloses a legitimate request type entirely.",
+      "affected_users": ["practical_decision"],
+      "confidence": "confirmed_in_code",
+      "proposed_correction_layer": "authored_clinical_canon",
+      "implementation_status": "awaiting_owner_approval"
+    }
+  ]
+}
