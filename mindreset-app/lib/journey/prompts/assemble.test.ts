@@ -56,6 +56,7 @@ function makeState(stage: number): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
   };
 }
 

@@ -116,6 +116,7 @@ function makeState(): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
   };
 }
 

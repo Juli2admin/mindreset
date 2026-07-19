@@ -136,6 +136,19 @@ export const NEXT_BEST_MODES = [
 ] as const;
 export type NextBestMode = (typeof NEXT_BEST_MODES)[number];
 
+// Journey P3 (2026-07-19, audit RC2) — lightweight session task contract,
+// inferred from the user's own language. presentingRequest is the original
+// ask; currentFocus tracks where the work actually is right now (emerging
+// material may become the focus WITHOUT silently replacing the presenting
+// request). All fields optional per turn — the save layer merges field-wise
+// and never lets an empty/generic emission erase a valid value.
+export type TaskContract = {
+  presentingRequest?: string; // what the user is asking for — their words
+  expectedHelp?: string; // what they expect from this conversation
+  currentFocus?: string; // where the work actually is right now
+  completionCriterion?: string; // what "addressed" would look like — their words
+};
+
 export type PracticeFamily =
   | 'regulation'
   | 'somatic'
@@ -394,6 +407,10 @@ export type StateReport = {
 
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
+
+  // Journey P3 (2026-07-19, audit RC2) — session task contract.
+  // Sparse per-turn emission; merged field-wise by the save layer.
+  taskContract?: TaskContract;
 
   // Raw shape if parse partially failed
   _raw?: string;

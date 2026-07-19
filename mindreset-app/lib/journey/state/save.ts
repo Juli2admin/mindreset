@@ -6,7 +6,7 @@ import prisma from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import type { JourneyChannel, MiiState } from './types';
-import type { StateReport } from '../stateReport/schema';
+import type { StateReport, TaskContract } from '../stateReport/schema';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -26,6 +26,9 @@ type Updates = {
   continuityNote?: string;
   // MII updates (partial — merged into existing mii JSON)
   miiPatch?: Partial<MiiState>;
+  // Journey P3 (2026-07-19, RC2) — sparse task-contract patch, merged
+  // field-wise against the stored contract
+  taskContractPatch?: TaskContract;
 };
 
 export async function applyStateReportToProgress(
@@ -40,6 +43,7 @@ export async function applyStateReportToProgress(
   if (report.adultSelfQualities) updates.adultSelfQualities = report.adultSelfQualities;
   if (typeof report.intensity === 'number') updates.lastIntensity = report.intensity;
   if (report.continuityNote) updates.continuityNote = report.continuityNote;
+  if (report.taskContract) updates.taskContractPatch = report.taskContract;
   if (report.practiceRun?.depth === 'deep') updates.deepLayerContact = true;
   // Note: the red_flag freeze write is intentionally NOT here — turn/route.ts
   // calls freezeJourney({source:'state_report'}) after applyStateReportToProgress
@@ -85,6 +89,7 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     select: {
       anchorTextEncrypted: true,
       mii: true,
+      taskContractEncrypted: true,
     },
   });
   if (!current) return; // start endpoint must have been called first
@@ -117,10 +122,62 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     data.mii = merged;
   }
 
+  // Journey P3 — task-contract merge (RC2). Field-wise: an incoming
+  // non-empty value updates its field; absent fields keep their stored
+  // value. The parser already dropped empty/generic values, so a sparse
+  // emission can never erase a valid contract.
+  if (u.taskContractPatch) {
+    const existing = decryptJsonOrNull<TaskContract>(current.taskContractEncrypted);
+    const merged = mergeTaskContract(existing, u.taskContractPatch);
+    if (merged) data.taskContractEncrypted = encrypt(JSON.stringify(merged));
+  }
+
   await prisma.recodeProgress.update({
     where: { userId },
     data,
   });
+}
+
+/** Decrypt an encrypted-JSON column; null on any decrypt/parse failure. */
+function decryptJsonOrNull<T>(v: string | null): T | null {
+  if (v == null) return null;
+  try {
+    return JSON.parse(decrypt(v)) as T;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Journey P3 (2026-07-19, RC2). Merge a sparse task-contract patch into the
+ * stored contract. Pure; exported for tests.
+ *
+ * Rules:
+ *   - Only non-empty values (≥ 3 chars after trim, capped at 300) update a
+ *     field; absent fields keep their stored value.
+ *   - presentingRequest MAY be revised by a new non-empty value: the user
+ *     is allowed to change direction. Emerging material lives in
+ *     currentFocus; the prompt instructs the model to revise
+ *     presentingRequest only on an explicit change of direction.
+ *   - Returns null only when both sides are empty.
+ */
+export function mergeTaskContract(
+  existing: TaskContract | null,
+  patch: TaskContract,
+): TaskContract | null {
+  const merged: TaskContract = { ...(existing ?? {}) };
+  for (const field of [
+    'presentingRequest',
+    'expectedHelp',
+    'currentFocus',
+    'completionCriterion',
+  ] as const) {
+    const v = patch[field];
+    if (typeof v === 'string' && v.trim().length >= 3) {
+      merged[field] = v.trim().slice(0, 300);
+    }
+  }
+  return Object.keys(merged).length > 0 ? merged : null;
 }
 
 async function applyLandscapeAdditions(userId: string, report: StateReport): Promise<void> {
