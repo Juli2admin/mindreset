@@ -123,6 +123,12 @@ export type ModalityRejected = (typeof MODALITIES_REJECTED)[number];
 export const CYCLE_STATUSES = ['open', 'closing', 'closed'] as const;
 export type CycleStatus = (typeof CYCLE_STATUSES)[number];
 
+// Journey remediation 2026-07-19 (audit RC4/A5) — expressibility widened so
+// the clinician can recommend staying in a working mode, continuing
+// assessment, clarifying the task, parts/belief work, containment, or a
+// pause — not only switching between somatic/imagery/narrative/compassion.
+// This is an expressibility correction for Journey users, not a new
+// universal intervention ontology.
 export const NEXT_BEST_MODES = [
   'continue_imagery',
   'switch_to_somatic',
@@ -133,8 +139,48 @@ export const NEXT_BEST_MODES = [
   'integrate',
   'stabilise',
   'close',
+  'continue_assessment',
+  'clarify_task',
+  'stay_cognitive',
+  'stay_narrative',
+  'stay_current_mode',
+  'explore_emotion',
+  'explore_parts',
+  'cognitive_belief_work',
+  'contain',
+  'pause_step_back',
 ] as const;
 export type NextBestMode = (typeof NEXT_BEST_MODES)[number];
+
+// Journey remediation 2026-07-19 (audit RC2) — lightweight session task
+// contract, inferred from the user's own language. presentingRequest is the
+// original ask; currentFocus tracks where the work actually is right now
+// (emerging material may become the focus WITHOUT silently replacing the
+// presenting request). All fields optional per turn — the save layer merges
+// field-wise and never lets an empty/generic emission erase a valid value.
+export type TaskContract = {
+  presentingRequest?: string; // what the user is asking for, their words
+  expectedHelp?: string; // what they expect from this conversation
+  currentFocus?: string; // the current working focus (may shift)
+  completionCriterion?: string; // what "addressed" would look like, their words
+};
+
+export const WORKING_PREFERENCE_KINDS = [
+  'refusal',
+  'preference',
+  'willingness',
+] as const;
+export type WorkingPreferenceKind = (typeof WORKING_PREFERENCE_KINDS)[number];
+
+// Journey remediation 2026-07-19 (audit RC4/A7) — durable, revisable working
+// preferences ("please no imagery", "structured questions work better",
+// "I cannot feel anything in my body", "willing to try parts work").
+// Not personality labels; they persist across session boundaries until the
+// user revises them (workingPreferenceCleared).
+export type WorkingPreferenceNote = {
+  text: string; // user-language, concise
+  kind: WorkingPreferenceKind;
+};
 
 export type PracticeFamily =
   | 'regulation'
@@ -151,6 +197,8 @@ export type PracticeRunStatus =
   | 'aborted_user_request'
   | 'aborted_overwhelm';
 
+export type PracticeOutcome = 'helped' | 'did_not_help' | 'unclear';
+
 export type PracticeRun = {
   kind: 'canonical' | 'generated' | 'none';
   name?: string;
@@ -160,6 +208,9 @@ export type PracticeRun = {
   depth?: JourneyDepth;
   status: PracticeRunStatus;
   modalitySwitched?: { from: string; to: string };
+  // Journey remediation 2026-07-19 — the user's observable response to the
+  // practice, when readable. Feeds the practice-history block.
+  outcome?: PracticeOutcome;
 };
 
 // Full state report — most fields optional, only the safety-critical core
@@ -214,13 +265,23 @@ export type StateReport = {
     adultSelfOffering?: string; // user's exact words for what the Adult Self offered
   };
   // Stage 5 — Symbolic Return of the Burden. Released a previously-identified
-  // foreign file. Code marks releasedAt on the matching JourneyForeignFile row.
+  // foreign file. Journey remediation 2026-07-19 (audit A8): this emission is
+  // a PROVISIONAL claim — code stamps releaseClaimedAt, NOT releasedAt. The
+  // release becomes confirmed (releasedAt) only via releaseConfirmed below.
   foreignFileReleased?: {
     description: string;     // user's exact words — matches an existing JourneyForeignFile
     returnedTo?: string;     // user's exact words
     honouringPhrase?: string;// user's exact words
     whatStaysAsMine?: string;// user's exact words
   };
+  // Journey remediation 2026-07-19 (audit A8/B6) — release confirmation and
+  // invalidation. Emit releaseConfirmed ONLY when the user has confirmed the
+  // release held across time (relief that persisted, stable next check-in) —
+  // never on the same turn as the release itself. Emit releaseInvalidated
+  // when the user's response contradicts the release (feels worse, material
+  // reactivated) — code reopens the file (clears claim + confirmation).
+  releaseConfirmed?: { description: string };
+  releaseInvalidated?: { description: string; reason?: string };
 
   // Stage-specific captures (named per the specs)
   anchorIdentified?: string; // Stage 1 — set once
@@ -381,6 +442,16 @@ export type StateReport = {
 
   // Rolling continuity for cross-session
   continuityNote?: string; // 2–4 sentences the AI writes for itself
+
+  // Journey remediation 2026-07-19 (audit RC2) — session task contract.
+  // Sparse per-turn emission; merged field-wise by the save layer.
+  taskContract?: TaskContract;
+
+  // Journey remediation 2026-07-19 (audit RC4/A7) — durable preferences.
+  // workingPreferenceNoted: new preferences/refusals observed this turn.
+  // workingPreferenceCleared: texts the user has explicitly revised/reversed.
+  workingPreferenceNoted?: WorkingPreferenceNote[];
+  workingPreferenceCleared?: string[];
 
   // Raw shape if parse partially failed
   _raw?: string;

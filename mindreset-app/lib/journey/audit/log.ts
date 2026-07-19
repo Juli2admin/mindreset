@@ -50,6 +50,7 @@ export async function writeAuditTurn(w: AuditWrite): Promise<string> {
         status: w.report.practiceRun.status,
         modalitySwitchedFrom: w.report.practiceRun.modalitySwitched?.from ?? null,
         modalitySwitchedTo: w.report.practiceRun.modalitySwitched?.to ?? null,
+        outcome: w.report.practiceRun.outcome ?? null,
       },
     });
   }

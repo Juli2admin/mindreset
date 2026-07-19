@@ -2,7 +2,30 @@
 // These describe the *decrypted* shape in memory; storage at rest is
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
-import type { ModalityRejected } from '../stateReport/schema';
+import type {
+  ModalityRejected,
+  TaskContract,
+  WorkingPreferenceKind,
+  PracticeOutcome,
+} from '../stateReport/schema';
+
+// Journey remediation 2026-07-19 — durable working preference as persisted
+// (adds notedAt to the emission shape). Revisable, not a personality label.
+export type StoredWorkingPreference = {
+  text: string;
+  kind: WorkingPreferenceKind;
+  notedAt: string; // ISO timestamp
+};
+
+// Journey remediation 2026-07-19 — one line of the practice-history block
+// rendered into the clinician context (derived from JourneyPracticeRun).
+export type PracticeHistoryEntry = {
+  name: string;
+  family: string | null;
+  status: string;
+  outcome: PracticeOutcome | null;
+  daysAgo: number;
+};
 
 export type JourneyChannel =
   | 'visual'
@@ -86,6 +109,9 @@ export type JourneyForeignFile = {
   honouringPhrase: string | null;
   whatStaysAsMine: string | null;
   identifiedAt: Date | null;
+  // Journey remediation 2026-07-19: releaseClaimedAt = provisional (AI
+  // reported a release); releasedAt = confirmed by the user across time.
+  releaseClaimedAt: Date | null;
   releasedAt: Date | null;
 };
 
@@ -212,4 +238,19 @@ export type JourneyState = {
   openCycleDescription: string | null;
   sessionRejectedModalities: ModalityRejected[];
   recentChannelShift: boolean;
+
+  // Journey remediation 2026-07-19 (RC2) — session task contract, persisted
+  // on RecodeProgress and merged field-wise per turn. Null until first
+  // inferred.
+  taskContract: TaskContract | null;
+
+  // Journey remediation 2026-07-19 (RC4/A7) — durable working preferences
+  // and refusals. Survive session boundaries; revisable via
+  // workingPreferenceCleared.
+  workingPreferences: StoredWorkingPreference[];
+
+  // Journey remediation 2026-07-19 — recent practice/intervention history
+  // (most recent first), rendered into the clinician context so the AI can
+  // see what it already tried and how the user responded.
+  practiceHistory: PracticeHistoryEntry[];
 };

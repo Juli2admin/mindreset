@@ -5,8 +5,16 @@
 import prisma from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { encrypt, decrypt } from '@/lib/encrypt';
-import type { JourneyChannel, MiiState } from './types';
-import type { StateReport } from '../stateReport/schema';
+import type {
+  JourneyChannel,
+  MiiState,
+  StoredWorkingPreference,
+} from './types';
+import type {
+  StateReport,
+  TaskContract,
+  WorkingPreferenceNote,
+} from '../stateReport/schema';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -24,6 +32,13 @@ type Updates = {
   deepLayerContact?: boolean;
   // Rolling continuity note for the next session
   continuityNote?: string;
+  // Journey remediation 2026-07-19 — sparse task-contract patch (RC2)
+  taskContractPatch?: TaskContract;
+  // Journey remediation 2026-07-19 — working-preference patch (RC4/A7)
+  workingPreferencePatch?: {
+    noted: WorkingPreferenceNote[];
+    cleared: string[];
+  };
   // MII updates (partial — merged into existing mii JSON)
   miiPatch?: Partial<MiiState>;
 };
@@ -41,6 +56,16 @@ export async function applyStateReportToProgress(
   if (typeof report.intensity === 'number') updates.lastIntensity = report.intensity;
   if (report.continuityNote) updates.continuityNote = report.continuityNote;
   if (report.practiceRun?.depth === 'deep') updates.deepLayerContact = true;
+  // Journey remediation 2026-07-19 — task contract + working preferences.
+  // Parser already validated non-empty, non-generic values; merge happens in
+  // applyUpdates against the stored versions.
+  if (report.taskContract) updates.taskContractPatch = report.taskContract;
+  if (report.workingPreferenceNoted || report.workingPreferenceCleared) {
+    updates.workingPreferencePatch = {
+      noted: report.workingPreferenceNoted ?? [],
+      cleared: report.workingPreferenceCleared ?? [],
+    };
+  }
   // Note: the red_flag freeze write is intentionally NOT here — turn/route.ts
   // calls freezeJourney({source:'state_report'}) after applyStateReportToProgress
   // so the reason string composed by freezeJourney (source | type | reasoning)
@@ -79,12 +104,15 @@ export async function applyStateReportToProgress(
 
 async function applyUpdates(userId: string, u: Updates): Promise<void> {
   // Read current state so we can: (a) not overwrite the anchor once set,
-  // (b) merge the MII patch into the existing JSON.
+  // (b) merge the MII patch into the existing JSON, (c) merge the task
+  // contract and working preferences against stored values.
   const current = await prisma.recodeProgress.findUnique({
     where: { userId },
     select: {
       anchorTextEncrypted: true,
       mii: true,
+      taskContractEncrypted: true,
+      workingPreferencesEncrypted: true,
     },
   });
   if (!current) return; // start endpoint must have been called first
@@ -117,10 +145,135 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     data.mii = merged;
   }
 
+  // Journey remediation 2026-07-19 — task-contract merge (RC2). Field-wise:
+  // an incoming non-empty value updates its field; absent fields keep their
+  // stored value. Parser already dropped empty/generic values, so a sparse
+  // emission can never erase a valid contract.
+  if (u.taskContractPatch) {
+    const existing = decryptJsonOrNull<TaskContract>(current.taskContractEncrypted);
+    const merged = mergeTaskContract(existing, u.taskContractPatch);
+    if (merged) data.taskContractEncrypted = encrypt(JSON.stringify(merged));
+  }
+
+  // Journey remediation 2026-07-19 — working-preference merge (RC4/A7).
+  if (u.workingPreferencePatch) {
+    const existing =
+      decryptJsonOrNull<StoredWorkingPreference[]>(
+        current.workingPreferencesEncrypted,
+      ) ?? [];
+    const merged = mergeWorkingPreferences(
+      existing,
+      u.workingPreferencePatch.noted,
+      u.workingPreferencePatch.cleared,
+    );
+    data.workingPreferencesEncrypted = encrypt(JSON.stringify(merged));
+  }
+
   await prisma.recodeProgress.update({
     where: { userId },
     data,
   });
+}
+
+function decryptJsonOrNull<T>(v: string | null): T | null {
+  if (!v) return null;
+  try {
+    return JSON.parse(decrypt(v)) as T;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Journey remediation 2026-07-19 (RC2). Merge a sparse task-contract patch
+ * into the stored contract. Pure; exported for tests.
+ *
+ * Rules:
+ *   - Only non-empty string fields in the patch update the stored value
+ *     (the parser has already dropped empty/generic values — this guard is
+ *     defence in depth for callers that bypass the parser).
+ *   - Fields absent from the patch keep their stored value — a sparse or
+ *     partial emission never erases a valid contract (fixture E).
+ *   - presentingRequest MAY be revised by a new non-empty value: the user
+ *     is allowed to change direction. Emerging material lives in
+ *     currentFocus; the prompt instructs the model to revise
+ *     presentingRequest only on an explicit change of direction.
+ *   - Returns null only when both sides are empty.
+ */
+export function mergeTaskContract(
+  existing: TaskContract | null,
+  patch: TaskContract,
+): TaskContract | null {
+  const merged: TaskContract = { ...(existing ?? {}) };
+  for (const field of [
+    'presentingRequest',
+    'expectedHelp',
+    'currentFocus',
+    'completionCriterion',
+  ] as const) {
+    const v = patch[field];
+    if (typeof v === 'string' && v.trim().length >= 3) {
+      merged[field] = v.trim().slice(0, 300);
+    }
+  }
+  return Object.keys(merged).length > 0 ? merged : null;
+}
+
+const MAX_STORED_PREFERENCES = 10;
+
+/**
+ * Journey remediation 2026-07-19 (RC4/A7). Merge newly noted working
+ * preferences into the stored list and remove cleared ones. Pure; exported
+ * for tests.
+ *
+ * Rules:
+ *   - Dedup case-insensitively on text: re-noting an existing preference
+ *     refreshes its notedAt and kind rather than duplicating.
+ *   - Cleared entries are matched case-insensitively on exact text OR
+ *     substring in either direction ("no imagery" clears "please no
+ *     imagery work").
+ *   - Cap at MAX_STORED_PREFERENCES — oldest dropped first.
+ *   - Preferences survive session boundaries by design; only an explicit
+ *     clear (user revised their position) removes one.
+ */
+export function mergeWorkingPreferences(
+  existing: StoredWorkingPreference[],
+  noted: WorkingPreferenceNote[],
+  cleared: string[],
+  now: Date = new Date(),
+): StoredWorkingPreference[] {
+  const clearedNorms = cleared
+    .map((c) => c.trim().toLowerCase())
+    .filter((c) => c.length > 0);
+  const matchesCleared = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return clearedNorms.some((c) => t === c || t.includes(c) || c.includes(t));
+  };
+
+  const out: StoredWorkingPreference[] = existing.filter(
+    (p) => !matchesCleared(p.text),
+  );
+  for (const n of noted) {
+    const text = n.text.trim();
+    if (text.length < 3) continue;
+    if (matchesCleared(text)) continue; // cleared this turn wins over noted
+    const idx = out.findIndex(
+      (p) => p.text.toLowerCase() === text.toLowerCase(),
+    );
+    const entry: StoredWorkingPreference = {
+      text,
+      kind: n.kind,
+      notedAt: now.toISOString(),
+    };
+    if (idx >= 0) out[idx] = entry;
+    else out.push(entry);
+  }
+  // Cap: keep the most recently noted.
+  if (out.length > MAX_STORED_PREFERENCES) {
+    out.sort((a, b) => a.notedAt.localeCompare(b.notedAt));
+    return out.slice(out.length - MAX_STORED_PREFERENCES);
+  }
+  return out;
 }
 
 async function applyLandscapeAdditions(userId: string, report: StateReport): Promise<void> {
@@ -218,10 +371,14 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
     }
   }
 
-  // Stage 5 — Symbolic Return of the Burden. Match an existing
-  // JourneyForeignFile by description, set releasedAt + the returned-to,
-  // honouring-phrase, and what-stays-as-mine fields. This is what closes
-  // Block 5's completion gate.
+  // Stage 5 — Symbolic Return of the Burden.
+  //
+  // Journey remediation 2026-07-19 (audit A8/B6): the AI's release emission
+  // is a PROVISIONAL claim. It stamps releaseClaimedAt — never releasedAt.
+  // releasedAt (which the Stage 5 gate reads) is set only by the separate
+  // releaseConfirmed emission, when the user has confirmed the release held
+  // across time. releaseInvalidated reopens the file (clears both stamps),
+  // so the next user response can always invalidate the release hypothesis.
   if (report.foreignFileReleased?.description) {
     const all = await prisma.journeyForeignFile.findMany({
       where: { userId, releasedAt: null },
@@ -245,7 +402,7 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
       await prisma.journeyForeignFile.update({
         where: { id: matchId },
         data: {
-          releasedAt: new Date(),
+          releaseClaimedAt: new Date(),
           returnedToEncrypted: report.foreignFileReleased.returnedTo
             ? encrypt(report.foreignFileReleased.returnedTo)
             : null,
@@ -258,14 +415,14 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
         },
       });
     } else {
-      // No prior identification — insert as released immediately. Rare but
+      // No prior identification — insert with the claim only. Rare but
       // possible if the user named and released foreign material in one move.
       await prisma.journeyForeignFile.create({
         data: {
           userId,
           userDescriptionEncrypted: encrypt(report.foreignFileReleased.description),
           identifiedAt: new Date(),
-          releasedAt: new Date(),
+          releaseClaimedAt: new Date(),
           returnedToEncrypted: report.foreignFileReleased.returnedTo
             ? encrypt(report.foreignFileReleased.returnedTo)
             : null,
@@ -277,6 +434,56 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
             : null,
         },
       });
+    }
+  }
+
+  // Journey remediation 2026-07-19 — release CONFIRMATION. Only a file with
+  // a standing provisional claim can be confirmed; confirmation stamps
+  // releasedAt, which is what the Stage 5 gate counts.
+  if (report.releaseConfirmed?.description) {
+    const claimed = await prisma.journeyForeignFile.findMany({
+      where: { userId, releasedAt: null, releaseClaimedAt: { not: null } },
+      select: { id: true, userDescriptionEncrypted: true },
+    });
+    for (const row of claimed) {
+      try {
+        if (decrypt(row.userDescriptionEncrypted) === report.releaseConfirmed.description) {
+          await prisma.journeyForeignFile.update({
+            where: { id: row.id },
+            data: { releasedAt: new Date() },
+          });
+          break;
+        }
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  // Journey remediation 2026-07-19 — release INVALIDATION. The user's
+  // response contradicted the release (feels worse, material reactivated):
+  // reopen the file immediately — clear both the claim and any confirmation
+  // so unresolved activation reopens the process.
+  if (report.releaseInvalidated?.description) {
+    const candidates = await prisma.journeyForeignFile.findMany({
+      where: {
+        userId,
+        OR: [{ releaseClaimedAt: { not: null } }, { releasedAt: { not: null } }],
+      },
+      select: { id: true, userDescriptionEncrypted: true },
+    });
+    for (const row of candidates) {
+      try {
+        if (decrypt(row.userDescriptionEncrypted) === report.releaseInvalidated.description) {
+          await prisma.journeyForeignFile.update({
+            where: { id: row.id },
+            data: { releaseClaimedAt: null, releasedAt: null },
+          });
+          break;
+        }
+      } catch {
+        // ignore
+      }
     }
   }
 

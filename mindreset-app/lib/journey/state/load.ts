@@ -15,7 +15,10 @@ import type {
   JourneyPattern,
   CompassionBridgeQuality,
   MiiState,
+  StoredWorkingPreference,
+  PracticeHistoryEntry,
 } from './types';
+import type { TaskContract, PracticeOutcome } from '../stateReport/schema';
 
 function decryptOrNull(v: string | null): string | null {
   if (v == null) return null;
@@ -205,6 +208,22 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
       }),
     ]);
 
+  // Journey remediation 2026-07-19 — recent practice/intervention history
+  // (most recent first, capped at 10) so the clinician can see what it has
+  // already tried and how the user responded. Not the whole archive.
+  const practiceRows = await prisma.journeyPracticeRun.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 10,
+    select: {
+      name: true,
+      family: true,
+      status: true,
+      outcome: true,
+      createdAt: true,
+    },
+  });
+
   const parts: JourneyPart[] = partsRows.map((p) => ({
     id: p.id,
     userDescription: decrypt(p.userDescriptionEncrypted),
@@ -225,6 +244,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     honouringPhrase: decryptOrNull(f.honouringPhraseEncrypted),
     whatStaysAsMine: decryptOrNull(f.whatStaysAsMineEncrypted),
     identifiedAt: f.identifiedAt,
+    releaseClaimedAt: f.releaseClaimedAt,
     releasedAt: f.releasedAt,
   }));
 
@@ -309,7 +329,35 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     openCycleDescription: sensitivity.openCycleDescription,
     sessionRejectedModalities: sensitivity.sessionRejectedModalities,
     recentChannelShift: sensitivity.recentChannelShift,
+    taskContract: parseStoredJson<TaskContract>(
+      decryptOrNull(progress.taskContractEncrypted),
+    ),
+    workingPreferences:
+      parseStoredJson<StoredWorkingPreference[]>(
+        decryptOrNull(progress.workingPreferencesEncrypted),
+      ) ?? [],
+    practiceHistory: practiceRows.map(
+      (r): PracticeHistoryEntry => ({
+        name: r.name,
+        family: r.family,
+        status: r.status,
+        outcome: (r.outcome as PracticeOutcome | null) ?? null,
+        daysAgo: Math.max(
+          0,
+          Math.floor((nowMs - r.createdAt.getTime()) / DAY_MS),
+        ),
+      }),
+    ),
   };
+}
+
+function parseStoredJson<T>(v: string | null): T | null {
+  if (!v) return null;
+  try {
+    return JSON.parse(v) as T;
+  } catch {
+    return null;
+  }
 }
 
 /**
