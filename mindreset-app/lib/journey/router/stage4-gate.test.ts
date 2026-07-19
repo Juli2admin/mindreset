@@ -74,6 +74,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     openCycleDescription: null,
     sessionRejectedModalities: [],
     recentChannelShift: false,
+    taskContract: null,
     ...overrides,
   };
 }

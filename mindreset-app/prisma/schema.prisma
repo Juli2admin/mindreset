@@ -728,6 +728,13 @@ model RecodeProgress {
   // close. Loaded fresh on every turn — gives cross-session continuity without
   // replaying every prior message.
   continuityNoteEncrypted      String?
+
+  // Journey P3 (2026-07-19, audit RC2) — session task contract.
+  // Encrypted JSON: { presentingRequest, expectedHelp, currentFocus,
+  // completionCriterion } in the user's own words. Merged field-wise
+  // (non-empty values only) so a sparse or generic model emission never
+  // erases a valid contract.
+  taskContractEncrypted        String?
 }
 
 // =============================================================================

@@ -13,6 +13,7 @@ import type {
   ModalityRejected,
   CycleStatus,
   NextBestMode,
+  TaskContract,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
@@ -381,6 +382,10 @@ export function parseStateReport(raw: string | null): StateReport {
 
   copyStringField(obj, 'continuityNote', report);
 
+  // Journey P3 (2026-07-19) — session task contract (RC2).
+  const contract = parseTaskContract(obj.taskContract);
+  if (contract) report.taskContract = contract;
+
   // Journey P1 (2026-07-19) — release confirmation / invalidation (A8).
   const rc = obj.releaseConfirmed;
   if (rc && typeof rc === 'object') {
@@ -405,6 +410,43 @@ export function parseStateReport(raw: string | null): StateReport {
   }
 
   return report;
+}
+
+// ---------------------------------------------------------------------------
+// Journey P3 (2026-07-19) — task-contract validation (RC2).
+//
+// Rules:
+//   - Each field must be a non-empty string of 3..300 chars after trim
+//     (truncated at 300, not rejected).
+//   - Generic/placeholder values are DROPPED so they can never overwrite a
+//     valid stored contract at merge time ("none", "n/a", "unknown",
+//     "not clear yet", "tbd", "-", "...").
+//   - Returns undefined when no field survives — absent field, not an empty
+//     object, so the save-layer merge is a no-op.
+// ---------------------------------------------------------------------------
+const TASK_CONTRACT_FIELDS = [
+  'presentingRequest',
+  'expectedHelp',
+  'currentFocus',
+  'completionCriterion',
+] as const;
+const GENERIC_CONTRACT_VALUE_RE =
+  /^(none|n\/a|na|unknown|unclear|not\s+(yet\s+)?(clear|known|sure)(\s+yet)?|tbd|todo|-+|\.+|\?+|null|nothing)$/i;
+const MAX_CONTRACT_FIELD_CHARS = 300;
+
+export function parseTaskContract(v: unknown): TaskContract | undefined {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
+  const obj = v as Record<string, unknown>;
+  const out: TaskContract = {};
+  for (const field of TASK_CONTRACT_FIELDS) {
+    const raw = obj[field];
+    if (typeof raw !== 'string') continue;
+    const trimmed = raw.trim();
+    if (trimmed.length < 3) continue;
+    if (GENERIC_CONTRACT_VALUE_RE.test(trimmed)) continue;
+    out[field] = trimmed.slice(0, MAX_CONTRACT_FIELD_CHARS);
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
 }
 
 // ---------------------------------------------------------------------------

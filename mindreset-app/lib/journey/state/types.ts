@@ -2,7 +2,7 @@
 // These describe the *decrypted* shape in memory; storage at rest is
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
-import type { ModalityRejected } from '../stateReport/schema';
+import type { ModalityRejected, TaskContract } from '../stateReport/schema';
 
 export type JourneyChannel =
   | 'visual'
@@ -215,4 +215,10 @@ export type JourneyState = {
   openCycleDescription: string | null;
   sessionRejectedModalities: ModalityRejected[];
   recentChannelShift: boolean;
+
+  // Journey P3 (2026-07-19, audit RC2) — session task contract in the
+  // user's own words. Merged field-wise across turns by save.ts
+  // (mergeTaskContract); a sparse or generic emission never erases a
+  // stored value. null until the AI first captures any field.
+  taskContract: TaskContract | null;
 };

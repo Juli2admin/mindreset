@@ -4,7 +4,7 @@
 import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
-import type { ModalityRejected } from '../stateReport/schema';
+import type { ModalityRejected, TaskContract } from '../stateReport/schema';
 import type {
   JourneyState,
   JourneyChannel,
@@ -21,6 +21,17 @@ function decryptOrNull(v: string | null): string | null {
   if (v == null) return null;
   try {
     return decrypt(v);
+  } catch {
+    return null;
+  }
+}
+
+// Journey P3 — parse a decrypted JSON column into a typed value; null on
+// malformed content so a corrupt row degrades to "no contract yet".
+function parseStoredJson<T>(v: string | null): T | null {
+  if (v == null) return null;
+  try {
+    return JSON.parse(v) as T;
   } catch {
     return null;
   }
@@ -310,6 +321,9 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     openCycleDescription: sensitivity.openCycleDescription,
     sessionRejectedModalities: sensitivity.sessionRejectedModalities,
     recentChannelShift: sensitivity.recentChannelShift,
+    taskContract: parseStoredJson<TaskContract>(
+      decryptOrNull(progress.taskContractEncrypted),
+    ),
   };
 }
 
