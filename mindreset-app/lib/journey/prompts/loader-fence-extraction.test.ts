@@ -117,6 +117,7 @@ function makeState(): JourneyState {
     sessionRejectedModalities: [],
     recentChannelShift: false,
     taskContract: null,
+    onboardingAnswers: null,
   };
 }
 

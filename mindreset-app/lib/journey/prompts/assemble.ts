@@ -21,6 +21,7 @@ import {
 } from './load-spec';
 import { renderSettlingSignalInstruction } from '../delayedCheck/signal';
 import { formatTimeSinceLastTurnBucket } from '../state/load';
+import { buildOnboardingContextBlock } from '@/lib/platform/onboarding-context';
 import type { JourneyState } from '../state/types';
 
 // Token in the engineered prompt files where the runtime state block is
@@ -180,6 +181,16 @@ function renderStateBlock(state: JourneyState): string {
       "**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.",
     );
     lines.push('');
+    // Platform Step 3 part B (2026-07-20, owner-approved unfreeze) —
+    // sign-up onboarding answers, shown ONLY while no task contract
+    // exists. Once the clinician holds a live contract in the user's
+    // words, the sign-up buttons have served their purpose and drop out
+    // of context — the live conversation always supersedes the form.
+    const onboardingBlock = buildOnboardingContextBlock(state.onboardingAnswers);
+    if (onboardingBlock) {
+      lines.push(onboardingBlock);
+      lines.push('');
+    }
   }
   // PR λ (2026-07-11) — the router's current bookkeeping label, not a
   // capability gate. All 8 stage specs are in the AI's canon block above;

@@ -45,6 +45,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     sessionRejectedModalities: [],
     recentChannelShift: false,
     taskContract: null,
+    onboardingAnswers: null,
     ...overrides,
   };
 }
@@ -616,5 +617,46 @@ describe('renderStateBlock — pattern rendering with all context set', () => {
     expect(stateText).toContain(
       '`inner_child_wound` — "the nine year old" — context: ageTag: 9 — last seen 24 days ago',
     );
+  });
+});
+
+// Platform Step 3 part B (2026-07-20, owner-approved unfreeze) — the
+// sign-up onboarding answers appear in the state block ONLY until the
+// Journey captures its own task contract; the live contract always
+// supersedes the form.
+describe('renderStateBlock — onboarding context bridge (Step 3 part B)', () => {
+  it('renders the sign-up answers while no task contract exists', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        onboardingAnswers: {
+          why: 'lost_myself',
+          area: 'career_purpose',
+          style: 'direct_practical',
+          goal: 'decision_clarity',
+        },
+      }),
+    );
+    const text = blocks[STATE_BLOCK_INDEX].text;
+    expect(text).toContain('What brought them here');
+    expect(text).toContain("I feel like I've lost myself.");
+    expect(text).toContain('never "How was your day?"');
+  });
+
+  it('drops the sign-up answers once the Journey holds its own task contract', () => {
+    const blocks = assembleSystemPromptBlocks(
+      makeState({
+        taskContract: { presentingRequest: 'stop panicking before visits' },
+        onboardingAnswers: { why: 'lost_myself' },
+      }),
+    );
+    const text = blocks[STATE_BLOCK_INDEX].text;
+    expect(text).not.toContain('What brought them here');
+    expect(text).toContain('Session task contract');
+  });
+
+  it('renders nothing extra when onboarding was skipped', () => {
+    const blocks = assembleSystemPromptBlocks(makeState({ onboardingAnswers: null }));
+    const text = blocks[STATE_BLOCK_INDEX].text;
+    expect(text).not.toContain('What brought them here');
   });
 });

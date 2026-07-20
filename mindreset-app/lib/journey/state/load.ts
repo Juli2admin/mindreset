@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
 import type { ModalityRejected, TaskContract } from '../stateReport/schema';
+import { getOnboardingAnswers } from '@/lib/platform/profile';
 import type {
   JourneyState,
   JourneyChannel,
@@ -324,6 +325,9 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     taskContract: parseStoredJson<TaskContract>(
       decryptOrNull(progress.taskContractEncrypted),
     ),
+    // Platform Step 3 part B (2026-07-20) — sign-up onboarding answers,
+    // rendered only until the Journey's own task contract exists.
+    onboardingAnswers: await getOnboardingAnswers(userId),
   };
 }
 

@@ -66,6 +66,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     sessionRejectedModalities: [],
     recentChannelShift: false,
     taskContract: null,
+    onboardingAnswers: null,
     ...overrides,
   };
 }
