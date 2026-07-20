@@ -32,6 +32,19 @@ import type { OnboardingAnswers } from './types';
 
 export type RuleRecommendation = { product: string; ruleKey: string };
 
+// Every ruleKey a platform rule can emit. The dashboard i18n coverage
+// test walks this list — a new rule without localised reason copy in
+// BOTH native bundles fails CI before it can render as a raw key.
+export const ALL_RULE_KEYS = [
+  'onboarding_why_lost_myself',
+  'onboarding_area_money',
+  'onboarding_area_family',
+  'onboarding_area_career_purpose',
+  'onboarding_why_stuck',
+  'onboarding_default_minimind',
+  'state_repeat_3in7',
+] as const;
+
 // ---------------------------------------------------------------------------
 // Pure rules
 // ---------------------------------------------------------------------------

@@ -17,6 +17,7 @@ const recCreates: Array<{ data: Record<string, unknown> }> = [];
 const recUpdates: Array<{ where: unknown; data: Record<string, unknown> }> = [];
 const snapshotFindUniqueImpl = vi.fn();
 const recFindManyImpl = vi.fn();
+const recFindFirstStep5 = vi.fn();
 const userFindUniqueImpl = vi.fn();
 const purchaseFindManyImpl = vi.fn();
 const recodeFindUniqueImpl = vi.fn();
@@ -40,6 +41,7 @@ vi.mock('@/lib/prisma', () => ({
         return Promise.resolve({});
       }),
       findMany: (...args: unknown[]) => recFindManyImpl(...args),
+      findFirst: (...args: unknown[]) => recFindFirstStep5(...args),
     },
     user: { findUnique: (...args: unknown[]) => userFindUniqueImpl(...args) },
     purchase: { findMany: (...args: unknown[]) => purchaseFindManyImpl(...args) },
@@ -58,6 +60,7 @@ import {
   getActiveProducts,
   recordRecommendation,
   respondToRecommendation,
+  respondToRecommendationOwned,
   getUserFacingProfile,
   RECOMMENDATION_COOL_OFF_DAYS,
 } from './profile';
@@ -79,6 +82,8 @@ beforeEach(() => {
   purchaseFindManyImpl.mockResolvedValue([]);
   recodeFindUniqueImpl.mockReset();
   recodeFindUniqueImpl.mockResolvedValue(null);
+  recFindFirstStep5.mockReset();
+  recFindFirstStep5.mockResolvedValue(null);
 });
 
 // ---------------------------------------------------------------------------
@@ -337,5 +342,46 @@ describe('getUserFacingProfile', () => {
     ]);
     const profile = await getUserFacingProfile(USER_ID, NOW);
     expect(profile.activeRecommendations).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 5. Step 5 additions — ownership-checked responses + shown stamping
+// ---------------------------------------------------------------------------
+
+describe('respondToRecommendationOwned', () => {
+  it('refuses a recommendation belonging to someone else (no write)', async () => {
+    recFindFirstStep5.mockResolvedValue(null);
+    const ok = await respondToRecommendationOwned(USER_ID, 'rec_foreign', 'declined', NOW);
+    expect(ok).toBe(false);
+    expect(recUpdates).toHaveLength(0);
+  });
+
+  it('responds when the recommendation is owned and open', async () => {
+    recFindFirstStep5.mockResolvedValue({ id: 'rec_mine' });
+    const ok = await respondToRecommendationOwned(USER_ID, 'rec_mine', 'declined', NOW);
+    expect(ok).toBe(true);
+    expect(recUpdates).toHaveLength(1);
+    expect(recUpdates[0].data.response).toBe('declined');
+  });
+});
+
+describe('getUserFacingProfile — ruleKey exposure (Step 5)', () => {
+  it('recommendations carry ruleKey for dashboard localisation', async () => {
+    recFindManyImpl.mockResolvedValue([
+      {
+        id: 'rec_1',
+        product: 'theme:money',
+        ruleKey: 'onboarding_area_money',
+        reasonEncrypted: null,
+        createdAt: NOW,
+        coolOffUntil: null,
+      },
+    ]);
+    const profile = await getUserFacingProfile(USER_ID, NOW);
+    expect(profile.activeRecommendations[0]).toMatchObject({
+      ruleKey: 'onboarding_area_money',
+      reason: null,
+    });
   });
 });

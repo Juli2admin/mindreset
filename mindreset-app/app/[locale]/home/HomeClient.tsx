@@ -60,6 +60,9 @@ type Props = {
   journeyPurchased: boolean;
   hasActiveSubscription: boolean;
   footerSlot: ReactNode;
+  // Platform Step 5 (2026-07-20) — dashboard v1, rendered server-side
+  // and slotted in above the product cards (same pattern as footerSlot).
+  dashboardSlot?: ReactNode;
 };
 
 export default function HomeClient({
@@ -75,6 +78,7 @@ export default function HomeClient({
   journeyPurchased,
   hasActiveSubscription,
   footerSlot,
+  dashboardSlot,
 }: Props) {
   const t = useTranslations('Home');
   const tDel = useTranslations('AccountDeletion');
@@ -210,6 +214,10 @@ export default function HomeClient({
             {t('welcomeBody')}
           </p>
         </div>
+
+        {/* Platform Step 5 — dashboard v1: why-you're-here + one
+            recommendation. Server-rendered slot; null-safe. */}
+        {dashboardSlot}
 
         {/* Marketing-consent opt-in banner. Server-side gate: only renders
             when the user hasn't been prompted yet AND isn't already opted

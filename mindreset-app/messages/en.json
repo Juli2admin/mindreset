@@ -447,6 +447,24 @@
     "goal_what_no_longer_fits": "I want to understand what no longer fits my life.",
     "goal_not_sure": "I'm not sure yet."
   },
+  "Dashboard": {
+    "whyTitle": "Why you're here",
+    "whyEdit": "Change your answers",
+    "skippedInvite": "Tell us what brought you here — it helps every conversation start in the right place.",
+    "skippedCta": "Answer 4 quick questions",
+    "suggestedTitle": "Suggested for you",
+    "accept": "Take a look",
+    "decline": "Not now",
+    "productMinimind": "MiniMind",
+    "productJourney": "The Journey",
+    "reason_onboarding_why_lost_myself": "You said it feels like you've lost yourself.",
+    "reason_onboarding_area_money": "You said money feels most affected right now.",
+    "reason_onboarding_area_family": "You said family feels most affected right now.",
+    "reason_onboarding_area_career_purpose": "You said career and purpose feel most affected right now.",
+    "reason_onboarding_why_stuck": "You said you feel stuck in your life.",
+    "reason_onboarding_default_minimind": "You said you're curious about understanding yourself — MiniMind is a good place to begin.",
+    "reason_state_repeat_3in7": "The same state has come up several times this week in your MiniMind conversations."
+  },
   "AccountDeletion": {
     "settingsKicker": "YOUR DATA",
     "exportTitle": "Export your data",
