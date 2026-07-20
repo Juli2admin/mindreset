@@ -77,8 +77,13 @@ App lives in `mindreset-app/`. Run `npm` commands from inside that directory.
 - **Formal Вы** by default; informal **ты** at trauma-soft moments only
   (the existing `Screening.yellowCta = "Когда будешь готова"` is an
   intentional soft-moment exception)
-- **Feminine grammatical forms** are RU canonical (your reader is assumed
-  female-presenting in the absence of a gender signal)
+- **Gender-neutral phrasing is the standard for all NEW surfaces**
+  (owner decision 2026-07-20: MindReset is a both-genders app). Avoid
+  gendered first-person past-tense forms entirely — use present-tense or
+  nominal constructions («Ощущение, что я себя теряю», not
+  «потерял(а)»). The screening rewrites (#319–#321) set the migration
+  pattern. Legacy bundles may still carry the old feminine-canonical
+  default; migrate opportunistically, never introduce it in new copy.
 - **Locale-specific quote marks**: RU/FR/ES/IT/PT use «», DE/PL use „"
 - Full rules + glossary + examples in
   `mindreset-app/i18n-tools/translate-prompt.md`

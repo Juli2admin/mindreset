@@ -219,10 +219,17 @@ illustration of the brand voice when interpreting an ambiguous string.
   if the EN source is a `*Cta` key with a soft-redirect or "when
   you're ready" semantic, lean to informal `ты`. Everywhere else,
   default `Вы`.
-- **Grammatical gender: feminine.** When the source forces a gendered
-  form (verb past tense, predicate adjective, participle), use
-  feminine: `пробовала`, `готова`, `услышанной`, `устойчивой`,
-  `честна`. This is the canonical RU default for MindReset.
+- **Grammatical gender — SUPERSEDED for new surfaces (2026-07-20).**
+  MindReset is a both-genders app (owner decision, locked). For all NEW
+  copy: avoid gendered forms entirely — rephrase with present tense or
+  nominal constructions so no first-person past-tense verb, predicate
+  adjective, or participle forces a gender («Ощущение, что я себя
+  теряю», «Чувствую себя в тупике», «Я пока не знаю»). Never write
+  «потерял(а)»-style forks. The screening gender-neutralisation PRs
+  (#319–#321) set the migration pattern for legacy copy.
+  (Historical rule, applies only to pre-2026-07 legacy bundles not yet
+  migrated: feminine forms — `пробовала`, `готова`, `услышанной` —
+  were the canonical default.)
 - **Quote marks: « »** (Cyrillic guillemets). When EN has no quotes
   but a quotation is implied (`"Saying: I have tried therapy..."`),
   RU renders with guillemets: `"Слова: «Я пробовала терапию...»"`.
