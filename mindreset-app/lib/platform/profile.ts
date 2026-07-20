@@ -134,6 +134,32 @@ export async function markOnboardingSkipped(
   });
 }
 
+/**
+ * The user's onboarding answers, for product context injection (Step 3).
+ * null when the user skipped or answered nothing — callers render no
+ * block in that case.
+ */
+export async function getOnboardingAnswers(
+  userId: string,
+): Promise<OnboardingAnswers | null> {
+  const row = await prisma.wellbeingSnapshot.findUnique({
+    where: { userId },
+    select: {
+      onboardingWhy: true,
+      onboardingArea: true,
+      onboardingStyle: true,
+      onboardingGoal: true,
+    },
+  });
+  if (!row) return null;
+  const answers: OnboardingAnswers = {};
+  if (row.onboardingWhy) answers.why = row.onboardingWhy as OnboardingWhy;
+  if (row.onboardingArea) answers.area = row.onboardingArea as OnboardingArea;
+  if (row.onboardingStyle) answers.style = row.onboardingStyle as OnboardingStyle;
+  if (row.onboardingGoal) answers.goal = row.onboardingGoal as OnboardingGoal;
+  return Object.keys(answers).length > 0 ? answers : null;
+}
+
 // ---------------------------------------------------------------------------
 // Derived product access (computed — never duplicated as columns)
 // ---------------------------------------------------------------------------

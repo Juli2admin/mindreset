@@ -27,6 +27,8 @@ import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { getOnboardingAnswers } from '@/lib/platform/profile';
+import { buildOnboardingContextBlock } from '@/lib/platform/onboarding-context';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkThemeModuleAccess } from '@/lib/themes/access';
 import {
@@ -243,8 +245,8 @@ export async function POST(
   // prompt as PRIOR ARC NOTES. On the first ~15 turns this is null and
   // the base prompt is used unchanged.
   const memorySummary = await loadThemeMemorySummary(sessionId);
-  const systemPrompt = assembleSystemPromptForTheme(moduleId, memorySummary);
-  if (!systemPrompt) {
+  const baseSystemPrompt = assembleSystemPromptForTheme(moduleId, memorySummary);
+  if (!baseSystemPrompt) {
     // Should be unreachable — we sentinel-checked earlier — but if a
     // subsequent moduleId slips through, refuse rather than crash.
     return NextResponse.json(
@@ -252,6 +254,13 @@ export async function POST(
       { status: 501 },
     );
   }
+  // Platform Step 3 (2026-07-20) — onboarding context bridge. '' when
+  // the user skipped onboarding.
+  const onboardingBlock = buildOnboardingContextBlock(
+    await getOnboardingAnswers(userId),
+  );
+  const systemPrompt =
+    baseSystemPrompt + (onboardingBlock ? `\n\n${onboardingBlock}` : '');
 
   const stream = anthropic.messages.stream({
     model: MODEL,

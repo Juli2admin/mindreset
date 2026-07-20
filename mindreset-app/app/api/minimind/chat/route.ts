@@ -13,6 +13,8 @@ import {
   getMinimindCooldownLiftForLocale,
 } from '@/lib/minimind/safety/canned-responses';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
+import { getOnboardingAnswers } from '@/lib/platform/profile';
+import { buildOnboardingContextBlock } from '@/lib/platform/onboarding-context';
 import { updateWellbeingSnapshot } from '@/lib/minimind/memory/updater';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkChatRateLimit } from '@/lib/rateLimit';
@@ -481,10 +483,20 @@ export async function POST(req: NextRequest) {
   // decision — the minimal new-user block (language + screening + "first
   // meeting" signal) is genuinely useful context and worth surfacing on turn
   // 1, not deferred until the first profile update at message 21.
-  const systemWithMemory =
-    memory.formattedBlock.length > 0
-      ? `${MINIMIND_PROMPT_V2_3}\n\n${memory.formattedBlock}`
-      : MINIMIND_PROMPT_V2_3;
+  // Platform Step 3 (2026-07-20) — onboarding context bridge. The user's
+  // 4-step account-page answers shape the opening: never a generic
+  // greeting; open from what they already told us. '' when the user
+  // skipped onboarding — the join drops it.
+  const onboardingBlock = buildOnboardingContextBlock(
+    await getOnboardingAnswers(userId),
+  );
+  const systemWithMemory = [
+    MINIMIND_PROMPT_V2_3,
+    memory.formattedBlock,
+    onboardingBlock,
+  ]
+    .filter((s) => s.length > 0)
+    .join('\n\n');
 
   // Snapshot for the async verifier task. The closure-capture is deliberate —
   // see the runAsyncVerifier comment.
