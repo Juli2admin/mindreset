@@ -13,7 +13,8 @@ Sentry.init({
   tracesSampleRate: 0,
 
   release: process.env.VERCEL_GIT_COMMIT_SHA,
-  environment: process.env.VERCEL_ENV ?? 'development',
+  environment:
+    process.env.VERCEL_ENV ?? process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'development',
 
   debug: false,
 
