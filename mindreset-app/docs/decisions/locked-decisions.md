@@ -361,3 +361,35 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
   Mail / Outlook surface a native "Unsubscribe" button at the top of
   the message in addition to the footer link. Required for inbox
   placement at higher send volumes anyway.
+
+- **2026-07-20** **Step-down entitlement: The Journey includes MiniMind
+  access by default.** One-way relationship: MiniMind ≠ The Journey;
+  The Journey → includes MiniMind. MiniMind remains a standalone
+  product for users who only want daily support or light exploration.
+  Rationale: Journey users may want daily support, reflection, or a
+  lighter companion between deeper sessions; MiniMind is the natural
+  maintenance and integration layer before, during, and after The
+  Journey. Improves cohesion without subscription friction. Wiring
+  lands with platform build step ⑦ (see
+  `docs/platform/design-2026-07-20-onboarding-and-routing.md` §9).
+
+- **2026-07-20** **Informed choice before Journey purchase — a page,
+  never a gate.** Before the £599 purchase, one "Is The Journey right
+  for you?" page: what it is, what it is not, who it is designed for,
+  what else exists on the platform; then "Continue to The Journey" /
+  "Explore other options". Explicitly EXCLUDED: mandatory tests,
+  additional screening questionnaires, recommendation blockers, forced
+  routing through MiniMind. User autonomy is the principle; the user
+  always keeps the final choice. Screening `red` remains the only hard
+  block (unchanged).
+
+- **2026-07-20** **Platform architecture direction: onboarding is
+  platform-level; MiniMind is a product, not the reception desk.**
+  Flow: Screening → Platform Onboarding (3 questions, user's words,
+  skippable) → hidden diagnostics on the platform profile (promoted
+  WellbeingSnapshot) → intelligent recommendations → free product
+  choice → personal dashboard. Platform recommendations (from
+  onboarding + overall profile) and product recommendations (from
+  ongoing interaction inside each product) coexist and share one
+  recommendations log. Full design + build order:
+  `docs/platform/design-2026-07-20-onboarding-and-routing.md`.
