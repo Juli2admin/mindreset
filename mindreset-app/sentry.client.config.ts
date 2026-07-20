@@ -27,7 +27,10 @@ Sentry.init({
   // Show our build's release tag in Sentry's UI so we can correlate
   // errors with deploys. Vercel injects VERCEL_GIT_COMMIT_SHA at build.
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-  environment: process.env.VERCEL_ENV ?? 'development',
+  // Browser bundles only see NEXT_PUBLIC_-prefixed vars — the bare
+  // VERCEL_ENV is undefined here, which silently tagged every production
+  // client event (and its propagated trace baggage) as 'development'.
+  environment: process.env.NEXT_PUBLIC_VERCEL_ENV ?? 'development',
 
   // Drop noise that isn't ours — browser extensions and the SDK's
   // own internal warnings.
