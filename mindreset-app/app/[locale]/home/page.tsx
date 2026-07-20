@@ -5,7 +5,8 @@ import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
 import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
-import { TIER_CAPS } from '@/lib/billing/limits';
+import { TIER_CAPS, effectiveTier } from '@/lib/billing/limits';
+import { checkJourneyAccess } from '@/lib/journey/access';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
 import {
   getUserFacingProfile,
@@ -235,7 +236,12 @@ export default async function HomePage({
   // for free it's the lifetime counter (free has no billing cycle).
   // Top-up is reported separately so the UI can render either combined
   // ("X this cycle + Y top-up") or single-pool ("X messages remaining").
-  const tier = dbUser?.currentTier ?? 'free';
+  // The Journey includes MiniMind Extended (Decision 1). Derived from live
+  // Journey access so the counter + card reflect it and it reverts the instant
+  // Journey access lapses; checkJourneyAccess fast-exits for the common
+  // no-purchase case.
+  const journeyGrantsMiniMind = (await checkJourneyAccess(user.id)).allowed;
+  const tier = effectiveTier(dbUser?.currentTier ?? null, journeyGrantsMiniMind);
   const topUpRemaining = dbUser?.topUpMessagesRemaining ?? 0;
   let cycleRemaining: number;
   if (tier === 'extended') {

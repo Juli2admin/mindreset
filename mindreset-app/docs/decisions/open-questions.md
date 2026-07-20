@@ -435,3 +435,29 @@ engine spec's §7).
 content pass. Until then MiniMind is the honest, non-inferential entry point.
 
 **Logged**: 2026-07-20.
+
+### 26. MiniMind cycle-reset cadence for non-Stripe grants — `[non-blocking]`
+
+Step 7 (Journey includes MiniMind, Decision 1) grants Journey owners
+Extended-level MiniMind capacity, derived from `checkJourneyAccess`. Their
+`messagesUsedThisCycle` counter is gated against the Extended hard cap
+(1,200), but the **only** counter-reset path is the Stripe
+`invoice.payment_succeeded` webhook (a MiniMind subscription anniversary). A
+Journey owner with no MiniMind subscription therefore has no reset event — the
+1,200 pool does not refresh monthly.
+
+This is **pre-existing**: pilot Journey testers (granted Extended via
+`lib/pilot/grants.ts`) already share it. Step 7 deliberately introduced no new
+billing semantics — real Journey buyers now match pilot testers exactly.
+
+**Options**: (a) lazy rolling reset — on chat, if `now > cycleResetAt`, zero
+the counter and set the next window (touches the hot path; must not
+double-reset real subscribers); (b) a monthly cron; (c) accept 1,200 for the
+Journey year as sufficient. 1,200 is generous for most, so this is not
+launch-blocking.
+
+**Recommendation**: (a) a lazy rolling reset keyed on `cycleResetAt`, handled
+in a dedicated follow-up so it can be tested against the Stripe-driven reset
+without entangling this PR.
+
+**Logged**: 2026-07-20.
