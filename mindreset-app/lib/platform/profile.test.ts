@@ -99,11 +99,11 @@ describe('saveOnboarding', () => {
   });
 
   it('upserts a row for a user who never used MiniMind', async () => {
-    await saveOnboarding(USER_ID, { why: 'lost_myself' }, NOW);
+    await saveOnboarding(USER_ID, { why: 'far_from_myself' }, NOW);
     expect(snapshotUpserts).toHaveLength(1);
     expect(snapshotUpserts[0].create).toMatchObject({
       userId: USER_ID,
-      onboardingWhy: 'lost_myself',
+      onboardingWhy: 'far_from_myself',
     });
   });
 
@@ -115,10 +115,10 @@ describe('saveOnboarding', () => {
       onboardingGoal: null,
       onboardingCompletedAt: null,
     });
-    await saveOnboarding(USER_ID, { area: 'relationships' }, NOW);
+    await saveOnboarding(USER_ID, { area: 'love_relationships' }, NOW);
     expect(snapshotUpserts[0].update).toMatchObject({
       onboardingWhy: 'repeating_patterns',
-      onboardingArea: 'relationships',
+      onboardingArea: 'love_relationships',
     });
   });
 
@@ -130,12 +130,12 @@ describe('saveOnboarding', () => {
       onboardingGoal: null,
       onboardingCompletedAt: null,
     });
-    await saveOnboarding(USER_ID, { goal: 'why_repeating_patterns' }, NOW);
+    await saveOnboarding(USER_ID, { goal: 'talk_through' }, NOW);
     expect(snapshotUpserts[0].update.onboardingCompletedAt).toEqual(NOW);
   });
 
   it('does not stamp completion while answers are missing', async () => {
-    await saveOnboarding(USER_ID, { why: 'stuck' }, NOW);
+    await saveOnboarding(USER_ID, { why: 'no_energy_drive' }, NOW);
     expect(snapshotUpserts[0].update.onboardingCompletedAt).toBeNull();
   });
 
@@ -148,14 +148,14 @@ describe('saveOnboarding', () => {
       onboardingGoal: 'not_sure',
       onboardingCompletedAt: earlier,
     });
-    await saveOnboarding(USER_ID, { goal: 'decision_clarity' }, NOW);
+    await saveOnboarding(USER_ID, { goal: 'relief_now' }, NOW);
     expect(snapshotUpserts[0].update.onboardingCompletedAt).toEqual(earlier);
   });
 
   it('NEVER touches MiniMind-owned diagnostic columns', async () => {
     await saveOnboarding(
       USER_ID,
-      { why: 'curious', area: 'family', style: 'guide_me', goal: 'not_sure' },
+      { why: 'understand_myself', area: 'family_parents', style: 'guide_me', goal: 'not_sure' },
       NOW,
     );
     const allowed = new Set([
@@ -319,7 +319,8 @@ describe('getUserFacingProfile', () => {
       },
     ]);
     const profile = await getUserFacingProfile(USER_ID, NOW);
-    expect(profile.onboarding.why).toBe('lost_myself');
+    // Stored v1 code, projected as its v2 translation (read-time normalization).
+    expect(profile.onboarding.why).toBe('far_from_myself');
     expect(profile.activeRecommendations).toEqual([
       {
         id: 'rec_1',

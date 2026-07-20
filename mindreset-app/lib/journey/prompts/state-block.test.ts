@@ -629,16 +629,16 @@ describe('renderStateBlock — onboarding context bridge (Step 3 part B)', () =>
     const blocks = assembleSystemPromptBlocks(
       makeState({
         onboardingAnswers: {
-          why: 'lost_myself',
-          area: 'career_purpose',
+          why: 'far_from_myself',
+          area: 'work_purpose',
           style: 'direct_practical',
-          goal: 'decision_clarity',
+          goal: 'talk_through',
         },
       }),
     );
     const text = blocks[STATE_BLOCK_INDEX].text;
-    expect(text).toContain('What brought them here');
-    expect(text).toContain("I feel like I've lost myself.");
+    expect(text).toContain('What this person told us when they joined');
+    expect(text).toContain("I feel far away from myself — like I'm losing who I am.");
     expect(text).toContain('never "How was your day?"');
   });
 
@@ -646,17 +646,17 @@ describe('renderStateBlock — onboarding context bridge (Step 3 part B)', () =>
     const blocks = assembleSystemPromptBlocks(
       makeState({
         taskContract: { presentingRequest: 'stop panicking before visits' },
-        onboardingAnswers: { why: 'lost_myself' },
+        onboardingAnswers: { why: 'far_from_myself' },
       }),
     );
     const text = blocks[STATE_BLOCK_INDEX].text;
-    expect(text).not.toContain('What brought them here');
+    expect(text).not.toContain('What this person told us when they joined');
     expect(text).toContain('Session task contract');
   });
 
   it('renders nothing extra when onboarding was skipped', () => {
     const blocks = assembleSystemPromptBlocks(makeState({ onboardingAnswers: null }));
     const text = blocks[STATE_BLOCK_INDEX].text;
-    expect(text).not.toContain('What brought them here');
+    expect(text).not.toContain('What this person told us when they joined');
   });
 });

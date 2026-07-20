@@ -361,3 +361,28 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
   Mail / Outlook surface a native "Unsubscribe" button at the top of
   the message in addition to the footer link. Required for inbox
   placement at higher send volumes anyway.
+
+- **2026-07-20** **Onboarding v2 — typed routing (owner-approved with
+  two routing corrections).** Onboarding exists to sort out the user's
+  TYPE and refer them correctly. Step 3 ("What kind of work are you
+  looking for?") decides the type; Steps 1–2 decide which product of
+  that type; Step 4 (style) affects voice only. Types: Transformation →
+  «Путь к себе» primary from ANY topic, always via the informed-choice
+  page, never checkout; the module slot goes to the matching State if
+  Step 1 names one, else the matching Theme — never both; MiniMind rides
+  as companion. Relief + named state → that State primary. Focused +
+  named theme → that Theme primary. Talk/not-sure and all fallbacks →
+  Companion shape: MiniMind primary + matching State and/or Theme; a
+  soft «Путь к себе» card only when a soft signal exists (repeating
+  story / several areas / whole-life-identity) AND fewer than two
+  modules matched — it never displaces a directly matching module.
+  Dashboard: one Primary + up to two Other options (max 3 cards),
+  full catalogue below, nothing restricts access, owned products show
+  "You already have access — continue here". Hard prohibitions:
+  onboarding is not diagnosis (no trauma/parts/diagnosis inference from
+  buttons); love/relationships never → Family; strong reactions never →
+  Anxiety; Shame & Guilt only via the explicit self-worth/shame area.
+  Legacy v1 answers translate honestly at read time; unmappable ones
+  are dropped, and legacy goal answers read as talk_through — the
+  Journey is never inferred for someone who was never asked the depth
+  question. Supersedes the v1 scoring engine (PR #335's mapping tables).

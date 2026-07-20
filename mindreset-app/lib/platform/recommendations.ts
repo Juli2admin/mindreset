@@ -1,4 +1,5 @@
-// Platform recommendation rules (2026-07-20).
+// Platform recommendation rules — onboarding v2 typed routing
+// (2026-07-20, owner-approved with two routing corrections).
 //
 // TWO independent families, deliberately kept apart:
 //
@@ -11,19 +12,29 @@
 //      recommends the matching module. This one PERSISTS to
 //      PlatformRecommendation (dismissals, cool-off, explicit responses).
 //
-// Orientation product logic is the owner's exact spec (2026-07-20). It is a
-// STATED-REQUEST engine, not a diagnosis engine: a product is recommended
-// only from what the user directly said, never from an inferred hidden
-// cause. Hard rules baked in below:
-//   - MiniMind is in every result set (base 1; priority 3 for unclear /
-//     curious / decision requests). max, not sum.
-//   - States/Themes accumulate, and only from a direct matching request.
-//   - relationships NEVER maps to Family; confidence NEVER auto-maps to
-//     Shame; career NEVER auto-maps to Self-Realisation — each needs a
-//     qualifying second answer.
-//   - The Journey requires >=2 DISTINCT signal categories (never one
-//     isolated answer) and routes to the informed-choice page, never checkout.
-//   - Body and Inner-emptiness have NO onboarding mapping by construction.
+// Orientation logic — the TYPING model. Step 3 (goal column) decides the
+// user's preferred TYPE of work; Steps 1–2 decide which product of that
+// type. Output: one Primary + up to two Other options (max 3 cards); the
+// full catalogue stays visible below; nothing restricts access.
+//
+//   Transformation → «Путь к себе» primary (informed-choice page, ANY
+//     topic) + the matching module (State preferred, else Theme — never
+//     both in this shape) + MiniMind companion.
+//   Relief + a named state → that State primary + MiniMind
+//     (+ soft Journey only with a soft signal).
+//   Focused + a named theme → that Theme primary + MiniMind
+//     (+ soft Journey only with a soft signal).
+//   Talk / not-sure (and all fallbacks) → Companion shape: MiniMind
+//     primary + matching State and/or Theme; a soft Journey card may
+//     NEVER displace a directly matching module — it appears only when a
+//     soft signal exists AND fewer than two modules matched.
+//
+// Hard rules: onboarding is not diagnosis — no trauma/parts/diagnosis
+// inference from buttons. Love/relationships never maps to Family.
+// "Strong reactions" never auto-maps to Anxiety. Shame & Guilt only via
+// the explicit self-worth/shame area. The Journey is primary ONLY when
+// transformation is explicitly chosen, and always routes through the
+// informed-choice page, never checkout. Style affects voice only.
 
 import prisma from '@/lib/prisma';
 import { getActiveProducts, recordRecommendation } from './profile';
@@ -31,30 +42,20 @@ import type { ActiveProducts } from './types';
 
 export type RuleRecommendation = { product: string; ruleKey: string };
 
-// Products the ORIENTATION engine can rank. Note the absentees:
-//   - state:inner_emptiness → recognition-only (3-in-7), no onboarding signal
-//   - theme:body ("Body and Sexuality") → catalogue-only; onboarding never
-//     asks about the body, so it can never be produced here.
 export type RecommendedProduct =
   | 'minimind'
   | 'state:anxiety'
   | 'state:apathy'
   | 'state:loss_of_self'
+  | 'state:inner_emptiness'
   | 'theme:money'
   | 'theme:family'
-  | 'theme:self_realisation'
+  | 'theme:body'
   | 'theme:shame'
+  | 'theme:self_realisation'
   | 'journey';
 
-export type JourneySignal =
-  | 'loss_of_self'
-  | 'repeating_patterns'
-  | 'authenticity'
-  | 'multi_domain'
-  | 'identity_direction';
-
-// Loose answer shape: the projection hands us nullable strings. We compare
-// against code literals, so string|null is exactly right here.
+// Loose answer shape: the projection hands us nullable strings.
 export type OnboardingAnswerInput = {
   why?: string | null;
   area?: string | null;
@@ -64,7 +65,6 @@ export type OnboardingAnswerInput = {
 
 export type RankedRec = {
   product: RecommendedProduct;
-  score: number;
   reasonKey: string; // -> Dashboard.reason_<reasonKey>
   route: 'product' | 'informed_choice'; // journey -> informed_choice, never checkout
 };
@@ -73,267 +73,143 @@ export type RankedRec = {
 // coverage test walks this list — a new key without localised copy in BOTH
 // native bundles fails CI before it can render as a raw key to a user.
 export const ONBOARDING_REASON_KEYS = [
-  'minimind_explore',
-  'minimind_decision',
-  'minimind_unsure',
-  'state_loss_of_self',
-  'state_apathy',
+  'journey_primary',
+  'journey_soft',
   'state_anxiety',
+  'state_apathy',
+  'state_loss_of_self',
+  'state_inner_emptiness',
   'theme_money',
   'theme_family',
-  'theme_self_realisation',
+  'theme_body',
   'theme_shame',
-  'journey_multi',
+  'theme_self_realisation',
+  'minimind_talk',
+  'minimind_unsure',
+  'minimind_decision',
+  'minimind_companion',
 ] as const;
 
 // ---------------------------------------------------------------------------
-// ORIENTATION — pure, stateless scoring (owner spec 2026-07-20)
+// ORIENTATION — typed routing (pure, stateless)
 // ---------------------------------------------------------------------------
 
-// No WHY or GOAL code currently names family / parental expectations, so the
-// boundaries_pleasing -> family +2 branch below is a documented dead branch:
-// it activates only if such a code is ever added. Kept for spec fidelity.
-function referencesFamily(_why?: string | null, _goal?: string | null): boolean {
-  return false;
-}
-
-/**
- * Score all four answers into: a MiniMind level, per-product accumulated
- * scores (States/Themes), and the DISTINCT Journey-signal set. Step 3
- * (style) contributes NOTHING to scoring — it personalises the entry only.
- */
-export function scoreOnboarding(a: OnboardingAnswerInput): {
-  minimind: number;
-  products: Map<RecommendedProduct, number>;
-  journeySignals: Set<JourneySignal>;
-} {
-  const { why, area, goal } = a; // style intentionally ignored for scoring
-
-  // MiniMind is a LEVEL (base 1, priority up to 3), not an accumulation.
-  let minimind = 1;
-  const bump = (n: number) => {
-    if (n > minimind) minimind = n;
-  };
-
-  // States/Themes ACCUMULATE (a signal in two steps sums).
-  const products = new Map<RecommendedProduct, number>();
-  const add = (p: RecommendedProduct, n: number) =>
-    products.set(p, (products.get(p) ?? 0) + n);
-
-  const journey = new Set<JourneySignal>();
-
-  // ---- STEP 1 · WHY ARE YOU HERE TODAY? ----
-  switch (why) {
-    case 'lost_myself':
-      bump(1);
-      add('state:loss_of_self', 3);
-      journey.add('loss_of_self');
-      break;
-    case 'repeating_patterns':
-      bump(1);
-      journey.add('repeating_patterns');
-      break;
-    case 'dont_know_what_i_want':
-      bump(2);
-      journey.add('identity_direction');
-      break;
-    case 'difficult_decision':
-      bump(3); // MiniMind only
-      break;
-    case 'relationships_not_working':
-      bump(2); // NOT family; Journey only via other categories
-      break;
-    case 'understand_reactions':
-      bump(2); // anxiety only if Step 2/4 also refer to it (handled there)
-      break;
-    case 'stuck':
-      bump(1);
-      add('state:apathy', 3);
-      break;
-    case 'curious':
-      bump(3); // MiniMind only
-      break;
-  }
-
-  // ---- STEP 2 · WHERE IS THIS SHOWING UP MOST? ----
-  switch (area) {
-    case 'relationships':
-      bump(2); // NOT family — product gap recorded in open-questions.md
-      break;
-    case 'career_purpose':
-      bump(1);
-      if (
-        goal === 'whats_holding_me_back' ||
-        goal === 'mine_vs_expected' ||
-        goal === 'feel_like_myself' ||
-        goal === 'what_no_longer_fits'
-      ) {
-        add('theme:self_realisation', 3); // only with a qualifying goal
-      }
-      break;
-    case 'confidence_worth':
-      bump(2);
-      if (
-        goal === 'whats_holding_me_back' ||
-        goal === 'understand_reactions' ||
-        goal === 'mine_vs_expected'
-      ) {
-        add('theme:shame', 2); // only with a qualifying goal
-      }
-      break;
-    case 'family':
-      bump(1);
-      add('theme:family', 3);
-      break;
-    case 'money':
-      bump(1);
-      add('theme:money', 3);
-      break;
-    case 'boundaries_pleasing':
-      bump(2);
-      if (goal === 'mine_vs_expected') journey.add('authenticity');
-      if (referencesFamily(why, goal)) add('theme:family', 2); // dead branch today
-      break;
-    case 'emotional_reactions':
-      bump(1);
-      add('state:anxiety', 3);
-      break;
-    case 'several_areas':
-      bump(1);
-      journey.add('multi_domain');
-      break;
-  }
-
-  // ---- STEP 4 · WHAT WOULD MAKE THIS CONVERSATION MOST USEFUL? ----
-  switch (goal) {
-    case 'whats_holding_me_back':
-      bump(1);
-      if (area === 'career_purpose') add('theme:self_realisation', 2);
-      if (why === 'stuck') add('state:apathy', 1);
-      break;
-    case 'decision_clarity':
-      bump(3); // MiniMind only
-      break;
-    case 'why_repeating_patterns':
-      bump(1);
-      journey.add('repeating_patterns');
-      break;
-    case 'mine_vs_expected':
-      bump(1);
-      add('theme:self_realisation', 3);
-      journey.add('authenticity');
-      break;
-    case 'feel_like_myself':
-      bump(1);
-      add('state:loss_of_self', 3);
-      journey.add('loss_of_self');
-      break;
-    case 'understand_reactions':
-      bump(1);
-      add('state:anxiety', 3);
-      break;
-    case 'what_no_longer_fits':
-      bump(1);
-      add('theme:self_realisation', 3);
-      journey.add('authenticity');
-      break;
-    case 'not_sure':
-      bump(3); // MiniMind only
-      break;
-  }
-
-  return { minimind, products, journeySignals: journey };
-}
-
-/**
- * The Journey qualifies ONLY with >=2 DISTINCT signal categories — the same
- * category twice counts once (a Set dedupes it). Score = distinct count × 2.
- * null = does not qualify.
- */
-export function journeyScore(signals: Set<JourneySignal>): number | null {
-  if (signals.size < 2) return null;
-  return signals.size * 2;
-}
-
-// Fixed tie-break (the spec ranks by score; this only breaks ties): deepest
-// first, MiniMind last. Affects display order among already-chosen cards and
-// the rare 2nd/3rd-slot tie — never whether MiniMind appears.
-const PRIORITY: Record<RecommendedProduct, number> = {
-  journey: 0,
-  'state:loss_of_self': 1,
-  'state:apathy': 1,
-  'state:anxiety': 1,
-  'theme:money': 2,
-  'theme:family': 2,
-  'theme:self_realisation': 2,
-  'theme:shame': 2,
-  minimind: 3,
+// Step 1 → State module. Only these four answers name a state; everything
+// else (strong_reactions included — owner rule) names NO state.
+const STATE_BY_WHY: Partial<Record<string, RecommendedProduct>> = {
+  anxiety_overwhelm: 'state:anxiety',
+  no_energy_drive: 'state:apathy',
+  far_from_myself: 'state:loss_of_self',
+  emptiness_numbness: 'state:inner_emptiness',
 };
 
-function reasonKeyForProduct(p: RecommendedProduct): string {
-  switch (p) {
-    case 'state:loss_of_self':
-      return 'state_loss_of_self';
-    case 'state:apathy':
-      return 'state_apathy';
-    case 'state:anxiety':
-      return 'state_anxiety';
-    case 'theme:money':
-      return 'theme_money';
-    case 'theme:family':
-      return 'theme_family';
-    case 'theme:self_realisation':
-      return 'theme_self_realisation';
-    case 'theme:shame':
-      return 'theme_shame';
-    case 'journey':
-      return 'journey_multi';
-    case 'minimind':
-      return 'minimind_explore';
-  }
+// Step 2 → Theme module. love_relationships deliberately absent (product
+// gap #25 — never mapped to Family); several_areas / whole_life_identity
+// are breadth signals, not areas.
+const THEME_BY_AREA: Partial<Record<string, RecommendedProduct>> = {
+  money: 'theme:money',
+  family_parents: 'theme:family',
+  body_intimacy: 'theme:body',
+  self_worth_shame: 'theme:shame',
+  work_purpose: 'theme:self_realisation',
+};
+
+const REASON_BY_PRODUCT: Partial<Record<RecommendedProduct, string>> = {
+  'state:anxiety': 'state_anxiety',
+  'state:apathy': 'state_apathy',
+  'state:loss_of_self': 'state_loss_of_self',
+  'state:inner_emptiness': 'state_inner_emptiness',
+  'theme:money': 'theme_money',
+  'theme:family': 'theme_family',
+  'theme:body': 'theme_body',
+  'theme:shame': 'theme_shame',
+  'theme:self_realisation': 'theme_self_realisation',
+};
+
+/** Soft-Journey signal: repeated pattern, several areas, or whole-life/identity. */
+export function hasSoftJourneySignal(a: OnboardingAnswerInput): boolean {
+  return (
+    a.why === 'repeating_story' ||
+    a.area === 'several_areas' ||
+    a.area === 'whole_life_identity'
+  );
 }
 
-// MiniMind reason variant — priority: decision -> unsure -> explore.
-function minimindReasonKey(a: OnboardingAnswerInput): string {
-  if (a.why === 'difficult_decision' || a.goal === 'decision_clarity')
-    return 'minimind_decision';
-  if (a.why === 'dont_know_what_i_want' || a.goal === 'not_sure')
-    return 'minimind_unsure';
-  return 'minimind_explore';
+// MiniMind PRIMARY reason: the user's own words decide — not-sure first
+// (it is the Step 3 type answer), then the decision presenting, then talk.
+function minimindPrimaryReason(a: OnboardingAnswerInput): string {
+  if (a.goal === 'not_sure') return 'minimind_unsure';
+  if (a.why === 'weighing_decision') return 'minimind_decision';
+  return 'minimind_talk';
 }
+
+function moduleRec(product: RecommendedProduct): RankedRec {
+  return { product, reasonKey: REASON_BY_PRODUCT[product]!, route: 'product' };
+}
+
+const MINIMIND_COMPANION: RankedRec = {
+  product: 'minimind',
+  reasonKey: 'minimind_companion',
+  route: 'product',
+};
+
+const JOURNEY_SOFT: RankedRec = {
+  product: 'journey',
+  reasonKey: 'journey_soft',
+  route: 'informed_choice',
+};
 
 /**
- * The ranked "Recommended starting points": MiniMind (always) + up to two
- * highest-scoring other products. 1–3 cards. No arbitrary fallback — when
- * nothing else qualifies, MiniMind alone is the honest answer.
+ * The typed routing. Returns 1–3 cards; index 0 is the PRIMARY
+ * recommendation, the rest are "other options". Pure function of the
+ * (normalized, v2) answers; style never affects the result.
  */
 export function rankOnboardingRecommendations(a: OnboardingAnswerInput): RankedRec[] {
-  const { minimind, products, journeySignals } = scoreOnboarding(a);
+  const state = a.why ? STATE_BY_WHY[a.why] : undefined;
+  const theme = a.area ? THEME_BY_AREA[a.area] : undefined;
+  const soft = hasSoftJourneySignal(a);
 
+  // 1. Transformation user — «Путь к себе» primary from ANY topic.
+  if (a.goal === 'transformation') {
+    const others: RankedRec[] = [];
+    // Owner correction 1: the module most directly matching the presenting
+    // request — State if Step 1 names one, else Theme; never both here.
+    if (state) others.push(moduleRec(state));
+    else if (theme) others.push(moduleRec(theme));
+    others.push(MINIMIND_COMPANION);
+    return [
+      { product: 'journey', reasonKey: 'journey_primary', route: 'informed_choice' },
+      ...others.slice(0, 2),
+    ];
+  }
+
+  // 2. State user — relief sought AND a state named.
+  if (a.goal === 'relief_now' && state) {
+    const others: RankedRec[] = [MINIMIND_COMPANION];
+    if (soft) others.push(JOURNEY_SOFT);
+    return [moduleRec(state), ...others.slice(0, 2)];
+  }
+
+  // 3. Theme user — focused work sought AND a theme named.
+  if (a.goal === 'focused_work' && theme) {
+    const others: RankedRec[] = [MINIMIND_COMPANION];
+    if (soft) others.push(JOURNEY_SOFT);
+    return [moduleRec(theme), ...others.slice(0, 2)];
+  }
+
+  // 4. Companion user — talk_through / not_sure, and every fallback
+  //    (relief without a named state, focused without a named theme,
+  //    incomplete answers). MiniMind primary.
   const others: RankedRec[] = [];
-  for (const [product, score] of Array.from(products.entries())) {
-    if (score > 0) {
-      others.push({ product, score, reasonKey: reasonKeyForProduct(product), route: 'product' });
-    }
-  }
-  const js = journeyScore(journeySignals);
-  if (js !== null) {
-    others.push({ product: 'journey', score: js, reasonKey: 'journey_multi', route: 'informed_choice' });
-  }
-
-  others.sort((x, y) => y.score - x.score || PRIORITY[x.product] - PRIORITY[y.product]);
-
-  const mm: RankedRec = {
-    product: 'minimind',
-    score: minimind,
-    reasonKey: minimindReasonKey(a),
-    route: 'product',
-  };
-
-  // MiniMind is ALWAYS present, even when it ranks third.
-  const set = [...others.slice(0, 2), mm];
-  set.sort((x, y) => y.score - x.score || PRIORITY[x.product] - PRIORITY[y.product]);
-  return set;
+  if (state) others.push(moduleRec(state));
+  if (theme) others.push(moduleRec(theme));
+  // Owner correction 2: soft Journey never displaces a directly matching
+  // module — only when a signal exists AND fewer than two modules matched.
+  if (soft && others.length < 2) others.push(JOURNEY_SOFT);
+  return [
+    { product: 'minimind', reasonKey: minimindPrimaryReason(a), route: 'product' },
+    ...others.slice(0, 2),
+  ];
 }
 
 /**

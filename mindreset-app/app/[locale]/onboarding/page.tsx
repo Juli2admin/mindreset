@@ -12,6 +12,7 @@ import type { Metadata } from 'next';
 import { currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { redirect } from '@/i18n/navigation';
+import { normalizeOnboardingAnswers } from '@/lib/platform/types';
 import OnboardingClient from './OnboardingClient';
 
 export const dynamic = 'force-dynamic';
@@ -41,14 +42,14 @@ export default async function OnboardingPage({
     },
   });
 
-  return (
-    <OnboardingClient
-      initialAnswers={{
-        why: snapshot?.onboardingWhy ?? null,
-        area: snapshot?.onboardingArea ?? null,
-        style: snapshot?.onboardingStyle ?? null,
-        goal: snapshot?.onboardingGoal ?? null,
-      }}
-    />
-  );
+  // Legacy v1 codes preselect their v2 translation (or nothing when no
+  // honest equivalent exists) — the buttons only ever carry v2 codes.
+  const initialAnswers = normalizeOnboardingAnswers({
+    why: snapshot?.onboardingWhy,
+    area: snapshot?.onboardingArea,
+    style: snapshot?.onboardingStyle,
+    goal: snapshot?.onboardingGoal,
+  });
+
+  return <OnboardingClient initialAnswers={initialAnswers} />;
 }

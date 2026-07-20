@@ -29,6 +29,7 @@ import {
   ONBOARDING_GOAL,
   RECOMMENDATION_SOURCES,
   RECOMMENDATION_RESPONSES,
+  normalizeOnboardingAnswers,
   type OnboardingAnswers,
   type ActiveProducts,
   type ModuleAccess,
@@ -36,10 +37,6 @@ import {
   type RecommendationResponse,
   type UserFacingProfile,
   type UserFacingRecommendation,
-  type OnboardingWhy,
-  type OnboardingArea,
-  type OnboardingStyle,
-  type OnboardingGoal,
 } from './types';
 
 // Declined recommendations sleep for this long before a rule may
@@ -155,11 +152,19 @@ export async function getOnboardingAnswers(
     },
   });
   if (!row) return null;
+  // Read-time legacy translation: v1 codes become v2 codes here, so every
+  // consumer (engine, context block, dashboard) sees v2 only.
+  const normalized = normalizeOnboardingAnswers({
+    why: row.onboardingWhy,
+    area: row.onboardingArea,
+    style: row.onboardingStyle,
+    goal: row.onboardingGoal,
+  });
   const answers: OnboardingAnswers = {};
-  if (row.onboardingWhy) answers.why = row.onboardingWhy as OnboardingWhy;
-  if (row.onboardingArea) answers.area = row.onboardingArea as OnboardingArea;
-  if (row.onboardingStyle) answers.style = row.onboardingStyle as OnboardingStyle;
-  if (row.onboardingGoal) answers.goal = row.onboardingGoal as OnboardingGoal;
+  if (normalized.why) answers.why = normalized.why;
+  if (normalized.area) answers.area = normalized.area;
+  if (normalized.style) answers.style = normalized.style;
+  if (normalized.goal) answers.goal = normalized.goal;
   return Object.keys(answers).length > 0 ? answers : null;
 }
 
@@ -349,12 +354,18 @@ export async function getUserFacingProfile(
       createdAt: r.createdAt,
     }));
 
+  // Read-time legacy translation (see types.ts): the projection only ever
+  // carries v2 codes, whatever generation of codes is stored.
+  const onboardingCodes = normalizeOnboardingAnswers({
+    why: snapshot?.onboardingWhy,
+    area: snapshot?.onboardingArea,
+    style: snapshot?.onboardingStyle,
+    goal: snapshot?.onboardingGoal,
+  });
+
   return {
     onboarding: {
-      why: (snapshot?.onboardingWhy as OnboardingWhy | null) ?? null,
-      area: (snapshot?.onboardingArea as OnboardingArea | null) ?? null,
-      style: (snapshot?.onboardingStyle as OnboardingStyle | null) ?? null,
-      goal: (snapshot?.onboardingGoal as OnboardingGoal | null) ?? null,
+      ...onboardingCodes,
       completedAt: snapshot?.onboardingCompletedAt ?? null,
       skippedAt: snapshot?.onboardingSkippedAt ?? null,
     },

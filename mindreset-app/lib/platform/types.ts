@@ -1,32 +1,37 @@
-// Platform profile types — Step 1 (2026-07-20).
+// Platform profile types — onboarding v2 (2026-07-20, owner-approved
+// typing questionnaire).
 //
 // The 4-step account-page onboarding stores button CODES (display copy
-// lives in the i18n bundles). Code vocabularies are the owner's canonical
-// lists from docs/platform/plan-2026-07-20-step1-platform-profile.md.
+// lives in the i18n bundles). v2 measures one dimension per step:
+//   Step 1 (why column)  — what's most present right now (state)
+//   Step 2 (area column) — where it shows up (area + breadth)
+//   Step 3 (goal column) — what kind of work they seek (the TYPE decider)
+//   Step 4 (style)       — how to talk (voice only, unchanged from v1)
 // Unknown codes are rejected at the write path (profile.ts), never
-// silently stored.
+// silently stored. Legacy v1 codes stored before 2026-07-20 are
+// translated at READ time by normalizeOnboardingAnswers below.
 
 export const ONBOARDING_WHY = [
-  'lost_myself',
-  'repeating_patterns',
-  'dont_know_what_i_want',
-  'difficult_decision',
-  'relationships_not_working',
-  'understand_reactions',
-  'stuck',
-  'curious',
+  'anxiety_overwhelm',
+  'no_energy_drive',
+  'far_from_myself',
+  'emptiness_numbness',
+  'strong_reactions',
+  'repeating_story',
+  'weighing_decision',
+  'understand_myself',
 ] as const;
 export type OnboardingWhy = (typeof ONBOARDING_WHY)[number];
 
 export const ONBOARDING_AREA = [
-  'relationships',
-  'career_purpose',
-  'confidence_worth',
-  'family',
   'money',
-  'boundaries_pleasing',
-  'emotional_reactions',
+  'family_parents',
+  'love_relationships',
+  'body_intimacy',
+  'self_worth_shame',
+  'work_purpose',
   'several_areas',
+  'whole_life_identity',
 ] as const;
 export type OnboardingArea = (typeof ONBOARDING_AREA)[number];
 
@@ -38,25 +43,104 @@ export const ONBOARDING_STYLE = [
 export type OnboardingStyle = (typeof ONBOARDING_STYLE)[number];
 
 export const ONBOARDING_GOAL = [
-  'whats_holding_me_back',
-  'decision_clarity',
-  'why_repeating_patterns',
-  'mine_vs_expected',
-  'feel_like_myself',
-  'understand_reactions',
-  'what_no_longer_fits',
+  'relief_now',
+  'talk_through',
+  'focused_work',
+  'transformation',
   'not_sure',
 ] as const;
 export type OnboardingGoal = (typeof ONBOARDING_GOAL)[number];
 
-// Partial by design: step 2's UI may save per step. onboardingCompletedAt
-// is stamped by the write path once all four answers are present.
+// Partial by design: the UI saves per step. onboardingCompletedAt is
+// stamped by the write path once all four answers are present.
 export type OnboardingAnswers = {
   why?: OnboardingWhy;
   area?: OnboardingArea;
   style?: OnboardingStyle;
   goal?: OnboardingGoal;
 };
+
+// ---------------------------------------------------------------------------
+// Legacy v1 codes → v2 (read-time translation)
+// ---------------------------------------------------------------------------
+// Users who onboarded before v2 have v1 codes stored. Conservative,
+// honest translations only:
+//   - v1 answers that carry the same meaning map across;
+//   - v1 answers with no honest v2 equivalent are DROPPED (the field
+//     reads as unanswered) rather than guessed — the user can update via
+//     "Change your answers";
+//   - all v1 goal codes map to 'talk_through' (except not_sure): v1 never
+//     asked about depth, so legacy users become Companion users. The
+//     Journey is never inferred for someone who was never asked.
+
+const LEGACY_MAP: Record<'why' | 'area' | 'goal', Record<string, string>> = {
+  why: {
+    lost_myself: 'far_from_myself',
+    repeating_patterns: 'repeating_story',
+    dont_know_what_i_want: 'understand_myself',
+    difficult_decision: 'weighing_decision',
+    understand_reactions: 'strong_reactions',
+    stuck: 'no_energy_drive',
+    curious: 'understand_myself',
+    // relationships_not_working: no honest v2 equivalent → dropped
+  },
+  area: {
+    relationships: 'love_relationships',
+    career_purpose: 'work_purpose',
+    confidence_worth: 'self_worth_shame',
+    family: 'family_parents',
+    // money / several_areas: unchanged codes, valid in v2
+    // boundaries_pleasing, emotional_reactions: no v2 equivalent → dropped
+  },
+  goal: {
+    whats_holding_me_back: 'talk_through',
+    decision_clarity: 'talk_through',
+    why_repeating_patterns: 'talk_through',
+    mine_vs_expected: 'talk_through',
+    feel_like_myself: 'talk_through',
+    understand_reactions: 'talk_through',
+    what_no_longer_fits: 'talk_through',
+    // not_sure: unchanged code, valid in v2
+  },
+};
+
+function normalizeCode(
+  field: 'why' | 'area' | 'goal',
+  vocabulary: readonly string[],
+  value: string | null | undefined,
+): string | null {
+  if (!value) return null;
+  if (vocabulary.includes(value)) return value;
+  return LEGACY_MAP[field][value] ?? null;
+}
+
+/**
+ * Translate possibly-legacy stored codes to the v2 vocabulary. Applied at
+ * every READ path (profile projections) so the engine, the context block,
+ * the dashboard and the onboarding preselect all see v2 codes only.
+ * Style codes are unchanged between versions and pass through when valid.
+ */
+export function normalizeOnboardingAnswers(raw: {
+  why?: string | null;
+  area?: string | null;
+  style?: string | null;
+  goal?: string | null;
+}): {
+  why: OnboardingWhy | null;
+  area: OnboardingArea | null;
+  style: OnboardingStyle | null;
+  goal: OnboardingGoal | null;
+} {
+  return {
+    why: normalizeCode('why', ONBOARDING_WHY, raw.why) as OnboardingWhy | null,
+    area: normalizeCode('area', ONBOARDING_AREA, raw.area) as OnboardingArea | null,
+    style:
+      raw.style && (ONBOARDING_STYLE as readonly string[]).includes(raw.style)
+        ? (raw.style as OnboardingStyle)
+        : null,
+    goal: normalizeCode('goal', ONBOARDING_GOAL, raw.goal) as OnboardingGoal | null,
+  };
+}
 
 export const RECOMMENDATION_SOURCES = ['platform_rule', 'minimind', 'journey'] as const;
 export type RecommendationSource = (typeof RECOMMENDATION_SOURCES)[number];
