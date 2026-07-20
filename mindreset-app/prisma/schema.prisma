@@ -117,6 +117,8 @@ model User {
   // relation because internal admin / support-categorise calls may not
   // be attributable to a single user.
   aiUsages               AiUsage[]
+  // Platform Step 1 (2026-07-20) — recommendation log (append-only).
+  platformRecommendations PlatformRecommendation[]
 
   // Pilot programme (PR ρ, 2026-07-12). Set on redemption of a
   // PilotInvitation code. pilotTrialEndsAt is the hard expiry — the
@@ -346,6 +348,52 @@ model WellbeingSnapshot {
   lastAnalyzedConversationId String?
   lastAnalyzedAt             DateTime?
   modelVersion               String?  // which assessment-engine version produced this
+
+  // Platform Step 1 (2026-07-20) — the 4-step account-page onboarding.
+  // Button CODES, not free text (display copy lives in the i18n bundles;
+  // all locales gender-neutral per locked decision). User-authored and
+  // user-visible; products read but never write these. See
+  // docs/platform/plan-2026-07-20-step1-platform-profile.md for the
+  // code vocabularies and the consumption map.
+  onboardingWhy              String?
+  onboardingArea             String?
+  onboardingStyle            String?
+  onboardingGoal             String?
+  onboardingCompletedAt      DateTime?
+  onboardingSkippedAt        DateTime?
+}
+
+// =============================================================================
+// PLATFORM RECOMMENDATION — append-only log (Platform Step 1, 2026-07-20)
+// =============================================================================
+// One row per recommendation shown (or to be shown) to a user. Writers
+// arrive in build step 4 (platform rules + MiniMind catalog) and step 7
+// (Journey step-down); Step 1 ships the table and the primitives only.
+// "Never pushed" is enforced on this data: responses are recorded,
+// declines set a cool-off, and rules must consult the log before
+// re-recommending.
+model PlatformRecommendation {
+  id              String    @id @default(cuid())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  createdAt       DateTime  @default(now())
+
+  // What is recommended: 'minimind' | 'journey' | 'state:<id>' | 'theme:<id>'
+  product         String
+  // Who recommended: 'platform_rule' | 'minimind' | 'journey'
+  source          String
+  // Plaintext rule identifier (e.g. 'repeat_state_3in7'); null for AI-sourced
+  ruleKey         String?
+  // Plain-language reason shown to the user. May quote the user's own
+  // words, so encrypted at rest like all user-words fields.
+  reasonEncrypted String?
+
+  shownAt         DateTime?
+  response        String?   // 'accepted' | 'declined' | 'ignored'
+  respondedAt     DateTime?
+  coolOffUntil    DateTime?
+
+  @@index([userId, createdAt])
 }
 
 // =============================================================================
