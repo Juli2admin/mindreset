@@ -265,6 +265,38 @@ export async function respondToRecommendation(
   });
 }
 
+/**
+ * Ownership-checked variant for user-facing endpoints: the recommendation
+ * must belong to `userId` and still be open. Returns false (no write)
+ * otherwise — a user can never respond to someone else's recommendation
+ * or overwrite an existing response.
+ */
+export async function respondToRecommendationOwned(
+  userId: string,
+  id: string,
+  response: RecommendationResponse,
+  now: Date = new Date(),
+): Promise<boolean> {
+  const rec = await prisma.platformRecommendation.findFirst({
+    where: { id, userId, response: null },
+    select: { id: true },
+  });
+  if (!rec) return false;
+  await respondToRecommendation(id, response, now);
+  return true;
+}
+
+/** Stamp shownAt (set-once) when a recommendation is first rendered. */
+export async function markRecommendationShown(
+  id: string,
+  now: Date = new Date(),
+): Promise<void> {
+  await prisma.platformRecommendation.updateMany({
+    where: { id, shownAt: null },
+    data: { shownAt: now },
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Projections
 // ---------------------------------------------------------------------------
@@ -298,6 +330,7 @@ export async function getUserFacingProfile(
       select: {
         id: true,
         product: true,
+        ruleKey: true,
         reasonEncrypted: true,
         createdAt: true,
         coolOffUntil: true,
@@ -311,6 +344,7 @@ export async function getUserFacingProfile(
     .map((r) => ({
       id: r.id,
       product: r.product,
+      ruleKey: r.ruleKey,
       reason: decryptOrNull(r.reasonEncrypted),
       createdAt: r.createdAt,
     }));

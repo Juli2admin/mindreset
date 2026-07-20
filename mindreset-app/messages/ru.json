@@ -447,6 +447,24 @@
     "goal_what_no_longer_fits": "Хочу понять, что в моей жизни мне больше не подходит.",
     "goal_not_sure": "Пока не знаю."
   },
+  "Dashboard": {
+    "whyTitle": "Почему Вы здесь",
+    "whyEdit": "Изменить ответы",
+    "skippedInvite": "Расскажите, что привело Вас сюда — это помогает каждому разговору начинаться с нужного места.",
+    "skippedCta": "Ответить на 4 коротких вопроса",
+    "suggestedTitle": "Может подойти Вам",
+    "accept": "Посмотреть",
+    "decline": "Не сейчас",
+    "productMinimind": "MiniMind",
+    "productJourney": "The Journey",
+    "reason_onboarding_why_lost_myself": "Вы отметили: ощущение, что теряете себя.",
+    "reason_onboarding_area_money": "Вы отметили, что сфера денег сейчас затронута больше всего.",
+    "reason_onboarding_area_family": "Вы отметили, что сфера семьи сейчас затронута больше всего.",
+    "reason_onboarding_area_career_purpose": "Вы отметили, что карьера и предназначение сейчас затронуты больше всего.",
+    "reason_onboarding_why_stuck": "Вы отметили, что чувствуете себя в тупике.",
+    "reason_onboarding_default_minimind": "Вы отметили, что Вам интересно лучше понять себя — MiniMind — хорошее место для начала.",
+    "reason_state_repeat_3in7": "Одно и то же состояние появлялось несколько раз за эту неделю в Ваших разговорах с MiniMind."
+  },
   "AccountDeletion": {
     "settingsKicker": "ВАШИ ДАННЫЕ",
     "exportTitle": "Скачать ваши данные",

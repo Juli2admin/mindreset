@@ -7,6 +7,11 @@ import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcome';
 import { TIER_CAPS } from '@/lib/billing/limits';
 import { ensurePilotGrants } from '@/lib/pilot/grants';
+import {
+  getUserFacingProfile,
+  markRecommendationShown,
+} from '@/lib/platform/profile';
+import DashboardSection from './DashboardSection';
 import { redeemInvitation } from '@/lib/pilot/invitations';
 import { PILOT_REDEEM_COOKIE } from '@/lib/pilot/cookie';
 import HomeClient from './HomeClient';
@@ -276,8 +281,45 @@ export default async function HomePage({
     redirect({ href: '/onboarding', locale });
   }
 
+  // Platform Step 5 (2026-07-20) — dashboard v1. The user-facing
+  // projection only: onboarding answers + at most one open
+  // recommendation + derived product state. Hidden diagnostics are
+  // structurally absent from this read (lib/platform/types.ts).
+  const profile = await getUserFacingProfile(user.id);
+  const activeRec = profile.activeRecommendations[0] ?? null;
+  if (activeRec) {
+    // Stamp first-shown in the background; set-once server-side.
+    waitUntil(
+      markRecommendationShown(activeRec.id).catch((err) =>
+        console.error('[home] markRecommendationShown failed', err),
+      ),
+    );
+  }
+  const dashboardSlot = (
+    <DashboardSection
+      onboarding={{
+        why: profile.onboarding.why,
+        area: profile.onboarding.area,
+        style: profile.onboarding.style,
+        goal: profile.onboarding.goal,
+        completed: profile.onboarding.completedAt != null,
+      }}
+      recommendation={
+        activeRec
+          ? {
+              id: activeRec.id,
+              product: activeRec.product,
+              ruleKey: activeRec.ruleKey,
+              reason: activeRec.reason,
+            }
+          : null
+      }
+    />
+  );
+
   return (
     <HomeClient
+      dashboardSlot={dashboardSlot}
       firstName={firstName}
       cookieToClear={cookieToClear}
       currentTier={tier}

@@ -82,6 +82,10 @@ export type ModuleAccess = {
 export type UserFacingRecommendation = {
   id: string;
   product: string;
+  // Rule recommendations carry a ruleKey — the dashboard localises the
+  // reason from it. AI-sourced recommendations may carry decrypted
+  // reason text instead; display precedence: reason ?? t(reason_<ruleKey>).
+  ruleKey: string | null;
   reason: string | null; // decrypted; may quote the user's own words
   createdAt: Date;
 };
