@@ -3,6 +3,7 @@
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
 import type { ModalityRejected, TaskContract } from '../stateReport/schema';
+import type { OnboardingAnswers } from '@/lib/platform/types';
 
 export type JourneyChannel =
   | 'visual'
@@ -221,4 +222,10 @@ export type JourneyState = {
   // (mergeTaskContract); a sparse or generic emission never erases a
   // stored value. null until the AI first captures any field.
   taskContract: TaskContract | null;
+
+  // Platform Step 3 part B (2026-07-20, owner-approved unfreeze) — the
+  // user's 4-step account-page onboarding answers. Rendered in the state
+  // block ONLY until the Journey captures its own task contract; the
+  // live contract always supersedes the sign-up answers.
+  onboardingAnswers: OnboardingAnswers | null;
 };

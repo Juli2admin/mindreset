@@ -24,6 +24,8 @@ import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { waitUntil } from '@vercel/functions';
 import prisma from '@/lib/prisma';
+import { getOnboardingAnswers } from '@/lib/platform/profile';
+import { buildOnboardingContextBlock } from '@/lib/platform/onboarding-context';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkStateModuleAccess } from '@/lib/states/access';
 import { isValidStateModuleId, type StateModuleId } from '@/lib/states/modules';
@@ -252,7 +254,14 @@ export async function POST(
   // assembler prepends it as PRIOR ARC NOTES so the AI knows what
   // landed in earlier sessions.
   const memorySummary = await loadStateModuleMemory(userId, moduleId);
-  const systemPrompt = assembleSystemPromptForModule(moduleId, memorySummary);
+  // Platform Step 3 (2026-07-20) — onboarding context bridge. '' when
+  // the user skipped onboarding.
+  const onboardingBlock = buildOnboardingContextBlock(
+    await getOnboardingAnswers(userId),
+  );
+  const systemPrompt =
+    assembleSystemPromptForModule(moduleId, memorySummary) +
+    (onboardingBlock ? `\n\n${onboardingBlock}` : '');
 
   const stream = anthropic.messages.stream({
     model: MODEL,

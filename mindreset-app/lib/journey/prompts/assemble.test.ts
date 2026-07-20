@@ -57,6 +57,7 @@ function makeState(stage: number): JourneyState {
     sessionRejectedModalities: [],
     recentChannelShift: false,
     taskContract: null,
+    onboardingAnswers: null,
   };
 }
 
