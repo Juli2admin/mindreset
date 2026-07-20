@@ -1,12 +1,15 @@
 // app/robots.ts → /robots.txt at request time.
 //
-// Allow everything except routes that should never be crawled:
-//   - /api/                      — JSON endpoints, no SEO value
-//   - /sign-in/, /sign-up/       — Clerk catch-all paths with auth tokens
-//   - /home, /minimind, /account — auth-gated user surfaces (also noindex
-//     via per-page metadata, but disallow saves Google crawl budget)
-//   - /admin                     — owner-only, email-allowlist gated
-//   - /checkout/, /unsubscribe/  — transient flows, no SEO value
+// Disallow ONLY /api/ — JSON endpoints with no page content, so they can
+// never end up "indexed but blocked".
+//
+// Every other non-public route (/home, /minimind, /account, /admin,
+// /sign-in, /sign-up, /checkout, /unsubscribe) is kept out of the index by
+// a per-page `noindex` tag, NOT by a Disallow. This is deliberate and was
+// a bug fix (2026-07-20): a robots.txt Disallow blocks Google from
+// crawling, so it never sees the `noindex` and can never DE-index a URL
+// that got in via a link — Search Console's "Indexed, though blocked by
+// robots.txt" state. noindex only works if the page stays crawlable.
 //
 // Explicit AI crawler permissions:
 // Each of the major AI/LLM crawlers gets its own rule block so the signal
@@ -22,17 +25,7 @@
 import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo/alternates';
 
-const SHARED_DISALLOW = [
-  '/api/',
-  '/sign-in/',
-  '/sign-up/',
-  '/home',
-  '/minimind',
-  '/account',
-  '/admin',
-  '/checkout/',
-  '/unsubscribe/',
-];
+const SHARED_DISALLOW = ['/api/'];
 
 // Major AI crawlers, in order of current discovery relevance for the
 // MindReset audience. Each is explicitly welcomed.

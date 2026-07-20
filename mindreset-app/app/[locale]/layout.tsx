@@ -114,7 +114,6 @@ export async function generateMetadata({
     description: DEFAULT_DESCRIPTION,
     applicationName: 'MindReset.ai',
     alternates: pageAlternates('/', params.locale),
-    ...(placeholder && { robots: { index: false, follow: true } }),
     manifest: '/manifest.json',
     appleWebApp: {
       capable: true,
@@ -166,10 +165,17 @@ export async function generateMetadata({
       description: DEFAULT_DESCRIPTION,
       images: ['/og-image.png'],
     },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    // Placeholder locales (fr/de/es/it/pl/pt) serve byte-identical English,
+    // so noindex them to avoid duplicate-content canonicalisation warnings
+    // (`follow: true` keeps link equity flowing through the site graph).
+    // Native locales index normally. This MUST be the only `robots` key in
+    // this object — a second literal `robots` used to silently overwrite the
+    // placeholder override, so placeholders were being indexed despite the
+    // intent (bug fixed 2026-07-20). Pages that need their own value (auth
+    // surfaces set `index: false`) override this at the page level.
+    robots: placeholder
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
   };
 }
 
