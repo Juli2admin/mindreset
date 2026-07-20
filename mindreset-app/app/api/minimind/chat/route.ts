@@ -4,6 +4,7 @@ import { auth } from '@clerk/nextjs/server';
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
 import { MINIMIND_PROMPT_V2_3 } from '@/lib/minimind/prompt';
+import { MODULE_CATALOG_BLOCK } from '@/lib/minimind/catalog';
 import { scanForKeywords } from '@/lib/minimind/safety/keywords';
 import { runVerifier } from '@/lib/minimind/safety/verifier';
 import { logSafetyEvent } from '@/lib/minimind/safety/log';
@@ -490,8 +491,12 @@ export async function POST(req: NextRequest) {
   const onboardingBlock = buildOnboardingContextBlock(
     await getOnboardingAnswers(userId),
   );
+  // Platform Step 4 part B (2026-07-20, owner-approved) — the module
+  // catalog fills the suggestion protocol's [module name] placeholder
+  // with the nine real modules + honest Journey positioning.
   const systemWithMemory = [
     MINIMIND_PROMPT_V2_3,
+    MODULE_CATALOG_BLOCK,
     memory.formattedBlock,
     onboardingBlock,
   ]
