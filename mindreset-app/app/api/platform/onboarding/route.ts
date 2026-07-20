@@ -11,12 +11,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { waitUntil } from '@vercel/functions';
 import {
   saveOnboarding,
   markOnboardingSkipped,
 } from '@/lib/platform/profile';
-import { evaluateOnboardingRecommendation } from '@/lib/platform/recommendations';
 import type { OnboardingAnswers } from '@/lib/platform/types';
 
 export const dynamic = 'force-dynamic';
@@ -40,19 +38,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
     if (body.answers && typeof body.answers === 'object') {
-      const { completed } = await saveOnboarding(userId, {
+      // Orientation recommendations are STATELESS — computed at dashboard
+      // render time from these answers, never persisted here. So the write
+      // path just saves the answers; there is no completion-time side effect.
+      await saveOnboarding(userId, {
         why: body.answers.why,
         area: body.answers.area,
         style: body.answers.style,
         goal: body.answers.goal,
       });
-      if (completed) {
-        // Step 4 — completion-time recommendation rule. Background:
-        // must never delay or fail the save response. Idempotent via
-        // the one-open-recommendation guard, so re-saves after
-        // completion don't stack recommendations.
-        waitUntil(evaluateOnboardingRecommendation(userId));
-      }
       return NextResponse.json({ ok: true });
     }
     return NextResponse.json({ error: 'Nothing to save' }, { status: 400 });

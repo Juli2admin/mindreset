@@ -11,6 +11,10 @@ import {
   getUserFacingProfile,
   markRecommendationShown,
 } from '@/lib/platform/profile';
+import {
+  rankOnboardingRecommendations,
+  recommendationOwned,
+} from '@/lib/platform/recommendations';
 import DashboardSection from './DashboardSection';
 import { redeemInvitation } from '@/lib/pilot/invitations';
 import { PILOT_REDEEM_COOKIE } from '@/lib/pilot/cookie';
@@ -295,6 +299,20 @@ export default async function HomePage({
       ),
     );
   }
+
+  // ORIENTATION — the stateless "Recommended starting points" ranked set,
+  // recomputed every render from the four onboarding answers (no DB write).
+  // Only once onboarding is complete; skippers see the invitation instead.
+  // Owned products are annotated, never suppressed (shown as "already have
+  // access — continue here").
+  const recommendations = profile.onboarding.completedAt
+    ? rankOnboardingRecommendations(profile.onboarding).map((r) => ({
+        product: r.product,
+        reasonKey: r.reasonKey,
+        owned: recommendationOwned(r.product, profile.products),
+      }))
+    : [];
+
   const dashboardSlot = (
     <DashboardSection
       onboarding={{
@@ -304,6 +322,7 @@ export default async function HomePage({
         goal: profile.onboarding.goal,
         completed: profile.onboarding.completedAt != null,
       }}
+      recommendations={recommendations}
       recommendation={
         activeRec
           ? {
