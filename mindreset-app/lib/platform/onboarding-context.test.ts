@@ -1,8 +1,8 @@
-// Tests for the onboarding context block — Step 3 (2026-07-20).
+// Tests for the onboarding context block — v2 vocabulary (2026-07-20).
 //
 // The bridge that makes the 4-step answers WORK. Pins:
-//   1. The owner's two worked-example combinations render blocks that
-//      carry exactly what the user tapped (the step-3 fixtures).
+//   1. Worked-example combinations render blocks that carry exactly what
+//      the user tapped.
 //   2. The forbidden-opening rule is in the block verbatim — never
 //      "How was your day?", never "How are you feeling today?".
 //   3. Skipped/empty onboarding renders NOTHING (products see no block).
@@ -23,45 +23,43 @@ import en from '../../messages/en.json';
 
 const enO = (en as { Onboarding: Record<string, string> }).Onboarding;
 
-describe('buildOnboardingContextBlock — owner fixtures', () => {
-  it('fixture 1: lost_myself + career_purpose + direct_practical + decision_clarity', () => {
+describe('buildOnboardingContextBlock — worked examples', () => {
+  it('transformation user: far_from_myself + work_purpose + direct_practical + transformation', () => {
     const block = buildOnboardingContextBlock({
-      why: 'lost_myself',
-      area: 'career_purpose',
+      why: 'far_from_myself',
+      area: 'work_purpose',
       style: 'direct_practical',
-      goal: 'decision_clarity',
+      goal: 'transformation',
     });
-    expect(block).toContain(`"I feel like I've lost myself."`);
-    expect(block).toContain('Career and purpose');
+    expect(block).toContain(`"I feel far away from myself — like I'm losing who I am."`);
+    expect(block).toContain('Work, purpose, direction');
     expect(block).toContain('direct & practical');
-    expect(block).toContain('"I want clarity about an important decision."');
+    expect(block).toContain('reach the roots and change the pattern of my life');
   });
 
-  it('fixture 2: repeating_patterns + relationships + reflective_exploratory + why_repeating_patterns', () => {
+  it('state user: anxiety_overwhelm + several_areas + reflective_exploratory + relief_now', () => {
     const block = buildOnboardingContextBlock({
-      why: 'repeating_patterns',
-      area: 'relationships',
+      why: 'anxiety_overwhelm',
+      area: 'several_areas',
       style: 'reflective_exploratory',
-      goal: 'why_repeating_patterns',
+      goal: 'relief_now',
     });
-    expect(block).toContain('"I keep repeating the same patterns in my life."');
-    expect(block).toContain('Where it shows up most: Relationships');
+    expect(block).toContain(`"Anxiety or overwhelm — my mind won't settle."`);
+    expect(block).toContain('Where it shows up most: Several areas at once');
     expect(block).toContain('reflective & exploratory');
-    expect(block).toContain(
-      '"I want to understand why I keep repeating the same patterns."',
-    );
+    expect(block).toContain(`"Support and relief right now — help me steady what I'm feeling."`);
   });
 });
 
 describe('buildOnboardingContextBlock — the forbidden-opening rule', () => {
   it('names both forbidden openings and demands a specific personalised one', () => {
-    const block = buildOnboardingContextBlock({ why: 'stuck' });
+    const block = buildOnboardingContextBlock({ why: 'no_energy_drive' });
     expect(block).toContain('never "How was your day?"');
     expect(block).toContain('never "How are you feeling today?"');
     expect(block).toContain('one specific, inviting question');
   });
 
-  it('goal is the INITIAL focus, refreshed conversationally — never a questionnaire', () => {
+  it('answers are the INITIAL focus, refreshed conversationally — never a questionnaire', () => {
     const block = buildOnboardingContextBlock({ goal: 'not_sure' });
     expect(block).toContain('INITIAL focus');
     expect(block).toContain('never re-ask these questions as a questionnaire');
@@ -78,8 +76,8 @@ describe('buildOnboardingContextBlock — empty and partial', () => {
   it('renders only the provided answers', () => {
     const block = buildOnboardingContextBlock({ area: 'money' });
     expect(block).toContain('Money');
-    expect(block).not.toContain('What brought them here');
-    expect(block).not.toContain('worthwhile');
+    expect(block).not.toContain("What's most present for them");
+    expect(block).not.toContain('kind of work');
   });
 
   it('ignores unknown codes defensively instead of rendering them', () => {

@@ -55,26 +55,33 @@ describe('onboarding i18n — every code has copy in en and ru', () => {
   });
 });
 
-describe('onboarding i18n — owner-approved anchors', () => {
+describe('onboarding i18n — owner-approved anchors (v2)', () => {
   it('en titles are the approved wording', () => {
-    expect(enO.title1).toBe('What brought you here today?');
-    expect(enO.title4).toBe("What would make today's conversation feel worthwhile?");
+    expect(enO.title1).toBe("What's most present for you right now?");
+    expect(enO.title3).toBe('What kind of work are you looking for?');
   });
 
   it('ru titles are the approved wording (formal Вы)', () => {
-    expect(ruO.title1).toBe('Что привело Вас сюда сегодня?');
-    expect(ruO.title3).toBe('Как бы Вы хотели начать?');
+    expect(ruO.title1).toBe('Что сейчас ощущается сильнее всего?');
+    expect(ruO.title3).toBe('Что Вам сейчас ближе?');
+  });
+
+  it('the transformation answer is present — the type-deciding button', () => {
+    expect(enO.goal_transformation).toContain('reach the roots');
+    expect(ruO.goal_transformation).toContain('дойти до корней');
   });
 
   it('RU stays gender-neutral where a literal translation would gender', () => {
-    // lost_myself: present tense, not «потерял(а)»
-    expect(ruO.why_lost_myself).toBe('Ощущение, что я себя теряю.');
-    // stuck: «в тупике», not «застрял(а)»
-    expect(ruO.why_stuck).toBe('Чувствую себя в тупике.');
+    // far_from_myself: present tense, not «потерял(а)»
+    expect(ruO.why_far_from_myself).toBe('Ощущение, что я далеко от себя — будто теряю себя.');
+    // transformation: no «готов(а)» fork — willingness phrased without gender
+    expect(ruO.goal_transformation).not.toMatch(/готов/);
     // guide_me subtitle: «пока не знаю», not «не уверен(а)»
     expect(ruO.style_guide_me_sub).toBe('Я пока не знаю, с чего начать. Пожалуйста, направляйте меня.');
-    // Belt-and-braces: no gendered-fork notation anywhere in the RU block
+    // Belt-and-braces: no gendered-fork notation anywhere in the RU block.
+    // потерял(?!о): first-person «потерял/потеряла» is banned; the neuter
+    // «потеряло» (about «всё», not the person) is legitimate.
     const all = Object.values(ruO).join(' ');
-    expect(all).not.toMatch(/\(а\)|потерял|застрял|уверен /);
+    expect(all).not.toMatch(/\(а\)|потерял(?!о)|застрял|уверен /);
   });
 });

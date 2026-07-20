@@ -1,4 +1,4 @@
-// Dashboard i18n coverage (2026-07-20, owner-approved copy).
+// Dashboard i18n coverage — onboarding v2 (2026-07-20, owner-approved copy).
 //
 // Every reason key the ORIENTATION engine can emit (ONBOARDING_REASON_KEYS)
 // plus the RECOGNITION key must have localised copy in BOTH native bundles —
@@ -20,14 +20,20 @@ const ruJ = (ru as { JourneyChoice: Bundle }).JourneyChoice;
 // Every reason key that can render on the dashboard.
 const ALL_REASON_KEYS = [...ONBOARDING_REASON_KEYS, 'state_repeat_3in7'];
 
+// The companion reason is a generic MiniMind line ("alongside deeper
+// work…"), not derived from a specific answer — exempt from the
+// "you said" opener but still bound by the diagnostic-language ban.
+const USER_AUTHORED_KEYS = ONBOARDING_REASON_KEYS.filter((k) => k !== 'minimind_companion');
+
 const DIAGNOSTIC_PHRASES_EN = [
   'we noticed',
   'we detected',
   'your profile',
   'you appear',
   'diagnos',
+  'trauma',
 ];
-const DIAGNOSTIC_PHRASES_RU = ['мы заметили', 'мы обнаружили', 'ваш профиль'];
+const DIAGNOSTIC_PHRASES_RU = ['мы заметили', 'мы обнаружили', 'ваш профиль', 'диагно', 'травм'];
 
 // Payment-adjacent surface → brand-language constraints apply.
 const FORBIDDEN_BRAND = [
@@ -54,19 +60,19 @@ describe('dashboard i18n — reason copy for every rule', () => {
     }
   });
 
-  it('orientation reasons use user-authored framing, never diagnostic wording', () => {
-    for (const key of ONBOARDING_REASON_KEYS) {
+  it('answer-derived reasons use user-authored framing, never diagnostic wording', () => {
+    for (const key of USER_AUTHORED_KEYS) {
       const enCopy = enD[`reason_${key}`];
       const ruCopy = ruD[`reason_${key}`];
-      // EN: "You said …" / "You chose …"
-      expect(enCopy, `en reason_${key}`).toMatch(/^You (said|chose)/);
+      expect(enCopy, `en reason_${key}`).toMatch(/^You (said|chose|also chose)/);
+      expect(ruCopy, `ru reason_${key}`).toMatch(/Вы (сказали|выбрали|также отметили)/);
+    }
+    for (const key of ALL_REASON_KEYS) {
       for (const bad of DIAGNOSTIC_PHRASES_EN) {
-        expect(enCopy.toLowerCase(), `en reason_${key} contains "${bad}"`).not.toContain(bad);
+        expect(enD[`reason_${key}`].toLowerCase(), `en reason_${key} contains "${bad}"`).not.toContain(bad);
       }
-      // RU: «Вы сказали …» / «Вы выбрали …»
-      expect(ruCopy, `ru reason_${key}`).toMatch(/Вы (сказали|выбрали)/);
       for (const bad of DIAGNOSTIC_PHRASES_RU) {
-        expect(ruCopy.toLowerCase(), `ru reason_${key} contains "${bad}"`).not.toContain(bad);
+        expect(ruD[`reason_${key}`].toLowerCase(), `ru reason_${key} contains "${bad}"`).not.toContain(bad);
       }
     }
   });
@@ -75,7 +81,7 @@ describe('dashboard i18n — reason copy for every rule', () => {
     const keys = [
       'whyTitle', 'whyEdit', 'skippedInvite', 'skippedCta',
       'suggestedTitle', 'accept', 'decline',
-      'recommendedTitle', 'cta', 'ctaJourney', 'ownedContinue',
+      'primaryTitle', 'otherTitle', 'cta', 'ctaJourney', 'ownedContinue',
       'productMinimind', 'productJourney',
     ];
     for (const key of keys) {
@@ -84,14 +90,16 @@ describe('dashboard i18n — reason copy for every rule', () => {
       expect(typeof ruD[key], `ru: ${key}`).toBe('string');
       expect((ruD[key] ?? '').length, `ru empty: ${key}`).toBeGreaterThan(0);
     }
-    expect(enD.recommendedTitle).toBe('Recommended starting points');
+    expect(enD.primaryTitle).toBe('Recommended for you');
+    expect(enD.otherTitle).toBe('Other options that may also suit you');
     expect(enD.ownedContinue).toBe('You already have access — continue here');
   });
 
   it('The Journey is «Путь к себе» in every RU dashboard string', () => {
     expect(ruD.productJourney).toBe('«Путь к себе»');
     expect(ruD.ctaJourney).toContain('«Путь к себе»');
-    expect(ruD.reason_journey_multi).toContain('«Путь к себе»');
+    expect(ruD.reason_journey_primary).toContain('«Путь к себе»');
+    expect(ruD.reason_journey_soft).toContain('«Путь к себе»');
     // Never the untranslated English name.
     for (const v of Object.values(ruD)) {
       expect(v).not.toContain('The Journey');

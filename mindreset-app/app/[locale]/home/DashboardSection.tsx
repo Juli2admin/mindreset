@@ -1,16 +1,16 @@
 'use client';
 
-// Dashboard — Platform Step 5 + recommendation redesign (2026-07-20).
+// Dashboard — onboarding v2 typed routing (2026-07-20).
 //
 // Three blocks above the product cards on /home:
-//   1. "Recommended starting points" — the STATELESS orientation set,
-//      1–3 ranked cards computed from the four onboarding answers. Each
-//      card: the user's own "you said" reason, the product name, one action
-//      link. MiniMind is always present. Owned products are shown, not
-//      suppressed ("you already have access — continue here"). The Journey
-//      routes to the informed-choice page, never checkout. Guidance only —
-//      no accept/decline, never restricts access; the full catalogue stays
-//      visible in the sections below.
+//   1. "Recommended for you" — the PRIMARY recommendation from the typed
+//      routing, followed by "Other options that may also suit you" (up to
+//      two). Stateless, recomputed each visit. Each card: the user's own
+//      "you said" reason, the product name, one action link. Owned
+//      products are shown, not suppressed ("you already have access —
+//      continue here"). «Путь к себе» routes to the informed-choice page,
+//      never checkout. Guidance only — no accept/decline, never restricts
+//      access; the full catalogue stays visible in the sections below.
 //   2. "Why you're here" — the user's own onboarding answers, with a change
 //      link; or the invitation when onboarding was skipped.
 //   3. "Suggested for you" — the RECOGNITION nudge (3-in-7), persisted and
@@ -32,7 +32,8 @@ type Onboarding = {
   completed: boolean;
 };
 
-// One ranked orientation card. Stateless — no id, no response.
+// One orientation card. Stateless — no id, no response. First entry in
+// the array is the PRIMARY recommendation; the rest are "other options".
 type OrientationRec = {
   product: string;
   reasonKey: string;
@@ -138,49 +139,65 @@ export default function DashboardSection({
       ].filter((s): s is string => Boolean(s))
     : [];
 
+  function RecCard({ rec: r }: { rec: OrientationRec }) {
+    return (
+      <div
+        className="rounded-xl border p-5"
+        style={{ borderColor: PALETTE.border, background: PALETTE.bg }}
+      >
+        <p
+          className="text-[15px] mb-1"
+          style={{ color: PALETTE.text, fontFamily: SANS, fontWeight: 600 }}
+        >
+          {productName(r.product)}
+        </p>
+        <p
+          className="text-[14px] leading-[1.6] mb-4"
+          style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+        >
+          {t(`reason_${r.reasonKey}`)}
+        </p>
+        <Link
+          href={orientationHref(r)}
+          className="inline-block text-[13px] border rounded-lg px-4 py-2"
+          style={{
+            borderColor: PALETTE.text,
+            color: PALETTE.text,
+            fontFamily: SANS,
+          }}
+        >
+          {orientationCta(r)}
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="mb-12">
-      {/* Recommended starting points — the ranked orientation set. */}
+      {/* Recommended for you — primary card, then other options. */}
       {recommendations.length > 0 && (
         <div className="mb-4">
           <div
             className="text-[11px] uppercase tracking-[0.22em] mb-3"
             style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
           >
-            {t('recommendedTitle')}
+            {t('primaryTitle')}
           </div>
           <div className="flex flex-col gap-3">
-            {recommendations.map((r) => (
-              <div
-                key={r.product}
-                className="rounded-xl border p-5"
-                style={{ borderColor: PALETTE.border, background: PALETTE.bg }}
-              >
-                <p
-                  className="text-[15px] mb-1"
-                  style={{ color: PALETTE.text, fontFamily: SANS, fontWeight: 600 }}
+            <RecCard rec={recommendations[0]} />
+            {recommendations.length > 1 && (
+              <>
+                <div
+                  className="text-[11px] uppercase tracking-[0.22em] mt-2"
+                  style={{ color: PALETTE.textMuted, fontWeight: 500, fontFamily: SANS }}
                 >
-                  {productName(r.product)}
-                </p>
-                <p
-                  className="text-[14px] leading-[1.6] mb-4"
-                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
-                >
-                  {t(`reason_${r.reasonKey}`)}
-                </p>
-                <Link
-                  href={orientationHref(r)}
-                  className="inline-block text-[13px] border rounded-lg px-4 py-2"
-                  style={{
-                    borderColor: PALETTE.text,
-                    color: PALETTE.text,
-                    fontFamily: SANS,
-                  }}
-                >
-                  {orientationCta(r)}
-                </Link>
-              </div>
-            ))}
+                  {t('otherTitle')}
+                </div>
+                {recommendations.slice(1).map((r) => (
+                  <RecCard key={r.product} rec={r} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       )}

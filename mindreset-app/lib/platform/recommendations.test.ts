@@ -1,13 +1,15 @@
-// Tests for the platform recommendation rules (2026-07-20).
+// Tests for the platform recommendation rules — onboarding v2 typed
+// routing (2026-07-20, owner-approved with two routing corrections).
 //
 // TWO families, tested apart:
-//   - ORIENTATION (stateless onboarding scoring) — the owner's exact
-//     stated-request logic. Pins every safeguard as an executable check:
-//     MiniMind always present, no relationships→Family, no confidence→Shame
-//     or career→Self-Realisation without a qualifying second answer, the
-//     Journey only from >=2 DISTINCT categories, Body/Inner-emptiness never
-//     produced, no arbitrary fallback, Step 3 style-invariant, owned shown
-//     not suppressed.
+//   - ORIENTATION — the typing model. Step 3 decides the user's TYPE;
+//     Steps 1–2 decide which product of that type. Pins every owner rule:
+//     Journey primary ONLY from the explicit transformation answer (any
+//     topic, informed-choice route); State/Theme users; Companion shape
+//     with the soft-Journey never displacing a directly matching module;
+//     love/relationships never → Family; strong reactions never → Anxiety;
+//     Shame only via the explicit self-worth area; max 3 cards; primary
+//     first; style-invariant; legacy v1 codes normalise honestly.
 //   - RECOGNITION (3-in-7 state threshold) — persisted; guards unchanged.
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
@@ -43,16 +45,14 @@ vi.mock('@/lib/encrypt', () => ({
 }));
 
 import {
-  scoreOnboarding,
-  journeyScore,
   rankOnboardingRecommendations,
+  hasSoftJourneySignal,
   recommendationOwned,
   stateThresholdRecommendation,
   canRecommend,
   evaluateStateThresholdRecommendation,
   STATE_THRESHOLD_PRODUCT,
   ONBOARDING_REASON_KEYS,
-  type JourneySignal,
   type OnboardingAnswerInput,
 } from './recommendations';
 import {
@@ -60,6 +60,7 @@ import {
   ONBOARDING_AREA,
   ONBOARDING_STYLE,
   ONBOARDING_GOAL,
+  normalizeOnboardingAnswers,
   type ActiveProducts,
 } from './types';
 
@@ -80,180 +81,299 @@ beforeEach(() => {
   recodeFindUniqueImpl.mockResolvedValue(null);
 });
 
-// Product ids of the ranked set, in ranked order.
 function products(a: OnboardingAnswerInput): string[] {
   return rankOnboardingRecommendations(a).map((r) => r.product);
 }
+function primary(a: OnboardingAnswerInput): string {
+  return rankOnboardingRecommendations(a)[0].product;
+}
 
-// Exhaustive answer space (including "unanswered" for each step). Style is
-// omitted from these sweeps on purpose — it has no scoring role.
+const STATES_BY_WHY = {
+  anxiety_overwhelm: 'state:anxiety',
+  no_energy_drive: 'state:apathy',
+  far_from_myself: 'state:loss_of_self',
+  emptiness_numbness: 'state:inner_emptiness',
+} as const;
+const THEMES_BY_AREA = {
+  money: 'theme:money',
+  family_parents: 'theme:family',
+  body_intimacy: 'theme:body',
+  self_worth_shame: 'theme:shame',
+  work_purpose: 'theme:self_realisation',
+} as const;
+
+// Exhaustive answer space (including "unanswered" per step).
 const WHYS = [...ONBOARDING_WHY, undefined] as const;
 const AREAS = [...ONBOARDING_AREA, undefined] as const;
 const GOALS = [...ONBOARDING_GOAL, undefined] as const;
 
 // ---------------------------------------------------------------------------
-// ORIENTATION — MiniMind, shape, fallback
+// ORIENTATION — result shape
 // ---------------------------------------------------------------------------
 
-describe('orientation — MiniMind & result shape', () => {
-  it('MiniMind is in every result set, 1–3 cards (exhaustive)', () => {
+describe('orientation — result shape (exhaustive)', () => {
+  it('1–3 cards, MiniMind always present, every reasonKey registered', () => {
+    const known = new Set<string>(ONBOARDING_REASON_KEYS);
     for (const why of WHYS)
       for (const area of AREAS)
         for (const goal of GOALS) {
           const set = rankOnboardingRecommendations({ why, area, goal });
           const label = `${why}/${area}/${goal}`;
-          expect(set.some((r) => r.product === 'minimind'), label).toBe(true);
           expect(set.length, label).toBeGreaterThanOrEqual(1);
           expect(set.length, label).toBeLessThanOrEqual(3);
+          expect(set.some((r) => r.product === 'minimind'), label).toBe(true);
+          for (const r of set) expect(known.has(r.reasonKey), r.reasonKey).toBe(true);
+          // No duplicate products in one set.
+          expect(new Set(set.map((r) => r.product)).size, label).toBe(set.length);
         }
   });
 
-  it('returns MiniMind alone when nothing else qualifies — no arbitrary fallback', () => {
-    const set = rankOnboardingRecommendations({
-      why: 'curious',
-      area: 'several_areas',
-      goal: 'not_sure',
-    });
-    expect(set).toHaveLength(1);
-    expect(set[0].product).toBe('minimind');
-  });
-
-  it('MiniMind reason variant reflects the request (decision / unsure / explore)', () => {
-    const mm = (a: OnboardingAnswerInput) =>
-      rankOnboardingRecommendations(a).find((r) => r.product === 'minimind')!;
-    expect(mm({ why: 'difficult_decision' }).reasonKey).toBe('minimind_decision');
-    expect(mm({ goal: 'decision_clarity' }).reasonKey).toBe('minimind_decision');
-    expect(mm({ why: 'dont_know_what_i_want' }).reasonKey).toBe('minimind_unsure');
-    expect(mm({ goal: 'not_sure' }).reasonKey).toBe('minimind_unsure');
-    expect(mm({ why: 'curious' }).reasonKey).toBe('minimind_explore');
-    expect(mm({}).reasonKey).toBe('minimind_explore');
-  });
-
-  it('MiniMind is a LEVEL, not an accumulation (max, base 1)', () => {
-    // curious(3) + money(area, MiniMind 1) -> MiniMind stays 3, not 4.
-    const { minimind } = scoreOnboarding({ why: 'curious', area: 'money' });
-    expect(minimind).toBe(3);
-    expect(scoreOnboarding({}).minimind).toBe(1);
-  });
-
-  it('every reasonKey produced is registered in ONBOARDING_REASON_KEYS', () => {
-    const known = new Set<string>(ONBOARDING_REASON_KEYS);
+  it('Step 4 (style) never changes the result', () => {
     for (const why of WHYS)
-      for (const area of AREAS)
-        for (const goal of GOALS)
-          for (const r of rankOnboardingRecommendations({ why, area, goal }))
-            expect(known.has(r.reasonKey), r.reasonKey).toBe(true);
+      for (const goal of GOALS) {
+        const base = products({ why, area: 'self_worth_shame', goal });
+        for (const style of ONBOARDING_STYLE) {
+          expect(products({ why, area: 'self_worth_shame', goal, style })).toEqual(base);
+        }
+      }
   });
 });
 
 // ---------------------------------------------------------------------------
-// ORIENTATION — stated-request safeguards (no inferred diagnosis)
+// ORIENTATION — Transformation user
 // ---------------------------------------------------------------------------
 
-describe('orientation — no inferred mappings', () => {
-  it('relationships NEVER maps to Family', () => {
-    for (const goal of GOALS) {
-      expect(products({ why: 'relationships_not_working', goal })).not.toContain('theme:family');
-      expect(products({ area: 'relationships', goal })).not.toContain('theme:family');
-      expect(
-        products({ why: 'relationships_not_working', area: 'relationships', goal }),
-      ).not.toContain('theme:family');
+describe('orientation — transformation user', () => {
+  it('«Путь к себе» is primary from ANY topic, via the informed-choice route', () => {
+    for (const why of WHYS)
+      for (const area of AREAS) {
+        const set = rankOnboardingRecommendations({ why, area, goal: 'transformation' });
+        expect(set[0].product, `${why}/${area}`).toBe('journey');
+        expect(set[0].reasonKey).toBe('journey_primary');
+        expect(set[0].route).toBe('informed_choice');
+      }
+  });
+
+  it('module slot: State when Step 1 names one; else Theme; never both', () => {
+    // State named → State fills the slot even when a Theme also matches.
+    const both = products({ why: 'anxiety_overwhelm', area: 'money', goal: 'transformation' });
+    expect(both).toEqual(['journey', 'state:anxiety', 'minimind']);
+    // No state → the Theme fills the slot.
+    const themeOnly = products({ why: 'repeating_story', area: 'money', goal: 'transformation' });
+    expect(themeOnly).toEqual(['journey', 'theme:money', 'minimind']);
+    // Neither → Journey + MiniMind only.
+    const neither = products({ why: 'understand_myself', area: 'several_areas', goal: 'transformation' });
+    expect(neither).toEqual(['journey', 'minimind']);
+  });
+
+  it('MiniMind rides along as the lighter companion', () => {
+    const set = rankOnboardingRecommendations({ why: 'far_from_myself', goal: 'transformation' });
+    const mm = set.find((r) => r.product === 'minimind');
+    expect(mm?.reasonKey).toBe('minimind_companion');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ORIENTATION — State user
+// ---------------------------------------------------------------------------
+
+describe('orientation — state user (relief + named state)', () => {
+  it('every one of the four states is reachable as primary — including Inner Emptiness', () => {
+    for (const [why, product] of Object.entries(STATES_BY_WHY)) {
+      const set = rankOnboardingRecommendations({ why, goal: 'relief_now' });
+      expect(set[0].product, why).toBe(product);
+      expect(set.map((r) => r.product)).toContain('minimind');
     }
   });
 
-  it('confidence maps to Shame ONLY with a qualifying goal', () => {
-    expect(products({ area: 'confidence_worth' })).not.toContain('theme:shame');
-    expect(products({ area: 'confidence_worth', goal: 'decision_clarity' })).not.toContain(
-      'theme:shame',
-    );
-    for (const goal of ['whats_holding_me_back', 'understand_reactions', 'mine_vs_expected'] as const) {
-      expect(products({ area: 'confidence_worth', goal })).toContain('theme:shame');
+  it('soft «Путь к себе» appears only with a soft signal', () => {
+    const noSignal = products({ why: 'anxiety_overwhelm', area: 'money', goal: 'relief_now' });
+    expect(noSignal).not.toContain('journey');
+    const withSignal = rankOnboardingRecommendations({
+      why: 'anxiety_overwhelm',
+      area: 'whole_life_identity',
+      goal: 'relief_now',
+    });
+    const j = withSignal.find((r) => r.product === 'journey');
+    expect(j?.reasonKey).toBe('journey_soft');
+    expect(j?.route).toBe('informed_choice');
+    expect(withSignal[0].product).toBe('state:anxiety'); // never displaces the primary
+  });
+
+  it('relief WITHOUT a named state falls back to the companion shape', () => {
+    const set = rankOnboardingRecommendations({ why: 'strong_reactions', area: 'money', goal: 'relief_now' });
+    expect(set[0].product).toBe('minimind');
+    expect(set.map((r) => r.product)).toContain('theme:money');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ORIENTATION — Theme user
+// ---------------------------------------------------------------------------
+
+describe('orientation — theme user (focused + named theme)', () => {
+  it('every one of the five themes is reachable as primary — including Body', () => {
+    for (const [area, product] of Object.entries(THEMES_BY_AREA)) {
+      const set = rankOnboardingRecommendations({ area, goal: 'focused_work' });
+      expect(set[0].product, area).toBe(product);
+      expect(set.map((r) => r.product)).toContain('minimind');
     }
   });
 
-  it('career maps to Self-Realisation ONLY with a qualifying goal', () => {
-    expect(products({ area: 'career_purpose' })).not.toContain('theme:self_realisation');
-    expect(products({ area: 'career_purpose', goal: 'decision_clarity' })).not.toContain(
-      'theme:self_realisation',
-    );
-    for (const goal of [
-      'whats_holding_me_back',
-      'mine_vs_expected',
-      'feel_like_myself',
-      'what_no_longer_fits',
-    ] as const) {
-      expect(products({ area: 'career_purpose', goal })).toContain('theme:self_realisation');
-    }
+  it('soft «Путь к себе» appears only with a soft signal', () => {
+    expect(products({ area: 'money', goal: 'focused_work' })).not.toContain('journey');
+    const withSignal = products({ why: 'repeating_story', area: 'money', goal: 'focused_work' });
+    expect(withSignal).toContain('journey');
+    expect(withSignal[0]).toBe('theme:money');
   });
 
-  it('Body and Inner-emptiness are NEVER produced by onboarding (exhaustive)', () => {
+  it('focused WITHOUT a matching theme falls back to the companion shape', () => {
+    const set = rankOnboardingRecommendations({
+      why: 'anxiety_overwhelm',
+      area: 'love_relationships',
+      goal: 'focused_work',
+    });
+    expect(set[0].product).toBe('minimind');
+    expect(set.map((r) => r.product)).toContain('state:anxiety');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ORIENTATION — Companion user + the soft-Journey displacement rule
+// ---------------------------------------------------------------------------
+
+describe('orientation — companion user', () => {
+  it('MiniMind primary; matching State AND Theme both shown', () => {
+    const set = products({ why: 'no_energy_drive', area: 'work_purpose', goal: 'talk_through' });
+    expect(set).toEqual(['minimind', 'state:apathy', 'theme:self_realisation']);
+  });
+
+  it('soft «Путь к себе» NEVER displaces two directly matching modules', () => {
+    // Both slots taken → soft signal ignored even though present.
+    const full = products({ why: 'anxiety_overwhelm', area: 'money', goal: 'talk_through' });
+    expect(full).toEqual(['minimind', 'state:anxiety', 'theme:money']);
+    // ...same answers plus a soft signal would need a 4th slot — verify via
+    // a set where BOTH modules match and the signal comes from Step 1.
+    const alsoFull = products({ why: 'repeating_story', area: 'money', goal: 'talk_through' });
+    // repeating_story names no state, so only one module matched — soft fits.
+    expect(alsoFull).toEqual(['minimind', 'theme:money', 'journey']);
+  });
+
+  it('soft «Путь к себе» shows when a signal exists and fewer than two modules matched', () => {
+    const oneModule = products({ why: 'emptiness_numbness', area: 'several_areas', goal: 'not_sure' });
+    expect(oneModule).toEqual(['minimind', 'state:inner_emptiness', 'journey']);
+    const noModule = products({ why: 'understand_myself', area: 'whole_life_identity', goal: 'not_sure' });
+    expect(noModule).toEqual(['minimind', 'journey']);
+  });
+
+  it('no signal, no modules → MiniMind alone (no invented cards)', () => {
+    expect(products({ why: 'understand_myself', area: 'love_relationships', goal: 'talk_through' })).toEqual([
+      'minimind',
+    ]);
+  });
+
+  it('MiniMind primary reason follows the user’s own words', () => {
+    expect(rankOnboardingRecommendations({ goal: 'not_sure' })[0].reasonKey).toBe('minimind_unsure');
+    expect(
+      rankOnboardingRecommendations({ why: 'weighing_decision', goal: 'talk_through' })[0].reasonKey,
+    ).toBe('minimind_decision');
+    expect(rankOnboardingRecommendations({ goal: 'talk_through' })[0].reasonKey).toBe('minimind_talk');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ORIENTATION — owner prohibitions (exhaustive)
+// ---------------------------------------------------------------------------
+
+describe('orientation — prohibitions', () => {
+  it('«Путь к себе» is PRIMARY only for the explicit transformation answer', () => {
     for (const why of WHYS)
       for (const area of AREAS)
         for (const goal of GOALS) {
-          const ps = products({ why, area, goal });
-          expect(ps, `${why}/${area}/${goal}`).not.toContain('theme:body');
-          expect(ps, `${why}/${area}/${goal}`).not.toContain('state:inner_emptiness');
+          if (goal === 'transformation') continue;
+          expect(primary({ why, area, goal }), `${why}/${area}/${goal}`).not.toBe('journey');
         }
   });
 
-  it('Step 3 (style) never changes the ranked products', () => {
-    const base = { why: 'stuck', area: 'confidence_worth', goal: 'whats_holding_me_back' } as const;
-    const none = products(base);
-    for (const style of ONBOARDING_STYLE) {
-      expect(products({ ...base, style })).toEqual(none);
-    }
+  it('love/relationships never yields the Family theme', () => {
+    for (const why of WHYS)
+      for (const goal of GOALS) {
+        expect(products({ why, area: 'love_relationships', goal })).not.toContain('theme:family');
+      }
+  });
+
+  it('strong reactions never yields the Anxiety state', () => {
+    for (const area of AREAS)
+      for (const goal of GOALS) {
+        expect(products({ why: 'strong_reactions', area, goal })).not.toContain('state:anxiety');
+      }
+  });
+
+  it('Shame & Guilt only via the explicit self-worth/shame area', () => {
+    for (const why of WHYS)
+      for (const area of AREAS)
+        for (const goal of GOALS) {
+          const has = products({ why, area, goal }).includes('theme:shame');
+          if (area !== 'self_worth_shame') expect(has, `${why}/${area}/${goal}`).toBe(false);
+        }
+  });
+
+  it('hasSoftJourneySignal matches exactly the three signals', () => {
+    expect(hasSoftJourneySignal({ why: 'repeating_story' })).toBe(true);
+    expect(hasSoftJourneySignal({ area: 'several_areas' })).toBe(true);
+    expect(hasSoftJourneySignal({ area: 'whole_life_identity' })).toBe(true);
+    expect(hasSoftJourneySignal({ why: 'far_from_myself', area: 'money' })).toBe(false);
   });
 });
 
 // ---------------------------------------------------------------------------
-// ORIENTATION — the Journey gate (>=2 distinct categories)
+// ORIENTATION — legacy v1 codes
 // ---------------------------------------------------------------------------
 
-describe('orientation — the Journey requires two distinct categories', () => {
-  it('journeyScore: <2 categories → null; N categories → N×2', () => {
-    expect(journeyScore(new Set<JourneySignal>())).toBeNull();
-    expect(journeyScore(new Set<JourneySignal>(['loss_of_self']))).toBeNull();
-    expect(journeyScore(new Set<JourneySignal>(['loss_of_self', 'multi_domain']))).toBe(4);
-    expect(
-      journeyScore(new Set<JourneySignal>(['loss_of_self', 'multi_domain', 'authenticity'])),
-    ).toBe(6);
+describe('orientation — legacy v1 answers normalise honestly', () => {
+  it('maps same-meaning codes and drops the unmappable', () => {
+    const n = normalizeOnboardingAnswers({
+      why: 'lost_myself',
+      area: 'career_purpose',
+      style: 'guide_me',
+      goal: 'feel_like_myself',
+    });
+    expect(n).toEqual({
+      why: 'far_from_myself',
+      area: 'work_purpose',
+      style: 'guide_me',
+      goal: 'talk_through',
+    });
+    // No honest v2 equivalent → dropped, never guessed.
+    expect(normalizeOnboardingAnswers({ why: 'relationships_not_working' }).why).toBeNull();
+    expect(normalizeOnboardingAnswers({ area: 'emotional_reactions' }).area).toBeNull();
+    expect(normalizeOnboardingAnswers({ area: 'boundaries_pleasing' }).area).toBeNull();
   });
 
-  it('never from a single category', () => {
-    expect(products({ why: 'lost_myself' })).not.toContain('journey');
-    expect(products({ area: 'several_areas' })).not.toContain('journey');
-    expect(products({ why: 'repeating_patterns' })).not.toContain('journey');
-  });
-
-  it('never from duplicate answers in ONE category', () => {
-    // lost_myself + feel_like_myself → both loss_of_self
-    expect(products({ why: 'lost_myself', goal: 'feel_like_myself' })).not.toContain('journey');
-    // repeating_patterns + why_repeating_patterns → both repeating_patterns
-    expect(products({ why: 'repeating_patterns', goal: 'why_repeating_patterns' })).not.toContain(
-      'journey',
-    );
-  });
-
-  it('qualifies from two DISTINCT categories and routes to informed-choice', () => {
-    for (const a of [
-      { why: 'lost_myself', area: 'several_areas' },
-      { why: 'repeating_patterns', goal: 'mine_vs_expected' },
-      { why: 'dont_know_what_i_want', goal: 'what_no_longer_fits' },
-      { goal: 'feel_like_myself', area: 'several_areas' },
-    ] as const) {
-      const j = rankOnboardingRecommendations(a).find((r) => r.product === 'journey');
-      expect(j, JSON.stringify(a)).toBeTruthy();
-      expect(j!.route).toBe('informed_choice');
+  it('legacy users become Companion users — the Journey is never inferred for someone never asked', () => {
+    for (const goal of [
+      'whats_holding_me_back',
+      'decision_clarity',
+      'why_repeating_patterns',
+      'mine_vs_expected',
+      'feel_like_myself',
+      'understand_reactions',
+      'what_no_longer_fits',
+    ]) {
+      const n = normalizeOnboardingAnswers({ why: 'lost_myself', area: 'money', goal });
+      const set = rankOnboardingRecommendations(n);
+      expect(set[0].product, goal).toBe('minimind');
+      expect(set[0].product).not.toBe('journey');
     }
   });
 
-  it('MiniMind-only answers never trigger the Journey', () => {
-    expect(products({ why: 'difficult_decision', goal: 'decision_clarity' })).not.toContain(
-      'journey',
-    );
-    expect(products({ why: 'relationships_not_working', area: 'relationships' })).not.toContain(
-      'journey',
-    );
+  it('the old emotional_reactions → Anxiety misfire is gone for legacy users', () => {
+    const n = normalizeOnboardingAnswers({
+      why: 'understand_reactions',
+      area: 'emotional_reactions',
+      goal: 'understand_reactions',
+    });
+    expect(products(n)).not.toContain('state:anxiety');
   });
 });
 
@@ -269,8 +389,8 @@ describe('orientation — owned products shown, not suppressed', () => {
     themes: [{ moduleId: 'money', accessExpiresAt: null, active: true }],
   };
 
-  it('a matched product stays in the ranked set regardless of ownership', () => {
-    expect(products({ area: 'money' })).toContain('theme:money');
+  it('a matched product stays in the set regardless of ownership', () => {
+    expect(products({ area: 'money', goal: 'focused_work' })).toContain('theme:money');
   });
 
   it('recommendationOwned reflects active access', () => {

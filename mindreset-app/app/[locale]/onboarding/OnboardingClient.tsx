@@ -1,12 +1,13 @@
 'use client';
 
-// 4-step onboarding client — Step 2 (2026-07-20).
+// 4-step onboarding client — v2 typing questionnaire (2026-07-20).
 //
-// Buttons write codes, nothing else. Each selection saves immediately
-// (partial saves merge server-side and survive an abandoned flow), then
-// advances. Skip is visible on every step and set-once server-side.
-// Revisits arrive with current answers preselected; changing one saves
-// the new value the same way.
+// One dimension per step: state (why) → area → kind of work (goal, the
+// type decider) → style. Buttons write codes, nothing else. Each
+// selection saves immediately (partial saves merge server-side and
+// survive an abandoned flow), then advances. Skip is visible on every
+// step and set-once server-side. Revisits arrive with current answers
+// preselected; changing one saves the new value the same way.
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -27,11 +28,13 @@ type Answers = {
 
 type StepKey = 'why' | 'area' | 'style' | 'goal';
 
+// v2 order: the work-type question (goal) comes BEFORE style — it is the
+// deciding question and deserves the user's attention while fresh.
 const STEPS: { key: StepKey; title: string; options: readonly string[] }[] = [
   { key: 'why', title: 'title1', options: ONBOARDING_WHY },
   { key: 'area', title: 'title2', options: ONBOARDING_AREA },
-  { key: 'style', title: 'title3', options: ONBOARDING_STYLE },
-  { key: 'goal', title: 'title4', options: ONBOARDING_GOAL },
+  { key: 'goal', title: 'title3', options: ONBOARDING_GOAL },
+  { key: 'style', title: 'title4', options: ONBOARDING_STYLE },
 ];
 
 export default function OnboardingClient({
