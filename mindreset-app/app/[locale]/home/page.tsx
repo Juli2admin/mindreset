@@ -261,6 +261,21 @@ export default async function HomePage({
   // modes.
   const hasStripeCustomer = dbUser?.stripeCustomerId != null;
 
+  // Platform Step 2 (2026-07-20) — the 4-step onboarding. Routed here
+  // once: only while the user has neither completed nor skipped it. Skip
+  // is visible on every step inside the flow, so this is an invitation
+  // with an exit, not a gate (owner-locked: no coercive routing).
+  // Existing users see it once on their next visit, then never again.
+  // Placed AFTER the post-sign-up bookkeeping above so screening linkage,
+  // welcome email and pilot grants are never skipped by the redirect.
+  const onboarding = await prisma.wellbeingSnapshot.findUnique({
+    where: { userId: user.id },
+    select: { onboardingCompletedAt: true, onboardingSkippedAt: true },
+  });
+  if (!onboarding?.onboardingCompletedAt && !onboarding?.onboardingSkippedAt) {
+    redirect({ href: '/onboarding', locale });
+  }
+
   return (
     <HomeClient
       firstName={firstName}
