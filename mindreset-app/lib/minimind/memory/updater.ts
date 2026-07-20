@@ -40,6 +40,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import prisma from '@/lib/prisma';
+import { evaluateStateThresholdRecommendation } from '@/lib/platform/recommendations';
 import { Prisma } from '@prisma/client';
 import type { DetectedState } from '@/lib/minimind/safety/verifier';
 import { decrypt } from '@/lib/encrypt';
@@ -598,6 +599,11 @@ export async function updateWellbeingSnapshot(userId: string): Promise<void> {
       create: { userId, ...data },
       update: data,
     });
+
+    // Platform Step 4 (2026-07-20) — the roadmap's 3-in-7 recognition
+    // rule, evaluated on the freshly written occurrence data. Own
+    // error-swallowing inside; must never break the profile update.
+    await evaluateStateThresholdRecommendation(userId);
   } catch (err) {
     console.error('[PROFILE UPDATE FAILED]', {
       userId,

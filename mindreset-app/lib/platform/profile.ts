@@ -69,13 +69,15 @@ function assertCode<T extends readonly string[]>(
  * otherwise silently poison recommendations downstream).
  *
  * onboardingCompletedAt is stamped once, when all four answers are present
- * after the merge. `now` injectable for tests.
+ * after the merge. `now` injectable for tests. Returns whether onboarding
+ * is complete after this save, so the caller can fire completion-time
+ * side effects (Step 4: recommendation rules).
  */
 export async function saveOnboarding(
   userId: string,
   answers: OnboardingAnswers,
   now: Date = new Date(),
-): Promise<void> {
+): Promise<{ completed: boolean }> {
   assertCode('why', answers.why, ONBOARDING_WHY);
   assertCode('area', answers.area, ONBOARDING_AREA);
   assertCode('style', answers.style, ONBOARDING_STYLE);
@@ -115,6 +117,7 @@ export async function saveOnboarding(
     update: data,
     create: { userId, ...data },
   });
+  return { completed: completedAt !== null };
 }
 
 /** Record that the user skipped onboarding. Set-once; upserts the row. */
