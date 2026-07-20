@@ -21,8 +21,26 @@ export type BillingUser = {
   lifetimeMessagesUsed:   number;
 };
 
-export function hasCapacity(user: BillingUser): boolean {
-  const tier = user.currentTier ?? 'free';
+// The Journey includes MiniMind Extended for the duration of Journey access
+// (owner Decision 1, 2026-07-20). One-way: owning MiniMind never grants the
+// Journey; owning the Journey grants MiniMind. DERIVED at read time from
+// checkJourneyAccess — never written to User.currentTier — so it keeps
+// Journey/MiniMind billing separate and reverts the instant Journey access
+// lapses. Extended matches what pilot Journey testers already receive.
+export const JOURNEY_MINIMIND_TIER = 'extended';
+
+// The tier that actually governs MiniMind capacity for this request: the
+// Journey grant (Extended) when active, otherwise the user's own tier.
+export function effectiveTier(
+  currentTier: string | null,
+  journeyGrantsMiniMind = false,
+): string {
+  if (journeyGrantsMiniMind) return JOURNEY_MINIMIND_TIER;
+  return currentTier ?? 'free';
+}
+
+export function hasCapacity(user: BillingUser, journeyGrantsMiniMind = false): boolean {
+  const tier = effectiveTier(user.currentTier, journeyGrantsMiniMind);
 
   // Top-up pool is consumed before the cycle allowance.
   if (user.topUpMessagesRemaining > 0) return true;
@@ -35,8 +53,8 @@ export function hasCapacity(user: BillingUser): boolean {
 }
 
 // Total messages the user can still send this cycle (including top-up pool).
-export function availableMessages(user: BillingUser): number {
-  const tier = user.currentTier ?? 'free';
+export function availableMessages(user: BillingUser, journeyGrantsMiniMind = false): number {
+  const tier = effectiveTier(user.currentTier, journeyGrantsMiniMind);
   const topUp = user.topUpMessagesRemaining;
 
   if (tier === 'free') {
@@ -54,9 +72,9 @@ export function availableMessages(user: BillingUser): number {
 
 // True when an Extended user has crossed the soft cap but not the hard cap.
 // Used by the UI to show a gentle "approaching limit" notice.
-export function isAtSoftCap(user: BillingUser): boolean {
+export function isAtSoftCap(user: BillingUser, journeyGrantsMiniMind = false): boolean {
   return (
-    user.currentTier === 'extended' &&
+    effectiveTier(user.currentTier, journeyGrantsMiniMind) === 'extended' &&
     user.topUpMessagesRemaining === 0 &&
     user.messagesUsedThisCycle >= TIER_CAPS.extended.softCap &&
     user.messagesUsedThisCycle < TIER_CAPS.extended.hardCap

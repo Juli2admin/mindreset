@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import { linkScreeningToUser } from '@/lib/screening/linkScreeningToUser';
 import { hasCapacity } from '@/lib/billing/limits';
+import { checkJourneyAccess } from '@/lib/journey/access';
 import { decrypt } from '@/lib/encrypt';
 import { redirect } from '@/i18n/navigation';
 import DisclaimerGate from '@/components/DisclaimerGate';
@@ -259,7 +260,13 @@ export default async function MiniMindPage({
   const initialShow = !disclaimerCookie && !disclaimerAcknowledgedInDB;
   const needsCookieBackfill = !disclaimerCookie && disclaimerAcknowledgedInDB;
 
-  const atCap = billingUser ? !hasCapacity(billingUser) : false;
+  // The Journey includes MiniMind (Decision 1): only show the paywall when
+  // the user is at their own cap AND the Journey grant doesn't cover them.
+  let atCap = billingUser ? !hasCapacity(billingUser) : false;
+  if (atCap && billingUser) {
+    const journeyGrantsMiniMind = (await checkJourneyAccess(userId)).allowed;
+    atCap = !hasCapacity(billingUser, journeyGrantsMiniMind);
+  }
 
   return (
     <>

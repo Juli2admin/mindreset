@@ -20,6 +20,7 @@ import { updateWellbeingSnapshot } from '@/lib/minimind/memory/updater';
 import { encrypt, decrypt } from '@/lib/encrypt';
 import { checkChatRateLimit } from '@/lib/rateLimit';
 import { hasCapacity, consumeMessage } from '@/lib/billing/limits';
+import { checkJourneyAccess } from '@/lib/journey/access';
 import { waitUntil } from '@vercel/functions';
 import { recordAiUsage } from '@/lib/ai-usage/record';
 
@@ -186,7 +187,16 @@ export async function POST(req: NextRequest) {
       data: { disclaimerAcknowledgedAt: new Date() },
     }).catch((err) => console.error('[chat] disclaimer backfill failed:', err));
   }
-  if (!hasCapacity(billingUser)) {
+  // MiniMind capacity gate. The Journey includes MiniMind (Decision 1): if
+  // the user's own tier is at cap, re-check with the Journey grant before
+  // blocking. checkJourneyAccess is queried ONLY when the base tier would
+  // block, so the common path (user under their own cap) pays no extra query.
+  let hasMessages = hasCapacity(billingUser);
+  if (!hasMessages) {
+    const journeyGrantsMiniMind = (await checkJourneyAccess(userId)).allowed;
+    hasMessages = hasCapacity(billingUser, journeyGrantsMiniMind);
+  }
+  if (!hasMessages) {
     return NextResponse.json({ error: 'at-cap' }, { status: 402 });
   }
 
