@@ -415,3 +415,23 @@ appears at most once per user. POST `/api/account/marketing-consent`
 backs both surfaces.
 
 **Logged**: 2026-05-31. Closed 2026-06-01.
+
+### 25. Relationships-focused product gap — `[non-blocking]`
+
+Recommendation-engine note (owner spec 2026-07-20). Onboarding offers
+relationship-oriented answers (`why: relationships_not_working`,
+`area: relationships`), but there is **no** Relationships State or Theme.
+The Family theme is specifically "Parents and Family Scripts" — mapping a
+romantic/peer relationship request onto it would be an *inferred diagnosis*,
+which the stated-request engine explicitly forbids. So relationship answers
+currently route to MiniMind, and to the Journey only when ≥2 independent
+Journey signal categories are present from the user's OTHER answers.
+
+**Gap**: a dedicated Relationships-focused Theme or module would give these
+users a direct product match. **Not created in this scope** (recorded per the
+engine spec's §7).
+
+**Recommendation**: consider a "Relationships" Theme in a future Block C
+content pass. Until then MiniMind is the honest, non-inferential entry point.
+
+**Logged**: 2026-07-20.

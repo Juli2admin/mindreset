@@ -1,18 +1,23 @@
 'use client';
 
-// Dashboard v1 — Platform Step 5 (2026-07-20, owner-approved copy).
+// Dashboard — Platform Step 5 + recommendation redesign (2026-07-20).
 //
-// Two blocks above the product cards on /home:
-//   1. "Why you're here" — the user's own onboarding answers (their
-//      tapped labels), with a change link back to /onboarding; or the
-//      invitation when onboarding was skipped.
-//   2. "Suggested for you" — at most ONE open recommendation, reason
-//      localised from its ruleKey ("you said" framing — never "we
-//      noticed"). "Take a look" records accepted and navigates;
-//      "Not now" records declined (30-day cool-off) and removes the card.
+// Three blocks above the product cards on /home:
+//   1. "Recommended starting points" — the STATELESS orientation set,
+//      1–3 ranked cards computed from the four onboarding answers. Each
+//      card: the user's own "you said" reason, the product name, one action
+//      link. MiniMind is always present. Owned products are shown, not
+//      suppressed ("you already have access — continue here"). The Journey
+//      routes to the informed-choice page, never checkout. Guidance only —
+//      no accept/decline, never restricts access; the full catalogue stays
+//      visible in the sections below.
+//   2. "Why you're here" — the user's own onboarding answers, with a change
+//      link; or the invitation when onboarding was skipped.
+//   3. "Suggested for you" — the RECOGNITION nudge (3-in-7), persisted and
+//      dismissable. "Take a look" accepts + navigates; "Not now" declines.
 //
-// Reads only the user-facing projection — hidden diagnostics cannot
-// appear here by construction (see lib/platform/types.ts).
+// Reads only the user-facing projection — hidden diagnostics cannot appear
+// here by construction (see lib/platform/types.ts).
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -27,6 +32,13 @@ type Onboarding = {
   completed: boolean;
 };
 
+// One ranked orientation card. Stateless — no id, no response.
+type OrientationRec = {
+  product: string;
+  reasonKey: string;
+  owned: boolean;
+};
+
 type Recommendation = {
   id: string;
   product: string;
@@ -35,6 +47,9 @@ type Recommendation = {
 };
 
 const SANS = 'var(--font-sans, ui-sans-serif)';
+
+// The informed-choice page for the Journey — never checkout.
+const JOURNEY_INFORMED_CHOICE = '/journey/is-it-right';
 
 function productHref(product: string): string {
   if (product === 'minimind') return '/minimind';
@@ -45,9 +60,11 @@ function productHref(product: string): string {
 
 export default function DashboardSection({
   onboarding,
+  recommendations,
   recommendation,
 }: {
   onboarding: Onboarding | null;
+  recommendations: OrientationRec[];
   recommendation: Recommendation | null;
 }) {
   const t = useTranslations('Dashboard');
@@ -66,6 +83,17 @@ export default function DashboardSection({
     return kind === 'state'
       ? tStates(`modules.${moduleId}.name`)
       : tThemes(`modules.${moduleId}.name`);
+  }
+
+  // Orientation card CTA + destination.
+  function orientationHref(r: OrientationRec): string {
+    if (r.product === 'journey') return r.owned ? '/journey' : JOURNEY_INFORMED_CHOICE;
+    return productHref(r.product);
+  }
+  function orientationCta(r: OrientationRec): string {
+    if (r.owned) return t('ownedContinue');
+    if (r.product === 'journey') return t('ctaJourney');
+    return t('cta');
   }
 
   function reasonText(r: Recommendation): string | null {
@@ -112,6 +140,51 @@ export default function DashboardSection({
 
   return (
     <div className="mb-12">
+      {/* Recommended starting points — the ranked orientation set. */}
+      {recommendations.length > 0 && (
+        <div className="mb-4">
+          <div
+            className="text-[11px] uppercase tracking-[0.22em] mb-3"
+            style={{ color: PALETTE.accent, fontWeight: 500, fontFamily: SANS }}
+          >
+            {t('recommendedTitle')}
+          </div>
+          <div className="flex flex-col gap-3">
+            {recommendations.map((r) => (
+              <div
+                key={r.product}
+                className="rounded-xl border p-5"
+                style={{ borderColor: PALETTE.border, background: PALETTE.bg }}
+              >
+                <p
+                  className="text-[15px] mb-1"
+                  style={{ color: PALETTE.text, fontFamily: SANS, fontWeight: 600 }}
+                >
+                  {productName(r.product)}
+                </p>
+                <p
+                  className="text-[14px] leading-[1.6] mb-4"
+                  style={{ color: PALETTE.textMuted, fontFamily: SANS }}
+                >
+                  {t(`reason_${r.reasonKey}`)}
+                </p>
+                <Link
+                  href={orientationHref(r)}
+                  className="inline-block text-[13px] border rounded-lg px-4 py-2"
+                  style={{
+                    borderColor: PALETTE.text,
+                    color: PALETTE.text,
+                    fontFamily: SANS,
+                  }}
+                >
+                  {orientationCta(r)}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Why you're here */}
       <div
         className="rounded-xl border p-5 mb-4"
@@ -167,7 +240,7 @@ export default function DashboardSection({
         )}
       </div>
 
-      {/* Suggested for you — at most one, only when open */}
+      {/* Suggested for you — the recognition nudge (3-in-7), dismissable. */}
       {rec && reasonText(rec) && (
         <div
           className="rounded-xl border p-5"
