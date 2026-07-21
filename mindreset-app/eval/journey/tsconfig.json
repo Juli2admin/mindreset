@@ -9,5 +9,10 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["run.ts", "lib/**/*.ts"]
+  "include": ["run.ts", "lib/**/*.ts"],
+  // Override the inherited exclude. The root tsconfig now excludes `eval` so
+  // the Next build won't type-check the harness; but this config lives INSIDE
+  // eval/, so inheriting that exclude would drop its own inputs. An empty
+  // exclude is safe here because `include` is already narrow (run.ts + lib).
+  "exclude": []
 }

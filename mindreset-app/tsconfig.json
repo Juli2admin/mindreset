@@ -16,5 +16,10 @@
     "paths": { "@/*": ["./*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.jsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  // eval/ is a dev-only evaluation harness (Journey golden-session runner). It
+  // is NOT part of the Next.js app and must not be swept into `next build`'s
+  // type-check: this root config sets no `target`, so it defaults below es6 and
+  // rejects the harness's `u`-flag regexes and Set iteration. The harness has
+  // its own es2022 config — typecheck it with `tsc -p eval/journey/tsconfig.json`.
+  "exclude": ["node_modules", "eval"]
 }
