@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "downlevelIteration": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["run.ts", "lib/**/*.ts"]
+}
