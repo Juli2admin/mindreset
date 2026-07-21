@@ -354,5 +354,75 @@ named and no prior fix resolved.
 
 ---
 
+## Deliverable 7 (addendum, 2026-07-21) — communication & reply-generation system
+
+Added after the owner's correction: the reply defect is **not** stage progression and
+**not** the methodology. This section audits the coding + communication system directly
+and establishes why "smart analysis underneath, dumb reply on top" occurs — and why
+repeatedly changing the stage machinery never moved reply quality.
+
+**Finding 1 — the communication spec already forbids the observed behaviour (so this is
+an enforcement failure, not a content gap).** `<communication>` (`journey-master.md:69-101`)
+explicitly prohibits: paraphrasing/echoing the user's last message (`:72`); the exact
+"echo → interpretation → question" shape (`:74`); routine validation, which "lands worst
+with self-sufficient users" (`:76`); stock therapy phrasing (`:78`); announcing moves
+(`:80`); and diagnosing in real time / "explain[ing] the user to themselves" (`:84`).
+Julia's session did all of these. The rules are correct and were not followed.
+
+**Finding 2 — the reply is generated BEFORE the analysis, in one pass, with no enforced
+reasoning step.** One streamed completion emits the reply first, `<state-report>` (with
+`clinicalRead`) after (`turn/route.ts:399-404`; `parse.ts:140-153`;
+`reply-processor.ts:236-243`). The Sensitivity Layer *requires* the five clinical
+questions to be answered "silently … in working memory only. **No `<assessment>` block.
+No `<thinking>` block**" (`journey-master.md:815`), reply emitted first (`:819-827`),
+reasoning "never written to output" (`:887`). There is no structured analysis artefact
+the reply is built from and no second pass. `clinicalRead` is a "compact record" written
+*after* the reply — a receipt, not a plan.
+
+**Finding 3 — the "analytics-led clinician" logic exists only as unenforced
+instructions.** The five questions (`:829-846`) + hard behaviour rules (`:848-881`) ARE
+the analytics-led clinician the owner wants (detect channel shift, honour modality
+rejection, don't close an open cycle, "has the request been addressed"). But they run
+invisibly, reply-first, with no execution artefact and nothing that verifies the reply
+obeyed them. They are aspiration, not architecture.
+
+**Finding 4 — attention economics: the behavioural rules are ~4% of the prompt; the
+methodology reference is 73%.** Total assembled prompt: 341,561 chars / ~92,300 tokens.
+`<communication>` ≈ 33 lines (~1k tokens); the Sensitivity Layer ≈ 95 lines (~2.5k
+tokens) → the rules governing *how to talk and how to reason* are ~4% of the prompt.
+Block 1 (Shared Core + all 8 stage specs) is 251,418 chars = 73%. The conversational-
+behaviour contract is a minority voice competing with eight full clinical playbooks for
+the model's attention.
+
+**Finding 5 — no cross-turn memory of "what I already did."** Prior `<state-report>`s /
+`clinicalRead`s are stripped from history (`route.ts:606-613`; `parse.ts:140-154`);
+assistant history is clean replies only. The one carried-forward analytic is the
+`continuityNote` — head/tail truncated at 800 chars (`assemble.ts:427-438`), read by no
+gate/router/closure code (Deliverable 6, A9), and never instructed to be voiced. So the
+model cannot reliably know "I already asked what 'alone' means" except by re-reading raw
+reply history under attention dilution — hence the repeat, which its own post-hoc
+`clinicalRead` then correctly flags as a rupture.
+
+**Finding 6 — the prior fix for robotic behaviour plausibly worsened the dilution.** The
+master-prompt header attributes robotic behaviour to the old per-stage prompts and
+"fixes" it by merging into one master prompt with "the full 8-block toolkit … available
+every turn" (`journey-master.md:18`). PR λ (2026-07-11) then loaded all 8 stage specs
+into the prompt every turn (`assemble.ts:532-544`) — the 73% bulk of Finding 4. Robotic
+behaviour persisted. The fix added the very bulk that dilutes the behavioural rules and
+did not touch the reply-first, analysis-downstream architecture.
+
+**Answer to the owner's question (communication vs analytics underneath):** it is
+neither the methodology nor the stuck stage. The communication spec is good; the
+analytics are good; **the two are not coupled.** The reply is an undivided, single-pass
+improvisation emitted *before* the analysis; the analysis is a post-hoc receipt; the
+behavioural rules are ~4% of a 92k-token prompt dominated 73% by methodology reference;
+and there is no cross-turn memory of prior moves beyond a truncated note that no code
+reads. Therefore the AI **cannot** "lead from the analytics underneath" — the
+architecture has no analytics-then-speak step; the analytics only describe the reply
+after the fact. This is why changing stage/methodology never moved reply quality: reply
+quality was never a function of stage.
+
+---
+
 *Audit is factual and read-only. No fix proposed, no prompt drafted, no PR opened,
 per the request. The exact prompt export is the companion file.*
