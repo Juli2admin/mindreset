@@ -23,6 +23,15 @@ code (not against comments or prior audits):
 5. **[05-CLEANUP-ROADMAP.md](05-CLEANUP-ROADMAP.md)** — a proposed cleanup
    *sequence* only. No implementation, no fixes.
 
+Canon Resolution (the next phase — converting findings into an owner-approvable
+decision register; still read-only):
+
+6. **[06-CANON-RESOLUTION-REGISTER.md](06-CANON-RESOLUTION-REGISTER.md)** — one
+   row per confirmed conflict/duplication/dead field/competing authority (12
+   fields each), the owner decisions still required, and a PR decomposition
+   (scope only). Survivors proposed only where an explicit owner decision
+   dictates them.
+
 ## Evidence standard (held on every claim in this set)
 
 - Every factual claim is cited to `file:line` against the **live runtime** as
