@@ -28,9 +28,17 @@ decision register; still read-only):
 
 6. **[06-CANON-RESOLUTION-REGISTER.md](06-CANON-RESOLUTION-REGISTER.md)** — one
    row per confirmed conflict/duplication/dead field/competing authority (12
-   fields each), the owner decisions still required, and a PR decomposition
-   (scope only). Survivors proposed only where an explicit owner decision
-   dictates them.
+   fields each). Updated with the eight canonical owner decisions (2026-07-21),
+   the safety protocol, and a resolution map marking every row.
+7. **[07-PR-A-AND-B-PLANS.md](07-PR-A-AND-B-PLANS.md)** — first-round exact PR A
+   and PR B plans (superseded in part: PR A → PR A0, PR B → B1/B2/B3/B4 below).
+8. **[08-PR-B1-B2-B3-PLANS.md](08-PR-B1-B2-B3-PLANS.md)** — revised split of PR B
+   into B1 (anchor), B2 (banned stock wrappers), B3 (hypothesis discipline), with
+   B4 (echo rhythm) deferred. Planning only.
+
+Implementation status: **PR A0** (behaviour-preserving cleanup) is implemented on
+branch `claude/journey-clean-runtime` and opened as PR #340 (review only, not
+merged). Everything else remains planning; the runtime is otherwise frozen.
 
 ## Evidence standard (held on every claim in this set)
 
