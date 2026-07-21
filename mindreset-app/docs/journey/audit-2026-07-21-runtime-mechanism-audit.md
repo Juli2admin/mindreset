@@ -424,5 +424,60 @@ quality was never a function of stage.
 
 ---
 
+## Deliverable 8 (addendum, 2026-07-21) — four checks the architectural pass had NOT covered
+
+After delivering Deliverable 7 the owner asked "is it all." It was not. Four things the
+prior passes had not verified — model, sampling, post-processing, and whether the 73%
+methodology actively *models* the robotic pattern. One of them corrects a claim made in
+Deliverable 7.
+
+**Finding 8.1 — the methodology bulk ACTIVELY MODELS the forbidden pattern (upgrade of
+Finding 4 from "dilution" to "contradiction").** The `<communication>` spec forbids
+routine validation and stock therapy phrasing (`journey-master.md:76,78`). But the 73%
+clinical-spec bulk is saturated with the exact opener it forbids — "I hear you" / "I hear
+that" as the canonical exemplar: `00-shared-core.md:209`; `01-stage-stabilisation.md:173`
+("I'm here. I hear you."); `02-stage-pain.md:85` ("yes, I hear that"); `03-stage-adult-
+self.md:292` ("I hear that she's always there."); `07-stage-new-identity.md:264,389`
+("I hear that…" / "I hear you. You've been feeling a lot…"). The model is shown the
+validation-and-reflect opening as the method's own voice across ~6 stage docs, then told
+in ~4% of the prompt not to do it. This is the most direct explanation for the robotic
+reply: the prompt trains the pattern in-context far more than it prohibits it.
+
+**Finding 8.2 — the analyze-then-speak step EXISTED and was deliberately deleted for
+latency.** PR α (2026-07-09) added a pre-reply `<assessment>` block — the exact
+"reason before you speak" artefact whose absence Deliverable 7 flagged. PR β (2026-07-09)
+**removed the requirement** because buffering it "added 20–30s of first-byte delay in
+practice — too slow for the product" (`turn/route.ts:406-425`; `reply-processor.ts:6-16`).
+So coupling analysis to reply was built and then cut for speed — not an idea nobody had.
+The strip logic is still retained defensively, which is why any leaked `<assessment>` is
+removed from the user's view.
+
+**Finding 8.3 — model is Sonnet 4.6 on every stage; temperature is unset (default ~1.0);
+budget is 2,500 tokens shared reply+report.** `getModelForStage` returns
+`claude-sonnet-4-6` for all 8 stages, no overrides (`lib/journey/model.ts:13-22`). The
+API call sets `max_tokens: 2500` and **no `temperature`** (`turn/route.ts:399-404`,
+`:68`) → Anthropic default. Two consequences: (a) this is NOT a low-temperature rigidity
+problem — the opposite, it runs at full default temperature; (b) the behavioural-minority-
+voice-vs-contradictory-bulk problem lands on a mid-tier model with no Opus tiering,
+whereas the plan explicitly reserved Opus for the hardest stage "after fidelity testing."
+
+**Finding 8.4 — reply post-processing is clean; it does NOT mangle the reply.** The
+streaming state machine strips only `<assessment>`/`<thinking>` and `<state-report>` tags
+(`reply-processor.ts:40-46,229-247`); the visible reply is exactly what the model
+produced minus hidden tags. Post-processing is ruled out as a cause of reply quality.
+
+**Correction to Deliverable 7.** D7 implied the model is not directed to use the
+analytics. That was too strong. The prompt DOES instruct it to consult the state block and
+task contract and to answer five clinical questions before replying
+(`journey-master.md:50,66,815,873`; state block header `assemble.ts:160`). The accurate
+statement: the instruction to lead from the analytics **exists but is unenforced** — no
+artefact, no verification, single pass — AND the forcing mechanism that would have made it
+real (`<assessment>`) was removed for latency (8.2), AND it competes against a much larger
+body of exemplars that model the opposite behaviour (8.1). The problem is not a missing
+instruction; it is an unenforced instruction outweighed by a contradictory in-context
+demonstration, on a mid-tier model, with the one enforcement step deleted for speed.
+
+---
+
 *Audit is factual and read-only. No fix proposed, no prompt drafted, no PR opened,
 per the request. The exact prompt export is the companion file.*
