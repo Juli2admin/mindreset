@@ -55,6 +55,7 @@ import {
 } from '@/lib/journey/streaming/leak-detector';
 import { recordAiUsage } from '@/lib/ai-usage/record';
 import { checkJourneyMonthlyCap } from '@/lib/ai-usage/monthly-cap';
+import { resolveThinkingConfig } from '@/lib/journey/experiments/thinking-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -396,12 +397,31 @@ export async function POST(request: NextRequest) {
   // dropping to reply-only output, 18 consecutive report-less turns).
   const messages: Anthropic.MessageParam[] = appendEmissionReminder(maskedHistory);
 
-  const stream = anthropic.messages.stream({
+  // EXPERIMENT (flag-gated, off in production) — extended thinking.
+  // resolveThinkingConfig reads JOURNEY_THINKING from the env. When unset it
+  // returns mode 'off' with NO thinking params and maxTokens === MAX_TOKENS,
+  // so the request below is byte-identical to production. The thinking /
+  // output_config fields are cast onto the request because the installed SDK
+  // (0.30.1) predates those params. See lib/journey/experiments/thinking-
+  // config.ts. Owner note: budget is env-driven, not assumed at 1500.
+  const thinkingCfg = resolveThinkingConfig(MAX_TOKENS);
+  if (thinkingCfg.mode !== 'off') {
+    console.info(
+      '[journey/turn] EXPERIMENT thinking on',
+      JSON.stringify({ mode: thinkingCfg.mode, maxTokens: thinkingCfg.maxTokens, ...thinkingCfg.detail }),
+    );
+  }
+  const streamParams = {
     model,
-    max_tokens: MAX_TOKENS,
+    max_tokens: thinkingCfg.maxTokens,
     system: systemBlocks,
     messages,
-  });
+    ...(thinkingCfg.thinking ? { thinking: thinkingCfg.thinking } : {}),
+    ...(thinkingCfg.output_config ? { output_config: thinkingCfg.output_config } : {}),
+  };
+  const stream = anthropic.messages.stream(
+    streamParams as unknown as Anthropic.MessageStreamParams,
+  );
 
   // Streaming pipeline — PR α (2026-07-09) uses a dedicated state
   // machine at lib/journey/streaming/reply-processor.ts. Two tags are
@@ -421,6 +441,19 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       try {
         for await (const event of stream) {
+          // EXPERIMENT guard: when extended thinking is on, the model streams
+          // hidden thinking_delta / signature_delta events. These are private
+          // reasoning and must NEVER reach the visible stream or the state-
+          // report parser (processor.fullText). The text_delta branch below
+          // already excludes them, but we skip explicitly so the invariant
+          // survives future refactors. Typed loosely because SDK 0.30.1's
+          // delta union predates the thinking deltas.
+          if (event.type === 'content_block_delta') {
+            const deltaType = (event.delta as { type?: string }).type;
+            if (deltaType === 'thinking_delta' || deltaType === 'signature_delta') {
+              continue;
+            }
+          }
           if (
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
