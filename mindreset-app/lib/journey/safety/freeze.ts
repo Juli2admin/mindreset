@@ -12,7 +12,7 @@
 import prisma from '@/lib/prisma';
 import type { RedFlagType } from './keywords';
 
-export type FreezeSource = 'keyword_scan' | 'verifier' | 'state_report' | 'manual';
+export type FreezeSource = 'keyword_scan' | 'verifier' | 'state_report';
 
 export type FreezeArgs = {
   userId: string;

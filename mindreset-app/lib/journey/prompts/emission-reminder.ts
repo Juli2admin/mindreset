@@ -7,7 +7,7 @@
 // persistence, so the conversation history the model sees contains only
 // clean human replies. A few turns into a session, the model's own
 // history ("none of my replies here include a report") outweighs the
-// emission instruction sitting in the ~76k-token cached system prompt,
+// emission instruction sitting in the large cached system prompt,
 // and it stops emitting the <state-report> block entirely — output drops
 // to reply-only (42–160 tokens observed vs 444–789 on healthy turns).
 // Once it lapses, the near-identical context keeps it lapsed for the

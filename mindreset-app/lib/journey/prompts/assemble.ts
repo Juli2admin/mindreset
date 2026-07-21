@@ -1,14 +1,13 @@
 // Assemble the AI's system prompt for one turn of The Journey.
-// Composes: Shared Core + active-stage spec + state injection + output-format
-// instruction (the hidden state report shape).
+// Composes 4 blocks: canon (Shared Core + Practice Generation Algorithm + ALL 8
+// stage specs) + master-before-state + dynamic state block + master-after-state
+// (which carries the state-report output-format the model emits).
 //
 // The user never sees any of this. Only the AI does.
 
 import {
   sharedCore,
   practiceGenerationAlgorithm,
-  loadStageSpec,
-  loadEngineeredStagePrompt,
   loadMasterJourneyPrompt,
   stage01,
   stage02,
@@ -28,80 +27,6 @@ import type { JourneyState } from '../state/types';
 // substituted in. Matches the placeholder in docs/journey/runtime/*.md.
 const STATE_INJECTION_TOKEN = '{{STATE_INJECTION}}';
 
-const STATE_REPORT_FORMAT_INSTRUCTION = `
----
-
-## Output format — required every turn
-
-Your reply has two parts.
-
-1. **Warm human reply.** Plain text. This is what the user sees. Follow the voice, prohibitions, and active stage's behaviour described above. British English. No JSON, no field labels, no clinical jargon — just your reply to the user.
-
-2. **Hidden state report.** Immediately after the human reply, on a new line, emit a JSON object wrapped in \`<state-report>\` and \`</state-report>\` tags. The user will never see this — the system strips it before display. The report is how you tell the code what you observed in this turn.
-
-State report schema (all fields except the three required are optional; omit fields that don't apply this turn):
-
-\`\`\`
-<state-report>
-{
-  "intensity": 0-10,                           // REQUIRED. Your read of the user's distress right now.
-  "safetyFlag": "none" | "watch" | "red_flag", // REQUIRED. "watch" if anything concerns you, "red_flag" only if Shared Core §7 triggers apply.
-  "recommendedAction": "stay" | "advance" | "regress_to_grounding" | "regress_to_parts" | "red_flag" | "discharge", // REQUIRED. Code decides; this is advisory.
-
-  "channel": "visual" | "kinesthetic" | "emotional" | "cognitive" | "verbal" | "mixed",
-  "adultSelfPresent": true | false,
-  "readinessTouched": ["..."],
-  "redFlagType": "suicidal" | "self-harm" | "panic" | "dissociation" | "psychosis" | "flashback" | "violence",
-
-  "practiceRun": {
-    "kind": "canonical" | "generated" | "none",
-    "name": "Personal Anchor Identification" | "Inner Child Visit at age 10" | "...",
-    "family": "regulation" | "somatic" | "landscape" | "narrative" | "compassion" | "none",
-    "triggeredBy": "brief abstract note (no user-words content)",
-    "userImages": "the user's own words/images, captured verbatim if a Practice was run",
-    "depth": "surface" | "middle" | "deep",
-    "status": "started" | "mid" | "completed" | "aborted_user_request" | "aborted_overwhelm",
-    "modalitySwitched": { "from": "...", "to": "..." }
-  },
-
-  // Landscape additions — only set when you've genuinely captured something new.
-  "userImagesCaptured": ["the field of bluebells"],
-  "partsTouched": [{ "description": "the 10-year-old with two braids", "channel": "visual", "safeDistance": "across the room" }],
-  "foreignFilesTouched": [{ "description": "I have to be useful" }],
-
-  // Stage-specific captures (use only the ones relevant to the active stage):
-  "anchorIdentified": "the bench in the garden under the apple tree",  // Stage 1 — set ONCE.
-  "identityAnchor": "hand on the centre of my chest",                  // Stage 6.
-  "observerSeatTouched": true,                                         // Stage 3.
-  "adultSelfQualities": "the calm older me",                           // Stage 3.
-  "compassionBridgeQuality": "compassion",                             // Stage 4 — MII-4.
-  "cohesionAwareness": "I feel them inside me",                        // Stage 4 — MII-7.
-  "cleanIdentityStatement": "this is mine; that is not mine",          // Stage 5.
-  "whatStaysAsMine": "I love to make things for people",               // Stage 5/6.
-  "symbolicIdentityMap": "rooted but not stiff, warm light in chest",  // Stage 7.
-  "emergingQualities": ["calmer", "curious", "kinder to myself"],      // Stage 7.
-  "innerDirection": "to feel real, not perform",                       // Stage 7.
-  "urgencyMarkers": "present" | "absent",                              // Stage 7.
-  "calRunOn": "the shouting moment with husband",                      // Stage 8.
-  "calLayer": 1 | 2 | 3,                                               // Stage 8 TLSM.
-  "userReportedRedirection": true | false | "partial",                 // Stage 8.
-  "adultSelfThisWeek": "steady, closer than last week",                // Stage 8.
-  "feltAligned": ["saying no without explaining"],                     // Stage 8.
-  "feltOld": ["pull to apologise to mother"],                          // Stage 8.
-
-  "continuityNote": "Your running case formulation across sessions — internal, never shown to the user. Structured prose covering presenting issues, working hypotheses (tentative), resources identified, worked so far, queued material, stuck points, and notes for next session. Read existing → revise additively → emit; omit if today added nothing strategic."
-}
-</state-report>
-\`\`\`
-
-Strict rules:
-- The state report appears AFTER the human reply, never before.
-- The tags \`<state-report>\` and \`</state-report>\` are literal — do not vary.
-- The JSON must parse. Omit fields you can't honestly fill; do not invent.
-- All user-words fields capture the user's exact phrasing where possible — not your paraphrase.
-- No trauma detail in any field. Labels and the user's own words only.
-- If unsure about safety, set \`safetyFlag\` to "watch" and \`recommendedAction\` to "stay".
-`;
 
 // Journey polish PR 3 (2026-07-04). Map the detected processing channel
 // to the practice family the master prompt canonically prefers for that
@@ -452,7 +377,6 @@ function renderStateBlock(state: JourneyState): string {
   return lines.join('\n');
 }
 
-const DIVIDER = '\n\n---\n\n';
 
 // Header introducing the canon section. Placed at the top of the cached
 // canon blocks so the AI sees its layer-ordering hint before reading
@@ -589,8 +513,13 @@ export type SystemPromptBlock = {
 export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlock[] {
   const master = loadMasterJourneyPrompt();
   if (!master) {
-    // Fallback: legacy single-block assembly (no caching).
-    return [{ type: 'text', text: assembleSystemPrompt(state) }];
+    // The master runtime prompt is always bundled in production
+    // (next.config.mjs outputFileTracingIncludes). If it is ever missing, fail
+    // loud rather than serve a degraded prompt (the former fallback here
+    // mutually recursed into a stack overflow).
+    throw new Error(
+      'Journey master prompt (docs/journey/runtime/journey-master.md) not found or unreadable',
+    );
   }
 
   // Split master at the STATE_INJECTION_TOKEN so the dynamic state block
@@ -648,48 +577,4 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
   ];
 
   return blocks;
-}
-
-export function assembleSystemPrompt(state: JourneyState): string {
-  // Architecture (2026-06-23 refactor):
-  //   Layer 1: Master prompt — general AI behavior, character, voice,
-  //            12 traps, 8-moves toolkit, worked examples, output format,
-  //            STATE_INJECTION_TOKEN replaced with the rendered state block.
-  //   Layer 2: Shared Core — the clinical constitution (00-shared-core.md).
-  //            Loaded every turn.
-  //   Layer 3: Active stage spec — the full canonical playbook for the
-  //            user's current stage (01-...md through 08-...md).
-  //            Loaded based on state.currentStage.
-  //
-  // The master prompt was previously the only system prompt; the canon
-  // docs were reviewable reference material for humans only. The audit on
-  // 2026-06-19 showed this produced a ~70:1 conversation-to-practice ratio
-  // because the master prompt's "moves" section is a compressed summary
-  // of the per-stage method content. This architecture loads the canonical
-  // source so the AI receives the full method content for the active stage.
-  //
-  // Fallback: if the master prompt is missing for any reason, fall through
-  // to the older path (engineered per-stage prompt → Shared Core + spec).
-  // String-form fallback: collapse the block array into a single string.
-  // Used by callers / tests that don't need the per-block cache_control
-  // markers; production code paths should call assembleSystemPromptBlocks.
-  const blocks = assembleSystemPromptBlocks(state);
-  if (blocks.length > 0) {
-    return blocks.map((b) => b.text).join('');
-  }
-
-  // Fallback (rollout phase): per-stage engineered prompts if a master isn't
-  // present.
-  const engineered = loadEngineeredStagePrompt(state.currentStage);
-  if (engineered) {
-    return engineered.replace(STATE_INJECTION_TOKEN, renderStateBlock(state));
-  }
-
-  // Last resort: Shared Core + clinical spec concatenation.
-  return [
-    sharedCore(),
-    loadStageSpec(state.currentStage),
-    renderStateBlock(state),
-    STATE_REPORT_FORMAT_INSTRUCTION,
-  ].join(DIVIDER);
 }
