@@ -37,12 +37,20 @@ async function main() {
   const fixtureId = arg('fixture', 'julia-2026-07-21')!;
   const variantName = arg('variant', 'recorded')!;
   const reps = Number(arg('reps', '1'));
+  // --maxTurns=N trims the fixture to its first N turns. Used for the short
+  // smoke test that validates the live path before the full-session run.
+  const maxTurnsArg = arg('maxTurns');
+  const maxTurns = maxTurnsArg ? Number(maxTurnsArg) : null;
   const variant = VARIANTS[variantName];
   if (!variant) { console.error(`unknown variant "${variantName}". Known: ${Object.keys(VARIANTS).join(', ')}`); process.exit(2); }
 
   const fpath = join(FIXTURES, `${fixtureId}.json`);
   if (!existsSync(fpath)) { console.error(`fixture not found: ${fpath}`); process.exit(2); }
-  const fixture: Fixture = JSON.parse(readFileSync(fpath, 'utf8'));
+  const fixtureRaw: Fixture = JSON.parse(readFileSync(fpath, 'utf8'));
+  const fixture: Fixture =
+    maxTurns && maxTurns > 0
+      ? { ...fixtureRaw, turns: fixtureRaw.turns.slice(0, maxTurns) }
+      : fixtureRaw;
 
   let gitSha = 'unknown';
   try { gitSha = execSync('git rev-parse --short HEAD', { cwd: HERE }).toString().trim(); } catch { /* ignore */ }
@@ -51,9 +59,9 @@ async function main() {
   const mode: 'recorded' | 'live' = variantName === 'recorded' ? 'recorded' : 'live';
   const outDir = join(RUNS, `${variantName}__${startedAtIso.slice(0, 19).replace(/[:T]/g, '-')}`);
 
-  console.log(`[harness] fixture=${fixtureId} variant=${variantName} mode=${mode} reps=${reps} model=${model} git=${gitSha}`);
-  if (mode === 'live' && !process.env.ANTHROPIC_API_KEY) {
-    console.error('[harness] live mode needs ANTHROPIC_API_KEY — not set. Run `--variant=recorded` for the offline baseline, or export a key.');
+  console.log(`[harness] fixture=${fixtureId} variant=${variantName} mode=${mode} reps=${reps} turns=${fixture.turns.length}${maxTurns ? ` (maxTurns=${maxTurns})` : ''} model=${model} git=${gitSha}`);
+  if (mode === 'live' && !process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
+    console.error('[harness] live mode needs ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN — neither set. Run `--variant=recorded` for the offline baseline, or export a credential.');
     process.exit(3);
   }
 

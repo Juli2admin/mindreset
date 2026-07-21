@@ -22,13 +22,22 @@ Both modes emit the same result shape, so the 9 mechanical metrics run identical
 # Offline baseline on the owner's real 2026-07-21 session (no key):
 npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=recorded
 
-# Live baseline + thinking arms (needs ANTHROPIC_API_KEY):
-export ANTHROPIC_API_KEY=sk-ant-...
+# Live baseline + thinking arms. Provide ONE credential:
+export ANTHROPIC_API_KEY=sk-ant-...          # standard API key (x-api-key), OR
+export ANTHROPIC_AUTH_TOKEN=...              # Bearer token (managed/OAuth runner)
 npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=baseline            --reps=3
 npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=think-budget-1024   --reps=3
 npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=think-budget-2048   --reps=3
 npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=think-adaptive-low  --reps=3
+
+# Short smoke (first N turns per arm, to validate the live path before a full run):
+npx tsx eval/journey/run.ts --fixture=julia-2026-07-21 --variant=think-budget-1024 --maxTurns=3
 ```
+
+Auth: pass `ANTHROPIC_API_KEY` (sent as `x-api-key`) or `ANTHROPIC_AUTH_TOKEN`
+(sent as `Authorization: Bearer` with the oauth beta header, for environments
+that only expose a managed/session token). The token is read from the env and
+never written to disk or logs.
 
 Each run writes `runs/<variant>__<ts>/<fixture>__<variant>__repN.{json,md}`.
 `runs/` is gitignored except the committed `baseline-recorded-2026-07-21/` snapshot.

@@ -68,11 +68,23 @@ type StreamEvent = {
 
 export async function runLive(fixture: Fixture, variant: Variant): Promise<TurnResult[]> {
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error('live mode requires ANTHROPIC_API_KEY');
+  const authToken = process.env.ANTHROPIC_AUTH_TOKEN;
+  if (!key && !authToken) {
+    throw new Error('live mode requires ANTHROPIC_API_KEY or ANTHROPIC_AUTH_TOKEN');
+  }
   // Lazy import so recorded mode never needs the SDK present/keyed.
   const AnthropicMod = await import('@anthropic-ai/sdk');
   const Anthropic = AnthropicMod.default;
-  const client = new Anthropic({ apiKey: key });
+  // Two auth paths: a standard sk-ant-api key (x-api-key), or a Bearer token
+  // (ANTHROPIC_AUTH_TOKEN) for environments that only expose an OAuth/session
+  // token — e.g. a managed runner. Bearer uses the oauth beta header the CLI
+  // uses. The token is read from the env; it is never written to disk or logs.
+  const client = key
+    ? new Anthropic({ apiKey: key })
+    : new Anthropic({
+        authToken: authToken as string,
+        defaultHeaders: { 'anthropic-beta': 'oauth-2025-04-20' },
+      });
   const model = variant.model ?? fixture.model;
   const maxTokens = variant.maxTokens ?? 2500; // production MAX_TOKENS
 
