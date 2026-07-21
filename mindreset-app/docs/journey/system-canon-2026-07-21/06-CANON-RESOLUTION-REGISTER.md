@@ -29,6 +29,110 @@ Source of every code citation: the six evidence agents behind Docs 1–3;
 
 ---
 
+# CANON DECISIONS RECORDED 2026-07-21 (owner-approved, authoritative)
+
+These eight decisions were recorded by the owner after reviewing this register.
+They supersede the `OWNER DECISION REQUIRED` markers for the mapped rows below.
+The runtime is still frozen; recording a decision authorises **planning only**,
+not implementation.
+
+1. **Stages** — eight-stage methodology, but stages are a **flexible clinical
+   map, not rigid capability gates**. The current stage is the user's primary
+   phase; it must not prevent an appropriate move from another stage when the
+   user is regulated & oriented, the material has emerged, the move is
+   clinically appropriate, the user has not refused the modality/direction, and
+   no unresolved cycle makes it unsafe. **Safety, readiness, consent, modality
+   and open-cycle discipline remain binding. Stage number alone is not a
+   prohibition.**
+2. **Anchor** — an internally observed positive lived reality: **not required
+   for progression at any stage; never announced as "your anchor"; not
+   auto-invoked to soothe/stabilise/close; captured silently; usable only as
+   ordinary context when relevant. Remove anchor as a gate requirement across
+   Stages 1–8; preserve its internal observational value.**
+3. **Reply generation** — **keep reply-first; do not reinstate the assessment
+   block; do not merge Extended Thinking; do not add a new reasoning layer.**
+   Reassess visible-reply quality after contradictions/exemplars are cleaned.
+4. **Assessment & intervention** — assessment precedes intervention
+   *conceptually*, not by a fixed session count/stage. Before a practice or deep
+   move the clinician must have enough evidence about request, state/regulation,
+   desired depth, processing channel, working hypothesis, and purpose. Same-
+   session deep moves allowed when readiness is clear. **Keyword-/programme-
+   triggered intervention without sufficient understanding is not allowed.**
+5. **Body & imagery** — optional channels; offer gently when relevant; **after
+   a clear refusal/non-response, switch to another channel immediately and do
+   not return unless the user reopens it.**
+6. **Consolidation & discharge** — **do not manufacture a wound/pattern/depth.**
+   When the user reports no meaningful unresolved problem and evidence supports
+   it, consolidation / natural completion / discharge are legitimate; lighter
+   support may be offered; the clinician may honestly say deeper work exists but
+   no current indication is established. **Do not keep digging merely because
+   more stages exist.**
+7. **Open cycle** — one canonical definition for all consumers: `open` (active
+   process not at a safe stopping point), `closing` (completion begun,
+   regulation/closure unconfirmed), `closed` (safe stopping point reached).
+   **Both `open` and `closing` block starting a new deep process.** A session
+   boundary alone does not convert unfinished → closed; on resume the old cycle
+   is remembered as unfinished context but not auto-reopened without a current
+   user signal.
+8. **Memory scope** — preserve existing memory structures; **create no new
+   correction tables / memory architecture**; prepare a **bounded, preferably
+   migration-free** proposal to prevent destructive continuity-note overwrite
+   and silent middle truncation. Durable stores for corrected facts, rejected
+   hypotheses, repeated-question prevention, rejected topics, and pattern/part
+   invalidation are a **separate future design track**.
+
+## Mandatory non-destructive safety protocol (applies to every resulting PR)
+
+Immutable production baseline · separate clean-runtime branch · **one bounded
+category per PR** · **removal from runtime before deletion from repository** ·
+full traceability + rollback · **Golden Harness comparison after every PR** ·
+**tester-only exposure behind a runtime switch for behavioural changes** · **no
+irreversible migration**.
+
+## Resolution map — every register row marked
+
+| Row | Governing decision | Canonical survivor (now recorded) | Status | Target PR |
+|---|---|---|---|---|
+| V1 anti-echo vs mirror | #329 (07-20), reaffirmed | `<communication>` rule wins; mirror exemplars reconciled to it | RESOLVED | PR B |
+| V2 validation vs "I hear you" | #329 (07-20) | restraint rule; stock validation removed | RESOLVED | PR B |
+| V3 natural conv vs ceremony | D1, D2, #329 | move-announcing + anchor ceremony removed; plain voice | RESOLVED | PR B |
+| V4 tentative vs declarative origin | #329, D4 | tentative framing; no declarative in-line diagnosis | RESOLVED | PR B |
+| V5 leadership vs ask-more-than-tell | D1, D4, D6 | clinician leads with appropriate moves | RESOLVED | PR B (voice) + PR C (behaviour) |
+| V6 digging after "no problem" | D6 | consolidation legitimate; do not manufacture depth | RESOLVED | PR C (+PR B voice) |
+| V7 consolidation vs "always underneath" | D6 | natural completion/discharge legitimate | RESOLVED | PR C |
+| C1 flexible map vs sequential engine | D1 | flexible map; safety/readiness/consent/modality/open-cycle binding; stage# not a prohibition | RESOLVED | PR C |
+| C2 cross-stage moves | D1 | permitted under the 5 conditions | RESOLVED | PR C |
+| C3 assessment before intervention | D4 | assessment-first conceptually; same-session deep move when readiness clear | RESOLVED | PR C |
+| C4 body/imagery optionality | D5 | optional; on refusal switch channel, don't return unless reopened | RESOLVED | PR C (+PR B voice) |
+| C5 practice triggers | D4 | no keyword/programme-triggered practice without sufficient understanding | RESOLVED | PR C |
+| C6 foreign-material/parts permissions | D1 | permitted when regulated/emerged/appropriate/not-refused/no-unsafe-cycle | RESOLVED | PR C |
+| A1 anchor | D2 | observation-only; remove gate requirement Stages 1–8; never announced; not auto-soothe/close; preserve internal value | RESOLVED | PR B (prompt) + PR C (gate) |
+| M1 continuity overwrite/truncation | D8 | bounded non-destructive fix, preferably no migration | RESOLVED (scope) | PR D |
+| M2 corrected facts | D8 | out of scope — future design track | DEFERRED | — |
+| M3 rejected hypotheses | D8 | out of scope — future design track | DEFERRED | — |
+| M4 rejected topics/modalities | D8 | preserve existing modality echo (M4 is already wired) | RESOLVED (keep) | — |
+| M5 repeated-question prevention | D8 | out of scope — future design track | DEFERRED | — |
+| M6 pattern/part correction | D8 | out of scope — future design track | DEFERRED | — |
+| S1 two advancement lanes | D1 | reconcile to the flexible-map readiness model; readiness/safety/consent/open-cycle bind, stage# does not | RESOLVED (principle) | PR C |
+| S2 two open-cycle definitions | D7 | one definition (open/closing/closed); open+closing block new deep process; boundary≠closed; resume = remembered, not auto-reopened | RESOLVED | PR C |
+| S3 dead `currentDepth` | behaviour-preserving | remove dead `recommendedDepth` branch + inert prompt echo; keep DB column (no migration) | RESOLVED | PR A |
+| S4 unused `cycleCanClose` | behaviour-preserving | remove parse handling + emit instruction | RESOLVED | PR A |
+| S5 unused `stabilityCheck.score` | D6 (no code reader added) | keep field (inspector uses it); do not code-enforce closure | RESOLVED (keep) | — |
+| S6 close/discharge authority | D1, D6 | consolidation/discharge legitimate; Stage-8 clinical evidence; reconcile | RESOLVED | PR C |
+| S7 state-report schemas + unreachable fallback | behaviour-preserving | keep Generation A; remove Generation B + unreachable fallback + dead loaders | RESOLVED | PR A |
+
+Also recorded (was Part-2 item, not a row): **reply-first architecture is
+canonical** (D3) — no assessment block, no Extended-Thinking merge, no new
+reasoning layer.
+
+The exact, line-level plans for **PR A** (behaviour-preserving cleanup) and
+**PR B** (approved visible-communication + anchor cleanup) are in
+[07-PR-A-AND-B-PLANS.md](07-PR-A-AND-B-PLANS.md). PR C (stage/progression
+reconciliation) and PR D (bounded memory fix) are scoped there but not yet
+planned line-by-line, pending this planning round's completion.
+
+---
+
 # GROUP 1 — VISIBLE COMMUNICATION
 
 ## V1 — Anti-echo rule vs mirror/reflect exemplars
