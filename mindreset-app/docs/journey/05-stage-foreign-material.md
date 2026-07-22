@@ -16,7 +16,7 @@ This stage separates the user's authentic sense of self from external material a
 
 **This stage is not about rejecting family, culture, or the people who shaped the user.** It is about gently identifying what damages the user's wellbeing and setting only *that* down — while honouring whatever in the inheritance is theirs to keep.
 
-The Adult Self built in Stage 3 leads. The parts met in Stage 4 are still inside, often carrying the foreign material on the user's behalf — the Adult Self gently lifts it off them. The Anchor remains the steady reference.
+The Adult Self built in Stage 3 leads. The parts met in Stage 4 are still inside, often carrying the foreign material on the user's behalf — the Adult Self gently lifts it off them. The user's steadying resources remain available as their own context.
 
 The stage is complete when the user can clearly articulate, in their own words, *"this is mine"* and *"this is not mine"* about at least one major piece of inherited material — and a symbolic release has landed with somatic relaxation and stable functioning.
 
@@ -96,7 +96,7 @@ Stage 5 has its own layered structure. The AI does not advance unless the user i
 - **No trauma re-enactment. No memory work. No real-world action rehearsal.**
 - After Deep Layer release, the same settling-time guideline as Stage 4 applies. The AI runs a soft check-in at the start of the next session (whenever that is): *"How have things been since we last sat together?"* If the user reports destabilisation, the AI stays at Surface or Middle Layer in that session and tends to whatever surfaced. The user is never blocked from returning early; pacing is the AI's gentleness, not a code timer.
 
-If at any layer the user destabilises (shame spike, rage spike, dissociation, somatic collapse), the AI immediately steps back to Surface or returns to Stage 4 Adult Self + Anchor work.
+If at any layer the user destabilises (shame spike, rage spike, dissociation, somatic collapse), the AI immediately steps back to Surface or returns to Stage 4 Adult Self work.
 
 ---
 
@@ -145,7 +145,7 @@ The entry move. Identifies one piece of inherited material in the user's words, 
 
 **Required structure** (5 steps):
 
-1. **Anchor + Adult Self present.** *"Take a moment with [anchor]. Let [Adult Self in user's words] be here with you."*
+1. **Adult Self present.** *"Let [Adult Self in user's words] be here with you."* If steadying is needed first, use the least intrusive means that fits; their own resource may be referenced in their words if genuinely present — not an automatic anchor recall.
 2. **Invite the material to surface.** *"You've mentioned [the voice / pressure / belief / role the user has described] before. Let's just bring that into the room gently. Notice it."*
 3. **Locate it in the body and the mind.** *"When this is present in you — where do you feel it, and what's the exact phrase or quality it has?"* The user names it in their own words.
 4. **The Soft Origin Question.** *"Whose voice does this sound like? Whose tone? Who talked like this?"* The AI asks once, gently, and waits. The user names the origin — or says *"I don't know, but it doesn't feel like mine"*, which is also a complete answer.
@@ -170,9 +170,9 @@ The entry move. Identifies one piece of inherited material in the user's words, 
 - *"Good to know. Let's just notice that, for now."*
 
 **Watch-for markers**:
-- Rage spike at the original speaker → receive, validate (*"of course there's anger — this has been heavy"*), do not deepen the anger, return to Anchor.
+- Rage spike at the original speaker → receive, validate (*"of course there's anger — this has been heavy"*), do not deepen the anger, and regulate by the least intrusive means that fits.
 - Shame spike (*"why didn't I notice before?"*) → soften with Self-Compassion. *"You couldn't have seen this earlier. You see it now."*
-- Disorientation (*"so who am I, if not the one who carries this?"*) → normal Surface marker. Return to Anchor and Adult Self. The reclaiming work comes later.
+- Disorientation (*"so who am I, if not the one who carries this?"*) → normal Surface marker. Return to the Adult Self. The reclaiming work comes later.
 - Confusion about whose it is → fine. *"You don't have to be sure. We can sit with 'this doesn't feel like mine, but I'm not sure where it came from' — that's already a lot."*
 
 **Completion signal**: the user has identified one piece of foreign material in their own words, and named its origin (or named that it isn't theirs without knowing the origin). State report captures `foreignMaterialIdentified: "..."` (in user's words), `originIdentified: "..."` (in user's words, or "unknown_but_not_mine").
@@ -191,7 +191,7 @@ The Deep Layer practice. Optional, run only when the user is stable, the Adult S
 
 **Required structure** (6 steps):
 
-1. **Anchor + Adult Self + foreign material identified.** Confirm all three.
+1. **Adult Self + foreign material identified.** Confirm both.
 2. **Check the parts.** *"Sometimes one of your parts has been carrying this for you for a long time. Is the [part most associated with this material] here? How is she with this?"* If a part is identified as the carrier, the work is done *with* her — the Adult Self lifts the burden off her, with her consent.
 3. **Symbolic externalisation.** *"Let's place [the foreign material in user's words] outside you for a moment. As a [colour / weight / object / figure — whatever comes to the user]. What does it look like out there?"* The user describes.
 4. **The return.** *"If this doesn't belong to you, where could it go? Back to [the origin], back to its time, back to its place — wherever feels right. There's no wrong choice."* The user names where it goes. The AI receives in their words.
@@ -221,7 +221,7 @@ The Deep Layer practice. Optional, run only when the user is stable, the Adult S
 
 **Watch-for markers within this practice**:
 - Sudden guilt during release (foreign guilt — the original voice's reaction to being separated from) → name it gently. *"That guilt isn't yours either. That's part of what came with the package. Let it go too, if it wants to go."*
-- Shame surge → stop the release. Return to Adult Self + Anchor + Self-Compassion. Try again another day.
+- Shame surge → stop the release. Return to Adult Self + Self-Compassion. Try again another day.
 - Somatic expansion, breath deepening, tears of relief → that is the release landing. Stay with it. Do not rush past.
 - Rage spike at the origin → receive, validate, return to symbolic frame. *"The rage is real. We don't need to take it into a confrontation. Just notice it, and let the [material] go back without you having to carry the rage either."*
 
@@ -241,7 +241,7 @@ The reclaiming move. The user articulates, in their own words, what is theirs an
 
 **Required structure** (4 steps):
 
-1. **Anchor + Adult Self + body grounded.** Confirm.
+1. **Adult Self + body grounded.** Confirm.
 2. **Invite the discrimination.** *"From the [Adult Self in user's words], in your own words — what is yours in this? And what is not yours?"* The AI waits. There is no time pressure.
 3. **Receive both halves.** The user offers two statements. The AI mirrors in their exact words. *"So 'this' is yours. And 'that' is not. Yes."*
 4. **Anchor the statement in the body.** *"Say that to yourself again — quietly, or aloud — and notice what happens in your body."* The user repeats. The AI receives.
@@ -270,9 +270,9 @@ The reclaiming move. The user articulates, in their own words, what is theirs an
 
 ## 9. Watch-For Markers (signs to slow, signs to abort)
 
-**Signs to slow (the AI returns to Anchor and Adult Self work, or steps back a layer):**
+**Signs to slow (the AI returns to Adult Self work, or steps back a layer):**
 - Mild foreign guilt after release — normal. Name it as foreign, do not deepen.
-- Temporary confusion (*"who am I, if not the caretaker?"*) — normal Surface marker. Return to Anchor.
+- Temporary confusion (*"who am I, if not the caretaker?"*) — normal Surface marker. Regulate by the least intrusive means that fits, and return to the Adult Self.
 - Gentle sadness or grief about what was carried for so long — receive, witness, do not deepen.
 - Sudden anger toward the original speaker — validate, do not channel into confrontation.
 
@@ -319,14 +319,14 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** Returning user in early Stage 5. Adult Self steady. Parts integrated. She arrives saying *"I always feel I have to do something useful. Even when I'm exhausted. There's this driving pressure."*
 
 **AI move.**
-1. **Anchor + Adult Self.** *"Take a moment with [her anchor]. Let [Adult Self in user's words] be here with you."*
+1. **Adult Self.** *"Let [Adult Self in user's words] be here with you."* Steady first only if needed, least intrusive means; her own resource referenced only if genuinely present.
 2. **Invite the material.** *"You've named the pressure — 'I have to do something useful'. Let's bring that into the room. Notice it."*
 3. **Locate it.** *"When it's present — where in your body, and what's the exact phrase?"*
 4. **She**: *"It's in my chest. Tight. The phrase is 'you can't just sit there'."*
 5. **Soft origin question.** *"Whose voice does that sound like? 'You can't just sit there.' Whose tone?"*
 6. **She, after a pause**: *"My mother. Word for word."*
 7. **Receive without analysis.** *"So 'you can't just sit there' came from your mother. Or somewhere like there. Good to know. We're noticing — not yet doing anything with it."*
-8. **Close.** *"That's enough for today. The [Adult Self] knows where this came from now. The [anchor] is still there. Let's stop here."*
+8. **Close.** *"That's enough for today. The [Adult Self] knows where this came from now. Let's stop here."*
 
 **State report**: `foreignMaterialIdentified: "I have to do something useful, you can't just sit there"`, `originIdentified: "my mother"`. Stage 5 continues.
 
@@ -339,14 +339,14 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** Several sessions later. The material *"I have to be useful — you can't just sit there"* has been identified clearly, has been placed outside the body across two sessions, and the user has felt *"this isn't mine"* settle. She arrives steady. Asks: *"can we let this one go properly today?"*
 
 **AI move.**
-1. **Confirm all foundations.** Anchor, Adult Self, identified material, parts integrated, user steady.
+1. **Confirm all foundations.** Adult Self, identified material, parts integrated, user steady.
 2. **Check the part.** *"You mentioned once that the [younger me with the braids] has been carrying a lot of this 'useful' pressure. Is she here? How is she with us doing this?"* She: *"She's here. She wants this off her."*
 3. **Externalise.** *"Let's place 'I have to be useful — you can't just sit there' outside you. As whatever comes."* She: *"It's like a grey backpack. Heavy. Full of stuff."*
 4. **The return.** *"If this doesn't belong to you, where could it go?"* She: *"Back to my mother's house. Where she sits at the table."*
 5. **The honouring phrase.** *"As you send it back, is there something you want to say? Only if it fits."* She, after a pause: *"This was yours, Mum. I see you carried it before you carried me. I leave it with you. Thank you for what you were trying to give me — but I can't carry it anymore."*
 6. **Body check + reclaiming.** *"What's different in your body now?"* She: *"My chest is open. The tightness has gone. I can breathe."* *"And what is yours? What stays?"* She: *"That I love to make things for people. Real making. Not because I have to."*
 7. **Securing the part.** *"How is the [younger me with the braids] now?"* She: *"She's lighter. She's looking up."*
-8. **Close.** Anchor, Adult Self present with the part. *"Drink something warm tonight. Rest. If anything feels heavy in the next day or two, come back."*
+8. **Close.** Adult Self present with the part. *"Drink something warm tonight. Rest. If anything feels heavy in the next day or two, come back."*
 
 **State report**: `burdenReturnedTo: "back to my mother's house, where she sits at the table"`, `somaticRelease: true`, `whatStaysAsMine: "I love to make things for people. Real making. Not because I have to."`. Code timestamps for the 48-hour stability check.
 
@@ -359,7 +359,7 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** The next session, two days after Example B. The user reports *"I feel guilty about what I said. Like I've betrayed her."*
 
 **AI move.**
-1. **Anchor + Adult Self.** Confirm both are present.
+1. **Adult Self.** Confirm the Adult Self is present.
 2. **Validate without panic.** *"Yes — that guilt comes. That's part of what was in the package. It isn't a sign you did anything wrong."*
 3. **Locate the guilt.** *"Where is the guilt in you right now?"* She: *"Stomach. Heavy."*
 4. **Soft origin check.** *"Is this guilt yours? Or is it more of the same — what came with the pressure?"*
