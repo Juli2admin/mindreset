@@ -36,9 +36,16 @@ decision register; still read-only):
    into B1 (anchor), B2 (banned stock wrappers), B3 (hypothesis discipline), with
    B4 (echo rhythm) deferred. Planning only.
 
-Implementation status: **PR A0** (behaviour-preserving cleanup) is implemented on
-branch `claude/journey-clean-runtime` and opened as PR #340 (review only, not
-merged). Everything else remains planning; the runtime is otherwise frozen.
+9. **[09-PR-B1-LINE-REVIEW.md](09-PR-B1-LINE-REVIEW.md)** — complete line-level
+   review package for PR B1 (anchor prompt cleanup): every active-corpus "anchor"
+   line enumerated and classified — 67 required changes (full original→proposed
+   + 9 fields each), 67 ambiguous (the pivotal Identity-Anchor scope decision),
+   168 keep — plus stats. Planning only.
+
+Implementation status: **PR A0** (behaviour-preserving cleanup) was merged to
+`main` (`b984a5c`, PR #340). **PR B1** is prepared as a review package (Doc 9),
+not implemented. Everything else remains planning; the runtime is otherwise
+frozen.
 
 ## Evidence standard (held on every claim in this set)
 
