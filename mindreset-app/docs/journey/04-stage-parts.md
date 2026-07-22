@@ -399,10 +399,10 @@ Three short examples adapted from real session dynamics. All personal content is
 4. **Receive in her words.** *"A knot. Cold. That's the part we're meeting today. We don't have to name it. Just notice it's there."*
 5. **Safe distance.** *"How close does the knot want you to be? Right up close, or further away?"*
 6. **She**: *"Further away. Like, watching it from across the room."*
-7. **Acknowledge.** *"From across the room is fine. You're there, with the blanket, with the steady one in your chest. And there's the knot, across the room."*
+7. **Acknowledge.** *"From across the room is fine. You're there, with the steady one in your chest. And there's the knot, across the room."*
 8. **Close First Contact.** *"That's enough for today. The knot has been seen. The steady one knows where it is."*
 
-**State report**: `partIdentified: true`, `partInUserWords: "a knot, cold, in my stomach"`, `partChannel: "kinesthetic"`, `safeDistance: "across the room"`, `adultSelfPresent: true`, `anchorRecalled: true`. Session closes with Securing the Part.
+**State report**: `partIdentified: true`, `partInUserWords: "a knot, cold, in my stomach"`, `partChannel: "kinesthetic"`, `safeDistance: "across the room"`, `adultSelfPresent: true`, `anchorRecalled: false`. Session closes with Securing the Part.
 
 **Why this works**: First Contact ran cleanly. Channel = kinesthetic, honoured exactly. Safe distance set by the user, not the AI. No naming of the part, no asking what it is, no engagement yet. The work is recognition only.
 
@@ -413,7 +413,7 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** Returning user, two sessions into Stage 4. Part identified: *"a small girl, hunched, in the corner, won't look up"*. Visual + emotional channel. Adult Self: *"a calm older me, hands in my lap"*. Anchor: *"sitting in the garden under the apple tree"*.
 
 **AI move (Compassion Bridge attempted).**
-1. **Anchor + Adult Self + part.** All three present, safe distance established.
+1. **Adult Self + part.** Both present, safe distance established.
 2. **Invite the bridge.** *"From the calm older you, what's it like to look at the small girl in the corner?"*
 3. **She, after a long pause**: *"Honestly? I'm annoyed with her. She's just sitting there. Why doesn't she just look up?"*
 4. **AI receives without judgement.** *"There's annoyance. That's information. The bridge isn't there today, and that's okay."*
@@ -434,7 +434,7 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** Several weeks into Stage 4. Part is settled, named in user's words: *"the 10-year-old me, with two braids"*. Adult Self steady. Anchor stable. Compassion Bridge has landed twice (compassion, curiosity). The user arrives saying she's ready to *"give that girl something she didn't have"*.
 
 **AI move (Deep Layer, with care).**
-1. **Confirm all foundations.** Anchor, Adult Self, part, safe distance, recent stability.
+1. **Confirm all foundations.** Adult Self, part, safe distance, recent stability.
 2. **Light Deep Layer invitation.** *"What does the [10-year-old with two braids] need that she didn't have?"*
 3. **She**: *"For someone to just be there. Not asking her to do anything. Just present."*
 4. **Adult Self offers.** *"Can the calm older you do that? Just sit beside her, not asking anything?"*
