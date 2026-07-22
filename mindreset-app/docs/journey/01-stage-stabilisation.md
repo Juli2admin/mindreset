@@ -16,7 +16,7 @@ The first work of The Journey. The AI helps the user's nervous system settle, re
 
 No deeper work is permitted in this stage. No history, no parts, no foreign material, no identity work. The system must be stable enough to speak and reflect before anything else is possible.
 
-The stage is complete when the user can describe one emotion or body sensation, orientation is present, safety is clean, and the AI recommends advance (see §10). Anchor material may or may not have surfaced by then — that is fine; the anchor is no longer a gate token.
+The stage is complete when the user can describe one emotion or body sensation, orientation is present, safety is clean, and the AI recommends advance (see §10). Anchor material may or may not have surfaced by then — that is fine. (Owner decision 2026-07-02: the anchor is to cease being a progression requirement; the Stage 1 code gate still enforces `anchorText` and the `anchor_identified` token today, with removal deferred to PR C.)
 
 ---
 
@@ -103,7 +103,7 @@ The AI may detect a mixed type. It adapts to whichever channel is most alive in 
 The revised role of the anchor:
 - **NOT a stabilising intervention.** Regulation, somatic, and grounding practices from the master prompt's practice generation logic are what settle the user in Block 1. Anchor is not what the AI reaches for when the user destabilises.
 - **NOT a session-close move.** Sessions close on a fitting practice, not on anchor recall (see master prompt Closing protocol and Shared Core §10).
-- **NOT a load-bearing Stage 1 gate.** The `anchorText`-set requirement and the `anchor_identified` readiness token are dropped from the Stage 1 code gate (§10).
+- **To cease being a load-bearing Stage 1 gate (owner decision 2026-07-02; removal deferred to PR C).** The `anchorText`-set requirement and the `anchor_identified` readiness token are still enforced by the Stage 1 code gate today (§10); their removal is deferred to PR C.
 - **IS internal data about the user** — the positive lived reality they already carry, evidence some part of their nervous system knows what safe and allowed already feel like.
 - **Becomes structural in Block 3** — as resource material for Adult Self construction.
 
@@ -145,7 +145,7 @@ Not by running a scripted 4-step anatomy. By OBSERVATION during natural Block 1 
 
 ## 10. Completion Criteria (code-enforced gate)
 
-**Revised 2026-07-02: anchor requirement dropped from the Stage 1 gate.** The anchor is now captured throughout Block 1 as data about the user (positive lived reality → Adult Self resource), but it is no longer a load-bearing gate token. Anchor's structural role appears in Block 3, when Adult Self construction begins. See the master prompt Stabilisation move §1 for the revised framing.
+**Owner decision 2026-07-02: the anchor requirement is to cease being a Stage 1 progression gate (removal deferred to PR C).** The anchor is captured throughout Block 1 as data about the user (positive lived reality → Adult Self resource). The completion criteria listed below reflect that target state and omit anchor; the Stage 1 code gate, however, still additionally enforces `anchorText` and the `anchor_identified` token today, so anchor remains a de facto progression requirement until its removal in PR C. Anchor's structural role appears in Block 3, when Adult Self construction begins. See the master prompt Stabilisation move §1 for the revised framing.
 
 Code holds the user in Stage 1 until **all** of the following are true:
 
@@ -211,11 +211,11 @@ Three short examples adapted from real session dynamics. The names and trauma co
 4. **User describes**: *"It's soft. Heavy. My grandmother knitted it. I sit and just don't think."*
 5. **Anchor in the body** (step 3). *"When you imagine the blanket right now — its weight, its softness — what do you notice in your body?"*
 6. **User**: *"My shoulders drop a bit. Easier to breathe."*
-7. **Name explicitly** (step 4). *"This is your anchor. The blanket. We can return to it whenever you need."*
+7. **Mirror briefly in the user's own words, then move on — no labelling.** *"The blanket your grandmother knitted — soft, heavy, and your shoulders soften just picturing it."* The AI does not use the word "anchor" with the user, does not announce it as a designated resource, and does not promise to return to it; the capture (setting `anchorText`) is internal.
 
-**State report** records: `anchorText = "the blanket on the sofa, soft, heavy, my grandmother knitted it"`, in the user's exact words. From this turn forward, the AI references it any time intensity rises across any later stage.
+**State report** records: `anchorText = "the blanket on the sofa, soft, heavy, my grandmother knitted it"`, in the user's exact words — captured silently as internal data. It is not auto-invoked when intensity rises, and later stages do not recall it by default.
 
-**Why this works**: Signature practice run cleanly. The AI did not suggest anything — the Anchor came from the user. It was anchored in body. It was named explicitly. The user's exact words are preserved verbatim for code to surface in every later turn.
+**Why this works**: Captured cleanly by observation. The AI did not suggest anything — the material came from the user, in their own words. It was noticed in the body and mirrored back without being labelled "your anchor" and without being announced. The user's exact words are preserved verbatim as internal data for code to hold.
 
 ---
 
