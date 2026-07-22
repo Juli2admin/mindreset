@@ -14,10 +14,9 @@ import type {
 // extracted from the 8 stage docs + Shared Core + PRACTICE_GENERATION_ALGORITHM.md
 // and the master prompt. Each ID names a discrete clinical move the AI can
 // perform in a turn. The LLM emits `moveJustPerformed` in the state report
-// as an array of 1-3 of these IDs (primary first). The router does NOT
-// consume this field yet — this is the data-collection phase. PR 4b will
-// hook the histogram of moves-by-stage into stage advancement once the
-// vocabulary usage has been validated on real turns.
+// as an array of 1-3 of these IDs (primary first). The move-based advance
+// lane reads this field (move-based-advance.ts) — PR 4b wired it into stage
+// advancement.
 //
 // Rules the LLM must follow (enforced or normalised by the parser):
 //   - 1..3 IDs per turn, primary first (slice caps at 3).
@@ -262,14 +261,14 @@ export type StateReport = {
   adultSelfAnchorLinked?: boolean;
   heldEmotionInAdultSelf?: boolean;
   compassionBridgeQuality?: CompassionBridgeQuality; // Stage 4 — MII-4
-  // Stage 4 — Compassion Bridge §8.2 timestamp of the bridge moment.
-  // Captured when one of the four allowed qualities lands. Used by the
-  // gate to verify the bridge held across two distinct days (canon §10).
+  // Stage 4 — Compassion Bridge §8.2 timestamp of the bridge moment,
+  // captured when one of the four allowed qualities lands. Audit/telemetry
+  // only — no gate reads this (Stage 4 MII-4 gates on compassionBridgeQuality
+  // across two distinct days, not on this timestamp).
   bridgeAchievedAt?: string; // ISO timestamp
   // Stage 4 — Securing the Part §8.3 close-of-session ritual marker.
-  // userGrounded: true when the closing return-to-anchor has landed
-  // and the user is verifiably grounded before session end. Canon §10
-  // requires this for every Stage 4 session close.
+  // userGrounded: true when the closing return-to-anchor has landed. Audit/
+  // telemetry only — no gate reads this.
   userGrounded?: boolean;
   cohesionAwareness?: string; // Stage 4 — MII-7
   // Stage 4 — MII-6, the 48-hour soft check-in result. The AI emits this
@@ -360,9 +359,9 @@ export type StateReport = {
     contextNote?: string;
   };
 
-  // Journey polish PR 4a (data collection). Array of 1..3 canonical
-  // clinical-move IDs the AI performed this turn, primary first. See
-  // CANONICAL_MOVES for the vocabulary. Router does NOT read this yet.
+  // Journey polish PR 4a. Array of 1..3 canonical clinical-move IDs the AI
+  // performed this turn, primary first. See CANONICAL_MOVES for the
+  // vocabulary. Read by the move-based advance lane (move-based-advance.ts).
   moveJustPerformed?: CanonicalMove[];
 
   // Therapeutic Sensitivity Layer — PR α (2026-07-09).

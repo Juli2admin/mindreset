@@ -13,11 +13,18 @@
 // loads canon as the source of method.
 
 import { describe, expect, it } from 'vitest';
-import {
-  assembleSystemPrompt,
-  assembleSystemPromptBlocks,
-} from './assemble';
+import { assembleSystemPromptBlocks } from './assemble';
 import type { JourneyState } from '../state/types';
+
+// The former standalone `assembleSystemPrompt(state)` string helper was removed
+// in the clean-runtime cleanup (it was dead in production — only tests called
+// it, and it just joined the blocks). These tests still assert on the fully
+// assembled prompt string, so we join the block texts exactly as it did.
+function assembleSystemPrompt(state: JourneyState): string {
+  return assembleSystemPromptBlocks(state)
+    .map((b) => b.text)
+    .join('');
+}
 
 function makeState(stage: number): JourneyState {
   return {

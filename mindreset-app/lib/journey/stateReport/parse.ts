@@ -346,9 +346,8 @@ export function parseStateReport(raw: string | null): StateReport {
       report.stabilityCheck = check;
     }
   }
-  // Journey polish PR 4a — clinical-move naming for data collection.
-  // Array of 1..3 canonical move IDs, primary first. Router does NOT
-  // consume this yet.
+  // Journey polish PR 4a — clinical-move naming. Array of 1..3 canonical
+  // move IDs, primary first. Read by the move-based advance lane.
   const moves = parseMoveJustPerformed(obj.moveJustPerformed);
   if (moves) report.moveJustPerformed = moves;
 
@@ -521,8 +520,7 @@ function parsePracticeRun(v: unknown): PracticeRun | undefined {
 //
 // Owner rules (2026-07-04):
 //   - 1..3 IDs per turn, primary first. Cap at 3 by slicing tail off.
-//   - Unknown IDs are silently dropped (fail-soft; the router doesn't
-//     read this yet).
+//   - Unknown IDs are silently dropped (fail-soft).
 //   - universal.none is used ONLY when the turn had no clinical move.
 //     It MUST NOT combine with other IDs. If the LLM emits it alongside
 //     real moves, the real moves win — that's the honest read of the

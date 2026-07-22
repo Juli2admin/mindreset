@@ -1,12 +1,10 @@
 // Read a Journey prompt from docs/journey/ at module load.
 // Two flavours:
 //   1. Clinical specs in docs/journey/*.md — the reviewable canonical
-//      source documents (Shared Core + 8 stage specs).
-//   2. Engineered runtime prompts in docs/journey/runtime/*.md — the
-//      distilled, XML-tagged prompts the AI actually receives. These
-//      take precedence when present; the loader falls back to the
-//      clinical spec for any stage that does not yet have an engineered
-//      version.
+//      source documents (Shared Core + 8 stage specs), loaded verbatim.
+//   2. The single master runtime prompt in docs/journey/runtime/
+//      journey-master.md — the operational prompt the AI actually receives,
+//      extracted from its markdown code block.
 //
 // The engineered prompt files have the actual prompt content wrapped in
 // a triple-backtick code block (so the .md is readable in GitHub with
@@ -56,22 +54,8 @@ export const stage06 = (): string => loadSpec('06-stage-integration.md');
 export const stage07 = (): string => loadSpec('07-stage-new-identity.md');
 export const stage08 = (): string => loadSpec('08-stage-embodiment.md');
 
-export function loadStageSpec(stage: number): string {
-  switch (stage) {
-    case 1: return stage01();
-    case 2: return stage02();
-    case 3: return stage03();
-    case 4: return stage04();
-    case 5: return stage05();
-    case 6: return stage06();
-    case 7: return stage07();
-    case 8: return stage08();
-    default: return stage01();
-  }
-}
-
 // ---------------------------------------------------------------------------
-// Engineered runtime prompts — docs/journey/runtime/stage-NN.md
+// Code-fence extraction (used by the master runtime-prompt loader)
 // ---------------------------------------------------------------------------
 
 // Extract the prompt content between the OUTER ```...``` code fence.
@@ -100,7 +84,6 @@ function extractCodeBlock(md: string): string | null {
   return md.slice(afterOpenLine + 1, closeIdx).trim();
 }
 
-const runtimeCache = new Map<number, string | null>();
 const masterCache = { value: null as string | null, loaded: false };
 
 /**
@@ -126,25 +109,4 @@ export function loadMasterJourneyPrompt(): string | null {
   return masterCache.value;
 }
 
-/**
- * Load the engineered runtime prompt for a stage, if one exists.
- * Returns the prompt body (already extracted from its code block), or
- * null if no engineered version exists for this stage yet.
- *
- * Deprecated in favour of `loadMasterJourneyPrompt` — kept for fallback
- * during rollout.
- */
-export function loadEngineeredStagePrompt(stage: number): string | null {
-  if (runtimeCache.has(stage)) return runtimeCache.get(stage)!;
-  const filename = `stage-${String(stage).padStart(2, '0')}.md`;
-  const full = path.join(RUNTIME_DIR, filename);
-  if (!existsSync(full)) {
-    runtimeCache.set(stage, null);
-    return null;
-  }
-  const md = readFileSync(full, 'utf8');
-  const body = extractCodeBlock(md);
-  runtimeCache.set(stage, body);
-  return body;
-}
 
