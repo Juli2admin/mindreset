@@ -42,6 +42,53 @@ export function journeyMonthlyWarnUsd(): number {
   return readCap('JOURNEY_MONTHLY_SPEND_WARN_USD', DEFAULT_WARN_USD);
 }
 
+// Per-user monthly cap override (2026-07-24). A specific, itemised financial
+// override keyed by IMMUTABLE Clerk user ID — deliberately NOT admin, owner,
+// tester, pilot, or email-based identity. It lets a named account (e.g. a
+// product owner's personal testing account) run a HIGHER FINITE monthly cap
+// without lifting the cap for anyone else and without an unlimited exemption.
+//
+// Two env vars:
+//   JOURNEY_CAP_OVERRIDE_USER_IDS — comma-separated Clerk user IDs
+//   JOURNEY_CAP_OVERRIDE_USD      — the override monthly cap, in USD
+//
+// Fail-safe by construction: the override applies ONLY when the caller's
+// userId is on the list AND the amount parses to a finite number > 0. If the
+// user isn't listed, the list is empty/unset, or the amount is missing or
+// invalid, the account keeps the normal cap. A misconfiguration can only fall
+// back to the normal cap — it can never remove or disable the cap.
+
+/**
+ * Resolve a per-user cap override in USD, or null if none applies. Returns a
+ * positive finite number only when the userId is in JOURNEY_CAP_OVERRIDE_USER_IDS
+ * and JOURNEY_CAP_OVERRIDE_USD is a finite value > 0. Never throws; never
+ * returns 0 or a non-positive value.
+ */
+export function journeyCapOverrideUsdForUser(userId: string): number | null {
+  const rawIds = process.env.JOURNEY_CAP_OVERRIDE_USER_IDS;
+  if (!rawIds) return null;
+  const ids = rawIds
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  if (!ids.includes(userId)) return null;
+
+  const rawAmount = process.env.JOURNEY_CAP_OVERRIDE_USD;
+  if (!rawAmount) return null;
+  const amount = Number(rawAmount);
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+  return amount;
+}
+
+/**
+ * The effective monthly hard cap for a specific user: their validly-configured
+ * per-user override if one applies, otherwise the normal cap. Fail-safe — any
+ * missing/invalid override configuration resolves to the normal cap.
+ */
+export function journeyMonthlyHardCapUsdForUser(userId: string): number {
+  return journeyCapOverrideUsdForUser(userId) ?? journeyMonthlyHardCapUsd();
+}
+
 /**
  * Sum the current calendar month's Journey-attributed AI spend for a
  * user. Only counts callSite='journey_turn' + 'verifier_journey' rows —
@@ -89,7 +136,9 @@ export type MonthlyCapCheck =
 export async function checkJourneyMonthlyCap(
   userId: string,
 ): Promise<MonthlyCapCheck> {
-  const capUsd = journeyMonthlyHardCapUsd();
+  // Per-user effective cap: the account's validly-configured override, else
+  // the normal cap. Warn threshold is unchanged (out of scope for this PR).
+  const capUsd = journeyMonthlyHardCapUsdForUser(userId);
   const warnUsd = journeyMonthlyWarnUsd();
 
   let spentUsd: number;
