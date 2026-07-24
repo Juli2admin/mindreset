@@ -19,7 +19,18 @@ import {
   checkJourneyMonthlyCap,
   journeyMonthlyHardCapUsd,
   journeyMonthlyWarnUsd,
+  journeyCapOverrideUsdForUser,
+  journeyMonthlyHardCapUsdForUser,
 } from './monthly-cap';
+
+// Julia's personal Journey testing account — the ONLY account this PR
+// elevates. Immutable Clerk user ID (not email, not admin, not tester).
+const JULIA_USER_ID = 'user_3EfVFP02L8njKj2T36EvDAB0Z07';
+
+function withOverride(ids: string, usd: string) {
+  process.env.JOURNEY_CAP_OVERRIDE_USER_IDS = ids;
+  process.env.JOURNEY_CAP_OVERRIDE_USD = usd;
+}
 
 const aggregateMock = prisma.aiUsage.aggregate as unknown as ReturnType<
   typeof vi.fn
@@ -33,11 +44,15 @@ beforeEach(() => {
   aggregateMock.mockReset();
   delete process.env.JOURNEY_MONTHLY_SPEND_CAP_USD;
   delete process.env.JOURNEY_MONTHLY_SPEND_WARN_USD;
+  delete process.env.JOURNEY_CAP_OVERRIDE_USER_IDS;
+  delete process.env.JOURNEY_CAP_OVERRIDE_USD;
 });
 
 afterEach(() => {
   delete process.env.JOURNEY_MONTHLY_SPEND_CAP_USD;
   delete process.env.JOURNEY_MONTHLY_SPEND_WARN_USD;
+  delete process.env.JOURNEY_CAP_OVERRIDE_USER_IDS;
+  delete process.env.JOURNEY_CAP_OVERRIDE_USD;
 });
 
 describe('journeyMonthlyHardCapUsd / journeyMonthlyWarnUsd env overrides', () => {
@@ -141,5 +156,132 @@ describe('checkJourneyMonthlyCap — verdict transitions', () => {
     const r = await checkJourneyMonthlyCap('user_9');
     expect(r.verdict).toBe('ok');
     if (r.verdict === 'ok') expect(r.spentUsd).toBe(0);
+  });
+});
+
+describe('per-user cap override — pure resolution (journeyMonthlyHardCapUsdForUser)', () => {
+  it('no override configured → normal $50 for everyone, including Julia', () => {
+    expect(journeyCapOverrideUsdForUser(JULIA_USER_ID)).toBeNull();
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(50);
+    expect(journeyMonthlyHardCapUsdForUser('user_ordinary')).toBe(50);
+  });
+
+  it("Julia's exact ID with a valid $150 override → $150; others unaffected", () => {
+    withOverride(JULIA_USER_ID, '150');
+    expect(journeyCapOverrideUsdForUser(JULIA_USER_ID)).toBe(150);
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(150);
+    // No other account inherits it.
+    expect(journeyCapOverrideUsdForUser('user_someone_else')).toBeNull();
+    expect(journeyMonthlyHardCapUsdForUser('user_someone_else')).toBe(50);
+  });
+
+  it('trims whitespace and matches within a multi-ID list', () => {
+    withOverride(` user_other , ${JULIA_USER_ID} `, '150');
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(150);
+    expect(journeyMonthlyHardCapUsdForUser('user_other')).toBe(150);
+    expect(journeyMonthlyHardCapUsdForUser('user_not_listed')).toBe(50);
+  });
+
+  it('FAIL-SAFE: listed user but invalid override amount → normal $50 (never removes cap)', () => {
+    for (const bad of ['nonsense', '-5', '0', 'NaN', '', 'Infinity']) {
+      withOverride(JULIA_USER_ID, bad);
+      expect(journeyCapOverrideUsdForUser(JULIA_USER_ID)).toBeNull();
+      expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(50);
+    }
+  });
+
+  it('FAIL-SAFE: listed user but override amount unset → normal $50', () => {
+    process.env.JOURNEY_CAP_OVERRIDE_USER_IDS = JULIA_USER_ID;
+    delete process.env.JOURNEY_CAP_OVERRIDE_USD;
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(50);
+  });
+
+  it('FAIL-SAFE: empty / unset ID list → normal $50', () => {
+    process.env.JOURNEY_CAP_OVERRIDE_USD = '150';
+    process.env.JOURNEY_CAP_OVERRIDE_USER_IDS = '';
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(50);
+    process.env.JOURNEY_CAP_OVERRIDE_USER_IDS = '   ,  ';
+    expect(journeyMonthlyHardCapUsdForUser(JULIA_USER_ID)).toBe(50);
+  });
+});
+
+describe('per-user cap override — checkJourneyMonthlyCap verdicts (Julia @ $150)', () => {
+  // Required-policy scenarios 1-9.
+
+  it('(1) ordinary user below $50 → allowed (ok)', async () => {
+    mockSpend(30);
+    const r = await checkJourneyMonthlyCap('user_ordinary');
+    expect(r.verdict).toBe('ok');
+    expect(r.capUsd).toBe(50);
+  });
+
+  it('(2) ordinary user at/above $50 → blocked (over_cap)', async () => {
+    mockSpend(50);
+    const r = await checkJourneyMonthlyCap('user_ordinary');
+    expect(r.verdict).toBe('over_cap');
+    expect(r.capUsd).toBe(50);
+  });
+
+  it("(3) Julia's exact ID at $50.0583 → allowed (cap $150)", async () => {
+    withOverride(JULIA_USER_ID, '150');
+    mockSpend(50.0583);
+    const r = await checkJourneyMonthlyCap(JULIA_USER_ID);
+    expect(r.verdict).not.toBe('over_cap'); // allowed
+    expect(r.capUsd).toBe(150);
+    expect(r.spentUsd).toBe(50.0583);
+  });
+
+  it("(4) Julia's exact ID below $150 → allowed", async () => {
+    withOverride(JULIA_USER_ID, '150');
+    mockSpend(149.99);
+    const r = await checkJourneyMonthlyCap(JULIA_USER_ID);
+    expect(r.verdict).not.toBe('over_cap');
+    expect(r.capUsd).toBe(150);
+  });
+
+  it("(5) Julia's exact ID at/above $150 → blocked (over_cap)", async () => {
+    withOverride(JULIA_USER_ID, '150');
+    mockSpend(150);
+    const r = await checkJourneyMonthlyCap(JULIA_USER_ID);
+    expect(r.verdict).toBe('over_cap');
+    expect(r.capUsd).toBe(150);
+  });
+
+  it('(6) another user does NOT inherit Julia\'s override (blocked at $50)', async () => {
+    withOverride(JULIA_USER_ID, '150');
+    mockSpend(50.0583);
+    const r = await checkJourneyMonthlyCap('user_someone_else');
+    expect(r.verdict).toBe('over_cap');
+    expect(r.capUsd).toBe(50);
+  });
+
+  it('(7) empty override configuration → default $50 (even Julia is blocked at $50)', async () => {
+    // no override env set
+    mockSpend(50.0583);
+    const r = await checkJourneyMonthlyCap(JULIA_USER_ID);
+    expect(r.verdict).toBe('over_cap');
+    expect(r.capUsd).toBe(50);
+  });
+
+  it('(8) invalid override amount → default $50 (Julia blocked at $50, never uncapped)', async () => {
+    withOverride(JULIA_USER_ID, 'nonsense');
+    mockSpend(50.0583);
+    const r = await checkJourneyMonthlyCap(JULIA_USER_ID);
+    expect(r.verdict).toBe('over_cap');
+    expect(r.capUsd).toBe(50);
+  });
+
+  it('(9) ordinary cap behaviour unchanged while an override is active for Julia', async () => {
+    withOverride(JULIA_USER_ID, '150');
+    // ordinary user still warns at $45 with a $50 cap...
+    mockSpend(45);
+    const warnR = await checkJourneyMonthlyCap('user_ordinary');
+    expect(warnR.verdict).toBe('warn');
+    expect(warnR.capUsd).toBe(50);
+    // ...and is still blocked at $50.
+    mockSpend(50);
+    const blockR = await checkJourneyMonthlyCap('user_ordinary');
+    expect(blockR.verdict).toBe('over_cap');
+    expect(blockR.capUsd).toBe(50);
   });
 });
