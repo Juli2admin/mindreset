@@ -54,7 +54,10 @@ import {
   LEAK_HISTORY_MASK,
 } from '@/lib/journey/streaming/leak-detector';
 import { recordAiUsage } from '@/lib/ai-usage/record';
-import { checkJourneyMonthlyCap } from '@/lib/ai-usage/monthly-cap';
+import {
+  checkJourneyMonthlyCap,
+  journeyMonthlyCapRejectionPayload,
+} from '@/lib/ai-usage/monthly-cap';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,15 +167,16 @@ export async function POST(request: NextRequest) {
       userId,
       spentUsd: capCheck.spentUsd,
       capUsd: capCheck.capUsd,
+      resetAtUtc: capCheck.resetAtUtc,
     });
-    return NextResponse.json(
-      {
-        error: 'monthly_spend_cap_reached',
-        capUsd: capCheck.capUsd,
-        spentUsd: capCheck.spentUsd,
-      },
-      { status: 429 },
-    );
+    // Structured 429 (PR — 2026-07-24): distinct machine-readable `reason`,
+    // remaining/percent, and explicit UTC reset metadata. Distinguishable from
+    // the rate-limit 429 above (which uses error: 'Rate limited'). This return
+    // is BEFORE message persistence and the Anthropic call — a hard cap costs
+    // nothing.
+    return NextResponse.json(journeyMonthlyCapRejectionPayload(capCheck), {
+      status: 429,
+    });
   }
   if (capCheck.verdict === 'warn') {
     console.warn('[journey/turn] per-user monthly cap approaching', {

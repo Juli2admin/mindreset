@@ -89,19 +89,62 @@ export function journeyMonthlyHardCapUsdForUser(userId: string): number {
   return journeyCapOverrideUsdForUser(userId) ?? journeyMonthlyHardCapUsd();
 }
 
+// ---------------------------------------------------------------------------
+// Monthly window + structured metadata (PR — 2026-07-24)
+// ---------------------------------------------------------------------------
+//
+// The billing window is an explicit UTC calendar month. We deliberately do
+// NOT use `new Date(y, m, 1)` (which constructs a LOCAL-time boundary — on a
+// non-UTC server that shifts the window by the offset and can put a turn in
+// the wrong month near a boundary). Every boundary is built with `Date.UTC`
+// and read with `getUTC*`, so the result is identical regardless of the
+// server's timezone.
+//
+//   window start = first instant of the CURRENT month in UTC
+//   reset        = first instant of the NEXT month in UTC
+//
+// `Date.UTC` normalises a month index of 12 to January of the following year,
+// so the December→January rollover needs no special-casing.
+
+export interface MonthWindowUtc {
+  windowStartUtc: Date;
+  resetAtUtc: Date;
+}
+
+export function monthWindowUtc(now: Date): MonthWindowUtc {
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+  return {
+    windowStartUtc: new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)),
+    resetAtUtc: new Date(Date.UTC(year, month + 1, 1, 0, 0, 0, 0)),
+  };
+}
+
+// Round to 2 decimals (cents / hundredths of a percent) to keep the DERIVED
+// fields free of IEEE-754 noise. `spentUsd` and `capUsd` are passed through
+// unrounded: spend is reported at full precision (matching the pre-existing
+// 429 payload) and the cap is a configured whole number.
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
 /**
  * Sum the current calendar month's Journey-attributed AI spend for a
  * user. Only counts callSite='journey_turn' + 'verifier_journey' rows —
  * MiniMind chat is billed against the user's tier separately and shouldn't
  * count against the Journey cap.
  */
-export async function journeyMonthlySpendUsd(userId: string): Promise<number> {
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+export async function journeyMonthlySpendUsd(
+  userId: string,
+  now: Date = new Date(),
+): Promise<number> {
+  // Explicit UTC month start — same boundary reported in the metadata, so the
+  // query window and the reported window can never disagree.
+  const { windowStartUtc } = monthWindowUtc(now);
   const result = await prisma.aiUsage.aggregate({
     where: {
       userId,
-      createdAt: { gte: monthStart },
+      createdAt: { gte: windowStartUtc },
       callSite: { in: ['journey_turn', 'verifier_journey'] },
     },
     _sum: { costUsd: true },
@@ -109,19 +152,65 @@ export async function journeyMonthlySpendUsd(userId: string): Promise<number> {
   return result._sum.costUsd ?? 0;
 }
 
-export type MonthlyCapCheck =
-  | { verdict: 'ok'; spentUsd: number; capUsd: number }
-  | {
-      verdict: 'warn';
-      spentUsd: number;
-      capUsd: number;
-      warnUsd: number;
-    }
-  | {
-      verdict: 'over_cap';
-      spentUsd: number;
-      capUsd: number;
-    };
+/**
+ * Structured monthly-cap metadata. Every field is present on EVERY verdict, so
+ * callers (the turn route now; the frontend in a later PR) get a complete,
+ * unambiguous picture without re-deriving anything.
+ *
+ *   spentUsd       — current-month Journey spend (raw, full precision)
+ *   capUsd         — the user's EFFECTIVE hard cap ($50 default, or a valid
+ *                    per-user override, e.g. $150)
+ *   remainingUsd   — max(0, cap - spent), rounded to cents. Never negative: at
+ *                    or over the cap it is 0, so it can never present a
+ *                    misleading "allowance left".
+ *   usagePercent   — spent / cap * 100, rounded to 2 dp. MAY EXCEED 100 when
+ *                    actual spend is over the cap (e.g. 100.12). This is
+ *                    intentional — it lets a caller distinguish "just over"
+ *                    from "far over". Clamp for display downstream if desired.
+ *   warnUsd        — the warn threshold ($40 default), always included.
+ *   windowStartUtc — ISO-8601, first instant of the CURRENT month (UTC).
+ *   resetAtUtc     — ISO-8601, first instant of the NEXT month (UTC).
+ */
+export interface MonthlyCapMetadata {
+  spentUsd: number;
+  capUsd: number;
+  remainingUsd: number;
+  usagePercent: number;
+  warnUsd: number;
+  windowStartUtc: string;
+  resetAtUtc: string;
+}
+
+export type MonthlyCapVerdict = 'ok' | 'warn' | 'over_cap';
+
+export interface MonthlyCapCheck extends MonthlyCapMetadata {
+  verdict: MonthlyCapVerdict;
+}
+
+/**
+ * Build the structured metadata for a spend/cap pair at a given instant.
+ * Pure — no I/O. `now` fixes the UTC window so the query bound and the
+ * reported window are guaranteed to agree.
+ */
+export function buildMonthlyCapMetadata(
+  spentUsd: number,
+  capUsd: number,
+  warnUsd: number,
+  now: Date,
+): MonthlyCapMetadata {
+  const { windowStartUtc, resetAtUtc } = monthWindowUtc(now);
+  const remainingUsd = capUsd > 0 ? round2(Math.max(0, capUsd - spentUsd)) : 0;
+  const usagePercent = capUsd > 0 ? round2((spentUsd / capUsd) * 100) : 0;
+  return {
+    spentUsd,
+    capUsd,
+    remainingUsd,
+    usagePercent,
+    warnUsd,
+    windowStartUtc: windowStartUtc.toISOString(),
+    resetAtUtc: resetAtUtc.toISOString(),
+  };
+}
 
 /**
  * Check a user's current-month Journey spend against the caps. Returns:
@@ -136,27 +225,49 @@ export type MonthlyCapCheck =
 export async function checkJourneyMonthlyCap(
   userId: string,
 ): Promise<MonthlyCapCheck> {
+  const now = new Date();
   // Per-user effective cap: the account's validly-configured override, else
-  // the normal cap. Warn threshold is unchanged (out of scope for this PR).
+  // the normal cap. Warn threshold is unchanged.
   const capUsd = journeyMonthlyHardCapUsdForUser(userId);
   const warnUsd = journeyMonthlyWarnUsd();
 
   let spentUsd: number;
   try {
-    spentUsd = await journeyMonthlySpendUsd(userId);
+    spentUsd = await journeyMonthlySpendUsd(userId, now);
   } catch (err) {
-    console.error(
-      '[monthly-cap] aggregate failed, failing open:',
-      err,
-    );
-    return { verdict: 'ok', spentUsd: 0, capUsd };
+    console.error('[monthly-cap] aggregate failed, failing open:', err);
+    // Fail-open: report zero spend so the turn proceeds. Metadata is still
+    // complete (full allowance remaining) so callers never see a
+    // half-populated result.
+    return { verdict: 'ok', ...buildMonthlyCapMetadata(0, capUsd, warnUsd, now) };
   }
 
-  if (spentUsd >= capUsd) {
-    return { verdict: 'over_cap', spentUsd, capUsd };
-  }
-  if (spentUsd >= warnUsd) {
-    return { verdict: 'warn', spentUsd, capUsd, warnUsd };
-  }
-  return { verdict: 'ok', spentUsd, capUsd };
+  const meta = buildMonthlyCapMetadata(spentUsd, capUsd, warnUsd, now);
+  if (spentUsd >= capUsd) return { verdict: 'over_cap', ...meta };
+  if (spentUsd >= warnUsd) return { verdict: 'warn', ...meta };
+  return { verdict: 'ok', ...meta };
+}
+
+/**
+ * The structured HTTP 429 body for a HARD monthly-cap rejection. Kept beside
+ * the cap logic (not inlined in the route) so the wire contract is
+ * unit-testable without booting the route.
+ *
+ * `reason: 'journey_monthly_spend_cap'` makes it unambiguously distinguishable
+ * from the rate-limit 429 (which uses `error: 'Rate limited'` and carries no
+ * `reason`). The `error` code is preserved from the pre-existing contract for
+ * backward compatibility; the metadata fields are additive.
+ */
+export function journeyMonthlyCapRejectionPayload(check: MonthlyCapCheck) {
+  return {
+    error: 'monthly_spend_cap_reached',
+    reason: 'journey_monthly_spend_cap',
+    spentUsd: check.spentUsd,
+    capUsd: check.capUsd,
+    remainingUsd: check.remainingUsd,
+    usagePercent: check.usagePercent,
+    warnUsd: check.warnUsd,
+    windowStartUtc: check.windowStartUtc,
+    resetAtUtc: check.resetAtUtc,
+  };
 }
