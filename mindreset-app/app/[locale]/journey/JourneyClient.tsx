@@ -7,6 +7,13 @@ import remarkGfm from 'remark-gfm';
 import TopBar from '@/components/TopBar';
 import { useTheme } from '@/lib/theme/useTheme';
 import { TOKENS } from '@/lib/brand/colors';
+import {
+  classifyTurnError,
+  canSendTurn,
+  monthlyCapView,
+  resolveAssistantBubbleOnError,
+  type TurnError,
+} from '@/lib/journey/turn-error';
 
 // The Journey UI — mirrors MiniMind's visual structure (TopBar, message
 // column, opener pseudo-message, composer at bottom). Deliberately quiet.
@@ -53,7 +60,6 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
   const { palette: PALETTE } = useTheme();
 
   const opener = t('opener');
-  const streamErrorSuffix = t('streamErrorSuffix');
 
   // If the user has no prior history, render a single opener pseudo-message
   // (not persisted to the DB — purely UI scaffolding to warm the first turn,
@@ -65,7 +71,9 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
   );
   const [composerValue, setComposerValue] = useState('');
   const [sending, setSending] = useState(false);
-  const [streamError, setStreamError] = useState(false);
+  // Exactly one active turn error at a time (or none). Replaces the old
+  // `streamError` boolean that collapsed every failure into one message.
+  const [turnError, setTurnError] = useState<TurnError | null>(null);
   const scrollEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -229,14 +237,38 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   }
 
-  const canSend = !frozen && !sending && composerValue.trim().length > 0;
+  // A hard monthly-cap block keeps the composer disabled until the view is
+  // reopened; rate-limit / technical / access / screening do NOT permanently
+  // disable it (the user may edit and retry).
+  const hardCapActive = turnError?.kind === 'monthly_cap';
+  const canSend = canSendTurn({
+    frozen,
+    sending,
+    hardCapActive,
+    value: composerValue,
+  });
+
+  // A turn failed: keep any partial streamed text once (drop an empty
+  // placeholder), then surface exactly ONE error via `turnError`. Never writes
+  // the error into a message bubble — that was the old triple-render bug.
+  function failTurn(error: TurnError, assistantId: string) {
+    setMessages((prev) =>
+      prev.flatMap((m) => {
+        if (m.id !== assistantId) return [m];
+        return resolveAssistantBubbleOnError(m.content).keep
+          ? [{ ...m, streaming: false }]
+          : [];
+      }),
+    );
+    setTurnError(error);
+  }
 
   async function send() {
     if (!canSend) return;
     const message = composerValue.trim();
     setComposerValue('');
     setSending(true);
-    setStreamError(false);
+    setTurnError(null);
 
     const userMsg: Message = {
       id: `temp-user-${Date.now()}`,
@@ -258,15 +290,28 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
         body: JSON.stringify({ message, locale }),
       });
 
-      if (!res.ok || !res.body) {
-        setStreamError(true);
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === assistantMsg.id
-              ? { ...m, content: streamErrorSuffix, streaming: false }
-              : m,
-          ),
+      if (!res.ok) {
+        // Read the structured JSON so we can render the right, status-aware
+        // panel (monthly cap / rate limit / access / screening / technical).
+        let body: unknown = null;
+        try {
+          body = await res.json();
+        } catch {
+          body = null;
+        }
+        failTurn(
+          classifyTurnError({
+            transport: 'http',
+            status: res.status,
+            body,
+            retryAfterHeader: res.headers.get('Retry-After'),
+          }),
+          assistantMsg.id,
         );
+        return;
+      }
+      if (!res.body) {
+        failTurn({ kind: 'technical' }, assistantMsg.id);
         return;
       }
 
@@ -292,14 +337,10 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
         ),
       );
     } catch {
-      setStreamError(true);
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantMsg.id
-            ? { ...m, content: streamErrorSuffix, streaming: false }
-            : m,
-        ),
-      );
+      // Network drop or mid-stream interruption: a genuine technical failure.
+      // Any partial text already streamed into the bubble is kept (once) by
+      // failTurn; we do not claim the AI "lost its thread".
+      failTurn({ kind: 'technical' }, assistantMsg.id);
     } finally {
       setSending(false);
     }
@@ -326,11 +367,8 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
               {messages.map((m) => (
                 <MessageRow key={m.id} message={m} />
               ))}
-              {streamError && messages.length > 0 && (
-                <p style={{ color: PALETTE.textMuted }} className="text-sm italic">
-                  {streamErrorSuffix}
-                </p>
-              )}
+              {/* Single error site — exactly one panel per failure. */}
+              {turnError && <TurnErrorView error={turnError} locale={locale} />}
               <div ref={scrollEndRef} />
             </div>
           </div>
@@ -344,7 +382,8 @@ export default function JourneyClient({ initialMessages, frozen }: Props) {
             onChange={setComposerValue}
             onSend={send}
             onKeyDown={onKeyDown}
-            disabled={sending || recording || transcribing}
+            disabled={sending || recording || transcribing || hardCapActive}
+            blocked={hardCapActive}
             textareaRef={textareaRef}
             placeholder={t('placeholder')}
             sending={sending}
@@ -412,6 +451,7 @@ function Composer({
   onSend,
   onKeyDown,
   disabled,
+  blocked,
   textareaRef,
   placeholder,
   sending,
@@ -428,6 +468,7 @@ function Composer({
   onSend: () => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   disabled: boolean;
+  blocked: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement>;
   placeholder: string;
   sending: boolean;
@@ -515,7 +556,7 @@ function Composer({
             <button
               type="button"
               onClick={onMicClick}
-              disabled={transcribing}
+              disabled={transcribing || blocked}
               className="rounded-full transition-opacity disabled:opacity-30"
               style={{
                 background: recording ? PALETTE.danger : PALETTE.bgCard,
@@ -671,6 +712,130 @@ function FrozenView() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+// ===========================================================================
+// Turn-error rendering — exactly ONE panel per failure (PR 3, 2026-07-24).
+// Replaces the old triple-render of streamErrorSuffix. Switches on the typed
+// TurnError so each failure gets clear, status-aware copy. No internal AI cost
+// (spentUsd / capUsd) is ever shown.
+// ===========================================================================
+
+function TurnErrorView({
+  error,
+  locale,
+}: {
+  error: TurnError;
+  locale: string;
+}) {
+  const { palette: PALETTE } = useTheme();
+  const t = useTranslations('Journey');
+
+  if (error.kind === 'monthly_cap') {
+    return <MonthlyCapPanel info={error.info} locale={locale} />;
+  }
+
+  // Temporary notes — composer stays enabled; the user may retry.
+  if (error.kind === 'rate_limit' || error.kind === 'technical') {
+    const msg =
+      error.kind === 'technical'
+        ? t('turnErrors.technical')
+        : error.retryAfterSec != null
+          ? t('turnErrors.rateLimitSeconds', { seconds: error.retryAfterSec })
+          : t('turnErrors.rateLimit');
+    return (
+      <p
+        className="text-sm italic"
+        style={{ color: PALETTE.textMuted, fontFamily: TOKENS.serif }}
+        role="status"
+      >
+        {msg}
+      </p>
+    );
+  }
+
+  // access | screening — distinct restricted panels with a reload back to the
+  // server-gated view (page.tsx NoAccessView / the frozen gate).
+  const title =
+    error.kind === 'access'
+      ? t('turnErrors.accessTitle')
+      : t('turnErrors.screeningTitle');
+  const body =
+    error.kind === 'access'
+      ? t('turnErrors.accessBody')
+      : t('turnErrors.screeningBody');
+  return (
+    <div
+      className="px-5 py-4"
+      style={{
+        background: PALETTE.bgCard,
+        border: `1px solid ${PALETTE.border}`,
+        borderRadius: '1rem',
+      }}
+      role="alert"
+    >
+      <h3
+        className="mb-2 text-base"
+        style={{ fontFamily: TOKENS.serif, color: PALETTE.text }}
+      >
+        {title}
+      </h3>
+      <p className="text-sm leading-relaxed" style={{ color: PALETTE.textMuted }}>
+        {body}
+      </p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="mt-3 px-4 py-2 rounded-md text-sm"
+        style={{
+          background: PALETTE.accent,
+          color: PALETTE.accentText,
+          fontFamily: TOKENS.sans,
+        }}
+      >
+        {t('turnErrors.reload')}
+      </button>
+    </div>
+  );
+}
+
+function MonthlyCapPanel({
+  info,
+  locale,
+}: {
+  info: Extract<TurnError, { kind: 'monthly_cap' }>['info'];
+  locale: string;
+}) {
+  const { palette: PALETTE } = useTheme();
+  const t = useTranslations('Journey');
+  // Browser-local timezone: omit timeZone so Intl uses the viewer's zone; the
+  // raw UTC instant stays the source of truth. This panel only ever renders
+  // client-side (after a failed turn), so there is no SSR/local-zone mismatch.
+  const view = monthlyCapView(info, locale);
+
+  return (
+    <div
+      className="px-5 py-4"
+      style={{
+        background: PALETTE.bgCard,
+        border: `1px solid ${PALETTE.border}`,
+        borderRadius: '1rem',
+      }}
+      role="status"
+    >
+      <h3
+        className="mb-2 text-base"
+        style={{ fontFamily: TOKENS.serif, color: PALETTE.text }}
+      >
+        {t('monthlyCap.title')}
+      </h3>
+      <p className="text-sm leading-relaxed" style={{ color: PALETTE.textMuted }}>
+        {view.resetAtLocal
+          ? t('monthlyCap.body', { resetAt: view.resetAtLocal })
+          : t('monthlyCap.bodyNoReset')}
+      </p>
     </div>
   );
 }
