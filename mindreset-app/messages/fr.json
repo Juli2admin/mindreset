@@ -717,7 +717,22 @@
       "reviewSent": "Merci. Nous avons reçu ta demande et l'examinerons dès que possible.",
       "reviewError": "Impossible d'envoyer pour le moment. Merci de réessayer plus tard, ou d'écrire à support."
     },
-    "homeCardCta": "Continuer →"
+    "homeCardCta": "Continuer →",
+    "turnErrors": {
+      "technical": "The response could not be completed. Your message is safe. Please try again.",
+      "rateLimit": "You're moving quickly. Please wait a moment, then try again.",
+      "rateLimitSeconds": "You're moving quickly. Please wait about {seconds}s, then try again.",
+      "accessTitle": "Your Journey access needs a refresh.",
+      "accessBody": "Please reload this page to continue where you left off.",
+      "screeningTitle": "Let's pause here for now.",
+      "screeningBody": "This session can't continue right now. Your conversation is safe. Please reload the page.",
+      "reload": "Reload"
+    },
+    "monthlyCap": {
+      "title": "Monthly Journey allowance reached",
+      "body": "You've reached your Journey allowance for this month. Your conversation is safe and will remain here. You can continue after your allowance resets on {resetAt}.",
+      "bodyNoReset": "You've reached your Journey allowance for this month. Your conversation is safe and will remain here. You can continue after your allowance resets at the start of next month."
+    }
   },
   "Screening": {
     "brand": "MindReset",
