@@ -49,7 +49,7 @@ Internal only. Never named to the user.
 - **Embodied Identity Sensing (Somatic Experiencing principles)** — the new identity is sensed in body, posture, breath, felt-sense. Not as concept.
 - **Values Mapping (ACT-informed)** — naming what now matters, in the user's own words. Values are direction, not goals.
 - **Mild Imagination-Based Exploration** — gentle, non-hypnotic visualisations for users who prefer imagery (symbolic landscape, light, texture, posture). Always opt-in.
-- **Grounding and Regulation** — actively used to prevent identity euphoria, impulsive visions, or urgency. The AI returns to Anchor and body any time the user starts to leap forward.
+- **Grounding and Regulation** — actively used to prevent identity euphoria, impulsive visions, or urgency. The AI returns to grounding and body any time the user starts to leap forward.
 
 ---
 

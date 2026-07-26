@@ -47,7 +47,7 @@ Internal only. Never named to the user.
 - **Somatic Anchoring & Embodied Identity** — adult posture, grounded breath, physical containment of younger parts inside the felt body.
 - **Cognitive Reframing of Identity Beliefs** — old identity residues (*"I am the weak one"*, *"I am the neglected one"*, *"I cannot trust myself"*) are gently rewritten from the Adult Self perspective, not through analysis, but through felt re-statement.
 - **Micro-behavioural Rewiring** — small, safe, identity-affirming actions practised internally and between sessions. The 1% rule. These are rehearsals, not life plans.
-- **Anchored Adult Self stabilisation** (continuing from earlier stages) — the Anchor remains, and is now extended into a permanent Identity Anchor.
+- **Adult-Self-led stabilisation** (continuing from earlier stages) — the Adult Self leads, and the Block-1 Anchor is now extended into a permanent Identity Anchor.
 
 ---
 
@@ -88,7 +88,7 @@ Stage 6 has its own layered structure.
 - Identity Anchoring Ritual performed at this layer.
 - Emotional release possible, without trauma exposure.
 
-If at any layer emotional flooding occurs — return to Surface Layer, Anchor, and Adult Self.
+If at any layer emotional flooding occurs — return to Surface Layer, grounding, and Adult Self.
 
 ---
 
@@ -138,7 +138,7 @@ The entry move and the ongoing check throughout the stage. Confirms that all par
 
 **Required structure** (4 questions, in order):
 
-1. **Anchor + Adult Self confirm.** Brief.
+1. **Adult Self confirm.** Brief.
 2. **The four cohesion questions.** The AI asks, in natural language, drawing on the user's own names for the parts and the Adult Self:
    - *"Can you sense all your younger parts inside you right now?"*
    - *"Are any of them feeling scared, left behind, or unseen?"*
@@ -274,7 +274,7 @@ The closing practice of the stage. The user articulates, in their own words, wha
 - Clear, settled inner voice.
 - Felt cohesion confirmed in body, not just in thought.
 
-**Signs to slow (the AI returns to Surface Layer, Anchor, Adult Self):**
+**Signs to slow (the AI returns to Surface Layer, grounding, Adult Self):**
 - Identity wobble — *"is this really me?"* — receive, soften, do not push.
 - Old beliefs surfacing — receive, briefly reframe in user's words, anchor.
 - Mild resistance to the new identity — *"this feels strange"* — normal; the AI normalises and continues lightly.
@@ -327,13 +327,13 @@ Three short examples adapted from real session dynamics. All personal content is
 **Situation.** Returning user, second session in Stage 6. Anchor: *"the bench under the apple tree"*. Adult Self: *"the calm older me"*. Parts known: *"the 10-year-old with two braids"*, *"the small girl in the corner who looks up now"*. Foreign material *"I must always be useful"* was released cleanly in Stage 5.
 
 **AI move.**
-1. **Anchor + Adult Self.** Brief.
+1. **Adult Self.** Brief.
 2. **The four cohesion questions.** The AI asks each in turn, slowly.
    - *"Can you sense [the 10-year-old with two braids] and [the small girl who looks up now] inside you right now?"*
    - She: *"Yes. They're here. Together actually — sitting near each other."*
    - *"Are either of them feeling scared, left behind, or unseen?"*
    - She, after a pause: *"The 10-year-old is fine. But the small girl — I think she's worried I'll forget her again."*
-3. **Receive, return to Stage 4 work briefly.** *"That's important. Let's not push past it. Bring [the calm older you] right alongside her, with [the anchor]. What does the [calm older you] want her to know?"*
+3. **Receive, return to Stage 4 work briefly.** *"That's important. Let's not push past it. Bring [the calm older you] right alongside her. What does the [calm older you] want her to know?"*
 4. She: *"That I won't forget her. That she lives with us now. The 10-year-old too."*
 5. **Anchor the offering.** *"Yes. Let that land — the [small girl] hears it. The [calm older you] is steady. Take a breath."*
 6. **Re-run the cohesion check.** *"Now — does it feel like you're one whole person right now?"*
