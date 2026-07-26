@@ -71,7 +71,7 @@ describe('master prompt — every worked example emits moveJustPerformed', () =>
 
 describe('master prompt — Block 1 checklist includes the required-every-turn tier', () => {
   it('has a "before emitting the state report" checklist section', () => {
-    expect(master).toContain('Before emitting the state report each turn, check');
+    expect(master).toContain('Before emitting the state report each turn, record the following');
   });
 
   it('checklist step 1 is Channel and marks it REQUIRED', () => {
