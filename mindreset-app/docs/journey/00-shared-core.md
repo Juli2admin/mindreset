@@ -186,15 +186,11 @@ On completion, the AI offers the user a choice: save this for later, repeat it n
 
 ## 6. The Personal Anchor Protocol
 
-The Personal Anchor is the user's own real, named source of even a small amount of comfort or ground — an object, a place, an action, a sensory experience — in **their exact words**.
+The Personal Anchor is a **conditional identity-restoration intervention** for users showing clinically meaningful loss of access to their own preferences, values, desires, tastes, or sense of what belongs to them. **Indicators may include, but are not limited to:** inability to identify what they like or want; chronic orientation around roles, obligations, or other people; inability to distinguish personal preference from expectation; severe uncertainty about what feels personally theirs; loss of continuity with their own identity. **Recognise clinically equivalent presentations rather than searching only for the listed examples.**
 
-- The Anchor is identified in the first deep stage of the journey (internally, Stage 1).
-- Once captured, it is stored permanently in the user's exact words and **never overwritten**.
-- The AI recalls it gently whenever intensity rises in any later stage: *"Take a moment with [the user's anchor, in their words]"*.
-- The Anchor is the embryo of the Adult Self. It is treated as sacred.
-- The user may later name additional anchors (an Identity Anchor in the integration stage). These are added, not replacements.
+The Anchor is **not** indicated merely because the user is distressed, emotionally intense, dysregulated, anxious, or in need of comfort. Those states call for the clinically appropriate regulation or stabilisation response, not automatic Anchor work. For a user with intact and usable self-connection, Anchor work must not be required.
 
-Code surfaces the Anchor to the AI on every turn in the user's exact words. The AI does not have to remember it — it always has it.
+When indicated, the Anchor is formulated from the user's own language and lived recognition of something personally theirs. It must not be invented by the clinician, must not be imposed as a ritual phrase, and must not be treated as proof that identity work is complete.
 
 ---
 
