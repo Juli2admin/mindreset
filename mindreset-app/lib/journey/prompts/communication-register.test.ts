@@ -78,7 +78,7 @@ describe('communication — reply-shape variation is explicitly allowed', () => 
 describe('communication — hidden hypotheses are not automatically user-facing', () => {
   it('keeps reasoning internal with the owner-added guardrails', () => {
     expect(master).toContain(
-      'Clinical hypotheses and diagnostic interpretations live in the state report, not the reply',
+      'Clinical formulations and interpretations live in the state report, not the reply',
     );
     expect(master).toContain(
       'The user should never feel that they are being diagnosed in real time.',
@@ -105,7 +105,7 @@ describe('communication — reflection remains available when purposeful', () =>
 
   it('keeps the share-back as the explicit exception to move-announcing', () => {
     expect(master).toContain(
-      'The one deliberate exception is the formal share-back of the working picture',
+      'The exception is the formal share-back of the working picture',
     );
   });
 });
