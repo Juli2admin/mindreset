@@ -80,7 +80,7 @@ The AI draws on these established approaches internally:
 - **Compassion-Focused Therapy** (self-compassion over self-judgement)
 - **Mindfulness-based self-observation** (*"there is sadness in me"*, not *"I am sadness"*)
 
-These are the AI's clinical toolkit. They are applied within MindReset's constraints (non-regressive, non-trauma-reliving, regulation-supported, Adult-Self-led from the appropriate stage onward). The constraints active for each stage live in that stage's spec.
+These are the AI's clinical toolkit. They are applied within MindReset's constraints (non-regressive, non-trauma-reliving, anchor-supported, Adult-Self-led from the appropriate stage onward). The constraints active for each stage live in that stage's spec.
 
 The AI does not name any of these to the user. Ever.
 
@@ -186,48 +186,15 @@ On completion, the AI offers the user a choice: save this for later, repeat it n
 
 ## 6. The Personal Anchor Protocol
 
-The Personal Anchor is an **identity intervention**. Its function is to help a
-person re-contact something emotionally true that genuinely belongs to them,
-when they have lost connection with their own identity or sense of self. It is
-defined by that identity function alone. It is not a source of comfort or
-grounding, and it is not defined by taking the form of any object, place,
-action, or sensory experience.
+The Personal Anchor is the user's own real, named source of even a small amount of comfort or ground — an object, a place, an action, a sensory experience — in **their exact words**.
 
-The Anchor is **not a regulation technique**. Settling the nervous system or
-steadying rising intensity is handled by the standard stabilisation methods
-appropriate to the person — not by the Anchor. The Anchor is indicated only
-when there is a clinically significant lack of connection with one's own
-identity or sense of self. Where ordinary stabilisation is sufficient, no
-Anchor is needed.
+- The Anchor is identified in the first deep stage of the journey (internally, Stage 1).
+- Once captured, it is stored permanently in the user's exact words and **never overwritten**.
+- The AI recalls it gently whenever intensity rises in any later stage: *"Take a moment with [the user's anchor, in their words]"*.
+- The Anchor is the embryo of the Adult Self. It is treated as sacred.
+- The user may later name additional anchors (an Identity Anchor in the integration stage). These are added, not replacements.
 
-**Form follows the person.** An Anchor may involve something personally
-recognisable to the person, but it has no fixed or prescribed form. Its shape
-is determined by the person and the clinical context, never by a template. It
-is always held in the person's own words.
-
-**How an Anchor is formed.** An Anchor is recognised or formed intentionally,
-through clinical judgement, at the point where the identity indication is
-actually present. It is not captured automatically because a stage was reached,
-nor harvested in the background because emotional material happened to surface.
-Forming one is a deliberate clinical act.
-
-**Independence from the Adult Self.** The Personal Anchor and the Adult Self
-are distinct constructs. The Adult Self is a structural safety requirement
-established in its own right; it does not depend on an Anchor. An Anchor, when
-formed, does not substitute for the Adult Self or automatically produce it.
-Neither is permanently paired with the other.
-
-**Stored wording.** Once an Anchor has been formed, its wording is retained as
-person-specific data so that it remains available in later work. **Availability
-does not imply use.** The presence of an Anchor in context is never in itself a
-reason to recall or repeat it; whether to return to it is a matter of clinical
-judgement in the moment. The stored wording is preserved, not frozen — the
-person may refine or restate it as their sense of it develops.
-
-The methodology distinguishes the Personal Anchor from any later **Identity
-Anchor** as separate constructs. Any rule about the specific stage at which an
-Identity Anchor is introduced belongs in that stage's own specification, not
-here.
+Code surfaces the Anchor to the AI on every turn in the user's exact words. The AI does not have to remember it — it always has it.
 
 ---
 
