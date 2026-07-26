@@ -1,0 +1,1024 @@
+{
+ "id": "julia-2026-07-26-postrestore",
+ "locale": "ru",
+ "model": "claude-sonnet-4-6",
+ "description": "Post-restore session 2026-07-26 reconstructed from owner transcript + inspector reports. User turns omitted (echo/restating metrics NOT comparable).",
+ "annotations": {},
+ "sessionContractReference": "",
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-26T10:00:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Пятнадцать лет — и общего не было почти ничего. Только интим и быт. Это обидно. И это честная картина. Когда ты так это видишь — что ты держала, а он жил своей жизнью — что внутри? Злость, грусть, или что-то ещё?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-26T10:07:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Обида — за переезд, за годы, за то, что он до сих пор не укоренился рядом с тобой. И ты назвала это сама: эмоциональные качели. И что сама себя вытащить не можешь. Вот с этого и начнём сегодня. Не с него — с тебя. Качели — это когда что-то в тебе держит, даже когда голова говорит хватит. Что, как ты думаешь, держит?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-07-26T10:14:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Давай вместе. Ты говоришь — обида. Пятнадцать лет. Переехала ради него. А он не укоренился. Но обида сама по себе не держит. Обида — это когда что-то важное не получила. Что-то, чего очень хотела. Вот это и держит. Не он — а то, чего ты так и не получила от него. Что это было? Что ты хотела от этих отношений — в самом начале, когда переезжала?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 3,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 4,
+   "ts": "2026-07-26T10:21:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Пять лет с любовницей. Два месяца на операцию. Постоянно — не хочу работать. И ты всё это время держала. Сопли на кулак — твои слова. Ты хотела партнёра. А получила человека, которого надо было тащить. Вот что держит: ты всё ещё ждёшь, что он станет тем, ради кого ты переехала. Тем, кого ты себе придумала в начале. Этот человек существовал?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 4,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 5,
+   "ts": "2026-07-26T10:28:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Вот оно. Ты жила не с ним — ты жила с образом, который сама создала. И пятнадцать лет пыталась надеть этот образ на живого человека, который был совсем другим. Это не глупость. Это очень человеческое. Но вот вопрос, который сейчас важен: этот образ — партнёр, который планирует, развивается вместе, любит — ты его ищешь в мужчинах? Или ты можешь дать это себе сама?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 5,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 6,
+   "ts": "2026-07-26T10:35:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Ты права. Ходим по кругу. Потому что вопрос не в нём — ты это уже знаешь. И не в том, существуют ли такие мужчины — ты это тоже уже знаешь. Вот где мы застряли: каждое утро ты просыпаешься с надеждой. Изо дня в день. И это не про него — это про что-то в тебе, что не может отпустить эту надежду. Та девочка на лестничной площадке, которая мечтала о другой жизни — она тоже так ждала. Каждый день у окна. Она всё ещё ждёт?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 6,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 7,
+   "ts": "2026-07-26T11:42:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Девочку оставляю. Ты права — мы ходим по кругу, и это моя ответственность тоже. Скажи мне прямо: что ты хочешь сегодня? Не от него — от этого разговора. Куда идти?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 7,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 8,
+   "ts": "2026-07-26T11:49:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Давай попробую. Ты застряла не потому что слабая или глупая. Ты застряла потому что в тебе живёт очень старая надежда — и она сильнее, чем усталость от него. Вот что я вижу: ты каждое утро просыпаешься и ждёшь. Не его конкретно — а того, чтобы кто-то наконец увидел тебя. Подошёл. Спросил. Выбрал. Эта потребность — быть выбранной, увиденной, важной для кого-то — она очень глубокая. И она не появилась в этом браке. Она была до него. Вопрос не почему он такой. Вопрос — откуда в тебе эта такая острая потребность ждать, что кто-то придёт и выберет тебя? Когда ты впервые помнишь это чувство — что ждёшь, что тебя выберут или увидят?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 8,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 9,
+   "ts": "2026-07-26T11:56:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Принято. Ты не согласна — и это важно. Не быть выбранной. Привязанность — и одновременно чёткое понимание, что это не отношения. Расскажи про привязанность. Что это такое для тебя — к нему, к этим отношениям? Не к образу — а именно к нему, живому?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 9,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 10,
+   "ts": "2026-07-26T11:03:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Слушай, ты только что сама сказала самое точное за весь разговор. К нему как к личности — привязки нет. Но держит что-то другое: совместные выборы, дом, обязательства, которые он бросил на тебя. И ещё — эта странная вещь, что он не со зла. Просто не в порядке что-то у него. Это не привязанность к человеку. Это что-то между жалостью, незакрытым счётом и тем, что ты не можешь уйти с долгом на руках. Вот где ты застряла: не в любви к нему. В том, что он оставил тебе слишком много неоплаченного — и эмоционально, и буквально. Это звучит точно?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 10,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 11,
+   "ts": "2026-07-26T11:10:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Давай проще. Ты уходишь — и что остаётся у тебя на руках? Счета, которые ты одна не потянешь. Дом, который вы выбрали вместе. Решения, которые он принял и бросил — а ты с ними осталась. И ещё — пятнадцать лет, которые ты вложила. Время, переезд, терпение. Всё это как будто висит в воздухе незакрытым. Вот это и есть неоплаченный счёт. Не долг любви — а буквальное ощущение, что ты уйдёшь, а всё это так и останется без ответа. Без признания. Без завершения. Это ближе к тому, что ты чувствуешь?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 11,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 12,
+   "ts": "2026-07-26T11:17:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Вот это — настоящее. Не он, не образ, не любовь. А это: ты тянешь всё, а он может в любой момент уйти и вернуться, и ничего не изменится. И ты уже не знаешь, что с этим делать. Это не эмоциональные качели. Это конкретная ловушка: уйти ты не можешь, потому что счета останутся на тебе. Остаться — тоже невозможно, потому что так продолжаться не может. Вот где ты застряла по-настоящему. Один вопрос — практический. Если бы финансовая сторона была решена — счета, дом, всё это — ты бы ушла?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 12,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 13,
+   "ts": "2026-07-26T12:24:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Вот теперь полная картина. Не любовь в обычном смысле. Не образ. А что-то вроде очень старой, очень близкой связи — с человеком, который раз за разом делает больно, а потом приходит и говорит прости, я не специально. И ты прощаешь. Не потому что слабая — а потому что эта нить реальная. Это не иллюзия. Это привязанность к живому человеку, который тебя знает, который рядом много лет. Даже если он идиот. И вот в чём настоящая ловушка: он не чудовище. Он просто не способен дать тебе то, что тебе нужно. И ты это видишь — и всё равно остаёшься. Потому что уйти от не чудовища намного труднее, чем от злодея. Один вопрос. Когда он приходит и говорит прости, я не специально — что в тебе в этот момент происходит?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 13,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 14,
+   "ts": "2026-07-26T12:31:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Здесь. Никуда не делась.",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 14,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 15,
+   "ts": "2026-07-26T12:38:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Связь вернулась — хорошо. Ты только что повторила то, на чём мы остановились. И я задала вопрос, который ты не успела услышать. Когда он приходит и говорит прости, я не специально — что внутри тебя в этот момент происходит?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 15,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 16,
+   "ts": "2026-07-26T12:45:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Неуважение со всех сторон. Муж, сын — и ты стоишь там, как будто тебя нет. И при этом — когда он приходит с прости, я не специально — ты всё равно отпускаешь. Каждый раз. Вот что я хочу понять: в момент, когда он раскаивается — ты ему веришь? Или ты просто устала держать обиду?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 16,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 17,
+   "ts": "2026-07-26T12:52:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Ты сама это сказала. Не я. Не веришь ему — просто не хочешь держать обиду. Он возвращается в хорошее окно — и ты пускаешь. Не потому что простила. Потому что устала быть в напряжении. И сама называешь это дебильной стратегией. Значит, ты уже знаешь ответ. Ты его знаешь давно. Что мешает из этого знания что-то сделать?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 17,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 18,
+   "ts": "2026-07-26T12:59:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Подожди. Ты только что сказала очень чёткую вещь. Но я хочу убедиться, что это не просто усталость говорит. Это звучит как решение. Свои планы, своя жизнь, жирная точка. Это то, что ты сейчас действительно чувствуешь — или это то, что ты думаешь, что должна чувствовать?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 18,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 19,
+   "ts": "2026-07-26T13:06:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Да. Усталость — это реальное. И при этом — должна и хочу это разные вещи. Ты сама это разделила. Усталость говорит жирная точка. Но усталость проходит. Он возвращается. И окно снова открывается. Это не критика. Это просто то, что ты сама описала — как это работает у вас. Вот где настоящий вопрос: что нужно, чтобы решение держалось не только когда устала — но и когда он вернётся и скажет прости?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 19,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 20,
+   "ts": "2026-07-26T13:13:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Вот это — настоящий вопрос. Не уходить или нет. А почему решение не держится. Давай посмотрим на это честно. Ты описала цикл: он уходит или делает больно, ты в напряжении, напряжение отпускает, он возвращается с прости, ты пускаешь, всё сначала. Решение принимается в моменте усталости. А потом приходит он — живой, знакомый, с раскаянием — и что-то в тебе размягчается. Не потому что ты слабая. А потому что это размягчение происходит автоматически, без твоего участия. Вот где работа. Не в том, чтобы стать жёстче. А в том, чтобы понять — что именно размягчается в тот момент? Что в тебе откликается на его прости?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 20,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 21,
+   "ts": "2026-07-26T13:20:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Вот он — корень. Не любовь. Не привязанность к нему как к человеку. А облегчение от того, что непосильная задача временно снимается с плеч. Он приходит — и ты не одна с этой горой. Вот что размягчается. Это не слабость. Это человек, который реально устал и реально перегружен. Когда гора тяжёлая — любая помощь, даже ненадёжная, ощущается как спасение. Но вот что важно: он не решает гору. Он только даёт тебе передышку — и за это ты платишь ещё одним циклом. Гора никуда не девается. Она просто снова становится терпимой. Что было бы, если бы гора стала меньше — не потому что он вернулся, а по-другому?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 21,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 22,
+   "ts": "2026-07-26T13:27:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Ты только что сказала самое точное за весь разговор. Не я не могу уйти от него. А я устала настолько, что не могу двигаться вообще. Это разные вещи. Проблема не в нём. Проблема в том, что у тебя нет сил даже на то, чтобы начать выходить. И пока сил нет — любое облегчение, даже его возвращение, кажется выходом. Так что вопрос не уходить или нет. Вопрос — откуда взять силы, когда их нет совсем. Вот здесь я хочу остановиться. Не строить планы, не решать гору. Просто — что хоть немного даёт тебе энергию? Не счастье, не радость — просто чуть меньше пусто. Есть что-то такое?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 22,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  },
+  {
+   "n": 23,
+   "ts": "2026-07-26T13:34:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Останавливаемся. Прежде чем ты закроешь — одно маленькое. Просто руку на грудь, туда, где твоя комната, твоё пространство. Почувствуй ладонь. Три медленных выдоха — выдох чуть длиннее вдоха. Не надо ничего решать. Просто выдох. Ты можешь вернуться когда захочешь. Всё, что мы сегодня нашли — никуда не денется.",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 23,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "breath",
+     "family": "regulation",
+     "depth": "surface"
+    }
+   }
+  },
+  {
+   "n": 24,
+   "ts": "2026-07-26T13:41:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Не помогает — это честно. Просто сиди. Не надо ничего делать с этим. Дышать как получается. Не глубоко — просто как есть. Ты в безопасности?",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 24,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "breath",
+     "family": "regulation",
+     "depth": "surface"
+    }
+   }
+  },
+  {
+   "n": 25,
+   "ts": "2026-07-26T14:48:00Z",
+   "user": "(user turn)",
+   "recordedReply": "Хорошо. Ты дома, ты в безопасности. Этого достаточно сейчас. Тяжело — это реально. Не надо с этим бороться. Просто сиди. Никуда не торопись. Я здесь.",
+   "state": {
+    "currentStage": 2,
+    "currentDepth": "surface",
+    "anchorText": "моя комната, моё пространство, рука на груди — спокойно, хорошо, всё в норме",
+    "anchorSetAt": "2026-07-21T10:27:47.737Z",
+    "processingChannel": "emotional",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": true,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 6,
+    "daysEngaged": 6,
+    "thisSessionMessageCount": 25,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   },
+   "report": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "clinicalRead": "x",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ]
+   }
+  }
+ ]
+}
