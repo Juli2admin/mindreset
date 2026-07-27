@@ -262,7 +262,7 @@ function renderStateBlock(state: JourneyState): string {
     for (const f of state.foreignFiles) {
       // Journey P1 (2026-07-19, audit A8): provisional vs confirmed release.
       // A claimed release stays PROVISIONAL until the user confirms it held
-      // across time; treat provisional releases as open hypotheses.
+      // across time; treat provisional releases as open provisional claims.
       const phase = f.releasedAt
         ? 'released (confirmed by user across time)'
         : f.releaseClaimedAt
