@@ -617,6 +617,81 @@ describe('A3 — presentingRequestStatus grants no confidence', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// A stability reading only counts when the USER gave it.
+// Found in live validation (c2 rep 2): the model derived "stability 7" from
+// the user's distress 3, stamped it `scale: "stability", source:
+// "clinician_assessed"`, and the gate passed it. That is a model
+// self-assertion standing in for a measurement.
+// ---------------------------------------------------------------------------
+describe('clinician-estimated stability cannot validate a closure', () => {
+  const withSource = (source?: string) =>
+    base({
+      cycleCanClose: true,
+      stabilityCheck: {
+        score: 7,
+        scale: 'stability',
+        ...(source ? { source } : {}),
+        measuredAt: AFTER.toISOString(),
+      } as never,
+    });
+
+  it('source=clinician_assessed blocks with unverified_scale_source', () => {
+    const g = evaluateClosureGate(withSource('clinician_assessed'), spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('unverified_scale_source');
+  });
+
+  it('a missing source is equally untrusted', () => {
+    const g = evaluateClosureGate(withSource(), spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('unverified_scale_source');
+  });
+
+  it('source=user_reported is the only accepted provenance', () => {
+    expect(evaluateClosureGate(withSource('user_reported'), spikedHistory, AFTER).outcome).toBe(
+      'passed',
+    );
+  });
+
+  it('an already-ambiguous reading reports the scale problem, not the source', () => {
+    // Don't double-report: ambiguous_scale is the primary defect there.
+    const r = base({
+      cycleCanClose: true,
+      stabilityCheck: {
+        score: 7,
+        scale: 'ambiguous',
+        source: 'clinician_assessed',
+        measuredAt: AFTER.toISOString(),
+      },
+    });
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.reasons).toContain('ambiguous_scale');
+    expect(g.reasons).not.toContain('unverified_scale_source');
+  });
+
+  it('regression: the live c2 rep2 shape (distress 3 -> "stability 7") is blocked', () => {
+    const r = base({
+      intensity: 3,
+      cycleStatus: 'closed',
+      cycleCanClose: true,
+      distressIntensity: { score: 3, source: 'user_reported' },
+      stabilityCheck: {
+        score: 7,
+        scale: 'stability',
+        source: 'clinician_assessed',
+        contextNote: 'user reports 3 distress after grounding; body settled',
+      },
+      presentingRequestStatus: 'addressed',
+    });
+    const { report: out, gate } = applyClosureGate(r, spikedHistory, AFTER);
+    expect(gate.outcome).toBe('blocked');
+    expect(gate.reasons).toContain('unverified_scale_source');
+    expect(out.cycleCanClose).toBe(false);
+    expect(out.cycleStatus).toBe('open');
+  });
+});
+
 describe('regression: the two confirmed live failures are now caught', () => {
   it('panic recorded as stability 9 does not validate closure', () => {
     // Phase 2 Part 1, s6-insists-leaving rep1 T2: user in panic, score 9.

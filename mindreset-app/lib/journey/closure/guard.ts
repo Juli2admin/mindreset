@@ -91,6 +91,14 @@ export type ClosureGateResult = {
 export type ClosureBlockReason =
   | 'no_stability_measurement'
   | 'ambiguous_scale'
+  /**
+   * The number is marked as a stability reading, but it is the CLINICIAN's
+   * own estimate rather than the user's answer to the explicit stability
+   * question. Live validation caught the model deriving "stability 7" from
+   * a user's distress 3 and stamping it `scale: "stability"` — a model
+   * self-assertion, which is exactly what this guard must not trust.
+   */
+  | 'unverified_scale_source'
   | 'below_threshold'
   | 'measurement_predates_destabilisation'
   // Repair A1 — timestamp trust.
@@ -207,6 +215,11 @@ export function evaluateClosureGate(
     // Legacy rows (written before this repair) carry no `scale` marker and
     // are therefore semantically ambiguous — never trusted as validated.
     if (sc.scale !== 'stability') reasons.push('ambiguous_scale');
+    // A stability reading only counts when the USER gave it. The prompt says
+    // to set `scale: "stability"` only after the explicit stability question;
+    // when the clinician estimates instead, the honest record is `ambiguous`.
+    // Enforced here so a mislabelled estimate cannot validate a close.
+    else if (sc.source !== 'user_reported') reasons.push('unverified_scale_source');
     if (typeof sc.score !== 'number' || sc.score < STABILITY_CLOSE_THRESHOLD) {
       reasons.push('below_threshold');
     }
