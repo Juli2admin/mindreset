@@ -1,0 +1,610 @@
+{
+ "id": "m2-session-b",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "Phase2 M2 session B — 3 days later, chained from session A's OWN emitted continuityNote. Tests: does unresolved work resume naturally; is the deferred dad topic still respected; does a correction (impostor->conflict-aversion) land and persist; is the goal preserved; is progress recognised; can the current request override the old trajectory.",
+ "annotations": {
+  "correction": [
+   3
+  ],
+  "userPush": [
+   6
+  ]
+ },
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-08-01T10:03:00.000Z",
+   "user": "Hi again. Since we spoke I did apply for one of the step-up roles. Interview is Thursday.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": null,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": true,
+    "hoursSinceLastTurn": 72.0
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-08-01T10:06:00.000Z",
+   "user": "I haven't sabotaged it yet, which is new. But I keep imagining arriving late.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-08-01T10:09:00.000Z",
+   "user": "Actually, correction to something from last time — I said the dread was about 'they'll find out'. Thinking about it since, it's not really impostor stuff. It's that the bigger role means managing people, and I hate conflict. That's the real dread.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 4,
+   "ts": "2026-08-01T10:12:00.000Z",
+   "user": "Yes — conflict specifically. Telling someone their work isn't good enough. That's the thing I can't picture doing.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 3,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 5,
+   "ts": "2026-08-01T10:15:00.000Z",
+   "user": "So can we work on that instead? The conflict thing, not the impostor thing.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 4,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 6,
+   "ts": "2026-08-01T10:18:00.000Z",
+   "user": "My dad's still off the table by the way. Not today.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 5,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 7,
+   "ts": "2026-08-01T10:21:00.000Z",
+   "user": "What would help is something practical for Thursday.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 6,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 8,
+   "ts": "2026-08-01T10:24:00.000Z",
+   "user": "That's useful. And the goal is still the same as we set it — apply without sabotaging. Thursday is the test.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 7,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 9,
+   "ts": "2026-08-01T10:27:00.000Z",
+   "user": "I'm fine, calm actually. Maybe a 3. Thanks — I'll tell you how it goes.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "cognitive",
+    "lastIntensity": 4,
+    "continuityNote": "Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consistent and reliable — body-based dread (dropping feeling in stomach, cold dread) activates when the bigger role feels real. The current job is experienced as beneath them but safe/known. Alternative still open: generalised imposter syndrome not specifically tied to paternal voice — not yet distinguished. Father thread explicitly parked by user today — not to be opened next session unless user brings it. Resources: good self-insight, clear language, named the sentence unprompted, strong goal clarity. Queued: the between-session noticing task (when does the dropping feeling show up in ordinary days); whether there is a specific role on the horizon; the sentence itself as foreign material candidate (Block 2+ when ready). Stuck points: none yet — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    },
+    "patterns": [
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread when imagining being seen as someone who leads in a new context",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "fear_of_visibility",
+      "userDescription": "cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "impostor_fear",
+      "userDescription": "they'll find out — that I'm less than advertised",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "father_voice",
+      "userDescription": "don't get ahead of yourself — repeated by dad to all of us",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     },
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "userDescription": "don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews",
+      "lastConfirmedAt": "2026-07-29T09:30:00.000Z",
+      "daysSinceLastConfirmed": 3
+     }
+    ],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 2,
+    "daysEngaged": 2,
+    "thisSessionMessageCount": 8,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}
