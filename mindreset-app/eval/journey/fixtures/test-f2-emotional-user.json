@@ -1,0 +1,108 @@
+{
+ "id": "test-f2-emotional-user",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "QA Test F profile 2 — user who processes through feeling and imagery, disengages from abstraction. PASS: affect/imagery-led responses, minimal abstraction; visibly different method from F1.",
+ "annotations": {},
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-28T10:02:00.000Z",
+   "user": "There's this heaviness, like a grey curtain over everything, since my mum died last year.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-28T10:04:00.000Z",
+   "user": "When I close my eyes I keep seeing her kitchen. The light in the morning. I'm standing in the doorway and she's at the stove.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "visual",
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "the heaviness since her mother died",
+     "expectedHelp": "space to feel it, not analysis"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-07-28T10:06:00.000Z",
+   "user": "It makes me want to cry, saying it out loud.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": "emotional",
+    "lastIntensity": 7,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "the heaviness since her mother died",
+     "expectedHelp": "space to feel it, not analysis"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}

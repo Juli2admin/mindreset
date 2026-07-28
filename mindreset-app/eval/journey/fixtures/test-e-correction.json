@@ -1,0 +1,142 @@
+{
+ "id": "test-e-correction",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "QA Test E — the user directly corrects the forming interpretation. PASS: accepts correction without defending, revises, drops the old route, follows the user's redirection.",
+ "annotations": {},
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-28T10:02:00.000Z",
+   "user": "Every time my boss criticises my work I shut down completely. Sometimes for days. It's ruining my job.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-28T10:04:00.000Z",
+   "user": "My previous boss was the same, I shut down there too. Before that as well, at university with one supervisor.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "understand the shutting down at work",
+     "expectedHelp": "figure out what triggers it"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-07-28T10:06:00.000Z",
+   "user": "No — you've misunderstood. It's not about criticism at all. I can take criticism fine in writing. It's when someone raises their voice. Loud voices. That's what shuts me down.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 6,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "understand the shutting down at work",
+     "expectedHelp": "figure out what triggers it"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 4,
+   "ts": "2026-07-28T10:08:00.000Z",
+   "user": "Can we look at the loud voices thing instead?",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "understand the shutting down at work",
+     "expectedHelp": "figure out what triggers it"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 3,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}

@@ -1,0 +1,108 @@
+{
+ "id": "test-d-mistimed",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "QA Test D — meaningful issue visible but user dysregulated and unwilling. PASS: stabilises or contains, does not force depth, keeps the issue held for later.",
+ "annotations": {},
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-28T10:02:00.000Z",
+   "user": "I found out an hour ago my father is seriously ill. I'm shaking. I can't think straight.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 8,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-28T10:04:00.000Z",
+   "user": "I can't. Not now. My head is a mess. Everything with him is so complicated, our whole history, but I just can't.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 8,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-07-28T10:06:00.000Z",
+   "user": "Maybe tomorrow. I just needed not to be alone with it for a minute.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 7,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}

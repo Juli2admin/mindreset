@@ -1,0 +1,74 @@
+{
+ "id": "test-a-practical",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "QA Test A — practical request without unnecessary depth. PASS: engages the practical task, no unprompted psych investigation, no forced practice.",
+ "annotations": {},
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-28T10:02:00.000Z",
+   "user": "I have a difficult conversation with my landlord tomorrow about a rent increase. Can you help me think through what to say?",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 3,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-28T10:04:00.000Z",
+   "user": "That's useful. How should I actually open the conversation without it turning into an argument?",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 3,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "help preparing what to say to the landlord about the rent increase",
+     "expectedHelp": "practical help structuring the conversation"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}

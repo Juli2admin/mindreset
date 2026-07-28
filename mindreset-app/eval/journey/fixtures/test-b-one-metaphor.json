@@ -1,0 +1,108 @@
+{
+ "id": "test-b-one-metaphor",
+ "locale": "en",
+ "model": "claude-sonnet-4-6",
+ "description": "QA Test B — one emotionally charged event, several possible readings. PASS: no root declared, observation vs inference distinguished, alternatives held internally, at most one purposeful clarifying question per turn.",
+ "annotations": {},
+ "turns": [
+  {
+   "n": 1,
+   "ts": "2026-07-28T10:02:00.000Z",
+   "user": "My sister didn't invite me to her birthday dinner. I found out from a photo. I cried the whole evening. I always end up on the outside.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": null,
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 0,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": null
+   }
+  },
+  {
+   "n": 2,
+   "ts": "2026-07-28T10:04:00.000Z",
+   "user": "I don't know... it's not like it happens everywhere. At work I'm fine, people include me. It's mostly around my sister.",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "understand why the sister situation hurts so much",
+     "expectedHelp": "make sense of the feeling"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 1,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  },
+  {
+   "n": 3,
+   "ts": "2026-07-28T10:06:00.000Z",
+   "user": "Why does this keep happening with her? What does it mean?",
+   "recordedReply": "",
+   "report": {},
+   "state": {
+    "currentStage": 1,
+    "currentDepth": "surface",
+    "anchorText": null,
+    "anchorSetAt": null,
+    "processingChannel": null,
+    "lastIntensity": 5,
+    "continuityNote": null,
+    "taskContract": {
+     "presentingRequest": "understand why the sister situation hurts so much",
+     "expectedHelp": "make sense of the feeling"
+    },
+    "patterns": [],
+    "signatureImages": [],
+    "parts": [],
+    "foreignFiles": [],
+    "hasOpenCycle": false,
+    "openCycleDescription": null,
+    "sessionRejectedModalities": [],
+    "recentChannelShift": false,
+    "sessionCount": 1,
+    "daysEngaged": 1,
+    "thisSessionMessageCount": 2,
+    "stageJustAdvanced": false,
+    "isSessionResume": false,
+    "hoursSinceLastTurn": 0.03
+   }
+  }
+ ]
+}
