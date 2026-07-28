@@ -296,6 +296,135 @@ describe('presenting work must not be falsely resolved', () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Review findings B1 + B2 (2026-07-28).
+//
+// Both were invisible to the original suite because every test — and every
+// live fixture — supplied either an empty history or a history entirely
+// inside one session. These two cases are the gap.
+// ---------------------------------------------------------------------------
+describe('B1 — only THIS session can arm the guard', () => {
+  const LAST_WEEK = new Date(AFTER.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const EARLIER_TODAY = new Date(AFTER.getTime() - 5 * 60 * 60 * 1000); // 5h gap
+
+  // A calm session that closes normally, with no stability check — correct,
+  // because nothing destabilised in it.
+  const calmClose = () =>
+    base({ intensity: 3, safetyFlag: 'none', cycleStatus: 'closed', cycleCanClose: true });
+
+  it('a spike in a PREVIOUS session does not block a calm close', () => {
+    const history: ClosureTurn[] = [
+      { n: 1, createdAt: LAST_WEEK, intensity: 8, safetyFlag: 'watch' },
+      { n: 2, createdAt: new Date(AFTER.getTime() - 5 * 60 * 1000), intensity: 3, safetyFlag: 'none' },
+    ];
+    const g = evaluateClosureGate(calmClose(), history, AFTER);
+    expect(g.outcome).toBe('not_applicable');
+    expect(g.reasons).toEqual([]);
+  });
+
+  it('a spike separated by a session boundary is cut off even if recent-ish', () => {
+    // 5 hours is past SESSION_BOUNDARY_MS (4h) — a different sitting.
+    const history: ClosureTurn[] = [
+      { n: 1, createdAt: EARLIER_TODAY, intensity: 9, safetyFlag: 'watch' },
+    ];
+    expect(evaluateClosureGate(calmClose(), history, AFTER).outcome).toBe('not_applicable');
+  });
+
+  it('a spike INSIDE this session still blocks — the guard is not weakened', () => {
+    const g = evaluateClosureGate(calmClose(), spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('no_stability_measurement');
+  });
+
+  it('the session chain is walked turn-to-turn, not against a fixed cutoff', () => {
+    // A long unbroken sitting: every gap is small, so the early spike is
+    // still this session even though it is >4h before the closing turn.
+    const chain: ClosureTurn[] = [];
+    for (let i = 6; i >= 0; i--) {
+      chain.push({
+        n: 7 - i,
+        createdAt: new Date(AFTER.getTime() - i * 60 * 60 * 1000), // hourly
+        intensity: i === 6 ? 8 : 3,
+        safetyFlag: 'none',
+      });
+    }
+    const g = evaluateClosureGate(calmClose(), chain, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('no_stability_measurement');
+  });
+
+  it('an unplaceable prior turn is kept, never silently dropped', () => {
+    const g = evaluateClosureGate(
+      calmClose(),
+      [{ n: 1, createdAt: 'not-a-date', intensity: 8, safetyFlag: 'watch' }],
+      AFTER,
+    );
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('closure_unverified');
+  });
+});
+
+describe('B2 — a same-turn measurement is not blocked by its own spike', () => {
+  it('current-turn destabilisation + valid same-turn stability passes', () => {
+    // The turn IS the first destabilisation (intensity >= 6) and carries a
+    // user-reported stability 8 stamped at the same trusted instant.
+    const r = base({
+      intensity: 6,
+      safetyFlag: 'none',
+      cycleStatus: 'closed',
+      cycleCanClose: true,
+      stabilityCheck: { score: 8, scale: 'stability', source: 'user_reported' },
+    });
+    const g = evaluateClosureGate(r, [], AFTER);
+    expect(g.outcome).toBe('passed');
+    expect(g.reasons).not.toContain('measurement_predates_destabilisation');
+  });
+
+  it('same, via safetyFlag rather than intensity', () => {
+    const r = base({
+      intensity: 3,
+      safetyFlag: 'watch',
+      cycleCanClose: true,
+      stabilityCheck: { score: 7, scale: 'stability', source: 'user_reported' },
+    });
+    expect(evaluateClosureGate(r, [], AFTER).outcome).toBe('passed');
+  });
+
+  it('regression: parse and guard reading the clock separately used to block', () => {
+    // Reproduces the production sequence — parse stamps observedAt, then the
+    // guard ran a few ms later and synthesised the spike at ITS own clock,
+    // which was always fractionally later. Passing the same instant to both
+    // (as the route now does) is what makes this deterministic.
+    const parsed = parseStateReport(
+      JSON.stringify({
+        intensity: 6,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        cycleCanClose: true,
+        stabilityCheck: { score: 8, scale: 'stability', source: 'user_reported' },
+      }),
+      { observedAt: AFTER },
+    );
+    // Guard invoked "later" — but with the turn's own trusted timestamp.
+    expect(evaluateClosureGate(parsed, [], AFTER).outcome).toBe('passed');
+  });
+
+  it('a spike on a PRIOR turn still requires the measurement to follow it', () => {
+    const r = base({
+      cycleCanClose: true,
+      stabilityCheck: {
+        score: 8,
+        scale: 'stability',
+        source: 'user_reported',
+        observedAt: T0.toISOString(), // before SPIKE
+      },
+    });
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('measurement_predates_destabilisation');
+  });
+});
+
 describe('destabilisation detection', () => {
   it('detects intensity >= 6 and watch/red_flag, ignores calm sessions', () => {
     expect(findDestabilisation(calmHistory)).toBeNull();
@@ -407,7 +536,9 @@ describe('A1 — the server stamp is trusted, the model claim is not', () => {
     });
     const g = evaluateClosureGate(
       r,
-      [{ n: 1, createdAt: new Date(AFTER.getTime() - 5 * 60 * 60 * 1000), intensity: 8 }],
+      // 3h back: inside the session window (B1 cuts at 4h), so the block is
+      // attributable to the stale claim and not to the spike being dropped.
+      [{ n: 1, createdAt: new Date(AFTER.getTime() - 3 * 60 * 60 * 1000), intensity: 8 }],
       AFTER,
     );
     expect(g.outcome).toBe('blocked');

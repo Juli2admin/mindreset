@@ -542,7 +542,12 @@ async function finaliseTurn(args: {
   outputTokens: number | null;
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
-  const parsedReport = parseStateReport(split.rawStateReport);
+  // ONE trusted server clock reading governs this whole turn: it is stamped
+  // onto every measurement as `observedAt` AND handed to the closure guard,
+  // so ordering is exact rather than a race between parse time and guard
+  // time (review finding B2, 2026-07-28).
+  const observedAt = new Date();
+  const parsedReport = parseStateReport(split.rawStateReport, { observedAt });
 
   // ------------------------------------------------------------------
   // Closure guard (repair 2026-07-28 — scale semantics + closure gating).
@@ -582,6 +587,9 @@ async function finaliseTurn(args: {
             safetyFlag: t.safetyFlag,
             cycleStatus: t.report?.cycleStatus ?? null,
           })),
+          // loadRecentTurns has no session filter; the guard narrows the
+          // window to this session relative to this timestamp (B1).
+          observedAt,
         );
         report = gated.report;
         closureGate = gated.gate;

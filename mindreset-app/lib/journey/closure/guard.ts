@@ -30,6 +30,7 @@
 // clarified with the user before it can validate a closure.
 
 import type { StateReport } from '../stateReport/schema';
+import { SESSION_BOUNDARY_MS } from '../state/load';
 
 /**
  * Stability threshold for a permitted close.
@@ -131,15 +132,60 @@ export function claimsClosure(report: StateReport): boolean {
 }
 
 /**
+ * Narrow a raw history window to THE CURRENT SESSION.
+ *
+ * Review finding B1 (2026-07-28). The runtime hands the guard the last 30
+ * audit turns for the user (`loadRecentTurns`), which has no session filter.
+ * Without this, a spike from days ago still counts as "the session
+ * destabilised", so a later calm session's ordinary close is blocked with
+ * `no_stability_measurement`. That contradicts the protocol the guard
+ * enforces — journey-master.md:340 says "DESTABILISED **in this session**" —
+ * and the proportionality rule below.
+ *
+ * Uses the same walk and the same threshold as the rest of the codebase
+ * (`SESSION_BOUNDARY_MS`, lib/journey/state/load.ts): walk newest-first from
+ * this turn and stop at the first gap of 4h or more.
+ */
+export function currentSessionTurns(
+  turns: ClosureTurn[],
+  turnAtMs: number,
+): ClosureTurn[] {
+  const newestFirst = turns.slice().sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
+  const out: ClosureTurn[] = [];
+  let prevMs = turnAtMs;
+  for (const t of newestFirst) {
+    const tMs = ms(t.createdAt);
+    // A turn we cannot place in time is KEPT rather than dropped: it may be
+    // a destabilisation, and losing it would be the fail-open direction.
+    // It surfaces downstream as `closure_unverified`.
+    if (Number.isFinite(tMs) && Number.isFinite(prevMs) && prevMs - tMs >= SESSION_BOUNDARY_MS) {
+      break;
+    }
+    out.push(t);
+    if (Number.isFinite(tMs)) prevMs = tMs;
+  }
+  return out;
+}
+
+/**
  * Find the most recent destabilisation event in the session, if any.
  * Returns null when the session never destabilised — in which case the
  * guard stays out of the way entirely (proportionality: mild
  * conversations must not acquire a mechanical scale check).
+ *
+ * `currentTurnAt` is the trusted server timestamp for THIS turn. Review
+ * finding B2 (2026-07-28): it used to be `new Date()` taken at guard time,
+ * which is always later than the parse-time `observedAt` stamped on the
+ * measurement — so a turn that was itself the first destabilisation blocked
+ * its own valid same-turn stability reading with
+ * `measurement_predates_destabilisation`. Both timestamps must come from the
+ * same instant.
  */
 export function findDestabilisation(
   turns: ClosureTurn[],
   currentIntensity?: number | null,
   currentSafetyFlag?: string | null,
+  currentTurnAt: Date | string = new Date(),
 ): ClosureTurn | null {
   const isDestab = (i?: number | null, f?: string | null): boolean =>
     (typeof i === 'number' && i >= DESTABILISATION_INTENSITY) ||
@@ -154,7 +200,12 @@ export function findDestabilisation(
   }
   // The current turn can itself be the destabilisation event.
   if (!latest && isDestab(currentIntensity, currentSafetyFlag)) {
-    return { n: -1, createdAt: new Date(), intensity: currentIntensity ?? null, safetyFlag: currentSafetyFlag ?? null };
+    return {
+      n: -1,
+      createdAt: currentTurnAt,
+      intensity: currentIntensity ?? null,
+      safetyFlag: currentSafetyFlag ?? null,
+    };
   }
   return latest;
 }
@@ -162,14 +213,19 @@ export function findDestabilisation(
 /**
  * Evaluate whether this turn may record a safely-closed cycle.
  *
- * `now` is injectable for deterministic tests; it defaults to the current
- * time and is used when the model omits `measuredAt` on a measurement
- * taken this turn.
+ * `turnAt` is the TRUSTED server timestamp for this turn — the same instant
+ * `parseStateReport` stamped onto the measurement as `observedAt`. The
+ * runtime passes it explicitly so one clock reading governs the whole turn.
+ * It anchors two things and nothing else:
+ *   - the session-boundary walk that narrows `priorTurns` to this session;
+ *   - the synthetic destabilisation event when THIS turn is the spike.
+ * It is never a fallback for a missing measurement timestamp; a measurement
+ * with no trusted `observedAt` is blocked, not assumed to be from now.
  */
 export function evaluateClosureGate(
   report: StateReport,
   priorTurns: ClosureTurn[],
-  now: Date = new Date(),
+  turnAt: Date = new Date(),
 ): ClosureGateResult {
   const none: ClosureGateResult = {
     outcome: 'not_applicable',
@@ -191,7 +247,14 @@ export function evaluateClosureGate(
     };
   }
 
-  const destab = findDestabilisation(priorTurns, report.intensity, report.safetyFlag);
+  // B1: only THIS session's turns can arm the guard.
+  const sessionTurns = currentSessionTurns(priorTurns, turnAt.getTime());
+  const destab = findDestabilisation(
+    sessionTurns,
+    report.intensity,
+    report.safetyFlag,
+    turnAt,
+  );
   if (!destab) {
     return {
       outcome: 'not_applicable',
@@ -290,9 +353,9 @@ export function evaluateClosureGate(
 export function applyClosureGate(
   report: StateReport,
   priorTurns: ClosureTurn[],
-  now: Date = new Date(),
+  turnAt: Date = new Date(),
 ): { report: StateReport; gate: ClosureGateResult } {
-  const gate = evaluateClosureGate(report, priorTurns, now);
+  const gate = evaluateClosureGate(report, priorTurns, turnAt);
   if (gate.outcome !== 'blocked') return { report, gate };
   return { report: withBlockedGate(report, gate), gate };
 }
