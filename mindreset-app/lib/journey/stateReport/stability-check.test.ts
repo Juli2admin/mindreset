@@ -20,7 +20,17 @@ describe('parseStateReport — stabilityCheck (PR 8)', () => {
         stabilityCheck: { score: 8, contextNote: 'before_close' },
       }),
     );
-    expect(r.stabilityCheck).toEqual({ score: 8, contextNote: 'before_close' });
+    // Repair 2026-07-28: a score emitted without an explicit `scale` marker
+    // is now tagged 'ambiguous' (it is very often a DISTRESS number) and is
+    // not closure-valid. See lib/journey/closure/guard.ts.
+    // Repair A1 (same day): the parser also stamps a TRUSTED server-side
+    // `observedAt` on every measurement — the model cannot supply it.
+    expect(r.stabilityCheck).toEqual({
+      score: 8,
+      scale: 'ambiguous',
+      contextNote: 'before_close',
+      observedAt: expect.any(String),
+    });
   });
 
   it('accepts a numeric score in string form', () => {

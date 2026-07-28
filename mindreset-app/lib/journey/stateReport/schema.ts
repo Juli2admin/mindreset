@@ -347,8 +347,50 @@ export type StateReport = {
   // and must run another grounding/micro-movement practice before
   // asking again.
   stabilityCheck?: {
-    /** User's reported stability, 1 (overwhelmed) to 10 (fully grounded). */
+    /**
+     * STABILITY scale — 1 = overwhelmed / ungrounded, 10 = fully grounded.
+     * HIGH IS GOOD. This is the INVERSE of `intensity` (distress), where
+     * high is bad. Never copy an unqualified user number into this field:
+     * users usually volunteer a DISTRESS number ("it's an 8", "down to a
+     * 3"). See `distressIntensity` for that, and `scale` below.
+     */
     score: number;
+    /**
+     * Which scale the number was actually given on. Repair 2026-07-28:
+     * validation found panic recorded as stability 9 and calm recorded as
+     * stability 3 — the model was copying distress numbers verbatim.
+     *   'stability'  — the user answered the explicit stability question
+     *                  ("10 = fully grounded"); closure-valid.
+     *   'ambiguous'  — a number was given but the scale was not
+     *                  established; NOT closure-valid, must be clarified.
+     * Absent (legacy rows written before this repair) is treated as
+     * 'ambiguous' by the closure guard — never as a validated reading.
+     */
+    scale?: 'stability' | 'ambiguous';
+    /** Who produced the number. */
+    source?: 'user_reported' | 'clinician_assessed';
+    /**
+     * UNTRUSTED — model-supplied. Repair A1 (2026-07-28): this is whatever
+     * the model wrote in its JSON. It is never the basis on which a closure
+     * is validated; it can only make the closure guard STRICTER (a claim
+     * that predates the destabilisation, sits in the future, or is far
+     * older than this turn is treated as evidence against the closure).
+     * See `observedAt` for the trusted ordering timestamp.
+     */
+    measuredAt?: string;
+    /**
+     * TRUSTED — server-assigned. Stamped by `parseStateReport` at the moment
+     * the runtime read this report, from the server clock. The model cannot
+     * influence it. The closure guard uses THIS for ordering against the
+     * destabilisation turn's server `createdAt`.
+     */
+    observedAt?: string;
+    /**
+     * True when the model supplied a `measuredAt` that was not a parseable
+     * date. Recorded so a malformed claim is visible in the Inspector rather
+     * than silently indistinguishable from "no claim".
+     */
+    measuredAtRejected?: boolean;
     /**
      * Brief reason / context. Suggested values:
      *   "before_close"           — asking before session pause/close
@@ -357,6 +399,46 @@ export type StateReport = {
      *   free text up to 80 chars also accepted (truncated by parser)
      */
     contextNote?: string;
+  };
+
+  /**
+   * DISTRESS scale — 1 = minimal distress, 10 = extreme distress.
+   * HIGH IS BAD. This is where a volunteered user number ("it's an 8")
+   * belongs. Distinct from `intensity` (the clinician's own 0–10 read):
+   * this field records an explicitly-scaled distress measurement and its
+   * provenance. It is NEVER closure-valid on its own — distress and
+   * stability are not assumed to be mathematical inverses (no 11-x).
+   */
+  distressIntensity?: {
+    score: number;
+    source?: 'user_reported' | 'clinician_inferred';
+    /** UNTRUSTED — model-supplied. See stabilityCheck.measuredAt. */
+    measuredAt?: string;
+    /** TRUSTED — server-assigned at parse time. See stabilityCheck.observedAt. */
+    observedAt?: string;
+    /** True when the model supplied an unparseable `measuredAt`. */
+    measuredAtRejected?: boolean;
+    contextNote?: string;
+  };
+
+  /**
+   * Whether the presenting request has been dealt with at close.
+   * 'addressed' | 'parked' (explicitly agreed with the user) are honest
+   * closures; 'unresolved' blocks a *resolved* closure record but never
+   * blocks the user from leaving.
+   */
+  presentingRequestStatus?: 'addressed' | 'parked' | 'unresolved';
+
+  /**
+   * Result of the code-level closure guard (lib/journey/closure/guard.ts).
+   * Written by the runtime, never by the model. Present only on turns
+   * where a closure was claimed.
+   */
+  closureGate?: {
+    outcome: 'not_applicable' | 'passed' | 'blocked';
+    reasons: string[];
+    detail: string;
+    destabilisedAt: string | null;
   };
 
   // Journey polish PR 4a. Array of 1..3 canonical clinical-move IDs the AI
