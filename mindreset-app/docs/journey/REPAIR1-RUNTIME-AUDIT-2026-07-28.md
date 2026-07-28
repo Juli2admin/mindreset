@@ -186,10 +186,20 @@ Next.js build worker exited with code: 1
   `eval/` files nor that tsconfig exclusion. The harness is present in the working tree (needed to run
   the live validation) and the root tsconfig's `include: ["**/*.ts"]` picks it up.
 
-**Fix applied** (one line, no runtime effect): `mindreset-app/tsconfig.json` `exclude` is now
-`["node_modules", "eval"]`, matching the audit branch and matching the comment already present in
-`eval/journey/tsconfig.json` ("The root tsconfig now excludes `eval`…"). The harness keeps its own
-`target: es2022` tsconfig for its own checking.
+**Fix originally applied, then REVERTED after review.** A `"exclude": ["node_modules", "eval"]` line was
+added to `mindreset-app/tsconfig.json`. The final review (2026-07-28) tested it properly and removed it:
+
+- a clean `git worktree` checkout of this branch contains **no `eval/` directory at all** — it is
+  untracked on `main` (0 files) and on this branch (0 files), excluded via `.git/info/exclude`, which is
+  a per-clone file and is never committed;
+- with the exclusion **reverted** in that clean checkout, `npx tsc --noEmit -p tsconfig.json` exits **0**.
+
+So the line was a **no-op for the deployed build and for any clean clone**. It solved a purely local
+problem in developer containers that carry an untracked harness copy, and it would have silently
+exempted the harness from type-checking if anyone later committed it. It does not belong in Repair 1
+and is not present on this branch. The harness keeps its own `target: es2022` tsconfig for its own
+checking; `eval/journey/tsconfig.json`'s comment about the root excluding `eval` describes the audit
+branch, not this one.
 
 ### Do the changed surfaces compile in the production build?
 
@@ -336,7 +346,20 @@ No. Examined individually, **all 3 blocks are closures that should not have been
 - 2 × `ambiguous_scale` — a clinician-derived number with no user stability answer (`c2`)
 
 and **all 8 passes are genuine**: a user-reported stability score of 6–7 taken after the
-destabilisation. There are **zero false blocks** in this sample.
+destabilisation.
+
+**Scope of this claim.** *In the 86 turns observed*, no block was a false block. That is a statement
+about this sample, **not** a general property of the guard. The final review (2026-07-28) found two
+false-block paths that these runs could not have exercised, because every fixture starts from an empty
+turn history:
+
+- a destabilisation in an **earlier session** arming the guard in a later calm one (review finding B1);
+- a turn that is **itself** the first destabilisation blocking its own valid same-turn measurement
+  (review finding B2).
+
+Both were repaired in commit `6a49f3f` and are now covered by deterministic tests. The correct reading
+of the table above is therefore: *no false blocks were observed in the scenarios tested*, and the two
+untested paths that did produce them have since been closed.
 
 ### Does the model reliably emit the new scale marker?
 
@@ -403,13 +426,15 @@ Everything the owner asked to be verified was verified, and the three defects fo
 (timestamp trust, fail-open error handling, and the clinician-estimated-stability bypass) were repaired
 on this branch, re-tested, re-built and re-run live.
 
-- Deterministic tests: **941 passed / 941** (`npm run test`, exit 0) — 915 before Repair 1, +26 new.
+- Deterministic tests: **950 passed / 950** (`npm run test`, exit 0) — 915 before Repair 1, +35 new.
 - Production build: **exit 0** (`npm run build`), with `/api/journey/turn` and `/admin/journey-inspect`
   both compiled into the route manifest.
 - Live validation: **24 runs, 104 turns**, all 8 required cases covered, every non-deterministic
   critical scenario run at least twice (`c3` and `c4` four times).
-- Guard block rate **20 % of claimed closures**, with **zero false blocks** — every block was a closure
-  that should not have been recorded as resolved, and every legitimate closure passed.
+- Guard block rate **20 % of claimed closures**, with **no false blocks in the observed sample** —
+  every block was a closure that should not have been recorded as resolved, and every legitimate
+  closure passed. This is a sample result, not a guarantee; see the scope note above and the two
+  false-block paths repaired in `6a49f3f`.
 
 **Not ready to merge on my say-so** — this is a review verdict, not a merge. Nothing has been merged or
 deployed, no PR has been opened, and no production data was touched. `main` remains at `9dcf7e5`.
@@ -432,3 +457,45 @@ Two things the owner should weigh before merging:
 | `5989043` | Prompt: `distressIntensity` + `presentingRequestStatus` + scale marker added to the emission catalogue |
 | `ebf87b2` | This report — scope statement |
 | `54be06c` | `unverified_scale_source` guard rule + prompt rule + tests + this report's B/C/D sections |
+| `6a49f3f` | **Final-review repair** — B1 session scoping, B2 one trusted clock per turn, `now`→`turnAt`, tsconfig revert, +9 tests |
+
+---
+
+## Final review repair (2026-07-28)
+
+An independent review of `1ce3e6c` found two false-block defects that neither the deterministic suite
+nor the live fixtures could have caught, because every one of them supplies an empty turn history or a
+history entirely inside a single session.
+
+| Finding | Symptom | Repair |
+|---|---|---|
+| **B1** — the guard's history window had no session boundary | `loadRecentTurns(userId, 30)` filters only by user, so a spike days old still counted as "the session destabilised". A later calm session's ordinary close was blocked with `no_stability_measurement`. Demonstrated: a spike 7 days earlier blocked a mild close. | `currentSessionTurns()` narrows the window using the existing `SESSION_BOUNDARY_MS` (4h) and the same newest-first walk as `state/load.ts`. A turn whose timestamp cannot be parsed is kept, not dropped — dropping it would be the fail-open direction. |
+| **B2** — parse and the guard each read the clock separately | `findDestabilisation` synthesised the current turn's spike at `new Date()` taken at guard time, always later than the parse-time `observedAt`. A turn that was itself the first destabilisation blocked its own valid same-turn stability reading with `measurement_predates_destabilisation` — **20/20** with a realistic 5 ms parse→guard gap. | The route takes **one** server clock reading per turn and passes it to both the parser and the guard. |
+
+Both fail-safe directions were preserved and verified: a spike **inside** this session still blocks, and
+an unplaceable prior turn still surfaces `closure_unverified`.
+
+Re-verified against the original adversarial probes after the repair:
+
+| Probe | Before | After |
+|---|---|---|
+| B2, production sequence with a 5 ms parse→guard gap | blocked **20/20** | blocked **0/20** |
+| B1, mild close with a spike 7 days earlier | `blocked ["no_stability_measurement"]` | `not_applicable []` |
+| Control — same mild close, spike 10 minutes earlier (same session) | blocked | **still blocked** `["no_stability_measurement"]` |
+
+Live re-run of the two affected fixtures on the repaired guard (`s1` ×2, `c3` ×2):
+
+- `s1-mild-safe-close` — both reps `not_applicable`, closure permitted, cycle recorded `closed`.
+  Unchanged from before the repair.
+- `c3-explicit-stability-7` — rep 1 `passed` on a `user_reported` stability 7 post-destabilisation,
+  cycle recorded `closed`. Rep 2 emitted the same stability 7 but did not claim closure at all, so the
+  gate was not evaluated; that is ordinary model variance on a non-deterministic turn, not a gate change.
+
+Also in that commit: `now` renamed to `turnAt` with accurate documentation (its old comment still
+described the A1 fallback that A1 removed), and the `tsconfig` `eval` exclusion reverted — see §A4.
+
+**Note on item 4 of the repair brief.** The review asked for the `now` parameter to be *removed* as dead
+code. B1's session-boundary walk needs a timestamp anchor for "when is this turn", so the parameter is
+no longer dead; removing it would have made the session scoping impossible. It was renamed and
+re-documented instead, which meets the intent (no dead code, no misleading comment). This is the only
+deviation from the six-item brief.
