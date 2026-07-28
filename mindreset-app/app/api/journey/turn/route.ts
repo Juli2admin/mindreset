@@ -35,6 +35,7 @@ import { writeAuditTurn } from '@/lib/journey/audit/log';
 import {
   applyClosureGate,
   claimsClosure,
+  failSafeClosureGate,
   type ClosureGateResult,
 } from '@/lib/journey/closure/guard';
 import { loadRecentTurns } from '@/lib/journey/router/history';
@@ -480,18 +481,24 @@ export async function POST(request: NextRequest) {
         // recent message at the end (we persisted it before loading history),
         // so we strip it: `slice(0, -1)`.
         waitUntil(
-          finalMessagePromise.then((msg) =>
-            finaliseTurn({
-              userId,
-              stageAtTurn: state.currentStage,
-              depthAtTurn: state.currentDepth,
-              userMessage,
-              fullText: processor.fullText,
-              recentForVerifier: decryptedHistory.slice(0, -1),
-              stopReason: msg?.stop_reason ?? null,
-              outputTokens: msg?.usage?.output_tokens ?? null,
-            }),
-          ),
+          finalMessagePromise
+            .then((msg) =>
+              finaliseTurn({
+                userId,
+                stageAtTurn: state.currentStage,
+                depthAtTurn: state.currentDepth,
+                userMessage,
+                fullText: processor.fullText,
+                recentForVerifier: decryptedHistory.slice(0, -1),
+                stopReason: msg?.stop_reason ?? null,
+                outputTokens: msg?.usage?.output_tokens ?? null,
+              }),
+            )
+            // The reply has already streamed by this point; a background
+            // failure must be logged, never left as an unhandled rejection.
+            .catch((err) =>
+              console.error('[journey/turn] finaliseTurn failed:', err),
+            ),
         );
         // Bump the Journey access meter (firstAccessedAt on first turn,
         // journeyMessagesUsed +1 always). Runs in the background so it
@@ -514,6 +521,11 @@ export async function POST(request: NextRequest) {
       'X-Content-Type-Options': 'nosniff',
     },
   });
+}
+
+/** Short, log-safe rendering of an unknown thrown value. */
+function errText(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
 }
 
 async function finaliseTurn(args: {
@@ -543,32 +555,51 @@ async function finaliseTurn(args: {
   // It never blocks the user's exit — the reply has already streamed —
   // it only refuses to RECORD an unearned "safely closed".
   //
-  // Best-effort: a history-load failure must never break a turn, so the
-  // guard degrades to the model's own claim.
+  // Repair A2 (2026-07-28) — FAIL-SAFE, not fail-open. If history cannot be
+  // loaded or the guard itself throws, the model's closure claim is NOT
+  // trusted: the cycle is preserved as open with an observable reason
+  // ('history_unavailable' / 'guard_error' / 'closure_unverified'). This
+  // runs after the reply has already streamed, so it can never delay or
+  // block the user's turn, their exit, or the HTTP response.
   let report = parsedReport;
   let closureGate: ClosureGateResult | null = null;
   if (claimsClosure(parsedReport)) {
+    let failure: { reason: 'history_unavailable' | 'guard_error'; detail: string } | null = null;
+    let priorTurns: Awaited<ReturnType<typeof loadRecentTurns>> | null = null;
     try {
-      const priorTurns = await loadRecentTurns(args.userId, 30);
-      const gated = applyClosureGate(
-        parsedReport,
-        priorTurns.map((t) => ({
-          n: 0,
-          createdAt: t.createdAt,
-          intensity: t.intensityReported,
-          safetyFlag: t.safetyFlag,
-          cycleStatus: t.report?.cycleStatus ?? null,
-        })),
-      );
-      report = gated.report;
-      closureGate = gated.gate;
-      if (gated.gate.outcome === 'blocked') {
-        console.warn(
-          `[journey:closure-guard] blocked resolved-closure for user=${args.userId}: ${gated.gate.detail}`,
-        );
-      }
+      priorTurns = await loadRecentTurns(args.userId, 30);
     } catch (err) {
-      console.error('[journey:closure-guard] evaluation failed; using model claim', err);
+      failure = { reason: 'history_unavailable', detail: errText(err) };
+    }
+    if (!failure) {
+      try {
+        const gated = applyClosureGate(
+          parsedReport,
+          (priorTurns ?? []).map((t) => ({
+            n: 0,
+            createdAt: t.createdAt,
+            intensity: t.intensityReported,
+            safetyFlag: t.safetyFlag,
+            cycleStatus: t.report?.cycleStatus ?? null,
+          })),
+        );
+        report = gated.report;
+        closureGate = gated.gate;
+      } catch (err) {
+        failure = { reason: 'guard_error', detail: errText(err) };
+      }
+    }
+    if (failure) {
+      const safe = failSafeClosureGate(parsedReport, failure.reason, failure.detail);
+      report = safe.report;
+      closureGate = safe.gate;
+      console.error(
+        `[journey:closure-guard] ${failure.reason} for user=${args.userId}; closure NOT recorded as resolved: ${failure.detail}`,
+      );
+    } else if (closureGate?.outcome === 'blocked') {
+      console.warn(
+        `[journey:closure-guard] blocked resolved-closure for user=${args.userId}: ${closureGate.detail}`,
+      );
     }
   }
   void closureGate;

@@ -9,10 +9,13 @@ import { describe, expect, it } from 'vitest';
 import {
   applyClosureGate,
   evaluateClosureGate,
+  failSafeClosureGate,
   findDestabilisation,
   claimsClosure,
   STABILITY_CLOSE_THRESHOLD,
   DESTABILISATION_INTENSITY,
+  MAX_MEASUREMENT_AGE_MS,
+  MAX_CLOCK_SKEW_MS,
   type ClosureTurn,
 } from './guard';
 import { parseStateReport } from '../stateReport/parse';
@@ -22,8 +25,22 @@ const T0 = new Date('2026-07-28T10:00:00.000Z'); // session start
 const SPIKE = new Date('2026-07-28T10:10:00.000Z'); // destabilisation
 const AFTER = new Date('2026-07-28T10:20:00.000Z'); // post-intervention
 
-const base = (o: Partial<StateReport> = {}): StateReport =>
-  ({ intensity: 4, safetyFlag: 'none', recommendedAction: 'stay', ...o }) as StateReport;
+// Repair A1: every report that reaches the guard through the runtime carries
+// a SERVER-stamped `observedAt` on its measurements. `base()` simulates that
+// so hand-built reports exercise the same shape the parser produces. Tests
+// that need the untrusted/legacy shape set `observedAt: undefined` explicitly.
+const base = (o: Partial<StateReport> = {}, observedAt: Date = AFTER): StateReport => {
+  const r = {
+    intensity: 4,
+    safetyFlag: 'none',
+    recommendedAction: 'stay',
+    ...o,
+  } as StateReport;
+  if (r.stabilityCheck && !('observedAt' in r.stabilityCheck)) {
+    r.stabilityCheck = { ...r.stabilityCheck, observedAt: observedAt.toISOString() };
+  }
+  return r;
+};
 
 const calmHistory: ClosureTurn[] = [
   { n: 1, createdAt: T0, intensity: 3, safetyFlag: 'none' },
@@ -33,8 +50,8 @@ const spikedHistory: ClosureTurn[] = [
   { n: 2, createdAt: SPIKE, intensity: 8, safetyFlag: 'watch' },
 ];
 
-const report = (raw: object): StateReport =>
-  parseStateReport(JSON.stringify(raw));
+const report = (raw: object, observedAt: Date = AFTER): StateReport =>
+  parseStateReport(JSON.stringify(raw), { observedAt });
 
 describe('threshold + trigger constants match the methodology', () => {
   it('close threshold is 6 and destabilisation trigger is 6', () => {
@@ -290,6 +307,313 @@ describe('destabilisation detection', () => {
 
   it('the current turn can itself be the destabilisation event', () => {
     expect(findDestabilisation(calmHistory, 8, 'watch')).not.toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Repair A1 — timestamp trust boundary.
+//
+// Rule under test: a model-generated timestamp is never the sole basis for a
+// closure decision. Ordering is established by the SERVER stamp (`observedAt`,
+// written by parseStateReport); the model's `measuredAt` is untrusted metadata
+// that can only make the guard stricter.
+// ---------------------------------------------------------------------------
+describe('A1 — the server stamp is trusted, the model claim is not', () => {
+  const validStability = (extra: Record<string, unknown> = {}) => ({
+    score: 8,
+    scale: 'stability',
+    source: 'user_reported',
+    ...extra,
+  });
+
+  it('the model cannot supply or overwrite observedAt — parse always stamps it', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      stabilityCheck: {
+        ...validStability(),
+        // A model trying to forge the trusted field.
+        observedAt: '2099-01-01T00:00:00.000Z',
+      },
+    });
+    expect(r.stabilityCheck?.observedAt).toBe(AFTER.toISOString());
+  });
+
+  it('MISSING model timestamp: closure still rests on the server stamp', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability(), // no measuredAt at all
+    });
+    expect(r.stabilityCheck?.measuredAt).toBeUndefined();
+    expect(r.stabilityCheck?.observedAt).toBe(AFTER.toISOString());
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('passed');
+  });
+
+  it('MISSING server stamp: ordering is unverifiable, closure is blocked', () => {
+    // A report that did not come through the trusted parse path (legacy row,
+    // hand-built object, future refactor that forgets to stamp).
+    const r = base({
+      cycleCanClose: true,
+      stabilityCheck: { ...validStability(), observedAt: undefined } as never,
+    });
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('untrusted_timestamp');
+  });
+
+  it('FUTURE model timestamp is treated as fabricated and blocks closure', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability({
+        measuredAt: new Date(AFTER.getTime() + MAX_CLOCK_SKEW_MS + 60_000).toISOString(),
+      }),
+    });
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('implausible_timestamp');
+  });
+
+  it('small clock skew on the model claim is tolerated', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability({
+        measuredAt: new Date(AFTER.getTime() + 30_000).toISOString(),
+      }),
+    });
+    expect(evaluateClosureGate(r, spikedHistory, AFTER).outcome).toBe('passed');
+  });
+
+  it('STALE model timestamp (far older than this turn) blocks closure', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability({
+        // Post-destabilisation, but claimed hours before this turn.
+        measuredAt: new Date(AFTER.getTime() - MAX_MEASUREMENT_AGE_MS - 60_000).toISOString(),
+      }),
+    });
+    const g = evaluateClosureGate(
+      r,
+      [{ n: 1, createdAt: new Date(AFTER.getTime() - 5 * 60 * 60 * 1000), intensity: 8 }],
+      AFTER,
+    );
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('stale_measurement');
+  });
+
+  it('COPIED-FROM-EARLIER-TURN timestamp (pre-spike) blocks closure', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability({ measuredAt: T0.toISOString() }), // before SPIKE
+    });
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('measurement_predates_destabilisation');
+  });
+
+  it('MALFORMED model timestamp is recorded and ignored, never trusted', () => {
+    const r = report({
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: validStability({ measuredAt: 'yesterday-ish' }),
+    });
+    // Not stored as a date; flagged so the Inspector can show it.
+    expect(r.stabilityCheck?.measuredAt).toBeUndefined();
+    expect(r.stabilityCheck?.measuredAtRejected).toBe(true);
+    // Validity rests on the server stamp — the garbage claim neither
+    // validates nor is silently swallowed.
+    expect(evaluateClosureGate(r, spikedHistory, AFTER).outcome).toBe('passed');
+  });
+
+  it('a forged claim cannot rescue a measurement taken before the spike', () => {
+    // Server stamp says this report was read BEFORE the destabilisation
+    // (clock/ordering anomaly); a helpful-looking model claim must not fix it.
+    const r = report(
+      {
+        intensity: 4,
+        safetyFlag: 'none',
+        recommendedAction: 'stay',
+        cycleCanClose: true,
+        stabilityCheck: validStability({ measuredAt: AFTER.toISOString() }),
+      },
+      T0, // observedAt = before SPIKE
+    );
+    const g = evaluateClosureGate(r, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('measurement_predates_destabilisation');
+  });
+
+  it('distressIntensity carries the same trust split', () => {
+    const r = report({
+      intensity: 8,
+      safetyFlag: 'watch',
+      recommendedAction: 'stay',
+      distressIntensity: { score: 8, source: 'user_reported', measuredAt: 'not-a-date' },
+    });
+    expect(r.distressIntensity?.observedAt).toBe(AFTER.toISOString());
+    expect(r.distressIntensity?.measuredAt).toBeUndefined();
+    expect(r.distressIntensity?.measuredAtRejected).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Repair A2 — guard failure must fail SAFE, not open.
+//
+// Rule under test: when the guard cannot run (history load throws, prior state
+// is malformed, the gate itself throws) the model's closure claim is not
+// trusted. The cycle is preserved as open with an observable reason. None of
+// this touches the user's reply or their ability to leave.
+// ---------------------------------------------------------------------------
+describe('A2 — guard failures do not degrade to the model claim', () => {
+  const claiming = () =>
+    base({
+      cycleStatus: 'closed',
+      cycleCanClose: true,
+      stabilityCheck: { score: 9, scale: 'stability', measuredAt: AFTER.toISOString() },
+    });
+
+  it('history load failure: closure is recorded as unverified, not resolved', () => {
+    const { report: out, gate } = failSafeClosureGate(
+      claiming(),
+      'history_unavailable',
+      'connection terminated',
+    );
+    expect(gate.outcome).toBe('blocked');
+    expect(gate.reasons).toContain('history_unavailable');
+    expect(gate.reasons).toContain('closure_unverified');
+    expect(out.cycleCanClose).toBe(false);
+    expect(out.cycleStatus).toBe('open');
+    expect(out.closureGate?.outcome).toBe('blocked');
+  });
+
+  it('guard exception: same fail-safe downgrade with guard_error', () => {
+    const { report: out, gate } = failSafeClosureGate(claiming(), 'guard_error', 'boom');
+    expect(gate.reasons).toEqual(['guard_error', 'closure_unverified']);
+    expect(gate.detail).toContain('boom');
+    expect(out.cycleCanClose).toBe(false);
+    expect(out.cycleStatus).toBe('open');
+  });
+
+  it('the fail-safe path never mutates the input report', () => {
+    const input = claiming();
+    failSafeClosureGate(input, 'guard_error', 'boom');
+    expect(input.cycleCanClose).toBe(true);
+    expect(input.cycleStatus).toBe('closed');
+  });
+
+  it('malformed history object (not an array) blocks rather than passes', () => {
+    const g = evaluateClosureGate(
+      claiming(),
+      undefined as unknown as ClosureTurn[],
+      AFTER,
+    );
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('history_unavailable');
+    expect(g.reasons).toContain('closure_unverified');
+  });
+
+  it('malformed prior-turn timestamp cannot be ordered and blocks closure', () => {
+    const g = evaluateClosureGate(
+      claiming(),
+      [{ n: 1, createdAt: 'not-a-date', intensity: 8, safetyFlag: 'watch' }],
+      AFTER,
+    );
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('closure_unverified');
+  });
+
+  it('a non-closure turn is never touched by any of this', () => {
+    const quiet = base({ intensity: 3 });
+    const g = evaluateClosureGate(quiet, undefined as unknown as ClosureTurn[], AFTER);
+    expect(g.outcome).toBe('not_applicable');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Repair A3 — presentingRequestStatus is ADVISORY ONLY (option B).
+//
+// Decision 2026-07-28: presenting-request completion is NOT verified by
+// Repair 1. The field is an unverified model claim, so it may only ever make
+// the guard stricter. Absent / 'addressed' / 'parked' / invalid values grant
+// no confidence and are not treated as evidence of anything.
+// ---------------------------------------------------------------------------
+describe('A3 — presentingRequestStatus grants no confidence', () => {
+  const withStatus = (status?: unknown) => {
+    const raw: Record<string, unknown> = {
+      intensity: 4,
+      safetyFlag: 'none',
+      recommendedAction: 'stay',
+      cycleCanClose: true,
+      stabilityCheck: { score: 8, scale: 'stability', source: 'user_reported' },
+    };
+    if (status !== undefined) raw.presentingRequestStatus = status;
+    return report(raw);
+  };
+
+  it('ABSENT: gate outcome is decided purely by the stability evidence', () => {
+    const r = withStatus();
+    expect(r.presentingRequestStatus).toBeUndefined();
+    expect(evaluateClosureGate(r, spikedHistory, AFTER).outcome).toBe('passed');
+    // ...and absence is equally irrelevant when stability is missing:
+    const noStability = base({ cycleCanClose: true });
+    expect(evaluateClosureGate(noStability, spikedHistory, AFTER).reasons).toContain(
+      'no_stability_measurement',
+    );
+  });
+
+  it('ADDRESSED: is recorded but adds no validation of its own', () => {
+    const r = withStatus('addressed');
+    expect(r.presentingRequestStatus).toBe('addressed');
+    // Identical outcome to ABSENT — the claim changed nothing.
+    expect(evaluateClosureGate(r, spikedHistory, AFTER).outcome).toBe('passed');
+    // And it cannot rescue a closure that fails on stability grounds.
+    const weak = base({
+      cycleCanClose: true,
+      presentingRequestStatus: 'addressed',
+      stabilityCheck: { score: 3, scale: 'stability', measuredAt: AFTER.toISOString() },
+    });
+    const g = evaluateClosureGate(weak, spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('below_threshold');
+  });
+
+  it('PARKED: same as addressed — honest close, no extra confidence', () => {
+    expect(evaluateClosureGate(withStatus('parked'), spikedHistory, AFTER).outcome).toBe(
+      'passed',
+    );
+  });
+
+  it('UNRESOLVED: the one value with an effect — it tightens the guard', () => {
+    const g = evaluateClosureGate(withStatus('unresolved'), spikedHistory, AFTER);
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('presenting_request_unresolved');
+  });
+
+  it('INVALID: an unknown value is dropped, never coerced to a status', () => {
+    for (const bad of ['done', 'complete', 42, true, null, { v: 'addressed' }]) {
+      const r = withStatus(bad);
+      expect(r.presentingRequestStatus).toBeUndefined();
+      // Dropped, not coerced to 'unresolved' either — it simply has no effect.
+      expect(evaluateClosureGate(r, spikedHistory, AFTER).outcome).toBe('passed');
+    }
   });
 });
 

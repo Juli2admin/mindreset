@@ -16,5 +16,11 @@
     "paths": { "@/*": ["./*"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.jsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  // `eval` holds the Golden Harness (eval/journey), a developer-only replay
+  // tool with its own tsconfig (target es2022). It is never imported by the
+  // app and must not be type-checked by `next build`: its RU metric regexes
+  // use lookbehind, which this config's default target rejects. The audit
+  // branch already carries this exclusion; it is repeated here so a local
+  // `npm run build` matches the deployed build.
+  "exclude": ["node_modules", "eval"]
 }

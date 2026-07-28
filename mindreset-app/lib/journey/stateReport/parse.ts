@@ -159,7 +159,24 @@ export function splitReplyAndReport(fullReply: string): SplitReply {
 // Parse + validate the raw JSON into a StateReport, falling back defensively.
 // ---------------------------------------------------------------------------
 
-export function parseStateReport(raw: string | null): StateReport {
+/**
+ * Repair A1 (2026-07-28) — trusted observation timestamp.
+ *
+ * Every measurement the model reports is stamped with a SERVER-side
+ * timestamp at the moment the runtime parses the report. That stamp
+ * (`observedAt`) is the only timestamp the closure guard trusts for
+ * ordering; the model's own `measuredAt` is retained as untrusted
+ * metadata. `opts.observedAt` is injectable for deterministic tests.
+ */
+export type ParseStateReportOptions = {
+  observedAt?: Date;
+};
+
+export function parseStateReport(
+  raw: string | null,
+  opts: ParseStateReportOptions = {},
+): StateReport {
+  const observedAtIso = (opts.observedAt ?? new Date()).toISOString();
   if (!raw) return { ...DEFENSIVE_DEFAULT };
   let obj: Record<string, unknown>;
   try {
@@ -351,8 +368,16 @@ export function parseStateReport(raw: string | null): StateReport {
       if (sc.source === 'user_reported' || sc.source === 'clinician_assessed') {
         check.source = sc.source;
       }
-      if (typeof sc.measuredAt === 'string' && !Number.isNaN(Date.parse(sc.measuredAt))) {
-        check.measuredAt = sc.measuredAt;
+      // Repair A1 (2026-07-28). The model's own timestamp is UNTRUSTED
+      // metadata; `observedAt` is the server clock at the moment we read
+      // this report and is what the closure guard orders against.
+      check.observedAt = observedAtIso;
+      if (typeof sc.measuredAt === 'string') {
+        if (Number.isNaN(Date.parse(sc.measuredAt))) {
+          check.measuredAtRejected = true;
+        } else {
+          check.measuredAt = sc.measuredAt;
+        }
       }
       if (typeof sc.contextNote === 'string') {
         check.contextNote = sc.contextNote.slice(0, 80);
@@ -376,8 +401,10 @@ export function parseStateReport(raw: string | null): StateReport {
       if (di.source === 'user_reported' || di.source === 'clinician_inferred') {
         d.source = di.source;
       }
-      if (typeof di.measuredAt === 'string' && !Number.isNaN(Date.parse(di.measuredAt))) {
-        d.measuredAt = di.measuredAt;
+      d.observedAt = observedAtIso;
+      if (typeof di.measuredAt === 'string') {
+        if (Number.isNaN(Date.parse(di.measuredAt))) d.measuredAtRejected = true;
+        else d.measuredAt = di.measuredAt;
       }
       if (typeof di.contextNote === 'string') d.contextNote = di.contextNote.slice(0, 80);
       report.distressIntensity = d;

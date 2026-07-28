@@ -389,12 +389,33 @@ function StateSummary({ sr }: { sr: StateReport }) {
         scale?: 'stability' | 'ambiguous';
         source?: string;
         measuredAt?: string;
+        observedAt?: string;
+        measuredAtRejected?: boolean;
         contextNote?: string;
       }
     | undefined;
   const distress = sr.distressIntensity as
-    | { score?: number; source?: string; measuredAt?: string; contextNote?: string }
+    | {
+        score?: number;
+        source?: string;
+        measuredAt?: string;
+        observedAt?: string;
+        measuredAtRejected?: boolean;
+        contextNote?: string;
+      }
     | undefined;
+  // Repair A1 — the two timestamps carry different trust. `observedAt` is
+  // the server clock at parse time (what the guard orders against);
+  // `measuredAt` is the model's own claim and is labelled as untrusted so
+  // nobody reading the Inspector mistakes it for evidence.
+  const stamps = (m: {
+    measuredAt?: string;
+    observedAt?: string;
+    measuredAtRejected?: boolean;
+  }): string =>
+    `${m.observedAt ? ` · observed(server) ${m.observedAt}` : ' · observed(server) MISSING ⚠'}${
+      m.measuredAt ? ` · claimed(model, untrusted) ${m.measuredAt}` : ''
+    }${m.measuredAtRejected ? ' · claimed(model) MALFORMED — ignored' : ''}`;
   const closureGate = sr.closureGate as
     | { outcome?: string; reasons?: string[]; detail?: string; destabilisedAt?: string | null }
     | undefined;
@@ -403,16 +424,12 @@ function StateSummary({ sr }: { sr: StateReport }) {
         stability.scale ?? 'ambiguous (legacy)'
       }${stability.scale !== 'stability' ? ' ⚠ NOT closure-valid' : ''} · source=${
         stability.source ?? 'unspecified'
-      }${stability.measuredAt ? ` · at ${stability.measuredAt}` : ''}${
-        stability.contextNote ? ` · ${stability.contextNote}` : ''
-      }`
+      }${stamps(stability)}${stability.contextNote ? ` · ${stability.contextNote}` : ''}`
     : null;
   const distressLabel = distress
     ? `${distress.score}/10 DISTRESS (10 = extreme distress) · source=${
         distress.source ?? 'unspecified'
-      }${distress.measuredAt ? ` · at ${distress.measuredAt}` : ''}${
-        distress.contextNote ? ` · ${distress.contextNote}` : ''
-      }`
+      }${stamps(distress)}${distress.contextNote ? ` · ${distress.contextNote}` : ''}`
     : null;
   const closureLabel = closureGate
     ? `${closureGate.outcome?.toUpperCase()}${
@@ -550,8 +567,15 @@ function StateSummary({ sr }: { sr: StateReport }) {
       {stabilityLabel && <SumRow k="stabilityCheck" v={stabilityLabel} />}
       {distressLabel && <SumRow k="distressIntensity" v={distressLabel} />}
       {closureLabel && <SumRow k="closureGate" v={closureLabel} />}
-      {sr.presentingRequestStatus != null && (
-        <SumRow k="presentingRequestStatus" v={String(sr.presentingRequestStatus)} />
+      {/* A3 decision (2026-07-28): presenting-request completion is NOT
+          verified by Repair 1. The field is an unverified model claim —
+          only 'unresolved' has any effect (it tightens the guard). It is
+          rendered even when absent so its unreliability stays visible. */}
+      {closureLabel && (
+        <SumRow
+          k="presentingRequestStatus"
+          v={`${sr.presentingRequestStatus ?? 'not emitted'} (advisory — model claim, not verified)`}
+        />
       )}
 
       {setCaptures.length > 0 && (

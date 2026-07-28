@@ -369,8 +369,28 @@ export type StateReport = {
     scale?: 'stability' | 'ambiguous';
     /** Who produced the number. */
     source?: 'user_reported' | 'clinician_assessed';
-    /** ISO timestamp of the measurement (guard requires it post-dates the spike). */
+    /**
+     * UNTRUSTED — model-supplied. Repair A1 (2026-07-28): this is whatever
+     * the model wrote in its JSON. It is never the basis on which a closure
+     * is validated; it can only make the closure guard STRICTER (a claim
+     * that predates the destabilisation, sits in the future, or is far
+     * older than this turn is treated as evidence against the closure).
+     * See `observedAt` for the trusted ordering timestamp.
+     */
     measuredAt?: string;
+    /**
+     * TRUSTED — server-assigned. Stamped by `parseStateReport` at the moment
+     * the runtime read this report, from the server clock. The model cannot
+     * influence it. The closure guard uses THIS for ordering against the
+     * destabilisation turn's server `createdAt`.
+     */
+    observedAt?: string;
+    /**
+     * True when the model supplied a `measuredAt` that was not a parseable
+     * date. Recorded so a malformed claim is visible in the Inspector rather
+     * than silently indistinguishable from "no claim".
+     */
+    measuredAtRejected?: boolean;
     /**
      * Brief reason / context. Suggested values:
      *   "before_close"           — asking before session pause/close
@@ -392,7 +412,12 @@ export type StateReport = {
   distressIntensity?: {
     score: number;
     source?: 'user_reported' | 'clinician_inferred';
+    /** UNTRUSTED — model-supplied. See stabilityCheck.measuredAt. */
     measuredAt?: string;
+    /** TRUSTED — server-assigned at parse time. See stabilityCheck.observedAt. */
+    observedAt?: string;
+    /** True when the model supplied an unparseable `measuredAt`. */
+    measuredAtRejected?: boolean;
     contextNote?: string;
   };
 

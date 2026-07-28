@@ -49,6 +49,24 @@ export const STABILITY_CLOSE_THRESHOLD = 6;
  */
 export const DESTABILISATION_INTENSITY = 6;
 
+/**
+ * Repair A1 (2026-07-28) — timestamp trust boundary.
+ *
+ * `stabilityCheck.observedAt` is stamped by the server at parse time and is
+ * the ONLY timestamp used to establish that a measurement post-dates the
+ * destabilisation. `stabilityCheck.measuredAt` is whatever the model wrote;
+ * it is untrusted and can only ever make this guard STRICTER:
+ *   - claimed before the destabilisation  -> copy-forward, block
+ *   - claimed in the future               -> fabricated, block
+ *   - claimed far older than this turn    -> stale/copied, block
+ * A missing or malformed model claim is simply ignored; validity then rests
+ * entirely on the server-side stamp, never on model output.
+ */
+/** How far the model's claimed measurement time may lag the server stamp. */
+export const MAX_MEASUREMENT_AGE_MS = 30 * 60 * 1000; // 30 minutes
+/** Tolerance for benign clock differences before a claim counts as future-dated. */
+export const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000; // 2 minutes
+
 export type ClosureTurn = {
   /** 1-based turn number within the session (ordering only). */
   n: number;
@@ -75,7 +93,21 @@ export type ClosureBlockReason =
   | 'ambiguous_scale'
   | 'below_threshold'
   | 'measurement_predates_destabilisation'
-  | 'presenting_request_unresolved';
+  // Repair A1 — timestamp trust.
+  /** No trusted server-side observation stamp; ordering cannot be verified. */
+  | 'untrusted_timestamp'
+  /** The model claimed a measurement time in the future. */
+  | 'implausible_timestamp'
+  /** The model's claimed measurement time is far older than this turn. */
+  | 'stale_measurement'
+  | 'presenting_request_unresolved'
+  // Repair A2 — fail-safe error paths.
+  /** Session history could not be loaded, so destabilisation is unknown. */
+  | 'history_unavailable'
+  /** The guard threw; its verdict is unavailable. */
+  | 'guard_error'
+  /** Umbrella marker: the runtime could not verify this closure. */
+  | 'closure_unverified';
 
 const iso = (d: Date | string): string =>
   typeof d === 'string' ? d : d.toISOString();
@@ -140,6 +172,17 @@ export function evaluateClosureGate(
 
   if (!claimsClosure(report)) return none;
 
+  // Repair A2. Malformed history is not "no destabilisation" — it is
+  // *unknown*, and unknown must never validate a closure.
+  if (!Array.isArray(priorTurns)) {
+    return {
+      outcome: 'blocked',
+      reasons: ['history_unavailable', 'closure_unverified'],
+      detail: 'closure not recorded as resolved: session history unavailable',
+      destabilisedAt: null,
+    };
+  }
+
   const destab = findDestabilisation(priorTurns, report.intensity, report.safetyFlag);
   if (!destab) {
     return {
@@ -151,8 +194,12 @@ export function evaluateClosureGate(
   }
 
   const destabAt = iso(destab.createdAt);
+  const destabMs = ms(destab.createdAt);
   const reasons: ClosureBlockReason[] = [];
   const sc = report.stabilityCheck;
+
+  // A destabilisation we cannot place in time cannot be ordered against.
+  if (!Number.isFinite(destabMs)) reasons.push('closure_unverified');
 
   if (!sc) {
     reasons.push('no_stability_measurement');
@@ -163,10 +210,38 @@ export function evaluateClosureGate(
     if (typeof sc.score !== 'number' || sc.score < STABILITY_CLOSE_THRESHOLD) {
       reasons.push('below_threshold');
     }
-    const measuredAt = sc.measuredAt ? Date.parse(sc.measuredAt) : now.getTime();
-    if (Number.isFinite(measuredAt) && measuredAt < ms(destabAt)) {
+
+    // --- Repair A1: trusted ordering, server stamp only -----------------
+    const observedMs = sc.observedAt ? Date.parse(sc.observedAt) : NaN;
+    if (!Number.isFinite(observedMs)) {
+      // No server stamp => this report did not come through the trusted
+      // parse path (or is a legacy row). Ordering is unverifiable.
+      reasons.push('untrusted_timestamp');
+    } else if (Number.isFinite(destabMs) && observedMs < destabMs) {
       reasons.push('measurement_predates_destabilisation');
     }
+
+    // --- Repair A1: untrusted model claim, may only tighten -------------
+    if (typeof sc.measuredAt === 'string') {
+      const claimedMs = Date.parse(sc.measuredAt);
+      if (Number.isFinite(claimedMs)) {
+        if (Number.isFinite(destabMs) && claimedMs < destabMs) {
+          // The model itself says this reading predates the spike —
+          // a measurement carried forward from before the destabilisation.
+          reasons.push('measurement_predates_destabilisation');
+        }
+        if (Number.isFinite(observedMs)) {
+          if (claimedMs > observedMs + MAX_CLOCK_SKEW_MS) {
+            reasons.push('implausible_timestamp');
+          } else if (claimedMs < observedMs - MAX_MEASUREMENT_AGE_MS) {
+            reasons.push('stale_measurement');
+          }
+        }
+      }
+    }
+    // A malformed claim (measuredAtRejected) is ignored rather than
+    // trusted: validity rests on the server stamp above, so a garbled
+    // model timestamp can neither validate nor, on its own, invalidate.
   }
 
   if (report.presentingRequestStatus === 'unresolved') {
@@ -182,10 +257,11 @@ export function evaluateClosureGate(
     };
   }
 
+  const unique = Array.from(new Set(reasons));
   return {
     outcome: 'blocked',
-    reasons,
-    detail: `closure not recorded as resolved: ${reasons.join(', ')}`,
+    reasons: unique,
+    detail: `closure not recorded as resolved: ${unique.join(', ')}`,
     destabilisedAt: destabAt,
   };
 }
@@ -205,15 +281,43 @@ export function applyClosureGate(
 ): { report: StateReport; gate: ClosureGateResult } {
   const gate = evaluateClosureGate(report, priorTurns, now);
   if (gate.outcome !== 'blocked') return { report, gate };
+  return { report: withBlockedGate(report, gate), gate };
+}
 
+/**
+ * Downgrade a closure claim to the honest "not verified as resolved" state.
+ * The reply the user already received is untouched; only the record changes.
+ */
+function withBlockedGate(report: StateReport, gate: ClosureGateResult): StateReport {
   return {
-    report: {
-      ...report,
-      cycleCanClose: false,
-      // 'closed' would assert resolution; downgrade to the honest state.
-      cycleStatus: report.cycleStatus === 'closed' ? 'open' : report.cycleStatus,
-      closureGate: gate,
-    },
-    gate,
+    ...report,
+    cycleCanClose: false,
+    // 'closed' would assert resolution; downgrade to the honest state.
+    cycleStatus: report.cycleStatus === 'closed' ? 'open' : report.cycleStatus,
+    closureGate: gate,
   };
+}
+
+/**
+ * Repair A2 (2026-07-28) — fail-safe path for when the guard cannot run.
+ *
+ * Called by the runtime when loading session history throws, or when the
+ * gate itself throws. Clinical closure recording must not fail open: on any
+ * uncertainty the model's `cycleCanClose: true` / `cycleStatus: 'closed'`
+ * is NOT trusted, and the cycle is preserved as open with an observable
+ * reason. This never blocks the user's reply, their exit, or the HTTP turn —
+ * by the time it runs the response has already streamed.
+ */
+export function failSafeClosureGate(
+  report: StateReport,
+  reason: 'history_unavailable' | 'guard_error',
+  detail: string,
+): { report: StateReport; gate: ClosureGateResult } {
+  const gate: ClosureGateResult = {
+    outcome: 'blocked',
+    reasons: [reason, 'closure_unverified'],
+    detail: `closure not recorded as resolved: ${reason} (${detail})`,
+    destabilisedAt: null,
+  };
+  return { report: withBlockedGate(report, gate), gate };
 }
