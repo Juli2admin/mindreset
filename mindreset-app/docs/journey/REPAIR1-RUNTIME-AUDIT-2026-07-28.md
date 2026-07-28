@@ -431,4 +431,4 @@ Two things the owner should weigh before merging:
 | `6b45a99` | A1 trusted timestamps, A2 fail-safe error paths, A3 advisory-only decision, A4 tsconfig |
 | `5989043` | Prompt: `distressIntensity` + `presentingRequestStatus` + scale marker added to the emission catalogue |
 | `ebf87b2` | This report — scope statement |
-| _(final)_ | `unverified_scale_source` guard rule + prompt rule + tests + this report's B/C/D sections |
+| `54be06c` | `unverified_scale_source` guard rule + prompt rule + tests + this report's B/C/D sections |
