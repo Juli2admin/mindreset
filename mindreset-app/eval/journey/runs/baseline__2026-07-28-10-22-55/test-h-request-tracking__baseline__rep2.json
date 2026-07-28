@@ -1,0 +1,361 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-h-request-tracking",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:22:55.350Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-h-request-tracking",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 145
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 234
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 270
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 246
+   },
+   {
+    "n": 5,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 210
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 3,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 221
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "My ex texted me yesterday asking to meet 'to talk'. I don't know how to reply. Help me decide what to say.",
+   "visibleReply": "That kind of message lands differently depending on what the two of you were. How long has it been since you were together, and how did it end?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"First message. User arrives with a practical decision-making request about an ex's contact. Almost nothing is known yet — relationship history, how it ended, what the user actually feels about this, what 'help me decide' means to them (reassurance, permission, practical script, or something else). The presenting request is concrete but the emotional layer underneath is entirely unread. Gather before anything else. One focused question to open the picture.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"taskContract\": {\"presentingRequest\": \"decide what to say to ex who texted asking to meet 'to talk'\", \"expectedHelp\": \"help deciding how to reply\", \"currentFocus\": \"gathering the picture — relationship history, how it ended, what the user wants from this\"}}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. User arrives with a practical decision-making request about an ex's contact. Almost nothing is known yet — relationship history, how it ended, what the user actually feels about this, what 'help me decide' means to them (reassurance, permission, practical script, or something else). The presenting request is concrete but the emotional layer underneath is entirely unread. Gather before anything else. One focused question to open the picture.",
+    "taskContract": {
+     "presentingRequest": "decide what to say to ex who texted asking to meet 'to talk'",
+     "expectedHelp": "help deciding how to reply",
+     "currentFocus": "gathering the picture — relationship history, how it ended, what the user wants from this"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1749,
+    "totalMs": 7502
+   },
+   "usage": {
+    "inputTokens": 11353,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 263
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "2362c758",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "We broke up two months ago. It ended badly. I keep re-reading the message every hour.",
+   "visibleReply": "Two months, ended badly, and you've been re-reading it every hour. That's not indecision — that's something pulling at you quite hard.\n\nWhat's the pull? Is it that you want to go, or that you're afraid of what it means if you don't?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"Second message. Picture is sparse — breakup two months ago, ended badly, compulsive re-reading suggests unresolved emotional charge. Need to understand the pull before offering any decision support. Not enough to formulate yet — gathering.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"decide how to reply to the ex's message\", \"expectedHelp\": \"help deciding what to say\", \"currentFocus\": \"understanding what the pull is before any reply decision\"}}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "Second message. Picture is sparse — breakup two months ago, ended badly, compulsive re-reading suggests unresolved emotional charge. Need to understand the pull before offering any decision support. Not enough to formulate yet — gathering.",
+    "taskContract": {
+     "presentingRequest": "decide how to reply to the ex's message",
+     "expectedHelp": "help deciding what to say",
+     "currentFocus": "understanding what the pull is before any reply decision"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2064,
+    "totalMs": 6937
+   },
+   "usage": {
+    "inputTokens": 11519,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 247
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "f5600f01",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"decide how to reply to the ex's message\"\n- Expected help: \"help deciding what to say\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Honestly the whole thing brought back how alone I felt in that relationship. Like I disappear in relationships. I've always done that, even before him.",
+   "visibleReply": "That's a bigger thing than the text message.\n\nDisappearing in relationships — you've named something that goes well before him. What does disappearing feel like, when it happens? Is it that you stop knowing what you want, or that you stop saying it, or something else?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"channel\": \"emotional\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"The presenting task (how to reply to the ex) has opened something much older — a long-standing pattern of self-loss in relationships predating this partner. This is the live material now. Holding the text message as the original task contract but following this thread: the 'disappearing' pattern is the actual presenting wound. Gathering what this feels like experientially before any formulation — too early to commit to a single explanation. Possible provisional reads: identity dissolution under relational pressure; chronic self-abandonment; fear of conflict leading to self-erasure — holding all lightly, not committing.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\", \"pain_named\"], \"taskContract\": {\"presentingRequest\": \"decide how to reply to the ex's message\", \"expectedHelp\": \"help deciding what to say\", \"currentFocus\": \"long-standing pattern of disappearing in relationships — predates this partner\"}, \"patternsTouched\": [{\"category\": \"self_disappearing_in_relationships\", \"description\": \"I disappear in relationships. I've always done that, even before him.\", \"context\": {}}], \"continuityNote\": \"Session 1, message 3. User arrived with a practical question (how to reply to ex's text asking to meet). Two months post-breakup, ended badly. Re-reading the message hourly — signal of significant emotional activation. Opened quickly into a deeper pattern: 'I disappear in relationships — I've always done that, even before him.' This is the real presenting material. Working differential (no primary formulation yet): (1) chronic self-loss under relational pressure — identity subsumed by partner's needs/presence; (2) fear of conflict leading to suppression of wants/voice; (3) possible attachment pattern (anxious-enmeshed or fawn-type) producing self-erasure. Need: what does disappearing feel like experientially? Does she stop knowing what she wants, stop saying it, or both? What remains of her when she's in a relationship? Resources unknown so far. Anchor: nothing qualifying yet.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present",
+     "pain_named"
+    ],
+    "patternsTouched": [
+     {
+      "category": "self_disappearing_in_relationships",
+      "description": "I disappear in relationships. I've always done that, even before him.",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "The presenting task (how to reply to the ex) has opened something much older — a long-standing pattern of self-loss in relationships predating this partner. This is the live material now. Holding the text message as the original task contract but following this thread: the 'disappearing' pattern is the actual presenting wound. Gathering what this feels like experientially before any formulation — too early to commit to a single explanation. Possible provisional reads: identity dissolution under relational pressure; chronic self-abandonment; fear of conflict leading to self-erasure — holding all lightly, not committing.",
+    "continuityNote": "Session 1, message 3. User arrived with a practical question (how to reply to ex's text asking to meet). Two months post-breakup, ended badly. Re-reading the message hourly — signal of significant emotional activation. Opened quickly into a deeper pattern: 'I disappear in relationships — I've always done that, even before him.' This is the real presenting material. Working differential (no primary formulation yet): (1) chronic self-loss under relational pressure — identity subsumed by partner's needs/presence; (2) fear of conflict leading to suppression of wants/voice; (3) possible attachment pattern (anxious-enmeshed or fawn-type) producing self-erasure. Need: what does disappearing feel like experientially? Does she stop knowing what she wants, stop saying it, or both? What remains of her when she's in a relationship? Resources unknown so far. Anchor: nothing qualifying yet.",
+    "taskContract": {
+     "presentingRequest": "decide how to reply to the ex's message",
+     "expectedHelp": "help deciding what to say",
+     "currentFocus": "long-standing pattern of disappearing in relationships — predates this partner"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2999,
+    "totalMs": 16499
+   },
+   "usage": {
+    "inputTokens": 11618,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 603
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "026cf532",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"decide how to reply to the ex's message\"\n- Expected help: \"help deciding what to say\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 4,
+   "user": "I've been thinking about that disappearing thing all week actually. It scares me a bit.",
+   "visibleReply": "It scares you — and you've been sitting with it all week. That matters.\n\nWhat is it about the disappearing that frightens you most? Is it that you don't know why it happens, or that you're worried it'll keep happening no matter who you're with?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User has moved significantly away from the presenting request (how to reply to the text) into something more structurally important — a lifelong pattern of self-loss in relationships. This is genuinely alive material, not deflection. The fear she names about it recurring is the clinical hook. Stay wide in assessment — gather what this disappearing actually means to her, when it starts, what it looks like from inside. Primary formulation not yet formed; holding provisionally: possible self-abandonment pattern with anxious relational attachment, but far too early to commit. Task contract still holds the text decision — park it gently when appropriate but don't lose it.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\", \"pain_named\"], \"taskContract\": {\"presentingRequest\": \"decide how to reply to the ex's message\", \"expectedHelp\": \"help deciding what to say\", \"currentFocus\": \"lifelong pattern of disappearing / self-loss in relationships\", \"completionCriterion\": \"clarity on what she wants to do about the text\"}, \"continuityNote\": \"Session 1. User arrived wanting help replying to an ex's text — met 2 months ago, ended badly. Quickly moved to something deeper: a lifelong pattern of 'disappearing' in relationships, present before this relationship. She is scared by this pattern. No anchor material yet. No body location offered yet. Working picture forming but very early — gathering. Key threads to follow: what disappearing means from inside her experience; when it starts in a relationship; whether she has any sense of a self that exists outside relationships. Text decision still outstanding — to return to when this material has been sufficiently touched.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present",
+     "pain_named"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has moved significantly away from the presenting request (how to reply to the text) into something more structurally important — a lifelong pattern of self-loss in relationships. This is genuinely alive material, not deflection. The fear she names about it recurring is the clinical hook. Stay wide in assessment — gather what this disappearing actually means to her, when it starts, what it looks like from inside. Primary formulation not yet formed; holding provisionally: possible self-abandonment pattern with anxious relational attachment, but far too early to commit. Task contract still holds the text decision — park it gently when appropriate but don't lose it.",
+    "continuityNote": "Session 1. User arrived wanting help replying to an ex's text — met 2 months ago, ended badly. Quickly moved to something deeper: a lifelong pattern of 'disappearing' in relationships, present before this relationship. She is scared by this pattern. No anchor material yet. No body location offered yet. Working picture forming but very early — gathering. Key threads to follow: what disappearing means from inside her experience; when it starts in a relationship; whether she has any sense of a self that exists outside relationships. Text decision still outstanding — to return to when this material has been sufficiently touched.",
+    "taskContract": {
+     "presentingRequest": "decide how to reply to the ex's message",
+     "expectedHelp": "help deciding what to say",
+     "currentFocus": "lifelong pattern of disappearing / self-loss in relationships",
+     "completionCriterion": "clarity on what she wants to do about the text"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2106,
+    "totalMs": 13890
+   },
+   "usage": {
+    "inputTokens": 11703,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 501
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "5ac1fb98",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"decide how to reply to the ex's message\"\n- Expected help: \"help deciding what to say\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 5,
+   "user": "Anyway. It's been two days and I still haven't replied to him.",
+   "visibleReply": "The question about the disappearing got too close, and you've stepped back to the safer ground of the text message. That's fine — we can go there.\n\nTwo days, no reply. What's stopping you from just saying no?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"clinicalRead\": \"User deflected from the disappearing question — moved back to the presenting request (the text). Not avoidance to push through; the deflection itself is information. The presenting request is still live and unresolved. Following her back to it while holding the disappearing thread lightly. The two are connected — what stops her replying will illuminate the disappearing pattern — but she'll get there in her own time.\", \"taskContract\": {\"presentingRequest\": \"decide how to reply to the ex's message\", \"expectedHelp\": \"help deciding what to say\", \"currentFocus\": \"what's stopping her from saying no\", \"completionCriterion\": \"has a clear enough sense of what she wants to say\"}, \"continuityNote\": \"Presenting: how to reply to ex's text asking to meet. Ended badly two months ago, she keeps re-reading it. Beneath the presenting request: a pattern of disappearing in relationships — losing herself, stops knowing or saying what she wants. Has always done this, predates this relationship. This frightened her when named directly; she deflected back to the text. Working observation (not yet formulation): the difficulty replying may be the same mechanism as the disappearing — uncertainty about her own want/position. Worth watching whether she can name what SHE wants here, vs what she thinks she should do or what he needs. No anchor identified yet. Assessment phase, Block 1.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "clinicalRead": "User deflected from the disappearing question — moved back to the presenting request (the text). Not avoidance to push through; the deflection itself is information. The presenting request is still live and unresolved. Following her back to it while holding the disappearing thread lightly. The two are connected — what stops her replying will illuminate the disappearing pattern — but she'll get there in her own time.",
+    "continuityNote": "Presenting: how to reply to ex's text asking to meet. Ended badly two months ago, she keeps re-reading it. Beneath the presenting request: a pattern of disappearing in relationships — losing herself, stops knowing or saying what she wants. Has always done this, predates this relationship. This frightened her when named directly; she deflected back to the text. Working observation (not yet formulation): the difficulty replying may be the same mechanism as the disappearing — uncertainty about her own want/position. Worth watching whether she can name what SHE wants here, vs what she thinks she should do or what he needs. No anchor identified yet. Assessment phase, Block 1.",
+    "taskContract": {
+     "presentingRequest": "decide how to reply to the ex's message",
+     "expectedHelp": "help deciding what to say",
+     "currentFocus": "what's stopping her from saying no",
+     "completionCriterion": "has a clear enough sense of what she wants to say"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1959,
+    "totalMs": 12167
+   },
+   "usage": {
+    "inputTokens": 11785,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 440
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "32117ba0",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"decide how to reply to the ex's message\"\n- Expected help: \"help deciding what to say\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 5 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

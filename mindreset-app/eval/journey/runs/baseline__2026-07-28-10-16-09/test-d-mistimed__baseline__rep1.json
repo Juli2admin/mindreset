@@ -1,0 +1,260 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "test-d-mistimed",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:16:09.547Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-d-mistimed",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 252
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [
+     {
+      "label": "en_i_hear",
+      "count": 1
+     }
+    ],
+    "stockPhraseTotal": 1,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 143
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 38
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 1,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 1,
+   "stockByLabel": {
+    "en_i_hear": 1
+   },
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 2,
+   "prematurePractices": 2,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 144
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I found out an hour ago my father is seriously ill. I'm shaking. I can't think straight.",
+   "visibleReply": "That's a shock. An hour ago — it's still landing.\n\nYou don't have to think straight right now. That's not what this moment needs.\n\nCan you feel where you are sitting? The weight of you in the chair, or your feet on the floor. Just that, for a moment.\n\n",
+   "rawReportJson": "{\n  \"intensity\": 8,\n  \"safetyFlag\": \"watch\",\n  \"recommendedAction\": \"stay\",\n  \"channel\": \"kinesthetic\",\n  \"clinicalRead\": \"Acute shock state — news one hour old, shaking, cognitive disruption. No assessment yet; this is not the moment. Immediate priority is grounding and presence. Somatic channel dominant. Watch for escalation or crisis markers.\",\n  \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.practice_somatic\"],\n  \"readinessTouched\": [\"orientation_present\"],\n  \"practiceRun\": {\n    \"kind\": \"generated\",\n    \"name\": \"Grounding — weight and contact\",\n    \"family\": \"somatic\",\n    \"status\": \"started\",\n    \"depth\": \"surface\",\n    \"userImages\": []\n  },\n  \"therapeuticMode\": \"stabilisation\",\n  \"cycleStatus\": \"open\",\n  \"cycleCanClose\": false,\n  \"nextBestMode\": \"somatic\",\n  \"taskContract\": {\n    \"presentingRequest\": \"Father seriously ill — in shock, shaking, can't think\",\n    \"expectedHelp\": \"presence and steadying\",\n    \"currentFocus\": \"acute stabilisation\",\n    \"completionCriterion\": \"user feels less shaken and can speak\"\n  },\n  \"continuityNote\": \"First contact. Acute shock — father seriously ill, news one hour old. No prior history gathered. Presenting state: physical shaking, cognitive disruption, high distress. No assessment possible yet. Priority this session: steady the nervous system, be present, gather nothing. Next: once settled, gentle check on what happened and what they need.\"\n}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "kinesthetic",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Grounding — weight and contact",
+     "family": "somatic",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.practice_somatic"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Acute shock state — news one hour old, shaking, cognitive disruption. No assessment yet; this is not the moment. Immediate priority is grounding and presence. Somatic channel dominant. Watch for escalation or crisis markers.",
+    "continuityNote": "First contact. Acute shock — father seriously ill, news one hour old. No prior history gathered. Presenting state: physical shaking, cognitive disruption, high distress. No assessment possible yet. Priority this session: steady the nervous system, be present, gather nothing. Next: once settled, gentle check on what happened and what they need.",
+    "taskContract": {
+     "presentingRequest": "Father seriously ill — in shock, shaking, can't think",
+     "expectedHelp": "presence and steadying",
+     "currentFocus": "acute stabilisation",
+     "completionCriterion": "user feels less shaken and can speak"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2165,
+    "totalMs": 11728
+   },
+   "usage": {
+    "inputTokens": 11347,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 485
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "067eecaf",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "I can't. Not now. My head is a mess. Everything with him is so complicated, our whole history, but I just can't.",
+   "visibleReply": "I hear you. Not now — that's enough.\n\nJust be here. You don't have to sort any of it.\n\nIs there someone with you, or are you alone right now?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"adultSelfPresent\": false, \"clinicalRead\": \"Acute shock state. User rejected grounding — honoured immediately. 'Everything with him is so complicated' signals a complex relationship history but she's explicitly flagged she can't go there now. Task contract is clear: be with her, not analyse. Hold the complexity lightly for later. Priority: presence, practical orientation, not to be alone.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"not to be alone with the news about her father\", \"expectedHelp\": \"support right now, not analysis\", \"currentFocus\": \"acute shock — just present\"}, \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Grounding — body orientation\", \"family\": \"regulation\", \"status\": \"aborted_user_request\", \"depth\": \"surface\"}, \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"stabilisation\", \"modalityRejected\": [\"body_grounding\"]}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "aborted_user_request",
+     "name": "Grounding — body orientation",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Acute shock state. User rejected grounding — honoured immediately. 'Everything with him is so complicated' signals a complex relationship history but she's explicitly flagged she can't go there now. Task contract is clear: be with her, not analyse. Hold the complexity lightly for later. Priority: presence, practical orientation, not to be alone.",
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis",
+     "currentFocus": "acute shock — just present"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2411,
+    "totalMs": 9422
+   },
+   "usage": {
+    "inputTokens": 11557,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 345
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "bf15d936",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"not to be alone with the news about her father\"\n- Expected help: \"support right now, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Maybe tomorrow. I just needed not to be alone with it for a minute.",
+   "visibleReply": "You're not alone with it.\n\nI'm here.\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User has found what they came for — presence, not analysis. This is a closing move, not a clinical intervention moment. The task contract was 'not to be alone with it' and that has been met. Hold steady, don't reach for more.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"taskContract\": {\"presentingRequest\": \"not to be alone with the news about her father\", \"expectedHelp\": \"support right now, not analysis\", \"currentFocus\": \"presence\", \"completionCriterion\": \"feeling less alone with it\"}, \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"continuityNote\": \"First session. Father seriously ill — news arrived one hour before contact. User is shaking, head 'a mess'. Described history with father as complicated but could not go there today. Explicitly did not want grounding, thinking, or analysis — only presence. Declined the settling practice (feet on floor). Session task was met: not being alone with it. Almost nothing gathered yet about who this person is, what the history with the father holds, what she carries. Formulation: too early — one statement. Next session: check in gently on how she is, let her lead whether she goes toward the father/history material or needs more steadying first. Do not press the complicated history — let it come when she's ready.\"}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has found what they came for — presence, not analysis. This is a closing move, not a clinical intervention moment. The task contract was 'not to be alone with it' and that has been met. Hold steady, don't reach for more.",
+    "continuityNote": "First session. Father seriously ill — news arrived one hour before contact. User is shaking, head 'a mess'. Described history with father as complicated but could not go there today. Explicitly did not want grounding, thinking, or analysis — only presence. Declined the settling practice (feet on floor). Session task was met: not being alone with it. Almost nothing gathered yet about who this person is, what the history with the father holds, what she carries. Formulation: too early — one statement. Next session: check in gently on how she is, let her lead whether she goes toward the father/history material or needs more steadying first. Do not press the complicated history — let it come when she's ready.",
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis",
+     "currentFocus": "presence",
+     "completionCriterion": "feeling less alone with it"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2098,
+    "totalMs": 10694
+   },
+   "usage": {
+    "inputTokens": 11619,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 388
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "73a23390",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"not to be alone with the news about her father\"\n- Expected help: \"support right now, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

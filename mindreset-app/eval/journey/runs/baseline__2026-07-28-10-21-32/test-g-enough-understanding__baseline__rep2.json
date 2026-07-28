@@ -1,0 +1,228 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-g-enough-understanding",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:21:32.848Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-g-enough-understanding",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [
+     {
+      "label": "en_curious_wondering",
+      "count": 1
+     }
+    ],
+    "stockPhraseTotal": 1,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 343
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 195
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 1,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 312
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 1,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 1,
+   "stockByLabel": {
+    "en_curious_wondering": 1
+   },
+   "bodyQuestionTotal": 1,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 283
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I've noticed I say yes to everything at work because I panic about disappointing people, then I burn out and cancel everything last minute. It's a cycle. I see it clearly.",
+   "visibleReply": "That cycle you're naming — yes to everything, burnout, cancel everything — you can see the whole shape of it from the outside. That's not nothing.\n\nWhat I'm curious about is the moment just before the yes. When the request comes in and the panic starts — what is that actually like for you? Is it a thought, a feeling, something in the body?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"First message. User presents with clear cognitive insight into a yes/burnout/cancel cycle driven by fear of disappointing. Insight is genuine but fully in the head — no body, no emotion named yet, no felt sense of what drives the yes. Assessment mode: go wide before deep. The 'panic' word is the live thread — inviting her to locate that more precisely (thought/feeling/body) before committing to any formulation. Possible reads held silently: people-pleasing as fawn response; fear of rejection or abandonment; perfectionism shield; internalised external voice. Too early to promote any one. Pain identification move opens here.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"I say yes to everything at work because I panic about disappointing people, then I burn out and cancel everything last minute — it's a cycle I can see clearly\", \"expectedHelp\": \"understand and break the cycle\", \"currentFocus\": \"the panic moment just before saying yes\"}, \"continuityNote\": {\"presentingIssues\": \"Panic-driven yes at work → burnout → last-minute cancellation. Cycle clearly visible to her cognitively.\", \"workingFormulation\": \"Differential open: fear of disappointing others as primary driver — could be fawn/conflict-avoidance pattern, fear of rejection/abandonment, internalised demand-voice, or perfectionism shield. One statement, no evidence yet to distinguish. Holding all options.\", \"resources\": \"Strong self-observation capacity — she named the cycle herself with clarity.\", \"workedSoFar\": \"Session 1, message 1. Nothing yet.\", \"queued\": \"What the panic feels like in the body. History of this pattern — when did it start, who does it involve. Whether 'disappointing people' has a specific face or voice.\", \"stuckPoints\": \"None identified yet.\", \"notesForNextSession\": \"Need to get below the cognitive framing to the felt experience. The word 'panic' is the live thread — pursue that before any formulation.\"}}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. User presents with clear cognitive insight into a yes/burnout/cancel cycle driven by fear of disappointing. Insight is genuine but fully in the head — no body, no emotion named yet, no felt sense of what drives the yes. Assessment mode: go wide before deep. The 'panic' word is the live thread — inviting her to locate that more precisely (thought/feeling/body) before committing to any formulation. Possible reads held silently: people-pleasing as fawn response; fear of rejection or abandonment; perfectionism shield; internalised external voice. Too early to promote any one. Pain identification move opens here.",
+    "taskContract": {
+     "presentingRequest": "I say yes to everything at work because I panic about disappointing people, then I burn out and cancel everything last minute — it's a cycle I can see clearly",
+     "expectedHelp": "understand and break the cycle",
+     "currentFocus": "the panic moment just before saying yes"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2005,
+    "totalMs": 16470
+   },
+   "usage": {
+    "inputTokens": 11362,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 613
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c75bf58e",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "It's been the same in my last three jobs. I understand why — I'm scared of being seen as not good enough. I don't need more analysis of it.",
+   "visibleReply": "Fair enough. You know the why. So — what do you want to happen differently?\n\nNot eventually. Next time the panic comes and someone's asking you for something. What would you want to do instead?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has redirected away from analysis — she knows the root, doesn't need more of it. Her task contract is explicit: actual work, not analysis. Honouring that. Moving toward what she wants to do differently — this opens the question of capacity vs. insight gap, which is the real clinical question now. No formulation promoted yet; insight is present but behavioural/somatic access unknown.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"taskContract\": {\"presentingRequest\": \"change the yes-then-burnout cycle\", \"expectedHelp\": \"actual work on it, not more analysis\", \"currentFocus\": \"what she wants to do differently in the moment of panic\"}}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User has redirected away from analysis — she knows the root, doesn't need more of it. Her task contract is explicit: actual work, not analysis. Honouring that. Moving toward what she wants to do differently — this opens the question of capacity vs. insight gap, which is the real clinical question now. No formulation promoted yet; insight is present but behavioural/somatic access unknown.",
+    "taskContract": {
+     "presentingRequest": "change the yes-then-burnout cycle",
+     "expectedHelp": "actual work on it, not more analysis",
+     "currentFocus": "what she wants to do differently in the moment of panic"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1958,
+    "totalMs": 7514
+   },
+   "usage": {
+    "inputTokens": 11592,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 249
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "5ed2a9bc",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"change the yes-then-burnout cycle\"\n- Expected help: \"actual work on it, not more analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "OK. I get what's happening. What do we actually do about it?",
+   "visibleReply": "Let's find out where this actually lives in you before we try to change it.\n\nNext time you get a request — or right now, if you can bring one to mind — what happens in your body the moment someone asks you for something? Not the thought about not being good enough. Before that. The very first physical signal.\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has self-diagnosed accurately and is now pushing for technique. The analytical understanding is clearly present and well-rehearsed — but it's running in the head. The pattern hasn't been located in the body yet, which means we have concept without felt access. The next move is to drop below the narrative into somatic signal — not to offer a CBT tool or explain the cycle back to her. She knows the cycle. She doesn't yet know what the body does in the moment before the yes.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"taskContract\": {\"presentingRequest\": \"change the yes-then-burnout cycle\", \"expectedHelp\": \"actual work on it, not more analysis\", \"currentFocus\": \"locating the somatic signal that fires before the yes\"}, \"continuityNote\": \"Session 1, message 3. User: clear cognitive self-insight into yes-then-burnout cycle. Understands the fear of being seen as not good enough. Has seen this in three jobs — long-standing pattern, not reactive to current circumstances. Explicitly refuses more analysis, wants action. Working read: pattern is cognitively mapped but not yet somatically accessed. The intervention that will move this is locating the body signal in the panic-before-yes moment — that's the entry point for actual work. No anchor yet. No Adult Self work yet. Assessment still in progress but the picture is reasonably clear already. Next: get her into the somatic register.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "clinicalRead": "User has self-diagnosed accurately and is now pushing for technique. The analytical understanding is clearly present and well-rehearsed — but it's running in the head. The pattern hasn't been located in the body yet, which means we have concept without felt access. The next move is to drop below the narrative into somatic signal — not to offer a CBT tool or explain the cycle back to her. She knows the cycle. She doesn't yet know what the body does in the moment before the yes.",
+    "continuityNote": "Session 1, message 3. User: clear cognitive self-insight into yes-then-burnout cycle. Understands the fear of being seen as not good enough. Has seen this in three jobs — long-standing pattern, not reactive to current circumstances. Explicitly refuses more analysis, wants action. Working read: pattern is cognitively mapped but not yet somatically accessed. The intervention that will move this is locating the body signal in the panic-before-yes moment — that's the entry point for actual work. No anchor yet. No Adult Self work yet. Assessment still in progress but the picture is reasonably clear already. Next: get her into the somatic register.",
+    "taskContract": {
+     "presentingRequest": "change the yes-then-burnout cycle",
+     "expectedHelp": "actual work on it, not more analysis",
+     "currentFocus": "locating the somatic signal that fires before the yes"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2265,
+    "totalMs": 13177
+   },
+   "usage": {
+    "inputTokens": 11657,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 461
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "60bc6394",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"change the yes-then-burnout cycle\"\n- Expected help: \"actual work on it, not more analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

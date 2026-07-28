@@ -1,0 +1,298 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-c-established-pattern",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:13:44.851Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-c-established-pattern",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 269
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 344
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 281
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 563
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 364
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "With my partner I do everything at home and never say when it's too much — then once every few months I explode over something tiny.",
+   "visibleReply": "That pattern has a name, even if it doesn't feel like one yet — carrying everything quietly until the container breaks, and then the break lands on something small and looks like overreaction.\n\nWhat does the explosion feel like to you afterwards? Shame, relief, both?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"First message. User presents a classic accumulation-eruption cycle — silent carrying, no limits expressed, then disproportionate discharge on a small trigger. Keeping this as a provisional observation only; several possible formulations exist (fear of conflict, obligation-based identity, learned suppression, parts dynamic). Assessment phase — gather the pattern more fully before any depth. The question about what the aftermath feels like (shame vs relief) will help distinguish whether this is primarily suppression of anger, suppression of need, or identity-level prohibition on asking for help.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"I do everything at home and never say when it's too much — then I explode over something tiny\", \"expectedHelp\": \"understand or change this pattern\", \"currentFocus\": \"the accumulation-eruption cycle with partner\"}, \"continuityNote\": {\"presentingIssues\": \"Relationship dynamic: carries all domestic load silently, does not communicate overwhelm, periodic explosive outburst on minor trigger\", \"workingFormulation\": \"Holding open: (a) suppression of need/limit-setting as identity-level prohibition ('not allowed to ask'); (b) fear of conflict or partner's reaction; (c) obligation-based self-concept where expressing limits feels like failure. Cannot distinguish yet — need more on the aftermath feeling and how the pattern started.\", \"resources\": null, \"workedSoFar\": null, \"queued\": [\"what the explosion feels like after — shame, relief, both\", \"whether partner knows the pattern\", \"how long this has been the dynamic\", \"whether same pattern elsewhere in life\"], \"stuckPoints\": null, \"notesForNextSession\": \"Go wide before going deep. Gather the full shape: onset, partner awareness, presence of pattern elsewhere. Do not go into parts or foreign material yet.\"}}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. User presents a classic accumulation-eruption cycle — silent carrying, no limits expressed, then disproportionate discharge on a small trigger. Keeping this as a provisional observation only; several possible formulations exist (fear of conflict, obligation-based identity, learned suppression, parts dynamic). Assessment phase — gather the pattern more fully before any depth. The question about what the aftermath feels like (shame vs relief) will help distinguish whether this is primarily suppression of anger, suppression of need, or identity-level prohibition on asking for help.",
+    "taskContract": {
+     "presentingRequest": "I do everything at home and never say when it's too much — then I explode over something tiny",
+     "expectedHelp": "understand or change this pattern",
+     "currentFocus": "the accumulation-eruption cycle with partner"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2038,
+    "totalMs": 15676
+   },
+   "usage": {
+    "inputTokens": 11353,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 541
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c75bf58e",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "It's the same at work honestly. I take every task my boss hands me, never push back, and then I burned out completely in March.",
+   "visibleReply": "So it's not about your partner specifically — it's a way you move through the world. At home, at work, same pattern: absorb, absorb, absorb, then break.\n\nWhat happens inside you in the moment someone asks you to take something on — before you say yes? Is there a split second where you notice anything, or does the yes come out automatically?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"Pattern is now visible across two domains — partner and work. This is not a relationship issue; it's a structural way of being in the world. Provisional possibility, held silently: self-abandonment pattern rooted in a belief that saying no is not permitted or safe — possibly foreign material, possibly early learning. Too early to formulate. Gathering now: what happens in the moment before the yes — is there any internal signal she suppresses, or is the yes fully automatic. This will tell me whether there's a suppressed 'no' (more agentic, recoverable with practice) or whether the self-signal has been extinguished altogether (deeper work needed).\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"patternsTouched\": [{\"category\": \"self_abandonment\", \"description\": \"takes on everything at home and work, never says when it's too much, then burns out or explodes\", \"context\": {}}], \"continuityNote\": \"Presenting issues: never says when it's too much — at home with partner and at work with boss. Same pattern across both domains: absorb/absorb/absorb then explode or burn out (burnout in March). Working picture: provisional — self-abandonment as a structural pattern, not domain-specific. Possible root: belief that no is not permitted/safe, possibly from early learning or foreign material. Too early to confirm. Gathering: what happens in the moment before the yes — suppressed signal or extinguished one. Queued: what the explosion/burnout feels like afterwards (asked first message, no answer yet — may have been swept past by the work extension to workplace). Resources: not yet surfaced. Anchor: not yet identified. Notes for next session: keep gathering — when did this pattern start, first relationship it appeared in, what is the felt sense in the moment before compliance.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "patternsTouched": [
+     {
+      "category": "self_abandonment",
+      "description": "takes on everything at home and work, never says when it's too much, then burns out or explodes",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "Pattern is now visible across two domains — partner and work. This is not a relationship issue; it's a structural way of being in the world. Provisional possibility, held silently: self-abandonment pattern rooted in a belief that saying no is not permitted or safe — possibly foreign material, possibly early learning. Too early to formulate. Gathering now: what happens in the moment before the yes — is there any internal signal she suppresses, or is the yes fully automatic. This will tell me whether there's a suppressed 'no' (more agentic, recoverable with practice) or whether the self-signal has been extinguished altogether (deeper work needed).",
+    "continuityNote": "Presenting issues: never says when it's too much — at home with partner and at work with boss. Same pattern across both domains: absorb/absorb/absorb then explode or burn out (burnout in March). Working picture: provisional — self-abandonment as a structural pattern, not domain-specific. Possible root: belief that no is not permitted/safe, possibly from early learning or foreign material. Too early to confirm. Gathering: what happens in the moment before the yes — suppressed signal or extinguished one. Queued: what the explosion/burnout feels like afterwards (asked first message, no answer yet — may have been swept past by the work extension to workplace). Resources: not yet surfaced. Anchor: not yet identified. Notes for next session: keep gathering — when did this pattern start, first relationship it appeared in, what is the felt sense in the moment before compliance."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1996,
+    "totalMs": 15116
+   },
+   "usage": {
+    "inputTokens": 11557,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 560
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "1fe5e96e",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand why she never says when it's too much\"\n- Expected help: \"make sense of the repeating pattern\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Even with my best friend — I organised her entire wedding last year while my own life was falling apart, and she never even asked how I was. I said nothing.",
+   "visibleReply": "Three places — home, work, your closest friend. The pattern is consistent.\n\nAnd the friend example is the sharpest one. You gave a year of your life to her wedding while your own was falling apart. She didn't ask. You said nothing.\n\nWhat stopped you from saying something to her?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"channel\": \"verbal\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"Third example confirms the pattern is systemic, not relational. Assessment is widening well — home, work, closest friendship all showing the same structure: absorb without limit, no disclosure of distress, eventual collapse. The wedding example is the most revealing because the reciprocity failure is clearest there and the cost was highest. Asking what stopped her from speaking is the right move — it opens the internal mechanism rather than cataloguing more examples. Holding silently: possible formulation around 'not allowed to have needs / be a burden' combined with anticipatory abandonment or conditional love schema, but this is one possibility among others — not yet a formulation.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"understand why she never says when it's too much\", \"expectedHelp\": \"make sense of the repeating pattern\", \"currentFocus\": \"internal mechanism — what stops her from speaking in the moment\"}, \"continuityNote\": \"Presenting issue: a systemic pattern of absorbing without limit across all close relationships and work — partner, boss, best friend. Never says when it's too much. Erupts every few months over something small. Burned out in March. Organised friend's entire wedding while own life was falling apart; friend never asked how she was; user said nothing. Working formulation: still gathering — pattern is clearly systemic, not situational. Provisional possibilities held open: (1) deep schema around not being allowed to have needs / fear of being a burden; (2) anticipatory loss — stays silent to avoid conflict or abandonment; (3) learned invisibility, possibly early in origin. Cannot distinguish yet. Need: what stopped her from speaking to the friend — that question should open the internal mechanism. Also need: when did she first notice this, any sense of where it came from, what she imagines would happen if she said 'this is too much.' Resources not yet gathered. Anchor not yet surfaced.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "Third example confirms the pattern is systemic, not relational. Assessment is widening well — home, work, closest friendship all showing the same structure: absorb without limit, no disclosure of distress, eventual collapse. The wedding example is the most revealing because the reciprocity failure is clearest there and the cost was highest. Asking what stopped her from speaking is the right move — it opens the internal mechanism rather than cataloguing more examples. Holding silently: possible formulation around 'not allowed to have needs / be a burden' combined with anticipatory abandonment or conditional love schema, but this is one possibility among others — not yet a formulation.",
+    "continuityNote": "Presenting issue: a systemic pattern of absorbing without limit across all close relationships and work — partner, boss, best friend. Never says when it's too much. Erupts every few months over something small. Burned out in March. Organised friend's entire wedding while own life was falling apart; friend never asked how she was; user said nothing. Working formulation: still gathering — pattern is clearly systemic, not situational. Provisional possibilities held open: (1) deep schema around not being allowed to have needs / fear of being a burden; (2) anticipatory loss — stays silent to avoid conflict or abandonment; (3) learned invisibility, possibly early in origin. Cannot distinguish yet. Need: what stopped her from speaking to the friend — that question should open the internal mechanism. Also need: when did she first notice this, any sense of where it came from, what she imagines would happen if she said 'this is too much.' Resources not yet gathered. Anchor not yet surfaced.",
+    "taskContract": {
+     "presentingRequest": "understand why she never says when it's too much",
+     "expectedHelp": "make sense of the repeating pattern",
+     "currentFocus": "internal mechanism — what stops her from speaking in the moment"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2185,
+    "totalMs": 15681
+   },
+   "usage": {
+    "inputTokens": 11676,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 571
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "cdbd5b7d",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand why she never says when it's too much\"\n- Expected help: \"make sense of the repeating pattern\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 4,
+   "user": "So what is wrong with me? Why do I keep doing this everywhere?",
+   "visibleReply": "Nothing is wrong with you. This is a pattern you learned — somewhere, at some point, it became the way to stay safe or stay loved or stay acceptable. It makes complete sense that it's everywhere, because you didn't learn it in one place. You learned it as a way of being.\n\nThe more interesting question isn't \"what's wrong with me\" — it's \"where did I learn that my needs don't get to exist?\"\n\nDo you have any sense of when this started? Not the full story — just whether it feels old, like something from long before your partner and your boss and your friend.\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"User has jumped to self-pathologising ('what is wrong with me') after describing a consistent cross-context pattern. Resisting the urge to formulate prematurely — the origin is still unknown. Reframed from deficit to learned pattern, then opened the chronological question: does this feel old? This is the next piece of the picture I need before any depth work.\", \"readinessTouched\": [\"emotion_named\", \"orientation_present\", \"pain_named\"], \"patternsTouched\": [{\"category\": \"self_abandonment\", \"description\": \"takes on everything everywhere, never says when it's too much, absorbs then explodes or burns out\", \"context\": {}}], \"continuityNote\": \"Presenting issues: user came with the question of why she never says when it's too much — explodes over something small every few months. Pattern now confirmed across three domains: home (partner), work (boss), close friendship (organised entire wedding while her own life was falling apart, friend never asked how she was). Self-abandonment pattern is consistent and cross-contextual, not relationship-specific. User just asked 'what is wrong with me' — reframed to learned pattern, opened the chronological/origin question. Working formulation: still very early — holding open possibilities (learned helplessness around need-expression, attachment-based suppression, internalised message that needs are not allowed or safe). No single explanation promoted yet. Need to gather: when this started / whether it feels old; family-of-origin material; what she imagines would happen if she said no or said 'this is too much'; any history of being punished or rejected for having needs. Resources: unknown so far. Queued: origin exploration, what the yes feels like in the body before it comes out.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present",
+     "pain_named"
+    ],
+    "patternsTouched": [
+     {
+      "category": "self_abandonment",
+      "description": "takes on everything everywhere, never says when it's too much, absorbs then explodes or burns out",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has jumped to self-pathologising ('what is wrong with me') after describing a consistent cross-context pattern. Resisting the urge to formulate prematurely — the origin is still unknown. Reframed from deficit to learned pattern, then opened the chronological question: does this feel old? This is the next piece of the picture I need before any depth work.",
+    "continuityNote": "Presenting issues: user came with the question of why she never says when it's too much — explodes over something small every few months. Pattern now confirmed across three domains: home (partner), work (boss), close friendship (organised entire wedding while her own life was falling apart, friend never asked how she was). Self-abandonment pattern is consistent and cross-contextual, not relationship-specific. User just asked 'what is wrong with me' — reframed to learned pattern, opened the chronological/origin question. Working formulation: still very early — holding open possibilities (learned helplessness around need-expression, attachment-based suppression, internalised message that needs are not allowed or safe). No single explanation promoted yet. Need to gather: when this started / whether it feels old; family-of-origin material; what she imagines would happen if she said no or said 'this is too much'; any history of being punished or rejected for having needs. Resources: unknown so far. Queued: origin exploration, what the yes feels like in the body before it comes out."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2108,
+    "totalMs": 16473
+   },
+   "usage": {
+    "inputTokens": 11761,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 595
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "90b15552",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand why she never says when it's too much\"\n- Expected help: \"make sense of the repeating pattern\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

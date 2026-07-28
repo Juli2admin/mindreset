@@ -1,0 +1,312 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-e-correction",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:17:15.995Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-e-correction",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [
+     {
+      "label": "en_that_sounds",
+      "count": 1
+     }
+    ],
+    "stockPhraseTotal": 1,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 311
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 439
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 443
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 122
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 1,
+   "stockByLabel": {
+    "en_that_sounds": 1
+   },
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 329
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "Every time my boss criticises my work I shut down completely. Sometimes for days. It's ruining my job.",
+   "visibleReply": "That sounds exhausting — not just the shutdown itself, but watching it cost you something you care about.\n\nTell me more about what the shutdown is like. When your boss says something critical, what happens first — is it something you feel in the body, something in your head, or does everything just go blank?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"First contact. User brings a clear, concrete presenting problem: shutdown response to criticism from boss, lasting days, affecting job. Almost nothing else is known. Priority is to understand the shutdown itself — its phenomenology, onset, duration, and what it costs — before any formulation. Holding lightly: possible shame/freeze pattern, possible old attachment or performance wound, possible parts dynamic — none of these is a formulation yet, all remain silent possibilities. Goal this turn: open the picture of what the shutdown actually is.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"I shut down completely when my boss criticises my work — sometimes for days. It's ruining my job.\", \"expectedHelp\": \"understand and change the shutdown response\", \"currentFocus\": \"what the shutdown is like — phenomenology and onset\", \"completionCriterion\": \"not specified yet\"}, \"continuityNote\": \"First session. User presents with a shutdown response to criticism from boss — complete, sometimes lasting days. Job impact named explicitly. No history, no anchor, no formulation yet. Assessment phase: need to understand the shutdown's phenomenology (body? thoughts? blank?), its history (how long has this been happening?), what the boss's criticism is like, what the user's relationship to work/performance is, and whether there are analogues elsewhere in their life. All causal readings held as silent possibilities only.\", \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "cognitive",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "First contact. User brings a clear, concrete presenting problem: shutdown response to criticism from boss, lasting days, affecting job. Almost nothing else is known. Priority is to understand the shutdown itself — its phenomenology, onset, duration, and what it costs — before any formulation. Holding lightly: possible shame/freeze pattern, possible old attachment or performance wound, possible parts dynamic — none of these is a formulation yet, all remain silent possibilities. Goal this turn: open the picture of what the shutdown actually is.",
+    "continuityNote": "First session. User presents with a shutdown response to criticism from boss — complete, sometimes lasting days. Job impact named explicitly. No history, no anchor, no formulation yet. Assessment phase: need to understand the shutdown's phenomenology (body? thoughts? blank?), its history (how long has this been happening?), what the boss's criticism is like, what the user's relationship to work/performance is, and whether there are analogues elsewhere in their life. All causal readings held as silent possibilities only.",
+    "taskContract": {
+     "presentingRequest": "I shut down completely when my boss criticises my work — sometimes for days. It's ruining my job.",
+     "expectedHelp": "understand and change the shutdown response",
+     "currentFocus": "what the shutdown is like — phenomenology and onset",
+     "completionCriterion": "not specified yet"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2688,
+    "totalMs": 13465
+   },
+   "usage": {
+    "inputTokens": 11348,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 472
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "2362c758",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "My previous boss was the same, I shut down there too. Before that as well, at university with one supervisor.",
+   "visibleReply": "So this is a long-standing pattern — not something your current boss created. It's been following you across different contexts, different authority figures, for years.\n\nThat's useful to know. It means the work isn't really about your boss.\n\nBefore we go further — when you say \"shut down\", what actually happens? Do you go quiet, withdraw, stop thinking clearly, lose motivation? I want to understand what it looks like from the inside.\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"User has confirmed the pattern spans multiple authority figures across years — boss, previous boss, university supervisor. This is a patterned response, not situational. Too early to commit to a formulation. Holding provisionally: possible shame-based shutdown response to perceived evaluation/criticism from authority figures, possibly with roots in earlier relational dynamics. Gathering what the shutdown actually looks like from the inside before any depth.\", \"readinessTouched\": [\"orientation_present\"], \"patternsTouched\": [{\"category\": \"authority_figure_shutdown\", \"description\": \"shuts down completely when criticised by boss/supervisor — pattern across multiple contexts and years\", \"context\": {}}], \"taskContract\": {\"presentingRequest\": \"understand the shutting down at work\", \"expectedHelp\": \"figure out what triggers it\", \"currentFocus\": \"mapping the pattern — when, with whom, what it looks like from inside\"}, \"continuityNote\": \"Presenting issue: shuts down completely when criticised by boss — has happened with current boss, previous boss, and university supervisor. Pattern is long-standing and cross-contextual. Working formulation: too early — holding provisionally a shame/evaluation-response pattern triggered by authority-figure criticism. Need to understand: what the shutdown looks and feels like from inside; whether there is a body component; how long shutdowns last and what ends them; anything the user has tried. Resources and anchor: not yet identified. Queued: family history, critical figures in childhood. Notes: gather the phenomenology of the shutdown before any depth.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "patternsTouched": [
+     {
+      "category": "authority_figure_shutdown",
+      "description": "shuts down completely when criticised by boss/supervisor — pattern across multiple contexts and years",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has confirmed the pattern spans multiple authority figures across years — boss, previous boss, university supervisor. This is a patterned response, not situational. Too early to commit to a formulation. Holding provisionally: possible shame-based shutdown response to perceived evaluation/criticism from authority figures, possibly with roots in earlier relational dynamics. Gathering what the shutdown actually looks like from the inside before any depth.",
+    "continuityNote": "Presenting issue: shuts down completely when criticised by boss — has happened with current boss, previous boss, and university supervisor. Pattern is long-standing and cross-contextual. Working formulation: too early — holding provisionally a shame/evaluation-response pattern triggered by authority-figure criticism. Need to understand: what the shutdown looks and feels like from inside; whether there is a body component; how long shutdowns last and what ends them; anything the user has tried. Resources and anchor: not yet identified. Queued: family history, critical figures in childhood. Notes: gather the phenomenology of the shutdown before any depth.",
+    "taskContract": {
+     "presentingRequest": "understand the shutting down at work",
+     "expectedHelp": "figure out what triggers it",
+     "currentFocus": "mapping the pattern — when, with whom, what it looks like from inside"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2832,
+    "totalMs": 14886
+   },
+   "usage": {
+    "inputTokens": 11548,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 505
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "dd10212f",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand the shutting down at work\"\n- Expected help: \"figure out what triggers it\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "No — you've misunderstood. It's not about criticism at all. I can take criticism fine in writing. It's when someone raises their voice. Loud voices. That's what shuts me down.",
+   "visibleReply": "Thank you for correcting that — that's an important distinction.\n\nSo it's not criticism itself. It's volume. A raised voice is what shuts you down.\n\nAnd you've noticed this with your current boss, your previous boss, a university supervisor. Three different people, spread across years. The raised voice is the common thread.\n\nWhen it happens — what does \"shut down\" feel like from the inside? Does something close off, go numb, go far away?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"Important correction received and accepted — not criticism but raised voices. This is a significant narrowing: a specific auditory trigger with a long history across authority figures. Provisional observation (held silently, not a formulation yet): this pattern may have roots predating employment/university — the consistency and specificity suggest an older learned response to raised voices, possibly from early family environment. Still gathering; too early to formulate. Today's task contract is now more precise: understand the shut-down response to loud/raised voices specifically.\", \"moveJustPerformed\": [\"universal.rupture_receive\", \"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"shutting down when someone raises their voice\", \"expectedHelp\": \"understand what triggers it\", \"currentFocus\": \"mapping the shut-down response — what it feels like from inside\"}, \"continuityNote\": \"Presenting issue: shuts down completely — sometimes for days — when authority figures raise their voices. Pattern runs across current boss, previous boss, university supervisor. NOT about criticism in writing; specific to raised voices / volume. Long-standing, cross-context pattern. Working formulation: not yet — too early, one session. Holding provisionally that this is an older response to a specific auditory trigger, possibly predating employment. Need to understand: what the shut-down feels like from inside (body? cognition? both?); whether this shows up outside work contexts; early history with raised voices. Resources: not yet identified. Queued: history of raised voices in home/family context — to be gathered naturally when picture is fuller.\", \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.rupture_receive",
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "cognitive",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Important correction received and accepted — not criticism but raised voices. This is a significant narrowing: a specific auditory trigger with a long history across authority figures. Provisional observation (held silently, not a formulation yet): this pattern may have roots predating employment/university — the consistency and specificity suggest an older learned response to raised voices, possibly from early family environment. Still gathering; too early to formulate. Today's task contract is now more precise: understand the shut-down response to loud/raised voices specifically.",
+    "continuityNote": "Presenting issue: shuts down completely — sometimes for days — when authority figures raise their voices. Pattern runs across current boss, previous boss, university supervisor. NOT about criticism in writing; specific to raised voices / volume. Long-standing, cross-context pattern. Working formulation: not yet — too early, one session. Holding provisionally that this is an older response to a specific auditory trigger, possibly predating employment. Need to understand: what the shut-down feels like from inside (body? cognition? both?); whether this shows up outside work contexts; early history with raised voices. Resources: not yet identified. Queued: history of raised voices in home/family context — to be gathered naturally when picture is fuller.",
+    "taskContract": {
+     "presentingRequest": "shutting down when someone raises their voice",
+     "expectedHelp": "understand what triggers it",
+     "currentFocus": "mapping the shut-down response — what it feels like from inside"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2168,
+    "totalMs": 14575
+   },
+   "usage": {
+    "inputTokens": 11692,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 539
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "91217ac2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand the shutting down at work\"\n- Expected help: \"figure out what triggers it\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 4,
+   "user": "Can we look at the loud voices thing instead?",
+   "visibleReply": "Yes. Let's go there.\n\nWhen a loud voice lands — what happens in you, in that moment? Body, mind, wherever it hits first.\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"User corrected the formulation (not criticism, loud voices) and is now directing the work explicitly. Honour that completely. The pattern across three authority figures over years suggests an old reactive programme — loud voices as trigger, shutdown as response. Too early to name a root; gather what the shutdown actually is first. User's steer is the right one — follow it.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"taskContract\": {\"presentingRequest\": \"understand the shutting down at work\", \"expectedHelp\": \"figure out what triggers it\", \"currentFocus\": \"what happens internally when a loud voice lands\"}, \"continuityNote\": \"Presenting: shuts down completely when someone raises their voice — sometimes for days. Pattern spans current boss, previous boss, university supervisor. Has been clear: it is NOT criticism (can take criticism in writing fine) — it is volume specifically, raised voices. Shutdown is the response. First session, message 4. Nothing yet on what the shutdown feels like from inside. Next: gather the phenomenology of the shutdown itself — body, mind, what it looks like in the moment and aftermath. Hold provisionally: old reactive programme to raised voices, possibly learned early — do not surface this yet, gather first.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User corrected the formulation (not criticism, loud voices) and is now directing the work explicitly. Honour that completely. The pattern across three authority figures over years suggests an old reactive programme — loud voices as trigger, shutdown as response. Too early to name a root; gather what the shutdown actually is first. User's steer is the right one — follow it.",
+    "continuityNote": "Presenting: shuts down completely when someone raises their voice — sometimes for days. Pattern spans current boss, previous boss, university supervisor. Has been clear: it is NOT criticism (can take criticism in writing fine) — it is volume specifically, raised voices. Shutdown is the response. First session, message 4. Nothing yet on what the shutdown feels like from inside. Next: gather the phenomenology of the shutdown itself — body, mind, what it looks like in the moment and aftermath. Hold provisionally: old reactive programme to raised voices, possibly learned early — do not surface this yet, gather first.",
+    "taskContract": {
+     "presentingRequest": "understand the shutting down at work",
+     "expectedHelp": "figure out what triggers it",
+     "currentFocus": "what happens internally when a loud voice lands"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2256,
+    "totalMs": 11398
+   },
+   "usage": {
+    "inputTokens": 11808,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 363
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "97804cda",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand the shutting down at work\"\n- Expected help: \"figure out what triggers it\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

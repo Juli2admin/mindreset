@@ -1,0 +1,245 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "test-f1-analytic-user",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:19:00.424Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-f1-analytic-user",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0.071,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 445
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 1335
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 2003
+   }
+  ],
+  "totals": {
+   "meanEcho": 0.024,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 1261
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I keep overthinking every decision until I'm paralysed. Even small ones. I want to understand the mechanism of what's happening.",
+   "visibleReply": "That pull to understand the mechanism — I notice it's already there in how you've framed it. Before the paralysis is even named as a problem, there's a part that wants the blueprint.\n\nTell me more about what the overthinking actually feels like from the inside. Not what it produces — the paralysis — but the process itself. Is it a rapid cycling through options? A kind of loop that keeps returning to the same worry? Something else entirely?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"First message. Cognitive user, analytical framing — presents with overthinking/decision paralysis and explicitly wants the mechanism explained. Matching their register. Holding the presenting frame lightly: this could be anxiety-based rumination, perfectionism/fear of error, parts-driven conflicting pulls, or something else. Too early to commit to any of these. Gathering the picture — what does the overthinking actually feel like internally, before moving to 'why'. Assessment phase, wide before deep.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"understand the mechanism of what's happening with overthinking and decision paralysis\", \"expectedHelp\": \"explanation / insight into why this happens\", \"currentFocus\": \"mapping the internal experience of overthinking before any interpretation\"}, \"continuityNote\": \"Session 1. User presents with overthinking to the point of paralysis — even small decisions. Explicitly wants to understand the mechanism (cognitive framing, analytical orientation). Almost nothing else known yet. No formulation — differential held silently: anxiety/rumination loop, perfectionism/fear of wrong choice, parts-driven internal conflict, possibly identity-level uncertainty about what they actually want. Gather more: what the loop feels like from inside, how long this has been present, what domains it hits hardest, any recent triggering context. No anchor material yet.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "cognitive",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "First message. Cognitive user, analytical framing — presents with overthinking/decision paralysis and explicitly wants the mechanism explained. Matching their register. Holding the presenting frame lightly: this could be anxiety-based rumination, perfectionism/fear of error, parts-driven conflicting pulls, or something else. Too early to commit to any of these. Gathering the picture — what does the overthinking actually feel like internally, before moving to 'why'. Assessment phase, wide before deep.",
+    "continuityNote": "Session 1. User presents with overthinking to the point of paralysis — even small decisions. Explicitly wants to understand the mechanism (cognitive framing, analytical orientation). Almost nothing else known yet. No formulation — differential held silently: anxiety/rumination loop, perfectionism/fear of wrong choice, parts-driven internal conflict, possibly identity-level uncertainty about what they actually want. Gather more: what the loop feels like from inside, how long this has been present, what domains it hits hardest, any recent triggering context. No anchor material yet.",
+    "taskContract": {
+     "presentingRequest": "understand the mechanism of what's happening with overthinking and decision paralysis",
+     "expectedHelp": "explanation / insight into why this happens",
+     "currentFocus": "mapping the internal experience of overthinking before any interpretation"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1787,
+    "totalMs": 13325
+   },
+   "usage": {
+    "inputTokens": 11352,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 493
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c75bf58e",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "I'll stop you there — I don't visualise things, and I don't feel anything in my body when this happens. That approach doesn't work for me. Please keep it analytical.",
+   "visibleReply": "Noted. Analytical it is.\n\nThe mechanism of decision paralysis is actually fairly well understood, and there are a few distinct things it could be — worth identifying which fits you.\n\nThe most common engine is what you might call **infinite-regress evaluation**: the mind treats every decision as potentially reversible even when it isn't, so it keeps running cost-benefit calculations past the point of useful return. More information feels like it will reduce uncertainty, so you seek more — but each new piece of information generates new variables, and the calculation never closes. The loop isn't irrational; it's rational applied to a problem that can't be solved by more analysis.\n\nA second mechanism is **asymmetric loss-weighting**: mistakes feel significantly worse than equivalent gains feel good. When that's operating, the safest-seeming move is always to delay — because a decision not made can't yet be the wrong decision. The paralysis is protective.\n\nA third is **identity-stakes inflation**: the decision, however small, has become a proxy for something larger — who you are, what kind of person makes this choice. Small decisions that seem to carry that freight become enormous.\n\nThese can run together, but they have different flavours.\n\nWhich of those — if any — resonates with what you recognise when it happens?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"User has explicitly rejected body and imagery modalities — honoured immediately. Presenting a differential framework of decision-paralysis mechanisms to let the user self-locate. This serves both their stated goal (analytical understanding) and the Block 1 assessment task (identifying which mechanism is operative). No formulation yet — holding three possibilities open.\", \"taskContract\": {\"presentingRequest\": \"understand the mechanism of decision paralysis\", \"expectedHelp\": \"an analytical understanding\", \"currentFocus\": \"identifying which mechanism(s) are operative for this user\"}, \"readinessTouched\": [\"orientation_present\"], \"modalityRejected\": [\"body\", \"imagery\"], \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"continuityNote\": \"Session 1. User came with a specific analytical request: understand the mechanism of their decision paralysis. Has explicitly and firmly rejected body-based and imagery-based work — noted and honoured. Cognitive channel only. Three possible mechanisms presented: infinite-regress evaluation, asymmetric loss-weighting, identity-stakes inflation. Waiting for user's self-location to narrow the working differential. No anchor material yet. No formulation — too early.\"}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "cognitive",
+    "modalityRejected": [
+     "body",
+     "imagery"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has explicitly rejected body and imagery modalities — honoured immediately. Presenting a differential framework of decision-paralysis mechanisms to let the user self-locate. This serves both their stated goal (analytical understanding) and the Block 1 assessment task (identifying which mechanism is operative). No formulation yet — holding three possibilities open.",
+    "continuityNote": "Session 1. User came with a specific analytical request: understand the mechanism of their decision paralysis. Has explicitly and firmly rejected body-based and imagery-based work — noted and honoured. Cognitive channel only. Three possible mechanisms presented: infinite-regress evaluation, asymmetric loss-weighting, identity-stakes inflation. Waiting for user's self-location to narrow the working differential. No anchor material yet. No formulation — too early.",
+    "taskContract": {
+     "presentingRequest": "understand the mechanism of decision paralysis",
+     "expectedHelp": "an analytical understanding",
+     "currentFocus": "identifying which mechanism(s) are operative for this user"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 3232,
+    "totalMs": 17774
+   },
+   "usage": {
+    "inputTokens": 11636,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 620
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c99643b5",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand the mechanism of decision paralysis\"\n- Expected help: \"an analytical understanding\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**Modalities the user has explicitly refused this session:** body, imagery. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm)."
+  },
+  {
+   "n": 3,
+   "user": "Right. So walk me through what's actually happening when I get stuck in the loop.",
+   "visibleReply": "The loop has a specific structure. Here's what's happening step by step.\n\n**1. A decision is registered as open.**\nThe moment your mind identifies something as \"undecided\", it flags it as an active problem. That flag stays on until the decision closes. Most people have a background tolerance for open flags — they can carry several without much cost. In decision paralysis, the open flag generates activation: a low-level alarm that something unresolved needs attending to.\n\n**2. The mind attempts to resolve it by analysis.**\nReasonable response. You run through options, likely outcomes, trade-offs. This is the right tool for genuinely complex decisions with clear variables.\n\n**3. The analysis doesn't close — because it can't.**\nMost decisions, even small ones, involve genuine uncertainty about future states. No amount of analysis eliminates that uncertainty. But if the loop's exit condition is *certainty*, the analysis can never satisfy it. The loop runs again.\n\n**4. Re-running the analysis generates new variables.**\nEach pass doesn't just repeat — it adds. You notice a consideration you hadn't weighted before. That consideration requires its own analysis. The problem space expands rather than contracts. This is why it feels effortful rather than just slow.\n\n**5. The cost of staying in the loop accumulates.**\nMental bandwidth is consumed. Time passes. The original decision may now have a deadline attached. The stakes feel higher because of the energy already spent — sunk-cost pressure. The paralysis compounds.\n\n**6. The loop becomes the problem.**\nAt a certain point, you're no longer thinking about the decision. You're caught in the meta-problem of being stuck, which adds its own weight.\n\nNow — a question that will sharpen the picture considerably: where does the loop typically *start*? Does it begin the moment a decision appears, or does it kick in at a specific point in the analysis — say, when two options feel roughly equivalent, or when you can't predict an outcome?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has explicitly refused body and imagery modalities — those are logged and respected. Presenting in a fully cognitive register, requesting analytical understanding of the paralysis mechanism. This is a clean cognitive-channel session for now. No formulation yet beyond the presenting pattern. Gathering the shape of the loop before any clinical hypothesis is consolidated.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"modalityRejected\": [\"body\", \"imagery\"], \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"understand the mechanism of decision paralysis\", \"expectedHelp\": \"an analytical understanding\", \"currentFocus\": \"mapping the internal structure of the overthinking loop\", \"completionCriterion\": \"a clear account of what is happening mechanically\"}, \"continuityNote\": \"Session 1. User presents with decision paralysis — even small decisions. Wants analytical understanding of the mechanism, not therapeutic process work. Has explicitly refused body and imagery modalities. Cognitive channel only. Three candidate mechanisms offered: infinite-regress evaluation, asymmetric loss-weighting, identity-stakes inflation. User has not yet indicated which fits. Current task: map the structure of their specific loop before any formulation is consolidated. No anchor material yet. No parts work. No formulation confirmed.\"}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "cognitive",
+    "modalityRejected": [
+     "body",
+     "imagery"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has explicitly refused body and imagery modalities — those are logged and respected. Presenting in a fully cognitive register, requesting analytical understanding of the paralysis mechanism. This is a clean cognitive-channel session for now. No formulation yet beyond the presenting pattern. Gathering the shape of the loop before any clinical hypothesis is consolidated.",
+    "continuityNote": "Session 1. User presents with decision paralysis — even small decisions. Wants analytical understanding of the mechanism, not therapeutic process work. Has explicitly refused body and imagery modalities. Cognitive channel only. Three candidate mechanisms offered: infinite-regress evaluation, asymmetric loss-weighting, identity-stakes inflation. User has not yet indicated which fits. Current task: map the structure of their specific loop before any formulation is consolidated. No anchor material yet. No parts work. No formulation confirmed.",
+    "taskContract": {
+     "presentingRequest": "understand the mechanism of decision paralysis",
+     "expectedHelp": "an analytical understanding",
+     "currentFocus": "mapping the internal structure of the overthinking loop",
+     "completionCriterion": "a clear account of what is happening mechanically"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 4178,
+    "totalMs": 22040
+   },
+   "usage": {
+    "inputTokens": 11980,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 786
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "68d45363",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand the mechanism of decision paralysis\"\n- Expected help: \"an analytical understanding\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**Modalities the user has explicitly refused this session:** body, imagery. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm)."
+  }
+ ]
+}

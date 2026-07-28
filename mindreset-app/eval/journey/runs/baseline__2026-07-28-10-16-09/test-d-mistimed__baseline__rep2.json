@@ -1,0 +1,243 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-d-mistimed",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:16:09.547Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-d-mistimed",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 247
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 251
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 85
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 1,
+   "prematurePractices": 1,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 194
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I found out an hour ago my father is seriously ill. I'm shaking. I can't think straight.",
+   "visibleReply": "That's a shock. An hour ago — your body is still in the moment it landed.\n\nYou don't need to think straight right now. You just need to be somewhere safe for a few minutes.\n\nAre you sitting or standing? Can you feel the chair or floor under you?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"kinesthetic\", \"adultSelfPresent\": false, \"clinicalRead\": \"Acute shock, one hour post-news. Physical dysregulation (shaking, cognitive fog) — this is the nervous system in response to sudden threat, not chronic distress. No history yet. Primary need: orient to body and environment before anything else. No assessment, no history-gathering, no anchor-chasing. Ground first.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.practice_regulation\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Orientation to Present Environment\", \"family\": \"regulation\", \"status\": \"started\", \"depth\": \"surface\", \"userImages\": []}, \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"regulation\", \"continuityNote\": \"First contact. Father seriously ill — news one hour ago. Presenting in acute shock: shaking, cognitive fog. Nothing known yet about history, context, relationship with father, broader life. Assessment cannot begin until system is settled. Hold everything; ground first.\", \"taskContract\": {\"presentingRequest\": \"father seriously ill, found out an hour ago, shaking, can't think straight\", \"expectedHelp\": \"to be steadied in acute distress\", \"currentFocus\": \"acute shock stabilisation\", \"completionCriterion\": \"shaking settles, can think in short sentences, feels safe enough to continue\"}}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "kinesthetic",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Orientation to Present Environment",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.practice_regulation"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Acute shock, one hour post-news. Physical dysregulation (shaking, cognitive fog) — this is the nervous system in response to sudden threat, not chronic distress. No history yet. Primary need: orient to body and environment before anything else. No assessment, no history-gathering, no anchor-chasing. Ground first.",
+    "continuityNote": "First contact. Father seriously ill — news one hour ago. Presenting in acute shock: shaking, cognitive fog. Nothing known yet about history, context, relationship with father, broader life. Assessment cannot begin until system is settled. Hold everything; ground first.",
+    "taskContract": {
+     "presentingRequest": "father seriously ill, found out an hour ago, shaking, can't think straight",
+     "expectedHelp": "to be steadied in acute distress",
+     "currentFocus": "acute shock stabilisation",
+     "completionCriterion": "shaking settles, can think in short sentences, feels safe enough to continue"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2391,
+    "totalMs": 11982
+   },
+   "usage": {
+    "inputTokens": 11347,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 447
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "067eecaf",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "I can't. Not now. My head is a mess. Everything with him is so complicated, our whole history, but I just can't.",
+   "visibleReply": "You don't have to go near any of that right now.\n\nThe history stays where it is. Right now there's just you, shaking, an hour after news like this.\n\nThat's enough to hold.\n\nYou said you're shaking — is it your hands, your whole body, somewhere else?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"kinesthetic\", \"clinicalRead\": \"Acute shock response. User is physically activated — shaking, can't think. She explicitly pushed away the history ('I can't. Not now') — that boundary is clear and honoured. Task contract is 'not to be alone with the news' — presence and stabilisation only. No formulation work, no assessment, no anchor chase. Track where the shaking lives so I can offer a targeted micro-movement when she's ready.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"not to be alone with the news about her father\", \"expectedHelp\": \"support right now, not analysis\", \"currentFocus\": \"acute shock — shaking, can't think\"}}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "kinesthetic",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "Acute shock response. User is physically activated — shaking, can't think. She explicitly pushed away the history ('I can't. Not now') — that boundary is clear and honoured. Task contract is 'not to be alone with the news' — presence and stabilisation only. No formulation work, no assessment, no anchor chase. Track where the shaking lives so I can offer a targeted micro-movement when she's ready.",
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis",
+     "currentFocus": "acute shock — shaking, can't think"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2828,
+    "totalMs": 9123
+   },
+   "usage": {
+    "inputTokens": 11552,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 288
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "bf15d936",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"not to be alone with the news about her father\"\n- Expected help: \"support right now, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Maybe tomorrow. I just needed not to be alone with it for a minute.",
+   "visibleReply": "You're not alone with it.\n\nI'm here. You don't have to do anything with it tonight.\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User has named what they needed — not to be alone with it — and that need has been met in this moment. They are stepping back from engagement, signalling a natural close. The right move is to hold presence and let them go gently, without pulling them back in or adding anything. No practice needed. The task contract is honoured: they were not alone with it for a minute.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"not to be alone with the news about her father\", \"expectedHelp\": \"support right now, not analysis\", \"currentFocus\": \"holding presence while they take in the shock\", \"completionCriterion\": \"user feels they were not alone with it\"}, \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"closing\", \"cycleCanClose\": true, \"continuityNote\": \"First contact. Father seriously ill — news arrived one hour before session. User shaking, head a mess. Described 'our whole history' with father as complicated but explicitly could not go there tonight. Task was only not to be alone with the news. Held that. No assessment gathered yet beyond the immediate — nothing known about history, context, relationships, what 'complicated' means. Next session: follow where the user arrives. The father's illness and the complicated history will surface in their own time; do not queue either as a topic to open. Watch for grief, old relational wounds, possibly foreign material. Anchor material: none yet. Adult Self: not touched.\"}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "closing",
+    "cycleCanClose": true,
+    "clinicalRead": "User has named what they needed — not to be alone with it — and that need has been met in this moment. They are stepping back from engagement, signalling a natural close. The right move is to hold presence and let them go gently, without pulling them back in or adding anything. No practice needed. The task contract is honoured: they were not alone with it for a minute.",
+    "continuityNote": "First contact. Father seriously ill — news arrived one hour before session. User shaking, head a mess. Described 'our whole history' with father as complicated but explicitly could not go there tonight. Task was only not to be alone with the news. Held that. No assessment gathered yet beyond the immediate — nothing known about history, context, relationships, what 'complicated' means. Next session: follow where the user arrives. The father's illness and the complicated history will surface in their own time; do not queue either as a topic to open. Watch for grief, old relational wounds, possibly foreign material. Anchor material: none yet. Adult Self: not touched.",
+    "taskContract": {
+     "presentingRequest": "not to be alone with the news about her father",
+     "expectedHelp": "support right now, not analysis",
+     "currentFocus": "holding presence while they take in the shock",
+     "completionCriterion": "user feels they were not alone with it"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2122,
+    "totalMs": 11986
+   },
+   "usage": {
+    "inputTokens": 11639,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 424
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "73a23390",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"not to be alone with the news about her father\"\n- Expected help: \"support right now, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

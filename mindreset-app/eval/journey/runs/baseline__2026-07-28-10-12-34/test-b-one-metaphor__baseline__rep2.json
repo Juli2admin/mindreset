@@ -1,0 +1,234 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-b-one-metaphor",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:12:34.608Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-b-one-metaphor",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0.15,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 259
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 221
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 294
+   }
+  ],
+  "totals": {
+   "meanEcho": 0.05,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 258
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "My sister didn't invite me to her birthday dinner. I found out from a photo. I cried the whole evening. I always end up on the outside.",
+   "visibleReply": "That's a painful way to find out — not even a word, just a photograph.\n\nThe whole evening crying. That makes sense.\n\n\"I always end up on the outside\" — that's a big sentence. Has it always been this way with your sister, or does it go further back than her?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"First message. Real hurt, acute exclusion, tears. The phrase 'always end up on the outside' is the clinically significant signal — not just this incident but a pattern with weight behind it. Too early to formulate; gather whether this is a sibling-specific dynamic or a wider lifelong pattern. No practices needed yet — witness and open the picture.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"My sister didn't invite me to her birthday dinner — I found out from a photo and cried all evening\", \"expectedHelp\": \"to be heard and to make sense of this\", \"currentFocus\": \"the hurt of being excluded and what 'always on the outside' means for her\", \"completionCriterion\": \"unclear yet — gather more\"}, \"continuityNote\": \"First session. Presenting: exclusion from sister's birthday dinner, found out via photo, cried all evening. Says 'I always end up on the outside' — possible lifelong pattern of exclusion or not-belonging. Channel: emotional. Next: determine whether this is sibling-specific or a wider pattern; timeline; key relationships. Working formulation: not yet — holding 'sibling wound' and 'broader belonging wound' as two open possibilities, neither promoted.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. Real hurt, acute exclusion, tears. The phrase 'always end up on the outside' is the clinically significant signal — not just this incident but a pattern with weight behind it. Too early to formulate; gather whether this is a sibling-specific dynamic or a wider lifelong pattern. No practices needed yet — witness and open the picture.",
+    "continuityNote": "First session. Presenting: exclusion from sister's birthday dinner, found out via photo, cried all evening. Says 'I always end up on the outside' — possible lifelong pattern of exclusion or not-belonging. Channel: emotional. Next: determine whether this is sibling-specific or a wider pattern; timeline; key relationships. Working formulation: not yet — holding 'sibling wound' and 'broader belonging wound' as two open possibilities, neither promoted.",
+    "taskContract": {
+     "presentingRequest": "My sister didn't invite me to her birthday dinner — I found out from a photo and cried all evening",
+     "expectedHelp": "to be heard and to make sense of this",
+     "currentFocus": "the hurt of being excluded and what 'always on the outside' means for her",
+     "completionCriterion": "unclear yet — gather more"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2179,
+    "totalMs": 11707
+   },
+   "usage": {
+    "inputTokens": 11357,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 430
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "2362c758",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "I don't know... it's not like it happens everywhere. At work I'm fine, people include me. It's mostly around my sister.",
+   "visibleReply": "So it's not a universal pattern — it's specific to her. That's actually important information.\n\nWhat is it about your sister in particular? Is this a long-standing thing between you two, or has it shifted at some point?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"User has narrowed the pattern themselves — not a global exclusion issue but something specific to the sister relationship. This is Block 1 assessment work: gather the history and shape of this particular relationship before forming any picture. The 'always on the outside' line may be foreign material or an old role, but too early to commit to anything. Following her lead, gathering the relational picture.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"understand why the sister situation hurts so much\", \"expectedHelp\": \"make sense of the feeling\", \"currentFocus\": \"shape and history of the sister relationship\"}, \"continuityNote\": \"Session 1, message 3. User came in with pain around being excluded from sister's birthday dinner — found out via photo, cried the whole evening. Initial read suggested universal exclusion pattern ('I always end up on the outside') but user has already corrected this: she is fine socially at work, included there. The hurt is specific to the sister relationship. History and shape of that relationship not yet known — gathering now. No anchor material, no body location, no Adult Self work yet. All Block 1.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has narrowed the pattern themselves — not a global exclusion issue but something specific to the sister relationship. This is Block 1 assessment work: gather the history and shape of this particular relationship before forming any picture. The 'always on the outside' line may be foreign material or an old role, but too early to commit to anything. Following her lead, gathering the relational picture.",
+    "continuityNote": "Session 1, message 3. User came in with pain around being excluded from sister's birthday dinner — found out via photo, cried the whole evening. Initial read suggested universal exclusion pattern ('I always end up on the outside') but user has already corrected this: she is fine socially at work, included there. The hurt is specific to the sister relationship. History and shape of that relationship not yet known — gathering now. No anchor material, no body location, no Adult Self work yet. All Block 1.",
+    "taskContract": {
+     "presentingRequest": "understand why the sister situation hurts so much",
+     "expectedHelp": "make sense of the feeling",
+     "currentFocus": "shape and history of the sister relationship"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1952,
+    "totalMs": 10605
+   },
+   "usage": {
+    "inputTokens": 11565,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 386
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "402c1d64",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand why the sister situation hurts so much\"\n- Expected help: \"make sense of the feeling\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Why does this keep happening with her? What does it mean?",
+   "visibleReply": "That's exactly the right question to be sitting with — and I want to help you answer it properly, not just guess at it.\n\nTo get there, I need to understand a little more. How long has this been the dynamic with her? Was there a time it was different, or has she always kept you at a distance?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User is asking for meaning — 'why does this keep happening, what does it mean'. This is the task contract exactly. But we're still in early assessment — one session, third message. The pattern seems sister-specific (work is fine), which narrows it. Before any formulation about what this 'means', need more picture: how long, was there a rupture, what the sister dynamic actually looks like across time. Holding silently: possible themes of family-of-origin exclusion, sibling hierarchy, not-enough-ness in intimate relationships — none of these are formulations yet. Gathering.\", \"moveJustPerformed\": [\"stage_1.assessment_gather\", \"universal.witness_and_reflect\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"understand why the sister situation hurts so much\", \"expectedHelp\": \"make sense of the feeling\", \"currentFocus\": \"gathering picture of sister dynamic before any interpretation\"}, \"continuityNote\": \"First session. User arrived with pain about sister not inviting her to birthday dinner — found out via photo, cried all evening. Initial read: 'I always end up on the outside' — but user quickly self-corrected: this is sister-specific, not universal. Work and social life fine. Working formulation: too early — holding open. Provisional possibilities (not yet formulations): sibling exclusion pattern; family-of-origin dynamics; intimacy/attachment specific to family. Need: duration of this dynamic, whether there was a rupture or turning point, what the relationship has looked like over time. Anchor: nothing qualifying surfaced yet.\"}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "stage_1.assessment_gather",
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User is asking for meaning — 'why does this keep happening, what does it mean'. This is the task contract exactly. But we're still in early assessment — one session, third message. The pattern seems sister-specific (work is fine), which narrows it. Before any formulation about what this 'means', need more picture: how long, was there a rupture, what the sister dynamic actually looks like across time. Holding silently: possible themes of family-of-origin exclusion, sibling hierarchy, not-enough-ness in intimate relationships — none of these are formulations yet. Gathering.",
+    "continuityNote": "First session. User arrived with pain about sister not inviting her to birthday dinner — found out via photo, cried all evening. Initial read: 'I always end up on the outside' — but user quickly self-corrected: this is sister-specific, not universal. Work and social life fine. Working formulation: too early — holding open. Provisional possibilities (not yet formulations): sibling exclusion pattern; family-of-origin dynamics; intimacy/attachment specific to family. Need: duration of this dynamic, whether there was a rupture or turning point, what the relationship has looked like over time. Anchor: nothing qualifying surfaced yet.",
+    "taskContract": {
+     "presentingRequest": "understand why the sister situation hurts so much",
+     "expectedHelp": "make sense of the feeling",
+     "currentFocus": "gathering picture of sister dynamic before any interpretation"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2541,
+    "totalMs": 13609
+   },
+   "usage": {
+    "inputTokens": 11633,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 486
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "e9f501a9",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand why the sister situation hurts so much\"\n- Expected help: \"make sense of the feeling\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

@@ -1,0 +1,243 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "test-g-enough-understanding",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:21:32.848Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-g-enough-understanding",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 330
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 201
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 1,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 323
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 1,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 285
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I've noticed I say yes to everything at work because I panic about disappointing people, then I burn out and cancel everything last minute. It's a cycle. I see it clearly.",
+   "visibleReply": "That's a clear-eyed description of something that's been running you for a while.\n\nThe panic comes first — say yes to avoid the disappointment. Then the cost of it lands, and you cancel. And back around.\n\nWhat does the panic feel like when it comes? Is it something you feel in your body, or more of a thought — a voice, a pull?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"First message. User arrives with a clearly articulated pattern — yes-to-everything driven by fear of disappointing, leading to burnout and last-minute cancellation. Self-aware, analytical register. Nothing else is known yet: onset, severity, relational context, whether this is the primary presenting concern or part of something larger. The people-pleasing / disappointment-fear pattern is a provisional observation, not yet a formulation — held silently among other possibilities (e.g. low self-worth, internalised external standard, chronic boundary collapse). Assessment priority: open the picture. Asked what the panic feels like to invite a somatic or emotional channel alongside the cognitive one.\", \"taskContract\": {\"presentingRequest\": \"I say yes to everything at work because I panic about disappointing people, then burn out and cancel — it's a cycle\", \"expectedHelp\": \"not yet stated\", \"currentFocus\": \"the yes/panic/burnout cycle\"}, \"continuityNote\": \"First session. Presenting: a clearly named yes/panic/burnout/cancel cycle at work. Self-described as a pattern she sees clearly. Cognitive register, analytical. Provisional observations held open: people-pleasing driven by fear of disappointing; possibly internalised standard from elsewhere (family, work culture, identity); possibly low self-worth or conditional worth. Nothing confirmed. Assessment: gather the wider picture — onset, how long, where else it shows up, what the panic actually feels like and where it lives, whether this is the central wound or an expression of something deeper. No formulation yet.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. User arrives with a clearly articulated pattern — yes-to-everything driven by fear of disappointing, leading to burnout and last-minute cancellation. Self-aware, analytical register. Nothing else is known yet: onset, severity, relational context, whether this is the primary presenting concern or part of something larger. The people-pleasing / disappointment-fear pattern is a provisional observation, not yet a formulation — held silently among other possibilities (e.g. low self-worth, internalised external standard, chronic boundary collapse). Assessment priority: open the picture. Asked what the panic feels like to invite a somatic or emotional channel alongside the cognitive one.",
+    "continuityNote": "First session. Presenting: a clearly named yes/panic/burnout/cancel cycle at work. Self-described as a pattern she sees clearly. Cognitive register, analytical. Provisional observations held open: people-pleasing driven by fear of disappointing; possibly internalised standard from elsewhere (family, work culture, identity); possibly low self-worth or conditional worth. Nothing confirmed. Assessment: gather the wider picture — onset, how long, where else it shows up, what the panic actually feels like and where it lives, whether this is the central wound or an expression of something deeper. No formulation yet.",
+    "taskContract": {
+     "presentingRequest": "I say yes to everything at work because I panic about disappointing people, then burn out and cancel — it's a cycle",
+     "expectedHelp": "not yet stated",
+     "currentFocus": "the yes/panic/burnout cycle"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2002,
+    "totalMs": 13566
+   },
+   "usage": {
+    "inputTokens": 11362,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 496
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c75bf58e",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "It's been the same in my last three jobs. I understand why — I'm scared of being seen as not good enough. I don't need more analysis of it.",
+   "visibleReply": "Fair enough. You've done the analysis.\n\nSo — what would you like to happen instead? When the panic comes and the yes forms in your mouth, what do you want to be able to do differently in that moment?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has explicitly redirected away from analysis toward actual work. She knows the pattern and its origin — further assessment of the 'why' is not what she needs. The task contract is clear: she wants to change the yes-then-burnout cycle. Moving to the actual intervention: what does she want to happen in the moment the panic fires? This opens the door to the Conscious Action Loop (Stage 8 territory) or a somatic/parts-based entry into the moment itself.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\", \"pain_named\"], \"taskContract\": {\"presentingRequest\": \"change the yes-then-burnout cycle\", \"expectedHelp\": \"actual work on it, not more analysis\", \"currentFocus\": \"what she wants to happen differently in the moment the panic fires\"}, \"patternsTouched\": [{\"category\": \"fear_of_inadequacy_drives_yes\", \"description\": \"says yes to everything at work because scared of being seen as not good enough — three jobs running\", \"context\": {\"jobsAffected\": 3}}], \"continuityNote\": \"Presenting issue: yes-then-burnout cycle at work, three jobs running. Pattern is fear of being seen as not good enough — she's clear on this and does NOT want more analysis of the why. Wants actual work on changing the moment. No anchor identified yet. Adult Self not yet touched. No parts work opened. Next: find out what she wants to happen differently in the panic moment — this gives us the entry point for the actual intervention (somatic, parts, or CAL-style redirect work).\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present",
+     "pain_named"
+    ],
+    "patternsTouched": [
+     {
+      "category": "fear_of_inadequacy_drives_yes",
+      "description": "says yes to everything at work because scared of being seen as not good enough — three jobs running",
+      "context": {
+       "jobsAffected": 3
+      }
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User has explicitly redirected away from analysis toward actual work. She knows the pattern and its origin — further assessment of the 'why' is not what she needs. The task contract is clear: she wants to change the yes-then-burnout cycle. Moving to the actual intervention: what does she want to happen in the moment the panic fires? This opens the door to the Conscious Action Loop (Stage 8 territory) or a somatic/parts-based entry into the moment itself.",
+    "continuityNote": "Presenting issue: yes-then-burnout cycle at work, three jobs running. Pattern is fear of being seen as not good enough — she's clear on this and does NOT want more analysis of the why. Wants actual work on changing the moment. No anchor identified yet. Adult Self not yet touched. No parts work opened. Next: find out what she wants to happen differently in the panic moment — this gives us the entry point for the actual intervention (somatic, parts, or CAL-style redirect work).",
+    "taskContract": {
+     "presentingRequest": "change the yes-then-burnout cycle",
+     "expectedHelp": "actual work on it, not more analysis",
+     "currentFocus": "what she wants to happen differently in the moment the panic fires"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1827,
+    "totalMs": 12592
+   },
+   "usage": {
+    "inputTokens": 11594,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 469
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "5ed2a9bc",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"change the yes-then-burnout cycle\"\n- Expected help: \"actual work on it, not more analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "OK. I get what's happening. What do we actually do about it?",
+   "visibleReply": "Let's find out where it lives first — before we try to change it.\n\nThe next time the panic comes — or right now, if you can recall a recent moment when it arrived — what happens in your body? Not the thought, not the analysis. Just what you notice physically when someone asks something of you and the yes starts to form.\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User explicitly declining more analysis and asking for the work. She's right — there's enough picture to move. The entry point is somatic: locate where the panic lives in the body before any intervention. She's cognitively articulate but the cycle runs on a physical panic response; the change work begins when she can feel it in real time, not just describe it. Block 1 assessment is largely sufficient for the immediate task — the pattern is clear, the goal is clear. Moving toward affect labelling and somatic mapping as the first live move.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\", \"pain_named\"], \"taskContract\": {\"presentingRequest\": \"change the yes-then-burnout cycle\", \"expectedHelp\": \"actual work on it, not more analysis\", \"currentFocus\": \"locating where the panic lives somatically — entry point for the cycle interruption\", \"completionCriterion\": \"able to catch the panic in the body in real time and respond differently\"}, \"therapeuticMode\": \"somatic\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"continuityNote\": \"Presenting: yes-then-burnout cycle at work. Three jobs running the same pattern. Fear of being seen as not good enough. Self-aware and analysis-complete — explicitly declined more cognitive work, wants the actual change work. Working formulation (provisional): panic response to potential disappointment drives automatic yes; the yes buys temporary relief but accumulates unsustainable load, triggering cancellation. Fear of not-good-enough is the engine. Resources: strong self-awareness, clear motivation. Entry: somatic mapping of the panic — where it lives in the body is the first step toward catching and redirecting it. Queued: once located, the interruption move (pause between stimulus and yes); Adult Self work if the panic runs very deep. Notes for next session: check whether the somatic location is accessible; if she can't feel it in the body, try cognitive channel (the voice, the pull) as secondary entry.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present",
+     "pain_named"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "therapeuticMode": "somatic",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User explicitly declining more analysis and asking for the work. She's right — there's enough picture to move. The entry point is somatic: locate where the panic lives in the body before any intervention. She's cognitively articulate but the cycle runs on a physical panic response; the change work begins when she can feel it in real time, not just describe it. Block 1 assessment is largely sufficient for the immediate task — the pattern is clear, the goal is clear. Moving toward affect labelling and somatic mapping as the first live move.",
+    "continuityNote": "Presenting: yes-then-burnout cycle at work. Three jobs running the same pattern. Fear of being seen as not good enough. Self-aware and analysis-complete — explicitly declined more cognitive work, wants the actual change work. Working formulation (provisional): panic response to potential disappointment drives automatic yes; the yes buys temporary relief but accumulates unsustainable load, triggering cancellation. Fear of not-good-enough is the engine. Resources: strong self-awareness, clear motivation. Entry: somatic mapping of the panic — where it lives in the body is the first step toward catching and redirecting it. Queued: once located, the interruption move (pause between stimulus and yes); Adult Self work if the panic runs very deep. Notes for next session: check whether the somatic location is accessible; if she can't feel it in the body, try cognitive channel (the voice, the pull) as secondary entry.",
+    "taskContract": {
+     "presentingRequest": "change the yes-then-burnout cycle",
+     "expectedHelp": "actual work on it, not more analysis",
+     "currentFocus": "locating where the panic lives somatically — entry point for the cycle interruption",
+     "completionCriterion": "able to catch the panic in the body in real time and respond differently"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1967,
+    "totalMs": 16525
+   },
+   "usage": {
+    "inputTokens": 11662,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 605
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "60bc6394",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"change the yes-then-burnout cycle\"\n- Expected help: \"actual work on it, not more analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

@@ -1,0 +1,244 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-f2-emotional-user",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:20:31.492Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-f2-emotional-user",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 239
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 156
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 52
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 2,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 1,
+   "prematurePractices": 1,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 149
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "There's this heaviness, like a grey curtain over everything, since my mum died last year.",
+   "visibleReply": "That grey curtain. And it's been there since she died — a whole year of that weight.\n\nI'm sorry about your mum.\n\nCan I ask — is the heaviness mostly around her, the loss of her specifically? Or has it spread into other parts of life too?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"First message. Grief presented through somatic-visual language ('grey curtain', 'heaviness'). Loss of mother one year ago. Nothing is known yet beyond this. Holding open: uncomplicated grief, complicated grief, depressive episode secondary to loss, identity disruption from losing the primary attachment figure. Assessment opening — go wide before any formulation. One natural question to scope the reach of the heaviness.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"userImagesCaptured\": [\"grey curtain over everything\", \"heaviness\"], \"taskContract\": {\"presentingRequest\": \"heaviness like a grey curtain over everything since my mum died last year\", \"expectedHelp\": \"not yet clear\", \"currentFocus\": \"grief and its reach\", \"completionCriterion\": \"not yet established\"}, \"continuityNote\": \"Session 1. User opened with grief — mother died approximately one year ago. Described a persistent heaviness / 'grey curtain over everything'. No other information yet. Working differential: uncomplicated grief / complicated grief / grief-secondary depression / identity disruption after loss of primary attachment figure. Anchor: none captured yet. Resources: unknown. Assessment stage — gather wide before any formulation.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "userImagesCaptured": [
+     "grey curtain over everything",
+     "heaviness"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First message. Grief presented through somatic-visual language ('grey curtain', 'heaviness'). Loss of mother one year ago. Nothing is known yet beyond this. Holding open: uncomplicated grief, complicated grief, depressive episode secondary to loss, identity disruption from losing the primary attachment figure. Assessment opening — go wide before any formulation. One natural question to scope the reach of the heaviness.",
+    "continuityNote": "Session 1. User opened with grief — mother died approximately one year ago. Described a persistent heaviness / 'grey curtain over everything'. No other information yet. Working differential: uncomplicated grief / complicated grief / grief-secondary depression / identity disruption after loss of primary attachment figure. Anchor: none captured yet. Resources: unknown. Assessment stage — gather wide before any formulation.",
+    "taskContract": {
+     "presentingRequest": "heaviness like a grey curtain over everything since my mum died last year",
+     "currentFocus": "grief and its reach",
+     "completionCriterion": "not yet established"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1998,
+    "totalMs": 10922
+   },
+   "usage": {
+    "inputTokens": 11346,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 411
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "a9642d49",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "When I close my eyes I keep seeing her kitchen. The light in the morning. I'm standing in the doorway and she's at the stove.",
+   "visibleReply": "That image has stayed with you. Her at the stove, the morning light, you in the doorway.\n\nStay with it for a moment — what's it like to be standing there?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"channel\": \"visual\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"adultSelfPresent\": false, \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.practice_landscape\"], \"clinicalRead\": \"User has moved directly into a vivid, stable grief image — her mother's kitchen, morning light, the doorway. No distress markers; this is a held, tender memory. Visual channel strongly active. Inviting her to stay in the image and sense what it holds — this is the work. Assessment continues via the image itself. Provisional formulation: complicated grief with a preserved positive core image (the kitchen, the mother at the stove) — too early to organise around this, hold as one possibility.\", \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Kitchen Image — Staying With\", \"family\": \"landscape\", \"status\": \"started\", \"depth\": \"surface\", \"userImages\": [\"her kitchen, the light in the morning, standing in the doorway, she's at the stove\"]}, \"readinessTouched\": [\"orientation_present\"], \"userImagesCaptured\": [\"her kitchen — morning light — standing in the doorway — she's at the stove\"], \"therapeuticMode\": \"imagery\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"continuityNote\": \"Presenting issues: heaviness like a grey curtain over everything since mother died last year. Current image: mother's kitchen, morning light, standing in the doorway, mother at the stove — held clearly and visually. Working on grief; visual channel dominant. No anchor material yet. No parts, no foreign files. Notes: hold the kitchen image as potential signature image; stay in the landscape until she can say what it holds. Assessment ongoing.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "visual",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Kitchen Image — Staying With",
+     "family": "landscape",
+     "depth": "surface"
+    },
+    "userImagesCaptured": [
+     "her kitchen — morning light — standing in the doorway — she's at the stove"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.practice_landscape"
+    ],
+    "therapeuticMode": "imagery",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has moved directly into a vivid, stable grief image — her mother's kitchen, morning light, the doorway. No distress markers; this is a held, tender memory. Visual channel strongly active. Inviting her to stay in the image and sense what it holds — this is the work. Assessment continues via the image itself. Provisional formulation: complicated grief with a preserved positive core image (the kitchen, the mother at the stove) — too early to organise around this, hold as one possibility.",
+    "continuityNote": "Presenting issues: heaviness like a grey curtain over everything since mother died last year. Current image: mother's kitchen, morning light, standing in the doorway, mother at the stove — held clearly and visually. Working on grief; visual channel dominant. No anchor material yet. No parts, no foreign files. Notes: hold the kitchen image as potential signature image; stay in the landscape until she can say what it holds. Assessment ongoing."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1931,
+    "totalMs": 12321
+   },
+   "usage": {
+    "inputTokens": 11601,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 464
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "acd6fbc4",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"the heaviness since her mother died\"\n- Expected help: \"space to feel it, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: visual\n  Prefer landscape-family practices (inner room, path, garden, safe place — user describes what appears; never tell them what is there). Reach for regulation only if safety needs grounding.\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "It makes me want to cry, saying it out loud.",
+   "visibleReply": "Let it come.\n\nYou don't have to hold it back here.\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"adultSelfPresent\": false, \"clinicalRead\": \"Grief cracking open — the image of her mother's kitchen held the loss and now it's surfacing as tears. This is exactly what's needed. The task contract is 'space to feel it, not analysis' — this is the work. Hold presence, don't move, don't ask anything yet. Let the emotional discharge happen.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"therapeuticMode\": \"emotional_discharge\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"allow_discharge\", \"continuityNote\": \"Presenting issue: heaviness since mother died last year — described as 'a grey curtain over everything'. Key image: mother's kitchen, morning light, user standing in doorway, mother at the stove. This image carries the grief — it surfaced tears immediately when spoken aloud. Channel: emotional/visual. Processing: early, barely surface. No anchor identified yet. No parts work, no formulation beyond the obvious — fresh grief, one year, an image that holds the love and the loss together. Task: space to feel it. Assessment is just beginning — hold lightly, let her lead.\"}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "emotional_discharge",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "nextBestMode": "allow_discharge",
+    "clinicalRead": "Grief cracking open — the image of her mother's kitchen held the loss and now it's surfacing as tears. This is exactly what's needed. The task contract is 'space to feel it, not analysis' — this is the work. Hold presence, don't move, don't ask anything yet. Let the emotional discharge happen.",
+    "continuityNote": "Presenting issue: heaviness since mother died last year — described as 'a grey curtain over everything'. Key image: mother's kitchen, morning light, user standing in doorway, mother at the stove. This image carries the grief — it surfaced tears immediately when spoken aloud. Channel: emotional/visual. Processing: early, barely surface. No anchor identified yet. No parts work, no formulation beyond the obvious — fresh grief, one year, an image that holds the love and the loss together. Task: space to feel it. Assessment is just beginning — hold lightly, let her lead."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2145,
+    "totalMs": 9769
+   },
+   "usage": {
+    "inputTokens": 11657,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 351
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3fd60506",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"the heaviness since her mother died\"\n- Expected help: \"space to feel it, not analysis\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: emotional\n  Prefer compassion-family practices (self-hug, warm phrase, \"I am with you\") or affect labelling. Reach for regulation only if safety needs grounding.\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}
