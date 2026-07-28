@@ -1,0 +1,161 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "test-a-practical",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T10:11:41.999Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "test-a-practical",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 233
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 1300
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 767
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I have a difficult conversation with my landlord tomorrow about a rent increase. Can you help me think through what to say?",
+   "visibleReply": "That's a practical thing to want to sort out before walking into it.\n\nBefore we work on the words — what feels most difficult about it? Is it knowing what to say, or is there something about the conversation itself that feels hard?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"First message. User brings a concrete practical request — preparing for a difficult conversation with their landlord about rent. No emotional content visible yet beyond 'difficult'. Unclear whether the difficulty is primarily practical (what to say) or has an emotional/relational layer (something about the dynamic, assertiveness, fear of conflict). One open question before proceeding — clarify which it is. No clinical depth warranted yet; this may be a bounded practical task, or it may open something about self-advocacy, conflict, boundaries. Hold lightly.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"help thinking through what to say in a difficult conversation with landlord about rent increase\", \"expectedHelp\": \"practical preparation for a conversation\", \"currentFocus\": \"clarifying nature of the difficulty before working on it\"}}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "First message. User brings a concrete practical request — preparing for a difficult conversation with their landlord about rent. No emotional content visible yet beyond 'difficult'. Unclear whether the difficulty is primarily practical (what to say) or has an emotional/relational layer (something about the dynamic, assertiveness, fear of conflict). One open question before proceeding — clarify which it is. No clinical depth warranted yet; this may be a bounded practical task, or it may open something about self-advocacy, conflict, boundaries. Hold lightly.",
+    "taskContract": {
+     "presentingRequest": "help thinking through what to say in a difficult conversation with landlord about rent increase",
+     "expectedHelp": "practical preparation for a conversation",
+     "currentFocus": "clarifying nature of the difficulty before working on it"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2077,
+    "totalMs": 8559
+   },
+   "usage": {
+    "inputTokens": 11349,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 297
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3c7589d4",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**No session task contract captured yet.** As you listen, infer what this person is asking for, what they expect, and what \"addressed\" would look like — in their own words — and emit it in the state report's `taskContract` field. Clarify with the user only if genuinely unclear; never run a questionnaire.\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "That's useful. How should I actually open the conversation without it turning into an argument?",
+   "visibleReply": "A calm, factual opening usually works best — something that names the purpose without any heat in it.\n\nSomething like: *\"I wanted to talk through the rent increase — I'd like to understand the reasoning and see if there's any flexibility.\"*\n\nThat does a few things: it signals you're not there to fight, it invites explanation rather than demanding justification, and it keeps the door open for negotiation without you having committed to anything yet.\n\nA few things worth having ready before you go in:\n\n**What you know.** Current rent, the proposed increase, how long you've been there, your payment history. Facts are your steadiest ground if the conversation gets tense.\n\n**What you want to achieve.** Is it to reduce the increase? Delay it? Understand whether it's negotiable at all? Knowing your actual goal helps you steer rather than react.\n\n**A bottom line.** What's the number or condition you could genuinely live with? You don't have to say it first — but knowing it means you're not deciding under pressure in the room.\n\nIf they push back or get defensive, a simple *\"I'm not looking for an argument — I just want to understand what's possible\"* can reset the temperature.\n\nWhat's the increase they're proposing, and how long have you been there? That might change what's worth saying.\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has moved directly to practical help — no emotional content surfaced yet, no indication of underlying distress. Task is genuinely practical: structuring a landlord conversation. Meeting that directly is the right call. Holding lightly that there may be something underneath (the first turn suggested some anticipatory tension) but not fishing for it — let the practical work land first.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"taskContract\": {\"presentingRequest\": \"help preparing what to say to the landlord about the rent increase\", \"expectedHelp\": \"practical help structuring the conversation\", \"currentFocus\": \"how to open without triggering an argument\", \"completionCriterion\": \"user feels prepared and knows what to say\"}}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User has moved directly to practical help — no emotional content surfaced yet, no indication of underlying distress. Task is genuinely practical: structuring a landlord conversation. Meeting that directly is the right call. Holding lightly that there may be something underneath (the first turn suggested some anticipatory tension) but not fishing for it — let the practical work land first.",
+    "taskContract": {
+     "presentingRequest": "help preparing what to say to the landlord about the rent increase",
+     "expectedHelp": "practical help structuring the conversation",
+     "currentFocus": "how to open without triggering an argument",
+     "completionCriterion": "user feels prepared and knows what to say"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2443,
+    "totalMs": 13891
+   },
+   "usage": {
+    "inputTokens": 11535,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 507
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "7224701b",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"help preparing what to say to the landlord about the rent increase\"\n- Expected help: \"practical help structuring the conversation\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}
