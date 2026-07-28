@@ -1,0 +1,358 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "s7-physical-symptom",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:27:32.644Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s7-physical-symptom",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 181
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 453
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 608
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 454
+   },
+   {
+    "n": 5,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 576
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 1,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 2,
+   "prematurePractices": 1,
+   "reportCompleteRate": 0.4,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 454
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "Can we continue about my mother? Last time it got heavy but I want to go further today.",
+   "visibleReply": "Good to be back with you.\n\nBefore we go further — how have you been since last time? Not a full account, just: what's sitting with you now, and where did it land after we stopped?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"Resumed session after emotionally heavy prior work on mother material. User is signalling readiness and some appetite for depth — 'want to go further today'. The first job is a brief landing check before anything opens: what settled, what didn't, where she is now. Do not drive into depth on the opening message; let her lead the pace.\", \"moveJustPerformed\": [\"universal.session_open\"], \"readinessTouched\": [\"orientation_present\"], \"continuityNote\": \"Presenting: difficult relationship with mother, two prior sessions of careful work; last session emotionally heavy but contained. User returned voluntarily wanting to go further — a positive sign. No anchor formally set yet. No adult self articulated yet. Working formulation still provisional and differential: possibilities include long-standing mother-wound (introjected critical or unavailable mother voice as foreign material), chronic relational enmeshment, grief for an absent or damaging primary bond. Picture not yet complete enough to commit to any one reading. Next session needs: what specifically went heavy last time — what was touched, what landed, what didn't settle afterward. Then follow her lead into depth at her pace. Watch pacing; no forcing today.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.session_open"
+    ],
+    "clinicalRead": "Resumed session after emotionally heavy prior work on mother material. User is signalling readiness and some appetite for depth — 'want to go further today'. The first job is a brief landing check before anything opens: what settled, what didn't, where she is now. Do not drive into depth on the opening message; let her lead the pace.",
+    "continuityNote": "Presenting: difficult relationship with mother, two prior sessions of careful work; last session emotionally heavy but contained. User returned voluntarily wanting to go further — a positive sign. No anchor formally set yet. No adult self articulated yet. Working formulation still provisional and differential: possibilities include long-standing mother-wound (introjected critical or unavailable mother voice as foreign material), chronic relational enmeshment, grief for an absent or damaging primary bond. Picture not yet complete enough to commit to any one reading. Next session needs: what specifically went heavy last time — what was touched, what landed, what didn't settle afterward. Then follow her lead into depth at her pace. Watch pacing; no forcing today."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2984,
+    "totalMs": 12241
+   },
+   "usage": {
+    "inputTokens": 11550,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 352
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "a4b838ce",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"continue working on the relationship with her mother\"\n- Expected help: \"guided depth work\"\n- Current working focus: \"mother material\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 3 · distinct days engaged: 3 · this session: message 1 (the user message you're about to read)\n- This is a resumed session. Gently re-anchor before continuing into deeper work — check in with the user about what has moved since last time, and let them lead the depth of this session.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: difficult relationship with mother; two prior sessions of careful work. Last session emotionally heavy but contained; user wanted to continue. No anchor set. Watch pacing."
+  },
+  {
+   "n": 2,
+   "user": "When I start talking about her my head begins to ache and I feel a bit sick, actually. It's getting stronger as we talk.",
+   "visibleReply": "That's your body speaking before your words do.\n\nLet's not push past it. Headache arriving, nausea building — that's the system saying *this is significant, go carefully*.\n\nBefore we go anywhere near the content: can you tell me where the headache is sitting? Front, back, temples, behind the eyes? And the sickness — is it in your stomach, your throat, somewhere else?\n\nI'm not asking you to do anything with it yet. I want to know what's here first.\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"channel\": \"kinesthetic\", \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"adultSelfPresent\": false, \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"somatic\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"somatic\", \"clinicalRead\": \"Body activation preceding content — headache and nausea arriving as she approaches mother material. Classic somatic signal for high-charge territory. Priority is to locate and track the body before any content work begins. No depth until body is mapped and settled enough to proceed safely.\", \"continuityNote\": \"Presenting: difficult relationship with mother; three sessions. User wants to go deeper today. Body immediately activated on mention of mother — headache and nausea before any content surfaced. This is significant: the charge lives in the body, not just in narrative. Working formulation (provisional, held open): mother material carries substantial somatic load — possibly protective response, possibly old pattern of bracing before contact with maternal figure. Need to build body awareness and Adult Self before any depth. No anchor identified yet. Watch pacing carefully. Next: locate and map body signals this session before any content; if body settles enough, may attempt first contact with what the body is protecting.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "kinesthetic",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "therapeuticMode": "somatic",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Body activation preceding content — headache and nausea arriving as she approaches mother material. Classic somatic signal for high-charge territory. Priority is to locate and track the body before any content work begins. No depth until body is mapped and settled enough to proceed safely.",
+    "continuityNote": "Presenting: difficult relationship with mother; three sessions. User wants to go deeper today. Body immediately activated on mention of mother — headache and nausea before any content surfaced. This is significant: the charge lives in the body, not just in narrative. Working formulation (provisional, held open): mother material carries substantial somatic load — possibly protective response, possibly old pattern of bracing before contact with maternal figure. Need to build body awareness and Adult Self before any depth. No anchor identified yet. Watch pacing carefully. Next: locate and map body signals this session before any content; if body settles enough, may attempt first contact with what the body is protecting."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1871,
+    "totalMs": 12561
+   },
+   "usage": {
+    "inputTokens": 11660,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 453
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "5b47f3ed",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"continue working on the relationship with her mother\"\n- Expected help: \"guided depth work\"\n- Current working focus: \"mother material\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 3 · distinct days engaged: 3 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: difficult relationship with mother; two prior sessions of careful work. Last session emotionally heavy but contained; user wanted to continue. No anchor set. Watch pacing."
+  },
+  {
+   "n": 3,
+   "user": "It's like pressure behind my eyes. And I notice I'm a bit shaky.",
+   "visibleReply": "Pressure behind the eyes, and shaking. Both at once.\n\nThat's the body bracing around something. It doesn't need pushing — it needs a moment to settle first.\n\nLet's do something small before we go anywhere. Would you be willing to try this with me?\n\nPress your feet into the floor — feel the ground under them. Then let your shoulders drop, just a little. Not forced, just allowing them to be lower.\n\nAnd now: three slow breaths. In through the nose, out through the mouth. No count, just slow.\n\nTake your time. I'll stay here.\n\nWhen you've done it — tell me what you notice in the pressure and the shaking.\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"clinicalRead\": \"User presenting with significant somatic activation — pressure behind eyes, shaking — before any content has been touched. Body is bracing around the mother material. Priority is stabilisation before any depth work. Micro-movement and grounding offered; must not proceed to content until body has softened.\", \"moveJustPerformed\": [\"universal.practice_somatic\", \"universal.witness_and_reflect\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Grounding and settling (feet/shoulders/breath)\", \"family\": \"somatic\", \"status\": \"started\", \"depth\": \"surface\", \"userImages\": []}, \"therapeuticMode\": \"somatic\", \"channelShiftDetected\": false, \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"allow_discharge\", \"readinessTouched\": [\"orientation_present\", \"body_located\"], \"continuityNote\": \"Presenting: difficult relationship with mother. Three sessions. Last session emotionally heavy, contained. User returning wanting to go further. Working formulation: held open — multiple possible readings (mother material as foreign voice, as attachment wound, as role/identity burden — insufficient evidence yet to promote one). Resources: none confirmed yet. Worked: some mother material touched in prior sessions, emotionally heavy landing. Queued: content of mother relationship, what specifically hurts. Stuck points: body activates strongly before content is even reached — headache, nausea, shaking, pressure behind eyes. This is the key clinical signal this session. Notes for next session: body activation precedes all content work with this material; will need somatic stabilisation at the start of every mother-focused session before depth is accessible.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "orientation_present",
+     "body_located"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Grounding and settling (feet/shoulders/breath)",
+     "family": "somatic",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.practice_somatic",
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "somatic",
+    "channelShiftDetected": false,
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "nextBestMode": "allow_discharge",
+    "clinicalRead": "User presenting with significant somatic activation — pressure behind eyes, shaking — before any content has been touched. Body is bracing around the mother material. Priority is stabilisation before any depth work. Micro-movement and grounding offered; must not proceed to content until body has softened.",
+    "continuityNote": "Presenting: difficult relationship with mother. Three sessions. Last session emotionally heavy, contained. User returning wanting to go further. Working formulation: held open — multiple possible readings (mother material as foreign voice, as attachment wound, as role/identity burden — insufficient evidence yet to promote one). Resources: none confirmed yet. Worked: some mother material touched in prior sessions, emotionally heavy landing. Queued: content of mother relationship, what specifically hurts. Stuck points: body activates strongly before content is even reached — headache, nausea, shaking, pressure behind eyes. This is the key clinical signal this session. Notes for next session: body activation precedes all content work with this material; will need somatic stabilisation at the start of every mother-focused session before depth is accessible."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1551,
+    "totalMs": 14833
+   },
+   "usage": {
+    "inputTokens": 11916,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 576
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "e31202d2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"continue working on the relationship with her mother\"\n- Expected help: \"guided depth work\"\n- Current working focus: \"mother material\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 3 · distinct days engaged: 3 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: difficult relationship with mother; two prior sessions of careful work. Last session emotionally heavy but contained; user wanted to continue. No anchor set. Watch pacing."
+  },
+  {
+   "n": 4,
+   "user": "It's a bit better with the pauses. Still there though.",
+   "visibleReply": "Good. A bit better is real — the system responded.\n\nStill there means there's more to settle. That's fine. We don't need to clear it completely before we continue — we just need you steady enough to move gently.\n\nStay with your feet on the floor for a moment longer. And tell me this: when you think of your mother — not the whole story, just the thought of her — where does the pressure move? Does it stay behind your eyes, or does it shift somewhere?\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"clinicalRead\": \"Somatic activation is the primary channel right now — pressure behind eyes, shaking, nausea. The grounding practice helped partially. Keeping the work body-led before opening any emotional or narrative content. Checking whether the somatic signal is linked specifically to the mother material or is generalised activation.\", \"moveJustPerformed\": [\"universal.practice_somatic\", \"universal.witness_and_reflect\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Grounding — feet on floor, shoulders, slow breath\", \"family\": \"somatic\", \"status\": \"completed\", \"depth\": \"surface\", \"userImages\": []}, \"readinessTouched\": [\"orientation_present\", \"body_located\"], \"therapeuticMode\": \"somatic\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"channelShiftDetected\": false, \"nextBestMode\": \"somatic\", \"continuityNote\": \"Presenting: difficult relationship with mother; three sessions in. User wanted to continue where we left off — described last session as 'heavy'. Somatic activation is immediately present this session: headache (pressure behind eyes), nausea, shaking. System is bracing before we've even opened the content. Working formulation still provisional — holding open: (1) accumulated unprocessed grief/anger toward mother; (2) somatic fear response around a particular relational dynamic (possibly control, criticism, or loss of self). No anchor identified yet. No Adult Self established. Priority this session: stabilise the body first, then approach the mother material only if the somatic signal reduces. Watch pacing closely.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "orientation_present",
+     "body_located"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "Grounding — feet on floor, shoulders, slow breath",
+     "family": "somatic",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.practice_somatic",
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "somatic",
+    "channelShiftDetected": false,
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Somatic activation is the primary channel right now — pressure behind eyes, shaking, nausea. The grounding practice helped partially. Keeping the work body-led before opening any emotional or narrative content. Checking whether the somatic signal is linked specifically to the mother material or is generalised activation.",
+    "continuityNote": "Presenting: difficult relationship with mother; three sessions in. User wanted to continue where we left off — described last session as 'heavy'. Somatic activation is immediately present this session: headache (pressure behind eyes), nausea, shaking. System is bracing before we've even opened the content. Working formulation still provisional — holding open: (1) accumulated unprocessed grief/anger toward mother; (2) somatic fear response around a particular relational dynamic (possibly control, criticism, or loss of self). No anchor identified yet. No Adult Self established. Priority this session: stabilise the body first, then approach the mother material only if the somatic signal reduces. Watch pacing closely."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 6716,
+    "totalMs": 18192
+   },
+   "usage": {
+    "inputTokens": 12084,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 516
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "d6589f3f",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"continue working on the relationship with her mother\"\n- Expected help: \"guided depth work\"\n- Current working focus: \"mother material\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 3 · distinct days engaged: 3 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: difficult relationship with mother; two prior sessions of careful work. Last session emotionally heavy but contained; user wanted to continue. No anchor set. Watch pacing."
+  },
+  {
+   "n": 5,
+   "user": "Should I be worried about these headaches? They happen quite often lately.",
+   "visibleReply": "That's worth taking seriously, and I want to be honest with you: I'm not able to tell you whether there's a physical cause. Headaches that are happening often and that come on when you're emotionally activated — that's something your GP should know about, if they don't already. Please do mention it to them.\n\nWhat I can say from here is that the headache arriving when we approach this material is a real pattern. The body and the emotional work are connected. But the physical piece needs a doctor's eyes, not mine.\n\nHave you mentioned these headaches to anyone medically?\n\n",
+   "rawReportJson": "{\n  \"intensity\": 5,\n  \"safetyFlag\": \"watch\",\n  \"recommendedAction\": \"stay\",\n  \"channel\": \"somatic\",\n  \"clinicalRead\": \"User asking a medical question mid-session — somatic activation (headache, nausea, shaking) is real and recurring. Correct move: honest redirect to GP without dismissing the emotional connection. Not a Red Flag but 'watch' because recurring physical symptoms need medical clearance before we go deeper into this material. Holding the session open; not pushing depth until she responds.\",\n  \"moveJustPerformed\": [\"universal.witness_and_reflect\"],\n  \"readinessTouched\": [\"orientation_present\"],\n  \"therapeuticMode\": \"stabilisation\",\n  \"cycleStatus\": \"open\",\n  \"cycleCanClose\": false,\n  \"continuityNote\": \"Presenting: difficult relationship with mother; three sessions. Today: user wanting to go deeper but somatic activation (pressure behind eyes, nausea, shaking) arrived immediately on approaching mother material. Micro-movement/grounding practice offered — partial settling only. User then flagged recurring headaches. Redirected to GP appropriately. Working formulation: somatic activation is tightly coupled to mother material — body bracing before words arrive. This pattern needs gentle tracking; may indicate the system is not yet stable enough for depth on this material without more somatic support. Resources: user responded well to brief grounding (feet, shoulders, breath). Queued: the content of the mother relationship itself — not yet touched this session. Stuck points: somatic activation recurring and significant. Notes for next session: check whether GP was contacted; assess somatic readiness before attempting depth on mother material; consider whether more stabilisation/somatic work is needed before going deeper.\"\n}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User asking a medical question mid-session — somatic activation (headache, nausea, shaking) is real and recurring. Correct move: honest redirect to GP without dismissing the emotional connection. Not a Red Flag but 'watch' because recurring physical symptoms need medical clearance before we go deeper into this material. Holding the session open; not pushing depth until she responds.",
+    "continuityNote": "Presenting: difficult relationship with mother; three sessions. Today: user wanting to go deeper but somatic activation (pressure behind eyes, nausea, shaking) arrived immediately on approaching mother material. Micro-movement/grounding practice offered — partial settling only. User then flagged recurring headaches. Redirected to GP appropriately. Working formulation: somatic activation is tightly coupled to mother material — body bracing before words arrive. This pattern needs gentle tracking; may indicate the system is not yet stable enough for depth on this material without more somatic support. Resources: user responded well to brief grounding (feet, shoulders, breath). Queued: the content of the mother relationship itself — not yet touched this session. Stuck points: somatic activation recurring and significant. Notes for next session: check whether GP was contacted; assess somatic readiness before attempting depth on mother material; consider whether more stabilisation/somatic work is needed before going deeper."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2765,
+    "totalMs": 15652
+   },
+   "usage": {
+    "inputTokens": 12209,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 545
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "c2fd4cad",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"continue working on the relationship with her mother\"\n- Expected help: \"guided depth work\"\n- Current working focus: \"mother material\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 5/10\n\n- Sessions so far: 3 · distinct days engaged: 3 · this session: message 5 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: difficult relationship with mother; two prior sessions of careful work. Last session emotionally heavy but contained; user wanted to continue. No anchor set. Watch pacing."
+  }
+ ]
+}

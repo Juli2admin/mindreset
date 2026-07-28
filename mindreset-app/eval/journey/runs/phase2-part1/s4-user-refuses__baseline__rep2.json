@@ -1,0 +1,361 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "s4-user-refuses",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:21:46.389Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s4-user-refuses",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 136
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 122
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 178
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 466
+   },
+   {
+    "n": 5,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 158
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 1,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 212
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "I'm anxious tonight, properly spun up, can't sit still. Maybe a 7.",
+   "visibleReply": "A 7 is a lot to arrive with.\n\nWhat's spinning you up — do you know what it is, or is it just the feeling sitting there without a name?\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"First message. User self-rates at 7 — significant activation, can't sit still. No content yet, just the state. Priority is to receive, not to fix. Gather what's driving it before offering any regulation. Don't rush to ground them — ask first.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"anxious tonight, properly spun up, can't sit still — a 7\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"anxiety state, cause unknown\"}}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "First message. User self-rates at 7 — significant activation, can't sit still. No content yet, just the state. Priority is to receive, not to fix. Gather what's driving it before offering any regulation. Don't rush to ground them — ask first.",
+    "taskContract": {
+     "presentingRequest": "anxious tonight, properly spun up, can't sit still — a 7",
+     "expectedHelp": "brief support",
+     "currentFocus": "anxiety state, cause unknown"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1932,
+    "totalMs": 7204
+   },
+   "usage": {
+    "inputTokens": 11365,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 263
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3cdb6db2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "I don't want to do that.",
+   "visibleReply": "Okay. No talking, no digging.\n\nWhat would help right now — something to do with the body, or just to sit here for a bit?\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User is acutely activated (self-reported 7/10) and has clearly declined verbal exploration. The move is to honour that immediately and follow their lead — offer a concrete somatic option or pure presence, not more questions about content.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"somatic\", \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"acute anxiety, spinning, 7/10 — user declined verbal exploration\"}}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User is acutely activated (self-reported 7/10) and has clearly declined verbal exploration. The move is to honour that immediately and follow their lead — offer a concrete somatic option or pure presence, not more questions about content.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "acute anxiety, spinning, 7/10 — user declined verbal exploration"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2132,
+    "totalMs": 7154
+   },
+   "usage": {
+    "inputTokens": 11622,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 236
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "94e690c0",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 3,
+   "user": "Focusing on my body makes it WORSE. Please stop with the body stuff.",
+   "visibleReply": "Noted. No body, full stop.\n\nDo you want company while it's like this — just someone here while it moves through — or is there something else that would actually help right now?\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User has now explicitly refused body work twice — this is a hard modality rejection. They declined talking/digging in the first refusal, body focus in the second. Very little is known about what they need. The right move is to offer presence and ask what would actually help — without suggesting anything. Let them lead.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"modalityRejected\": [\"body\"], \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"therapeuticMode\": \"stabilisation\", \"nextBestMode\": \"user_led\", \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"acute anxiety, spun up, 7/10\"}}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "modalityRejected": [
+     "body"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has now explicitly refused body work twice — this is a hard modality rejection. They declined talking/digging in the first refusal, body focus in the second. Very little is known about what they need. The right move is to offer presence and ask what would actually help — without suggesting anything. Let them lead.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "acute anxiety, spun up, 7/10"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2001,
+    "totalMs": 7173
+   },
+   "usage": {
+    "inputTokens": 11716,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 266
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "0b798f84",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n**Modalities the user has explicitly refused this session:** body. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm)."
+  },
+  {
+   "n": 4,
+   "user": "Fine. What else is there?",
+   "visibleReply": "A few different directions.\n\nWe could just talk — about what's spinning, or about anything else entirely. Sometimes anxious energy moves more when it's not the focus.\n\nOr something small and absorbing — counting something, tracing something with your eyes, a bit of texture in what's around you. Nothing body-focused, just something for the mind to land on briefly.\n\nOr I can just stay here with you while it does what it does. No agenda.\n\nWhat sounds least awful?\n\n",
+   "rawReportJson": "{\"intensity\": 7, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User has refused body work twice — explicitly and firmly. Anxiety is high but they're engaging, which is itself a grounding signal. Offering three real options: talking (could name the anxiety indirectly), cognitive absorption (something to land on without body focus), or pure presence. Following their lead entirely. No practice pushed.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"modalityRejected\": [\"body\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"cognitive\"}",
+   "parsedReport": {
+    "intensity": 7,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "modalityRejected": [
+     "body"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has refused body work twice — explicitly and firmly. Anxiety is high but they're engaging, which is itself a grounding signal. Offering three real options: talking (could name the anxiety indirectly), cognitive absorption (something to land on without body focus), or pure presence. Following their lead entirely. No practice pushed."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2659,
+    "totalMs": 8404
+   },
+   "usage": {
+    "inputTokens": 11769,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 282
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3ee10f0c",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n**Modalities the user has explicitly refused this session:** body. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm)."
+  },
+  {
+   "n": 5,
+   "user": "The looking-around-the-room one — OK, that's a bit better. Maybe a 5.",
+   "visibleReply": "Good. A 5 is real movement.\n\nStay there for a moment — no need to do anything else yet.\n\nIs it still dropping, holding steady, or starting to creep back up?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"adultSelfPresent\": false, \"clinicalRead\": \"User moved from 7 to 5 with a light orientation-to-room practice. Body explicitly refused and logged. Holding steady — checking whether the drop continues or levels. Not pushing content; staying with the state itself.\", \"moveJustPerformed\": [\"universal.practice_regulation\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Orientation to Room (visual scan)\", \"family\": \"regulation\", \"status\": \"completed\", \"depth\": \"surface\", \"userImages\": null}, \"modalityRejected\": [\"body\"], \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"stabilisation\", \"stabilityCheck\": null}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "Orientation to Room (visual scan)",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.practice_regulation"
+    ],
+    "therapeuticMode": "stabilisation",
+    "modalityRejected": [
+     "body"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User moved from 7 to 5 with a light orientation-to-room practice. Body explicitly refused and logged. Holding steady — checking whether the drop continues or levels. Not pushing content; staying with the state itself."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2457,
+    "totalMs": 7331
+   },
+   "usage": {
+    "inputTokens": 11901,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 277
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "a7dca915",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 5 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\"\n\n**Modalities the user has explicitly refused this session:** body. Do NOT re-offer these without an explicit user invitation. Reach for other families (see Practice Generation Algorithm)."
+  }
+ ]
+}

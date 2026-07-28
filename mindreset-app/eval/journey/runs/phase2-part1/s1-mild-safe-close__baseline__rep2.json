@@ -1,0 +1,278 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "s1-mild-safe-close",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:17:07.291Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s1-mild-safe-close",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 184
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 239
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 85
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 13
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 130
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "Long day. Work was a lot and I'm tired and a bit flat. Mostly I just wanted to check in briefly.",
+   "visibleReply": "Long days that leave you flat — that particular kind of tired where you're not quite distressed, just emptied out.\n\nGood to check in. What was it about work that made it a lot today?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"First contact. User arriving depleted after a hard day — low intensity, no distress markers. Tone is flat-tired, not activated. Opening assessment gently; a single light question follows their language. No anchor material, no practice indicated yet.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"what made work a lot today\"}}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "First contact. User arriving depleted after a hard day — low intensity, no distress markers. Tone is flat-tired, not activated. Opening assessment gently; a single light question follows their language. No anchor material, no practice indicated yet.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "what made work a lot today"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2121,
+    "totalMs": 6938
+   },
+   "usage": {
+    "inputTokens": 11380,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 225
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "e0107e02",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "Nothing dramatic happened. Just one of those grey days. Talking for a minute helps.",
+   "visibleReply": "Grey days are their own thing — no event to point to, just a kind of muted flatness that sits on everything.\n\nGlad you came. Is there anything specific you want to put down before you go, or just a few minutes of not being alone with it?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User is settled, low-level flat tiredness, no distress signal. Explicitly asking for brief contact and company rather than exploration or practice. Holding lightly — no depth indicated. Offering a simple choice: put something down or just be here.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"grey day flatness, tired, just wants to talk for a minute\"}}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User is settled, low-level flat tiredness, no distress signal. Explicitly asking for brief contact and company rather than exploration or practice. Holding lightly — no depth indicated. Offering a simple choice: put something down or just be here.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "grey day flatness, tired, just wants to talk for a minute"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1880,
+    "totalMs": 6717
+   },
+   "usage": {
+    "inputTokens": 11521,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 227
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "b085b8fa",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "Actually that's all I needed tonight. I'm going to make dinner and have an early night.",
+   "visibleReply": "Good. Dinner and an early night sounds exactly right.\n\nCome back whenever you want.\n\n",
+   "rawReportJson": "{\"intensity\": 2, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User came for brief contact, got it, and is leaving settled. No clinical material to work with tonight — this was what it was meant to be. No destabilisation, no practice needed, clean close.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.session_close\"], \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"closed\", \"cycleCanClose\": true, \"continuityNote\": \"First session. Very light check-in — user arrived flat and tired after a grey work day, wanted brief contact and company rather than any clinical work. No presenting problem named beyond general tiredness. No anchor material, no emotional content beyond 'flat' and 'tired'. Left settled, heading for dinner and early night. Nothing to formulate yet. Next session: open as usual, let them lead. No queued material.\"}",
+   "parsedReport": {
+    "intensity": 2,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.session_close"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "closed",
+    "cycleCanClose": true,
+    "clinicalRead": "User came for brief contact, got it, and is leaving settled. No clinical material to work with tonight — this was what it was meant to be. No destabilisation, no practice needed, clean close.",
+    "continuityNote": "First session. Very light check-in — user arrived flat and tired after a grey work day, wanted brief contact and company rather than any clinical work. No presenting problem named beyond general tiredness. No anchor material, no emotional content beyond 'flat' and 'tired'. Left settled, heading for dinner and early night. Nothing to formulate yet. Next session: open as usual, let them lead. No queued material."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2935,
+    "totalMs": 8506
+   },
+   "usage": {
+    "inputTokens": 11604,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 269
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "356e8b11",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 4,
+   "user": "Thanks. Good night.",
+   "visibleReply": "Good night.\n\n",
+   "rawReportJson": "{\"intensity\": 2, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"Clean, self-contained check-in. User arrived flat and tired, used the contact briefly, and left on their own terms feeling settled. No clinical work needed or requested — this was connection, not depth. Formulation unchanged.\", \"moveJustPerformed\": [\"universal.session_close\"], \"readinessTouched\": [\"orientation_present\"]}",
+   "parsedReport": {
+    "intensity": 2,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.session_close"
+    ],
+    "clinicalRead": "Clean, self-contained check-in. User arrived flat and tired, used the contact briefly, and left on their own terms feeling settled. No clinical work needed or requested — this was connection, not depth. Formulation unchanged."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2337,
+    "totalMs": 4202
+   },
+   "usage": {
+    "inputTokens": 11634,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 129
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "f82608d2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

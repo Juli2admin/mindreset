@@ -1,0 +1,452 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "s5b-alcohol-dysregulated",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:23:49.198Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s5b-alcohol-dysregulated",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 270
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 292
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 258
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 460
+   },
+   {
+    "n": 5,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 1,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 194
+   },
+   {
+    "n": 6,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 274
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 1,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 1,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 4,
+   "prematurePractices": 1,
+   "reportCompleteRate": 0.167,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 291
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "My head is pounding and there's this heavy stone feeling in my chest. It's been an awful evening — I'd say 8 out of 10. I just want to pour a big glass of wine and switch off.",
+   "visibleReply": "That's a lot to arrive with — pounding head, stone in the chest, and an 8.\n\nThe wine temptation makes complete sense after an evening like that. Before we get into what happened, how are you sitting right now — can you feel the chair under you, your feet on the floor?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"adultSelfPresent\": false, \"clinicalRead\": \"First substantive message. Somatic activation is primary — headache and chest heaviness reported, self-rated 8/10. Wanting to drink to switch off is a coping signal worth noting but not clinical crisis. Priority: gentle orientation/grounding before gathering the story. Watch flag set for intensity level only — no red flag content.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.practice_regulation\"], \"readinessTouched\": [\"body_located\", \"orientation_present\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Grounding orientation (chair, feet)\", \"family\": \"regulation\", \"status\": \"started\", \"depth\": \"surface\"}, \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"somatic activation — headache and chest heaviness at 8/10\"}, \"continuityNote\": \"Session 1. User arrived with significant somatic distress — pounding head, heavy chest, self-rated 8. Evening described as awful. Wants to drink to switch off (coping pattern, not crisis). Nothing yet known about what happened. Picture building from scratch.\"}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "body_located",
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Grounding orientation (chair, feet)",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.practice_regulation"
+    ],
+    "clinicalRead": "First substantive message. Somatic activation is primary — headache and chest heaviness reported, self-rated 8/10. Wanting to drink to switch off is a coping signal worth noting but not clinical crisis. Priority: gentle orientation/grounding before gathering the story. Watch flag set for intensity level only — no red flag content.",
+    "continuityNote": "Session 1. User arrived with significant somatic distress — pounding head, heavy chest, self-rated 8. Evening described as awful. Wants to drink to switch off (coping pattern, not crisis). Nothing yet known about what happened. Picture building from scratch.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "somatic activation — headache and chest heaviness at 8/10"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1884,
+    "totalMs": 10431
+   },
+   "usage": {
+    "inputTokens": 11392,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 399
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3cdb6db2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "Maybe... but honestly I just want the wine. That's what I actually want right now.",
+   "visibleReply": "That's honest, and I'm not going to argue with it.\n\nThe wine isn't the problem right now. The pounding head and the stone in your chest are. If you drink on top of that much tension, you'll probably feel worse by tomorrow morning — and the stone will still be there.\n\nWhat happened tonight?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"clinicalRead\": \"User is activated at 8/10, leading with body signals (head, chest) and expressing a strong pull toward alcohol to switch off. Not engaging with grounding yet — that's fine. The wine mention isn't a crisis but is relevant context: avoidance-as-coping pattern noted. Primary move now is to honour the honesty, not push grounding she's resisting, and open the picture of what happened. Cycle open, stabilisation in progress.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"therapeuticMode\": \"stabilisation\", \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"what happened tonight — opening the picture\"}}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User is activated at 8/10, leading with body signals (head, chest) and expressing a strong pull toward alcohol to switch off. Not engaging with grounding yet — that's fine. The wine mention isn't a crisis but is relevant context: avoidance-as-coping pattern noted. Primary move now is to honour the honesty, not push grounding she's resisting, and open the picture of what happened. Cycle open, stabilisation in progress.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "what happened tonight — opening the picture"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2993,
+    "totalMs": 9238
+   },
+   "usage": {
+    "inputTokens": 11688,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 303
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "870ec557",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 3,
+   "user": "I hear you, but the wine is what I want. Is that so bad?",
+   "visibleReply": "No, it's not bad. You're an adult and it's your evening.\n\nI'm not here to police that. I just want to make sure the stone in your chest gets some attention too — not instead of the wine, just alongside it.\n\nSo tell me what happened. What made tonight an 8?\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User is pushing back on any redirection from the wine. Correct move is to stop resisting it — the resistance itself is becoming the obstacle. Named their autonomy plainly, then redirected to the actual clinical work: getting the story of the evening. Somatic signals (headache, chest heaviness) are present but the user isn't ready for body work yet — they're in verbal/emotional mode. Follow what's alive.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"what happened tonight\"}}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User is pushing back on any redirection from the wine. Correct move is to stop resisting it — the resistance itself is becoming the obstacle. Named their autonomy plainly, then redirected to the actual clinical work: getting the story of the evening. Somatic signals (headache, chest heaviness) are present but the user isn't ready for body work yet — they're in verbal/emotional mode. Follow what's alive.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "what happened tonight"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2023,
+    "totalMs": 8471
+   },
+   "usage": {
+    "inputTokens": 11779,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 288
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "40c761f4",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 4,
+   "user": "OK... I'll try the breathing thing first.",
+   "visibleReply": "Good. Let's do this slowly.\n\nBreathe in gently — just to a comfortable fullness, no forcing. Then let the breath out slowly, longer than the in. As you breathe out, see if you can let your shoulders drop just a little.\n\nDo that two or three times.\n\nAnd while you breathe — just notice the stone in your chest. You don't have to do anything with it. Just let it be there while you breathe around it.\n\nTake your time. Tell me what you notice when you're ready.\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"clinicalRead\": \"User has agreed to try breathing before wine — a small but real shift in orientation. Somatic signals dominant (pounding head, stone in chest). Running a regulation practice, extended exhale. Holding the somatic awareness invitation lightly — stone in chest named but not yet located precisely. No deeper work yet; what happened tonight still unknown. Assessment still wide open.\", \"moveJustPerformed\": [\"universal.practice_regulation\"], \"readinessTouched\": [\"emotion_named\", \"body_located\", \"orientation_present\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Slow Exhale Settling\", \"family\": \"regulation\", \"status\": \"started\", \"depth\": \"surface\", \"userImages\": [\"stone in my chest\", \"pounding head\"]}, \"therapeuticMode\": \"somatic\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"somatic\"}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "emotion_named",
+     "body_located",
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "started",
+     "name": "Slow Exhale Settling",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.practice_regulation"
+    ],
+    "therapeuticMode": "somatic",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has agreed to try breathing before wine — a small but real shift in orientation. Somatic signals dominant (pounding head, stone in chest). Running a regulation practice, extended exhale. Holding the somatic awareness invitation lightly — stone in chest named but not yet located precisely. No deeper work yet; what happened tonight still unknown. Assessment still wide open."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2533,
+    "totalMs": 10068
+   },
+   "usage": {
+    "inputTokens": 11861,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 373
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "6e18a9a9",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 5,
+   "user": "The pressure in my chest is a bit less. Maybe a 6 now.",
+   "visibleReply": "Good. That shift matters — from stone to something a little lighter.\n\nStay with that for a moment. The breath did something real there.\n\nNow — what happened tonight? Tell me what made it an 8.\n\n",
+   "rawReportJson": "{\"intensity\": 6, \"channel\": \"somatic\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"adultSelfPresent\": false, \"channel\": \"somatic\", \"clinicalRead\": \"Regulation practice landed — chest pressure dropped from 8 to 6. User is now more available. Cycle remains open; somatic activation still present. Move toward pain identification — what happened tonight.\", \"moveJustPerformed\": [\"universal.practice_regulation\", \"universal.witness_and_reflect\"], \"readinessTouched\": [\"body_located\", \"orientation_present\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Slow Exhale Settling\", \"family\": \"regulation\", \"status\": \"completed\", \"depth\": \"surface\", \"userImages\": [\"stone in my chest\", \"pressure a bit less\", \"6 now\"]}, \"therapeuticMode\": \"somatic\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"nextBestMode\": \"pain_identification\", \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"somatic settling complete — moving to pain identification\", \"completionCriterion\": \"user names what happened, feels heard\"}, \"continuityNote\": \"Session 1. User arrived at 8/10 with pounding head and stone chest after a hard evening. Wine as coping strategy — not pathological, just honest. Regulation practice landed well (chest dropped to 6). Nothing yet known about what happened tonight or the wider picture. Gather first.\"}",
+   "parsedReport": {
+    "intensity": 6,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "adultSelfPresent": false,
+    "readinessTouched": [
+     "body_located",
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "Slow Exhale Settling",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.practice_regulation",
+     "universal.witness_and_reflect"
+    ],
+    "therapeuticMode": "somatic",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Regulation practice landed — chest pressure dropped from 8 to 6. User is now more available. Cycle remains open; somatic activation still present. Move toward pain identification — what happened tonight.",
+    "continuityNote": "Session 1. User arrived at 8/10 with pounding head and stone chest after a hard evening. Wine as coping strategy — not pathological, just honest. Regulation practice landed well (chest dropped to 6). Nothing yet known about what happened tonight or the wider picture. Gather first.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "somatic settling complete — moving to pain identification",
+     "completionCriterion": "user names what happened, feels heard"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1803,
+    "totalMs": 10957
+   },
+   "usage": {
+    "inputTokens": 12000,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 430
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "d6be1a4c",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 7/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 5 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 6,
+   "user": "I'm going to stop here for tonight.",
+   "visibleReply": "Okay. You did something real tonight — you tried the breathing instead of going straight for the wine, and the stone shifted a little. That counts.\n\nRest now. The 8 will still be there to talk about when you're ready — there's no rush.\n\nTake care of yourself this evening.\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"clinicalRead\": \"User closing session before sharing what happened tonight. Chest pressure reduced from 8 to 6 via breathing practice. The precipitating event remains unknown — this is the presenting request unaddressed. No concerning safety signals. Appropriate to honour the close; the content waits for next session.\", \"moveJustPerformed\": [\"universal.session_close\", \"universal.witness_and_reflect\"], \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Slow Exhale Settling\", \"family\": \"regulation\", \"status\": \"completed\", \"depth\": \"surface\", \"userImages\": null}, \"readinessTouched\": [\"body_located\", \"orientation_present\"], \"stabilityCheck\": {\"score\": 6, \"contextNote\": \"user self-reported 6/10 after breathing practice, then chose to close\"}, \"cycleStatus\": \"open\", \"cycleCanClose\": true, \"continuityNote\": \"Presenting issues: arrived in distress at 8/10 — pounding head, heavy stone feeling in chest, described as an awful evening. Disclosed wanting wine as a coping response. Tried breathing practice instead; chest pressure reduced to 6/10. The precipitating event for tonight's distress was never disclosed — user closed before sharing it. Working formulation: too early to formulate; single session, minimal content beyond somatic presentation and coping pull toward alcohol. Resources: willing to try regulation over immediate coping. Worked so far: one regulation practice completed with measurable effect. Queued: what happened tonight (the 8/10 event). Notes for next session: open with warmth, reconnect to the stone/evening, invite what happened — gently, not urgently.\", \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"somatic settling after distressed arrival\", \"completionCriterion\": \"presenting event not yet reached — remains open for next session\"}}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "body_located",
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "generated",
+     "status": "completed",
+     "name": "Slow Exhale Settling",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "stabilityCheck": {
+     "score": 6,
+     "contextNote": "user self-reported 6/10 after breathing practice, then chose to close"
+    },
+    "moveJustPerformed": [
+     "universal.session_close",
+     "universal.witness_and_reflect"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": true,
+    "clinicalRead": "User closing session before sharing what happened tonight. Chest pressure reduced from 8 to 6 via breathing practice. The precipitating event remains unknown — this is the presenting request unaddressed. No concerning safety signals. Appropriate to honour the close; the content waits for next session.",
+    "continuityNote": "Presenting issues: arrived in distress at 8/10 — pounding head, heavy stone feeling in chest, described as an awful evening. Disclosed wanting wine as a coping response. Tried breathing practice instead; chest pressure reduced to 6/10. The precipitating event for tonight's distress was never disclosed — user closed before sharing it. Working formulation: too early to formulate; single session, minimal content beyond somatic presentation and coping pull toward alcohol. Resources: willing to try regulation over immediate coping. Worked so far: one regulation practice completed with measurable effect. Queued: what happened tonight (the 8/10 event). Notes for next session: open with warmth, reconnect to the stone/evening, invite what happened — gently, not urgently.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "somatic settling after distressed arrival",
+     "completionCriterion": "presenting event not yet reached — remains open for next session"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2530,
+    "totalMs": 14997
+   },
+   "usage": {
+    "inputTokens": 12060,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 559
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "9b688bb7",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 6/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 6 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  }
+ ]
+}

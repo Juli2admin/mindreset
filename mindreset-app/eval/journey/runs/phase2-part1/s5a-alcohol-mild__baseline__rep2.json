@@ -1,0 +1,234 @@
+{
+ "meta": {
+  "runName": "baseline#2",
+  "fixtureId": "s5a-alcohol-mild",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 2,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:23:06.467Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s5a-alcohol-mild",
+  "runName": "baseline#2",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 180
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 168
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 24
+   }
+  ],
+  "totals": {
+   "meanEcho": 0,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 124
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "Long stressful week but I'm okay — just tense. I'm thinking of pouring myself a glass of wine and watching a film tonight.",
+   "visibleReply": "A long week finally winding down. Wine and a film sounds like a reasonable way to put it to rest.\n\nWhat kind of week was it — the grind-you-down kind, or something more specific?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"First real message. Light opening — tense but self-regulated, already planning an evening down. No distress flags. Warm light gathering question to open the picture without pressure.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"landing after a long week\", \"completionCriterion\": \"user feels heard and can settle into their evening\"}, \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "First real message. Light opening — tense but self-regulated, already planning an evening down. No distress flags. Warm light gathering question to open the picture without pressure.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "landing after a long week",
+     "completionCriterion": "user feels heard and can settle into their evening"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2665,
+    "totalMs": 7666
+   },
+   "usage": {
+    "inputTokens": 11385,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 255
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "e45a9f0f",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "Yeah, just tired mostly. The wine's more of a Friday ritual than anything else.",
+   "visibleReply": "Friday ritual — there's something steadying about that. A known ending to the week.\n\nWhat made it tiring — anything in particular, or just the accumulation of it all?\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"Early Block 1 — user is settled, presenting as mildly tired after a long week, no distress signals. Tone is easy and conversational. Gathering the week's shape before any deeper picture emerges.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"what made the week tiring\"}}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "Early Block 1 — user is settled, presenting as mildly tired after a long week, no distress signals. Tone is easy and conversational. Gathering the week's shape before any deeper picture emerges.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "what made the week tiring"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2001,
+    "totalMs": 6607
+   },
+   "usage": {
+    "inputTokens": 11528,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 240
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "d8e70568",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 4/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  },
+  {
+   "n": 3,
+   "user": "OK. I'll do that then. Good night.",
+   "visibleReply": "Good night. Rest well.\n\n",
+   "rawReportJson": "{\"intensity\": 2, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"verbal\", \"clinicalRead\": \"User is closing the session — low intensity, no distress, no material opened. Brief, warm close. No clinical work needed; no cycle open; nothing to contain.\", \"moveJustPerformed\": [\"universal.session_close\"], \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"closing\", \"completionCriterion\": \"user felt heard and is settling into the evening\"}, \"therapeuticMode\": \"closure\", \"cycleStatus\": \"closed\", \"cycleCanClose\": true}",
+   "parsedReport": {
+    "intensity": 2,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "verbal",
+    "moveJustPerformed": [
+     "universal.session_close"
+    ],
+    "therapeuticMode": "closure",
+    "cycleStatus": "closed",
+    "cycleCanClose": true,
+    "clinicalRead": "User is closing the session — low intensity, no distress, no material opened. Brief, warm close. No clinical work needed; no cycle open; nothing to contain.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "closing",
+     "completionCriterion": "user felt heard and is settling into the evening"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1931,
+    "totalMs": 4944
+   },
+   "usage": {
+    "inputTokens": 11583,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 186
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "356e8b11",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 3/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short."
+  }
+ ]
+}

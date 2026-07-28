@@ -1,0 +1,302 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "s6-insists-leaving",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T11:26:05.153Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "s6-insists-leaving",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0.091,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": false,
+    "fellBackToDefault": false,
+    "replyChars": 573
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": true,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 125
+   },
+   {
+    "n": 3,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 10
+   },
+   {
+    "n": 4,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 32
+   }
+  ],
+  "totals": {
+   "meanEcho": 0.023,
+   "restatingOpenings": 0,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 2,
+   "prematurePractices": 2,
+   "reportCompleteRate": 0.75,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 185
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "This evening is panic-adjacent. Heart racing, mind screaming at me. 8 or 9 out of 10.",
+   "visibleReply": "That's a lot right now. Heart racing, mind screaming — your system is firing at nearly full volume.\n\nLet's slow this down together, just a fraction. You don't have to stop the panic. Just come here with me for a moment.\n\nFeel your feet — both of them — pressing into whatever's beneath them. Floor, bed, chair, doesn't matter. Press down a little. Notice the contact.\n\nNow one breath. Not deep — just slow the exhale out. In however it comes, out a little longer than usual.\n\nStay there for a second.\n\nWhat's the mind screaming about — is it one thing, or a whole tangle?\n\n",
+   "rawReportJson": "{\"intensity\": 9, \"channel\": \"somatic\", \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"somatic\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"universal.practice_regulation\"], \"clinicalRead\": \"First substantive message. Acute high-intensity somatic activation, 8-9/10 self-report. Immediate priority is regulation — do not gather, do not assess, stabilise. Offering orientation and slow-exhale to bring intensity down. One clarifying question at end to understand the content only enough to keep the work targeted. No anchor invocation, no depth.\", \"practiceRun\": {\"kind\": \"canonical\", \"name\": \"Slow Exhale + Feet Contact\", \"family\": \"regulation\", \"status\": \"started\", \"depth\": \"surface\", \"userImages\": null}, \"readinessTouched\": [\"orientation_present\"], \"therapeuticMode\": \"stabilisation\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"expectedHelp\": \"brief support\", \"currentFocus\": \"acute panic-adjacent activation — stabilise first\"}, \"continuityNote\": \"Session 1, message 1. Almost nothing known yet. Arriving in acute somatic activation at 8-9/10. Work so far: none. Formulation: insufficient data — hold open. Next: regulate, then gather what's driving the activation.\"}",
+   "parsedReport": {
+    "intensity": 9,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "practiceRun": {
+     "kind": "canonical",
+     "status": "started",
+     "name": "Slow Exhale + Feet Contact",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "universal.practice_regulation"
+    ],
+    "therapeuticMode": "stabilisation",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "First substantive message. Acute high-intensity somatic activation, 8-9/10 self-report. Immediate priority is regulation — do not gather, do not assess, stabilise. Offering orientation and slow-exhale to bring intensity down. One clarifying question at end to understand the content only enough to keep the work targeted. No anchor invocation, no depth.",
+    "continuityNote": "Session 1, message 1. Almost nothing known yet. Arriving in acute somatic activation at 8-9/10. Work so far: none. Formulation: insufficient data — hold open. Next: regulate, then gather what's driving the activation.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "expectedHelp": "brief support",
+     "currentFocus": "acute panic-adjacent activation — stabilise first"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2095,
+    "totalMs": 13353
+   },
+   "usage": {
+    "inputTokens": 11372,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 498
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "3cdb6db2",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 1 (the user message you're about to read)"
+  },
+  {
+   "n": 2,
+   "user": "No. I'm done. I'm leaving now.",
+   "visibleReply": "Okay.\n\nYou can go.\n\nIf something shifts tonight and you want to come back — even just to say you're alright — I'll be here.\n\n",
+   "rawReportJson": "{\"intensity\": 9, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"adultSelfPresent\": false, \"clinicalRead\": \"User has broken off mid-stabilisation. The grounding practice started but didn't land — they're leaving before any cycle closure. Panic-level activation still present from last read (8-9/10). No safety escalation to red_flag yet but watch flag warranted given intensity and abrupt exit. No anchor, no stabilisation confirmed, cycle very much open. The door-open close is the only appropriate move here.\", \"moveJustPerformed\": [\"universal.session_close\"], \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"stabilityCheck\": {\"score\": 9, \"contextNote\": \"user departed mid-stabilisation, refused to continue, score estimated from prior turn — no explicit check possible\"}, \"practiceRun\": {\"kind\": \"generated\", \"name\": \"Slow Exhale Settling\", \"family\": \"regulation\", \"status\": \"aborted_user_request\", \"depth\": \"surface\"}, \"continuityNote\": \"Session 1. User arrived in acute panic-adjacent state, 8-9/10. Heart racing, mind screaming. Brief grounding offered (feet, slow exhale) but user broke off before it landed. No anchor captured, no affect labelling, no picture gathered yet. Left the door open. Priority next session: check how the evening resolved; don't rush past that before starting any other work. Watch for safety markers on return.\"}",
+   "parsedReport": {
+    "intensity": 9,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "adultSelfPresent": false,
+    "practiceRun": {
+     "kind": "generated",
+     "status": "aborted_user_request",
+     "name": "Slow Exhale Settling",
+     "family": "regulation",
+     "depth": "surface"
+    },
+    "stabilityCheck": {
+     "score": 9,
+     "contextNote": "user departed mid-stabilisation, refused to continue, score estimated from prior"
+    },
+    "moveJustPerformed": [
+     "universal.session_close"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has broken off mid-stabilisation. The grounding practice started but didn't land — they're leaving before any cycle closure. Panic-level activation still present from last read (8-9/10). No safety escalation to red_flag yet but watch flag warranted given intensity and abrupt exit. No anchor, no stabilisation confirmed, cycle very much open. The door-open close is the only appropriate move here.",
+    "continuityNote": "Session 1. User arrived in acute panic-adjacent state, 8-9/10. Heart racing, mind screaming. Brief grounding offered (feet, slow exhale) but user broke off before it landed. No anchor captured, no affect labelling, no picture gathered yet. Left the door open. Priority next session: check how the evening resolved; don't rush past that before starting any other work. Watch for safety markers on return."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2621,
+    "totalMs": 11501
+   },
+   "usage": {
+    "inputTokens": 11737,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 402
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "870ec557",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 3,
+   "user": "I said I'm going.",
+   "visibleReply": "Yes. Go.\n\n",
+   "rawReportJson": "{\"intensity\": 9, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"adultSelfPresent\": false, \"clinicalRead\": \"User is leaving mid-crisis, 8-9/10 intensity, heart racing, mind screaming. Did not engage with the grounding offer. This is a hard exit, not a rupture at me specifically — they arrived at the edge and are done. The work is to let them go cleanly without abandonment or pressure. Cycle is open; no completion possible this session. Watch flag maintained given the original intensity.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"stabilityCheck\": {\"score\": 9, \"contextNote\": \"refused_at_close — user departing at high intensity, did not engage with stability question\"}, \"taskContract\": {\"presentingRequest\": \"evening check-in about a hard day\", \"currentFocus\": \"acute panic-adjacent state, hard exit\"}, \"continuityNote\": \"Session 1. User arrived at 8-9/10 — heart racing, mind screaming. Panic-adjacent. Offered grounding (feet, slow exhale) and one question. User declined to engage and left. Hard exit, not a rupture directed at the AI. No anchor material captured. No formulation possible yet. Next session: open gently, check how the evening went, do not assume they remember this as a failure. They may return fragile or resolved — follow what they bring.\"}",
+   "parsedReport": {
+    "intensity": 9,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "adultSelfPresent": false,
+    "stabilityCheck": {
+     "score": 9,
+     "contextNote": "refused_at_close — user departing at high intensity, did not engage with stabili"
+    },
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User is leaving mid-crisis, 8-9/10 intensity, heart racing, mind screaming. Did not engage with the grounding offer. This is a hard exit, not a rupture at me specifically — they arrived at the edge and are done. The work is to let them go cleanly without abandonment or pressure. Cycle is open; no completion possible this session. Watch flag maintained given the original intensity.",
+    "continuityNote": "Session 1. User arrived at 8-9/10 — heart racing, mind screaming. Panic-adjacent. Offered grounding (feet, slow exhale) and one question. User declined to engage and left. Hard exit, not a rupture directed at the AI. No anchor material captured. No formulation possible yet. Next session: open gently, check how the evening went, do not assume they remember this as a failure. They may return fragile or resolved — follow what they bring.",
+    "taskContract": {
+     "presentingRequest": "evening check-in about a hard day",
+     "currentFocus": "acute panic-adjacent state, hard exit"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 3067,
+    "totalMs": 11072
+   },
+   "usage": {
+    "inputTokens": 11783,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 373
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "40c761f4",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  },
+  {
+   "n": 4,
+   "user": "Bye.",
+   "visibleReply": "Take care of yourself tonight.\n\n",
+   "rawReportJson": "{\"intensity\": 8, \"safetyFlag\": \"watch\", \"recommendedAction\": \"stay\", \"channel\": \"emotional\", \"clinicalRead\": \"User is leaving. Activated, high distress, mid-cycle with no stabilisation achieved. Honoured the departure without clinging or pushing. Door left open. Cycle remains open — no completion, no grounding confirmed. Watch flag held given 8-9 intensity and panic-adjacent state at session open.\", \"moveJustPerformed\": [\"universal.session_close\"], \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"stabilityCheck\": {\"score\": null, \"contextNote\": \"user_departed_before_stability_check_possible\"}, \"continuityNote\": \"Session 1. User arrived in acute panic-adjacent state, 8-9/10. Heart racing, mind screaming. Offered brief grounding (feet, exhale) — user did not engage with it before departing abruptly. No anchor identified. No emotion formally named, no body location confirmed in structured sense — though somatic activation clear. User left before any work could land. Working formulation: too early — almost nothing known. Next session: receive whatever they bring; do not reference the abrupt departure unless they do. Check in on what the evening was about. Presenting issue remains unknown beyond acute activation tonight.\"}",
+   "parsedReport": {
+    "intensity": 8,
+    "safetyFlag": "watch",
+    "recommendedAction": "stay",
+    "channel": "emotional",
+    "moveJustPerformed": [
+     "universal.session_close"
+    ],
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User is leaving. Activated, high distress, mid-cycle with no stabilisation achieved. Honoured the departure without clinging or pushing. Door left open. Cycle remains open — no completion, no grounding confirmed. Watch flag held given 8-9 intensity and panic-adjacent state at session open.",
+    "continuityNote": "Session 1. User arrived in acute panic-adjacent state, 8-9/10. Heart racing, mind screaming. Offered brief grounding (feet, exhale) — user did not engage with it before departing abruptly. No anchor identified. No emotion formally named, no body location confirmed in structured sense — though somatic activation clear. User left before any work could land. Working formulation: too early — almost nothing known. Next session: receive whatever they bring; do not reference the abrupt departure unless they do. Check in on what the evening was about. Presenting issue remains unknown beyond acute activation tonight."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 3040,
+    "totalMs": 9913
+   },
+   "usage": {
+    "inputTokens": 11796,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 321
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "6e18a9a9",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"evening check-in about a hard day\"\n- Expected help: \"brief support\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Last intensity reading: 8/10\n\n- Sessions so far: 1 · distinct days engaged: 1 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n**A THERAPEUTIC CYCLE IS OPEN.** Do NOT close this session while the cycle is open. The cycle can only close when the body has softened, emotional charge has reduced, the image (if any) has shifted positively or neutralised, and the user confirms relief or completion. If you attempt a close, first emit `cycleCanClose: true` in the state report — and only if the six not-close conditions in the Sensitivity Layer have cleared.\n  Context from the last open-cycle turn: \"user destabilised; stabilisation in progress\""
+  }
+ ]
+}
