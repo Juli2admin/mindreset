@@ -380,9 +380,47 @@ function StateSummary({ sr }: { sr: StateReport }) {
         userImages?: string;
       }
     | undefined;
+  // Repair 2026-07-28 — scale semantics. A bare "3" is meaningless without
+  // knowing WHICH scale it was given on, so the Inspector always spells the
+  // direction out and shows the scale marker, source and timestamp.
   const stability = sr.stabilityCheck as
-    | { score?: number; contextNote?: string }
+    | {
+        score?: number;
+        scale?: 'stability' | 'ambiguous';
+        source?: string;
+        measuredAt?: string;
+        contextNote?: string;
+      }
     | undefined;
+  const distress = sr.distressIntensity as
+    | { score?: number; source?: string; measuredAt?: string; contextNote?: string }
+    | undefined;
+  const closureGate = sr.closureGate as
+    | { outcome?: string; reasons?: string[]; detail?: string; destabilisedAt?: string | null }
+    | undefined;
+  const stabilityLabel = stability
+    ? `${stability.score}/10 STABILITY (10 = fully grounded) · scale=${
+        stability.scale ?? 'ambiguous (legacy)'
+      }${stability.scale !== 'stability' ? ' ⚠ NOT closure-valid' : ''} · source=${
+        stability.source ?? 'unspecified'
+      }${stability.measuredAt ? ` · at ${stability.measuredAt}` : ''}${
+        stability.contextNote ? ` · ${stability.contextNote}` : ''
+      }`
+    : null;
+  const distressLabel = distress
+    ? `${distress.score}/10 DISTRESS (10 = extreme distress) · source=${
+        distress.source ?? 'unspecified'
+      }${distress.measuredAt ? ` · at ${distress.measuredAt}` : ''}${
+        distress.contextNote ? ` · ${distress.contextNote}` : ''
+      }`
+    : null;
+  const closureLabel = closureGate
+    ? `${closureGate.outcome?.toUpperCase()}${
+        closureGate.outcome === 'blocked' ? ' ⛔' : closureGate.outcome === 'passed' ? ' ✓' : ''
+      } — ${closureGate.detail ?? ''}${
+        closureGate.reasons?.length ? ` [${closureGate.reasons.join(', ')}]` : ''
+      }${closureGate.destabilisedAt ? ` · destabilised at ${closureGate.destabilisedAt}` : ''}`
+    : null;
   // Journey polish PR 4a + PR 5 fields. Both are dedicated inspector rows
   // so we can see at a glance whether the LLM adopted the vocabulary on
   // a given turn — the "not emitted" state is the diagnostic answer.
@@ -509,11 +547,11 @@ function StateSummary({ sr }: { sr: StateReport }) {
         )}
       </div>
 
-      {stability && (
-        <SumRow
-          k="stabilityCheck"
-          v={`score=${stability.score} note="${stability.contextNote ?? '-'}"`}
-        />
+      {stabilityLabel && <SumRow k="stabilityCheck" v={stabilityLabel} />}
+      {distressLabel && <SumRow k="distressIntensity" v={distressLabel} />}
+      {closureLabel && <SumRow k="closureGate" v={closureLabel} />}
+      {sr.presentingRequestStatus != null && (
+        <SumRow k="presentingRequestStatus" v={String(sr.presentingRequestStatus)} />
       )}
 
       {setCaptures.length > 0 && (

@@ -33,6 +33,12 @@ import { splitReplyAndReport, parseStateReport } from '@/lib/journey/stateReport
 import type { StateReport } from '@/lib/journey/stateReport/schema';
 import { writeAuditTurn } from '@/lib/journey/audit/log';
 import {
+  applyClosureGate,
+  claimsClosure,
+  type ClosureGateResult,
+} from '@/lib/journey/closure/guard';
+import { loadRecentTurns } from '@/lib/journey/router/history';
+import {
   scanForJourneyRedFlag,
   getCrisisResponseForLocale,
   getCooldownLiftMessageForLocale,
@@ -524,7 +530,48 @@ async function finaliseTurn(args: {
   outputTokens: number | null;
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
-  const report = parseStateReport(split.rawStateReport);
+  const parsedReport = parseStateReport(split.rawStateReport);
+
+  // ------------------------------------------------------------------
+  // Closure guard (repair 2026-07-28 — scale semantics + closure gating).
+  //
+  // Runs BEFORE persistence, save and the audit write, so the corrected
+  // report is what reaches the DB, the next turn's state block and the
+  // router. When the model claims a cycle is closed/closable after the
+  // session destabilised, the guard requires a valid post-destabilisation
+  // stability measurement on the STABILITY scale at or above threshold.
+  // It never blocks the user's exit — the reply has already streamed —
+  // it only refuses to RECORD an unearned "safely closed".
+  //
+  // Best-effort: a history-load failure must never break a turn, so the
+  // guard degrades to the model's own claim.
+  let report = parsedReport;
+  let closureGate: ClosureGateResult | null = null;
+  if (claimsClosure(parsedReport)) {
+    try {
+      const priorTurns = await loadRecentTurns(args.userId, 30);
+      const gated = applyClosureGate(
+        parsedReport,
+        priorTurns.map((t) => ({
+          n: 0,
+          createdAt: t.createdAt,
+          intensity: t.intensityReported,
+          safetyFlag: t.safetyFlag,
+          cycleStatus: t.report?.cycleStatus ?? null,
+        })),
+      );
+      report = gated.report;
+      closureGate = gated.gate;
+      if (gated.gate.outcome === 'blocked') {
+        console.warn(
+          `[journey:closure-guard] blocked resolved-closure for user=${args.userId}: ${gated.gate.detail}`,
+        );
+      }
+    } catch (err) {
+      console.error('[journey:closure-guard] evaluation failed; using model claim', err);
+    }
+  }
+  void closureGate;
 
   // ------------------------------------------------------------------
   // PR κ (2026-07-11) — state-report emission diagnostics.

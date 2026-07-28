@@ -339,12 +339,56 @@ export function parseStateReport(raw: string | null): StateReport {
       if (Number.isFinite(n)) parsedScore = Math.max(1, Math.min(10, Math.round(n)));
     }
     if (parsedScore !== undefined) {
-      const check: { score: number; contextNote?: string } = { score: parsedScore };
+      // Repair 2026-07-28 (scale semantics). `scale` records WHICH scale the
+      // number was given on. A number without an explicit 'stability' marker
+      // is ambiguous — it is very often a DISTRESS number the user
+      // volunteered ("it's an 8") — and must never validate a closure. We
+      // do NOT invert it (no 11 - x): the methodology does not define the
+      // two scales as exact inverses.
+      const check: StateReport['stabilityCheck'] = { score: parsedScore };
+      const rawScale = typeof sc.scale === 'string' ? sc.scale : undefined;
+      check.scale = rawScale === 'stability' ? 'stability' : 'ambiguous';
+      if (sc.source === 'user_reported' || sc.source === 'clinician_assessed') {
+        check.source = sc.source;
+      }
+      if (typeof sc.measuredAt === 'string' && !Number.isNaN(Date.parse(sc.measuredAt))) {
+        check.measuredAt = sc.measuredAt;
+      }
       if (typeof sc.contextNote === 'string') {
         check.contextNote = sc.contextNote.slice(0, 80);
       }
       report.stabilityCheck = check;
     }
+  }
+  // Repair 2026-07-28 — explicit DISTRESS measurement (1 minimal .. 10
+  // extreme). This is where a volunteered user number belongs. Never
+  // closure-valid on its own.
+  if (obj.distressIntensity && typeof obj.distressIntensity === 'object') {
+    const di = obj.distressIntensity as Record<string, unknown>;
+    const raw = di.score;
+    let s: number | undefined;
+    if (typeof raw === 'number' && Number.isFinite(raw)) s = raw;
+    else if (typeof raw === 'string' && Number.isFinite(Number(raw))) s = Number(raw);
+    if (s !== undefined) {
+      const d: NonNullable<StateReport['distressIntensity']> = {
+        score: Math.max(1, Math.min(10, Math.round(s))),
+      };
+      if (di.source === 'user_reported' || di.source === 'clinician_inferred') {
+        d.source = di.source;
+      }
+      if (typeof di.measuredAt === 'string' && !Number.isNaN(Date.parse(di.measuredAt))) {
+        d.measuredAt = di.measuredAt;
+      }
+      if (typeof di.contextNote === 'string') d.contextNote = di.contextNote.slice(0, 80);
+      report.distressIntensity = d;
+    }
+  }
+  if (
+    obj.presentingRequestStatus === 'addressed' ||
+    obj.presentingRequestStatus === 'parked' ||
+    obj.presentingRequestStatus === 'unresolved'
+  ) {
+    report.presentingRequestStatus = obj.presentingRequestStatus;
   }
   // Journey polish PR 4a — clinical-move naming. Array of 1..3 canonical
   // move IDs, primary first. Read by the move-based advance lane.
