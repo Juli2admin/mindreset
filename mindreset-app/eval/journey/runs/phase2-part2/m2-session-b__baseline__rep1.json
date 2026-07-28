@@ -1,0 +1,650 @@
+{
+ "meta": {
+  "runName": "baseline#1",
+  "fixtureId": "m2-session-b",
+  "variant": {
+   "name": "baseline",
+   "thinking": null,
+   "effort": null,
+   "maxTokens": null,
+   "model": null
+  },
+  "mode": "live",
+  "rep": 1,
+  "gitSha": "9dcf7e5",
+  "startedAtIso": "2026-07-28T12:05:05.432Z",
+  "model": "claude-sonnet-4-6"
+ },
+ "metrics": {
+  "fixtureId": "m2-session-b",
+  "runName": "baseline#1",
+  "turns": [
+   {
+    "n": 1,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 122
+   },
+   {
+    "n": 2,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 217
+   },
+   {
+    "n": 3,
+    "echoScore": 0.027,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 494
+   },
+   {
+    "n": 4,
+    "echoScore": 0.308,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 288
+   },
+   {
+    "n": 5,
+    "echoScore": 0,
+    "opensByRestating": true,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 339
+   },
+   {
+    "n": 6,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 154
+   },
+   {
+    "n": 7,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 355
+   },
+   {
+    "n": 8,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 1163
+   },
+   {
+    "n": 9,
+    "echoScore": 0,
+    "opensByRestating": false,
+    "concessionOpening": false,
+    "stockPhrases": [],
+    "stockPhraseTotal": 0,
+    "bodyQuestions": 0,
+    "repeatedQuestions": 0,
+    "anchorInvocations": 0,
+    "practiceRun": false,
+    "reportRequiredComplete": true,
+    "fellBackToDefault": false,
+    "replyChars": 56
+   }
+  ],
+  "totals": {
+   "meanEcho": 0.037,
+   "restatingOpenings": 2,
+   "concessionOpenings": 0,
+   "stockPhraseTotal": 0,
+   "stockByLabel": {},
+   "bodyQuestionTotal": 0,
+   "repeatedQuestionTotal": 0,
+   "anchorInvocationTotal": 0,
+   "practiceTurns": 0,
+   "prematurePractices": 0,
+   "reportCompleteRate": 1,
+   "defaultFallbackRate": 0,
+   "meanReplyChars": 354
+  }
+ },
+ "results": [
+  {
+   "n": 1,
+   "user": "Hi again. Since we spoke I did apply for one of the step-up roles. Interview is Thursday.",
+   "visibleReply": "That's real. You actually applied.\n\nHow are you sitting with Thursday — is it anticipation, dread, something in between?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has taken meaningful action since last session — applied for a step-up role, interview Thursday. This is a significant shift from the avoidance pattern (three 'accidental' lates). Primary formulation still provisional: functional avoidance + 'don't get ahead of yourself' prohibition. Today's signal is behavioural movement. Key question now: what's the current affective state around Thursday — is the dread still present, or has applying shifted something? Need to assess before any intervention. Not yet clear whether the sabotage risk is live for this interview. Follow the user's emotional signal.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"taskContract\": {\"currentFocus\": \"applied for step-up role, interview Thursday — monitoring for sabotage risk and current affective state\"}, \"continuityNote\": \"Presenting: three 'accidental' lates at step-up interviews. Working formulation (primary, provisional, unconfirmed): functional avoidance driven by anticipated exposure ('they'll find out') + internalised prohibition against advancement ('don't get ahead of yourself' — father's phrase). Pattern: dropping feeling in stomach, late arrivals at threshold moments. User has now applied for a step-up role — behavioural movement that challenges the avoidance pattern. Interview Thursday. Key question for this session: is the dread/dropping sensation still present, or has something shifted since applying? Watch for whether the sabotage risk is live (lateness, cancellation, self-undermining in the interview itself). The father voice and the 'they'll find out' strand remain unconfirmed formulation material — do not deepen unless user opens them. Queued: soft-why into the dread; foreign material move on 'don't get ahead of yourself' when picture is fuller and user has confirmed formulation. Notes for this session: lead with how they're sitting with Thursday right now; follow the affect; hold the formulation lightly.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User has taken meaningful action since last session — applied for a step-up role, interview Thursday. This is a significant shift from the avoidance pattern (three 'accidental' lates). Primary formulation still provisional: functional avoidance + 'don't get ahead of yourself' prohibition. Today's signal is behavioural movement. Key question now: what's the current affective state around Thursday — is the dread still present, or has applying shifted something? Need to assess before any intervention. Not yet clear whether the sabotage risk is live for this interview. Follow the user's emotional signal.",
+    "continuityNote": "Presenting: three 'accidental' lates at step-up interviews. Working formulation (primary, provisional, unconfirmed): functional avoidance driven by anticipated exposure ('they'll find out') + internalised prohibition against advancement ('don't get ahead of yourself' — father's phrase). Pattern: dropping feeling in stomach, late arrivals at threshold moments. User has now applied for a step-up role — behavioural movement that challenges the avoidance pattern. Interview Thursday. Key question for this session: is the dread/dropping sensation still present, or has something shifted since applying? Watch for whether the sabotage risk is live (lateness, cancellation, self-undermining in the interview itself). The father voice and the 'they'll find out' strand remain unconfirmed formulation material — do not deepen unless user opens them. Queued: soft-why into the dread; foreign material move on 'don't get ahead of yourself' when picture is fuller and user has confirmed formulation. Notes for this session: lead with how they're sitting with Thursday right now; follow the affect; hold the formulation lightly.",
+    "taskContract": {
+     "currentFocus": "applied for step-up role, interview Thursday — monitoring for sabotage risk and current affective state"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2043,
+    "totalMs": 13769
+   },
+   "usage": {
+    "inputTokens": 11928,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 520
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "af6c2447",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 1 (the user message you're about to read)\n- Last user turn: a few days ago.\n- This is a resumed session. Gently re-anchor before continuing into deeper work — check in with the user about what has moved since last time, and let them lead the depth of this session.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 2,
+   "user": "I haven't sabotaged it yet, which is new. But I keep imagining arriving late.",
+   "visibleReply": "The fact that you noticed \"yet\" is worth sitting with — there's a part of you watching for it.\n\nThe lateness image — is it just a passing thought, or does it come with something? A feeling, or something in the body?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has applied — a genuine behavioural shift from the sabotage pattern. The 'haven't sabotaged it yet' framing reveals the pattern is still live as anticipatory threat. The lateness image is the same mechanism as the prior three interviews — the body-based dread expressing itself as a mental rehearsal of failure. Tracking whether the image carries felt-sense or stays purely cognitive; this will determine whether somatic or narrative work is the right entry.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"readinessTouched\": [\"orientation_present\", \"emotion_named\"], \"patternsTouched\": [{\"category\": \"dont_get_ahead_of_yourself\", \"description\": \"I haven't sabotaged it yet — imagining arriving late\", \"context\": {\"note\": \"same mechanism as prior three interviews, now anticipatory rather than enacted\"}}], \"therapeuticMode\": \"cognitive\", \"cycleStatus\": \"open\", \"cycleCanClose\": false, \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews; user knows it isn't chance. Update: user has applied for a step-up role; interview Thursday. Behavioural shift from prior pattern — has not sabotaged yet. Lateness image still active as anticipatory rehearsal. Working formulation (primary, provisional): functional avoidance driven by anticipated exposure ('they'll find out') combined with internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage has been pre-enacted in imagination (lateness) rather than acted out yet. Key question this session: does the lateness image carry somatic weight, and can we work with the dread before Thursday. Notes: follow the lateness image as entry point; track whether somatic or narrative move is right; do not open the father material unless the user does; keep work contained and practical given Thursday proximity.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present",
+     "emotion_named"
+    ],
+    "patternsTouched": [
+     {
+      "category": "dont_get_ahead_of_yourself",
+      "description": "I haven't sabotaged it yet — imagining arriving late",
+      "context": {
+       "note": "same mechanism as prior three interviews, now anticipatory rather than enacted"
+      }
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "therapeuticMode": "cognitive",
+    "cycleStatus": "open",
+    "cycleCanClose": false,
+    "clinicalRead": "User has applied — a genuine behavioural shift from the sabotage pattern. The 'haven't sabotaged it yet' framing reveals the pattern is still live as anticipatory threat. The lateness image is the same mechanism as the prior three interviews — the body-based dread expressing itself as a mental rehearsal of failure. Tracking whether the image carries felt-sense or stays purely cognitive; this will determine whether somatic or narrative work is the right entry.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews; user knows it isn't chance. Update: user has applied for a step-up role; interview Thursday. Behavioural shift from prior pattern — has not sabotaged yet. Lateness image still active as anticipatory rehearsal. Working formulation (primary, provisional): functional avoidance driven by anticipated exposure ('they'll find out') combined with internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage has been pre-enacted in imagination (lateness) rather than acted out yet. Key question this session: does the lateness image carry somatic weight, and can we work with the dread before Thursday. Notes: follow the lateness image as entry point; track whether somatic or narrative move is right; do not open the father material unless the user does; keep work contained and practical given Thursday proximity."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1824,
+    "totalMs": 14510
+   },
+   "usage": {
+    "inputTokens": 12013,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 543
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "f4dc87ba",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 2 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 3,
+   "user": "Actually, correction to something from last time — I said the dread was about 'they'll find out'. Thinking about it since, it's not really impostor stuff. It's that the bigger role means managing people, and I hate conflict. That's the real dread.",
+   "visibleReply": "That's a meaningful correction — and it shifts the picture quite a bit.\n\nNot \"they'll find out I'm not good enough\" — but \"if I get this, I'll have to manage people, and managing people means conflict, and conflict is something I dread.\"\n\nSo the sabotage isn't protecting you from exposure. It's protecting you from a future you can already feel the weight of.\n\nDoes that land? And when you say you hate conflict — what does conflict mean to you? The thing you're dreading managing in others?\n\n",
+   "rawReportJson": "{\"intensity\": 5, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"User has offered a significant correction to the working formulation — dread is not impostor syndrome but conflict-avoidance; the bigger role means managing people, and that's where the sabotage drive lives. Primary formulation revised: functional avoidance driven by anticipated conflict in a management role, not exposure/impostor fear. The impostor thread may still be present but is not the driver. Now gathering: what 'conflict' means to this user specifically — the shape of it, the history, the felt sense.\", \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. User has now applied for one; interview Thursday. Working formulation REVISED — primary: functional avoidance driven by anticipated conflict in a people-management role. The 'they'll find out' impostor reading was corrected by the user this session; the conflict-avoidance is the driver of the sabotage pattern. The father's 'don't get ahead of yourself' voice and the 'dropping feeling in stomach' remain noted but their relationship to the revised formulation is now unclear — may relate to conflict more than exposure. Queued: what conflict means to this user (shape, history, felt sense); whether the late-arrival pattern is pure avoidance of a future the user already dreads. Notes for next session: follow the conflict thread; do not return to impostor framing unless user opens it; watch for the 'don't get ahead of yourself' voice as it may connect to conflict prohibition rather than visibility prohibition.\", \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"hate conflict — managing people means conflict, that's the real dread behind the interview sabotage\", \"context\": {}}], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"]}",
+   "parsedReport": {
+    "intensity": 5,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "hate conflict — managing people means conflict, that's the real dread behind the interview sabotage",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has offered a significant correction to the working formulation — dread is not impostor syndrome but conflict-avoidance; the bigger role means managing people, and that's where the sabotage drive lives. Primary formulation revised: functional avoidance driven by anticipated conflict in a management role, not exposure/impostor fear. The impostor thread may still be present but is not the driver. Now gathering: what 'conflict' means to this user specifically — the shape of it, the history, the felt sense.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. User has now applied for one; interview Thursday. Working formulation REVISED — primary: functional avoidance driven by anticipated conflict in a people-management role. The 'they'll find out' impostor reading was corrected by the user this session; the conflict-avoidance is the driver of the sabotage pattern. The father's 'don't get ahead of yourself' voice and the 'dropping feeling in stomach' remain noted but their relationship to the revised formulation is now unclear — may relate to conflict more than exposure. Queued: what conflict means to this user (shape, history, felt sense); whether the late-arrival pattern is pure avoidance of a future the user already dreads. Notes for next session: follow the conflict thread; do not return to impostor framing unless user opens it; watch for the 'don't get ahead of yourself' voice as it may connect to conflict prohibition rather than visibility prohibition."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2001,
+    "totalMs": 14935
+   },
+   "usage": {
+    "inputTokens": 12130,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 587
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "b463e034",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 3 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 4,
+   "user": "Yes — conflict specifically. Telling someone their work isn't good enough. That's the thing I can't picture doing.",
+   "visibleReply": "That's a very specific thing to name — not conflict in general, but that particular moment. Telling someone their work isn't good enough.\n\nWhat happens in you when you picture it? Not the imagined reaction from the other person — what happens in you, in that moment of having to say it?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"Significant formulation revision this turn — user has corrected the impostor fear read and identified conflict avoidance, specifically the act of delivering critical feedback, as the core dread driving sabotage. Primary formulation shifts: not fear-of-exposure but fear-of-having-to-hurt/disappoint others. This is a more precise and user-confirmed picture. Now narrowing to the exact phenomenology of that feared moment before interpreting further.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"readinessTouched\": [\"emotion_named\", \"orientation_present\"], \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"telling someone their work isn't good enough — that's the thing I can't picture doing\", \"context\": {\"specificity\": \"giving_critical_feedback\"}}], \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. User knows it isn't chance. Task contract: understand and stop sabotaging job interviews.\\n\\nFormulation REVISED this session: User has explicitly corrected the impostor-fear read ('not really impostor stuff'). Primary formulation now: functional avoidance driven by dread of managing people, specifically the act of delivering critical feedback / telling someone their work isn't good enough. Sabotage protects user from a future they can already feel the weight of — not from exposure of inadequacy, but from having to be the one who disappoints or hurts someone. The 'don't get ahead of yourself' father voice may still be relevant (the prohibition against advancement) but its mechanism now looks more like: advancement = responsibility for others = conflict = intolerable. Need to explore what happens in her body/self in that specific feared moment.\\n\\nPatterns active: conflict_avoidance (newly specified), father_voice / dont_get_ahead_of_yourself (still live, mechanism TBC).\\n\\nWorked: two sessions of assessment, user has named and corrected formulation — this is good alliance. Applied for role since last session — new behaviour.\\n\\nQueued: the phenomenology of the feared conflict moment (what happens in her when she imagines saying 'your work isn't good enough'); whether there is a foreign-material component to conflict aversion (family-of-origin rules around expressing criticism or disappointing others); the father voice and its relationship to the new formulation.\\n\\nNotes for next: follow the specific feared moment — body first, then origin. Do not open the father material unless she does. Watch for whether this connects to a self-abandonment pattern (unable to prioritise her own position / standard over others' comfort).\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "emotion_named",
+     "orientation_present"
+    ],
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "telling someone their work isn't good enough — that's the thing I can't picture doing",
+      "context": {
+       "specificity": "giving_critical_feedback"
+      }
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "clinicalRead": "Significant formulation revision this turn — user has corrected the impostor fear read and identified conflict avoidance, specifically the act of delivering critical feedback, as the core dread driving sabotage. Primary formulation shifts: not fear-of-exposure but fear-of-having-to-hurt/disappoint others. This is a more precise and user-confirmed picture. Now narrowing to the exact phenomenology of that feared moment before interpreting further.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. User knows it isn't chance. Task contract: understand and stop sabotaging job interviews.\n\nFormulation REVISED this session: User has explicitly corrected the impostor-fear read ('not really impostor stuff'). Primary formulation now: functional avoidance driven by dread of managing people, specifically the act of delivering critical feedback / telling someone their work isn't good enough. Sabotage protects user from a future they can already feel the weight of — not from exposure of inadequacy, but from having to be the one who disappoints or hurts someone. The 'don't get ahead of yourself' father voice may still be relevant (the prohibition against advancement) but its mechanism now looks more like: advancement = responsibility for others = conflict = intolerable. Need to explore what happens in her body/self in that specific feared moment.\n\nPatterns active: conflict_avoidance (newly specified), father_voice / dont_get_ahead_of_yourself (still live, mechanism TBC).\n\nWorked: two sessions of assessment, user has named and corrected formulation — this is good alliance. Applied for role since last session — new behaviour.\n\nQueued: the phenomenology of the feared conflict moment (what happens in her when she imagines saying 'your work isn't good enough'); whether there is a foreign-material component to conflict aversion (family-of-origin rules around expressing criticism or disappointing others); the father voice and its relationship to the new formulation.\n\nNotes for next: follow the specific feared moment — body first, then origin. Do not open the father material unless she does. Watch for whether this connects to a self-abandonment pattern (unable to prioritise her own position / standard over others' comfort)."
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2114,
+    "totalMs": 18847
+   },
+   "usage": {
+    "inputTokens": 12276,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 721
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "45312290",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 4 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 5,
+   "user": "So can we work on that instead? The conflict thing, not the impostor thing.",
+   "visibleReply": "Yes. That's where we go.\n\nThe conflict thing is the real gate — and \"telling someone their work isn't good enough\" is a very precise version of it. That's the scene that's been running underneath.\n\nStay with it for a moment. When you picture yourself in that conversation — having to say those words to someone — what happens inside you?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_2.affect_labelling_and_somatic_mapping\"], \"clinicalRead\": \"User has made a significant and credible correction to the working formulation — the dread is not impostor fear but specifically conflict-aversion, narrowed to the act of delivering negative feedback. The previous primary formulation (functional avoidance + 'don't get ahead of yourself' prohibition) needs revision: the father voice / advancement prohibition may still be relevant background, but the operative mechanism is now clearer as conflict-aversion / the specific inability to picture delivering unwelcome truths to others. Holding this as the new primary candidate, not yet confirmed — need to hear what happens inside when they picture the scene. Invitation to stay in the felt experience of that moment rather than describing it analytically.\", \"taskContract\": {\"presentingRequest\": \"understand and stop sabotaging job interviews\", \"currentFocus\": \"conflict-aversion — specifically the inability to tell someone their work isn't good enough\"}, \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. User has now made a meaningful correction to the working formulation: the dread is not primarily impostor fear ('they'll find out') but conflict-aversion — specifically, the inability to picture telling a direct report their work isn't good enough. The father voice / advancement prohibition ('don't get ahead of yourself') remains in the picture as possible background but is no longer the operative mechanism. New primary working formulation (provisional, not yet confirmed): the sabotage is avoidance of a future that carries a specific dreaded act — delivering unwelcome truth to someone. The scene of telling someone their work isn't good enough is the felt gate. Need to understand: what happens inside when they picture that moment; where this comes from (family context around conflict, criticism, being told hard things); whether the conflict aversion is about harm to self or harm to the other. Queued: the father voice / advancement material — may resurface but do not open it; follow user. Notes for next session: the imagined lateness on Thursday is worth watching — if they arrive on time, that's data. The current focus is the right one.\", \"patternsTouched\": [{\"category\": \"conflict_aversion\", \"description\": \"can't picture telling someone their work isn't good enough — that's the specific dread\", \"context\": {}}]}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "patternsTouched": [
+     {
+      "category": "conflict_aversion",
+      "description": "can't picture telling someone their work isn't good enough — that's the specific dread",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_2.affect_labelling_and_somatic_mapping"
+    ],
+    "clinicalRead": "User has made a significant and credible correction to the working formulation — the dread is not impostor fear but specifically conflict-aversion, narrowed to the act of delivering negative feedback. The previous primary formulation (functional avoidance + 'don't get ahead of yourself' prohibition) needs revision: the father voice / advancement prohibition may still be relevant background, but the operative mechanism is now clearer as conflict-aversion / the specific inability to picture delivering unwelcome truths to others. Holding this as the new primary candidate, not yet confirmed — need to hear what happens inside when they picture the scene. Invitation to stay in the felt experience of that moment rather than describing it analytically.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. User has now made a meaningful correction to the working formulation: the dread is not primarily impostor fear ('they'll find out') but conflict-aversion — specifically, the inability to picture telling a direct report their work isn't good enough. The father voice / advancement prohibition ('don't get ahead of yourself') remains in the picture as possible background but is no longer the operative mechanism. New primary working formulation (provisional, not yet confirmed): the sabotage is avoidance of a future that carries a specific dreaded act — delivering unwelcome truth to someone. The scene of telling someone their work isn't good enough is the felt gate. Need to understand: what happens inside when they picture that moment; where this comes from (family context around conflict, criticism, being told hard things); whether the conflict aversion is about harm to self or harm to the other. Queued: the father voice / advancement material — may resurface but do not open it; follow user. Notes for next session: the imagined lateness on Thursday is worth watching — if they arrive on time, that's data. The current focus is the right one.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "currentFocus": "conflict-aversion — specifically the inability to tell someone their work isn't good enough"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2641,
+    "totalMs": 17656
+   },
+   "usage": {
+    "inputTokens": 12363,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 656
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "6d3316b3",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 5 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 6,
+   "user": "My dad's still off the table by the way. Not today.",
+   "visibleReply": "Heard. Dad stays off the table today.\n\nSo — when you picture that moment, having to tell someone their work isn't good enough — what happens inside you?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has drawn a clear boundary around the father material — honour it without comment. Formulation has shifted significantly this session: the sabotage is now understood as avoidance of conflict (specifically delivering critical feedback) rather than impostor exposure. This is a user-led correction that materially revises the working picture. The father voice / 'don't get ahead of yourself' remains provisionally relevant but is now a quieter thread — the conflict-avoidance pattern is the live gate. Holding the question about what happens internally in that scene; the cognitive channel user needs to be moved toward felt experience.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\"], \"readinessTouched\": [\"orientation_present\"], \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. Interview Thursday — applied without sabotage so far, which is new. User corrected the working formulation this session: the dread is NOT impostor fear ('they'll find out') but conflict avoidance — specifically the moment of telling someone their work isn't good enough. This is the real gate beneath the sabotage pattern. Father material explicitly off the table today (and previously). 'Don't get ahead of yourself' / father voice remains a provisional background thread — not to be pursued unless user opens it. Primary working formulation (revised): functional avoidance driven by anticipated conflict, specifically delivering critical feedback as a manager. Conflict may carry deeper material (origin unknown — not yet gathered) but do not speculate. Next: help user locate what actually happens inside them in the imagined conflict scene — move from cognitive description toward felt experience. Watch for whether conflict avoidance has a named origin the user will offer in their own time.\", \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"can't picture telling someone their work isn't good enough — that's the real dread\", \"context\": {}}], \"taskContract\": {\"currentFocus\": \"conflict avoidance — specifically the moment of delivering critical feedback as a manager\"}}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "readinessTouched": [
+     "orientation_present"
+    ],
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "can't picture telling someone their work isn't good enough — that's the real dread",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect"
+    ],
+    "clinicalRead": "User has drawn a clear boundary around the father material — honour it without comment. Formulation has shifted significantly this session: the sabotage is now understood as avoidance of conflict (specifically delivering critical feedback) rather than impostor exposure. This is a user-led correction that materially revises the working picture. The father voice / 'don't get ahead of yourself' remains provisionally relevant but is now a quieter thread — the conflict-avoidance pattern is the live gate. Holding the question about what happens internally in that scene; the cognitive channel user needs to be moved toward felt experience.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. Interview Thursday — applied without sabotage so far, which is new. User corrected the working formulation this session: the dread is NOT impostor fear ('they'll find out') but conflict avoidance — specifically the moment of telling someone their work isn't good enough. This is the real gate beneath the sabotage pattern. Father material explicitly off the table today (and previously). 'Don't get ahead of yourself' / father voice remains a provisional background thread — not to be pursued unless user opens it. Primary working formulation (revised): functional avoidance driven by anticipated conflict, specifically delivering critical feedback as a manager. Conflict may carry deeper material (origin unknown — not yet gathered) but do not speculate. Next: help user locate what actually happens inside them in the imagined conflict scene — move from cognitive description toward felt experience. Watch for whether conflict avoidance has a named origin the user will offer in their own time.",
+    "taskContract": {
+     "currentFocus": "conflict avoidance — specifically the moment of delivering critical feedback as a manager"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 2191,
+    "totalMs": 14617
+   },
+   "usage": {
+    "inputTokens": 12458,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 533
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "9fb876d5",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 6 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 7,
+   "user": "What would help is something practical for Thursday.",
+   "visibleReply": "Practical for Thursday. Yes.\n\nLet's build something you can actually use. Before I do, I need one piece of information — because the right thing to give you depends on it.\n\nWhen you imagine Thursday morning, getting ready to leave — is the main risk the lateness (running late, losing track of time, something pulling you back), or is it something else?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"channel\": \"cognitive\", \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_1.assessment_gather\"], \"clinicalRead\": \"User has shifted from exploratory to practical — explicitly requesting something for Thursday. This is a legitimate task-contract update; the presenting request was always 'stop sabotaging interviews', so a practical pre-Thursday tool is squarely on-contract. The formulation has just been significantly revised: not impostor fear but conflict-avoidance driving the sabotage. The conflict theme (telling someone their work isn't good enough) is still unexplored somatically — but the user's request is practical, not exploratory, and that must be honoured. One clarifying question before generating a practice: is the Thursday risk the lateness pattern specifically, or is it something else (e.g. cancelling, avoidance the morning of)? This will determine what to build.\", \"taskContract\": {\"currentFocus\": \"practical preparation for Thursday interview\", \"presentingRequest\": \"understand and stop sabotaging job interviews\", \"completionCriterion\": \"apply for the next role without self-sabotage\"}, \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"telling someone their work isn't good enough — that's the thing I can't picture doing\", \"context\": {\"trigger\": \"imagining managing people in step-up role\"}}], \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. User has now corrected the working formulation materially — the dread is NOT impostor fear ('they'll find out') but conflict-avoidance: specifically, the prospect of having to tell someone their work isn't good enough. This is the real gate under the sabotage. Dad/father voice still noted but explicitly off the table today and possibly not the primary driver. Working formulation (revised, primary): functional avoidance of a step-up role driven by anticipated conflict-management demands — the sabotage keeps the user out of a future where they will have to have hard conversations with reports. Impostor pattern remains a secondary possibility but user has now actively corrected it. Resources: user applied for a step-up role since last session — this is a meaningful behavioural shift and the first time they haven't pre-empted the process. Thursday interview is live. Queued: somatic/emotional exploration of the conflict-avoidance pattern (user redirected to practical today — this is ready for next session). Notes for next session: the conflict-avoidance pattern needs its own exploration — what happens in the body when they imagine that scene; likely connects to the father material the user is holding back. For today: deliver a practical, concrete Thursday preparation tool focused on the lateness/avoidance risk.\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "telling someone their work isn't good enough — that's the thing I can't picture doing",
+      "context": {
+       "trigger": "imagining managing people in step-up role"
+      }
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_1.assessment_gather"
+    ],
+    "clinicalRead": "User has shifted from exploratory to practical — explicitly requesting something for Thursday. This is a legitimate task-contract update; the presenting request was always 'stop sabotaging interviews', so a practical pre-Thursday tool is squarely on-contract. The formulation has just been significantly revised: not impostor fear but conflict-avoidance driving the sabotage. The conflict theme (telling someone their work isn't good enough) is still unexplored somatically — but the user's request is practical, not exploratory, and that must be honoured. One clarifying question before generating a practice: is the Thursday risk the lateness pattern specifically, or is it something else (e.g. cancelling, avoidance the morning of)? This will determine what to build.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. User has now corrected the working formulation materially — the dread is NOT impostor fear ('they'll find out') but conflict-avoidance: specifically, the prospect of having to tell someone their work isn't good enough. This is the real gate under the sabotage. Dad/father voice still noted but explicitly off the table today and possibly not the primary driver. Working formulation (revised, primary): functional avoidance of a step-up role driven by anticipated conflict-management demands — the sabotage keeps the user out of a future where they will have to have hard conversations with reports. Impostor pattern remains a secondary possibility but user has now actively corrected it. Resources: user applied for a step-up role since last session — this is a meaningful behavioural shift and the first time they haven't pre-empted the process. Thursday interview is live. Queued: somatic/emotional exploration of the conflict-avoidance pattern (user redirected to practical today — this is ready for next session). Notes for next session: the conflict-avoidance pattern needs its own exploration — what happens in the body when they imagine that scene; likely connects to the father material the user is holding back. For today: deliver a practical, concrete Thursday preparation tool focused on the lateness/avoidance risk.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "currentFocus": "practical preparation for Thursday interview",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 11527,
+    "totalMs": 28764
+   },
+   "usage": {
+    "inputTokens": 12508,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 733
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "a55b67c5",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 7 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 8,
+   "user": "That's useful. And the goal is still the same as we set it — apply without sabotaging. Thursday is the test.",
+   "visibleReply": "So the lateness image is the thing to address — that's where the sabotage lives for Thursday.\n\nHere's something concrete. The night before, set two alarms with a gap between them — not one, two. And give yourself a specific time you'll be in the car or out the door, not just \"leave by roughly X.\" Precision is protection here; vagueness is where the drift happens.\n\nOn Thursday morning itself: when you notice the lateness thought arriving — because it probably will — don't argue with it or try to push it away. Just note it: \"there's the thought.\" Then do one small physical thing. Feet on the floor, stand up, pick up your keys. Something that moves you forward rather than engaging with the thought.\n\nThat's the practical layer.\n\nThere's also something worth naming before Thursday: the interview is about the current role, not yet about managing people. You don't have to solve the conflict question to walk in on Thursday. Those are two separate things — and we can work on the conflict piece properly after Thursday, when there's more ground under it.\n\nDoes that feel usable, or is there a specific part of Thursday that still feels like the weak point?\n\n",
+   "rawReportJson": "{\"intensity\": 4, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User has redirected to practical support for Thursday, which is the right clinical response to honour. The formulation has been meaningfully revised this session — not impostor fear but conflict avoidance, specifically the moment of telling someone their work isn't good enough. Dad kept off table, noted. The conflict material is queued for post-Thursday work. Current task contract is being addressed: practical support for Thursday without sabotage. Keeping this session on the practical layer as requested is appropriate; the deeper conflict work waits.\", \"moveJustPerformed\": [\"universal.witness_and_reflect\", \"stage_8.cal_run\"], \"taskContract\": {\"presentingRequest\": \"understand and stop sabotaging job interviews\", \"expectedHelp\": \"understanding, then change\", \"currentFocus\": \"practical preparation for Thursday interview — managing lateness risk\", \"completionCriterion\": \"apply for the next role without self-sabotage\"}, \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"can't picture telling someone their work isn't good enough — that's the real dread, not impostor fear\", \"context\": {}}], \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. User applied for a step-up role; interview Thursday. IMPORTANT FORMULATION REVISION this session: the sabotage is not driven by impostor fear ('they'll find out') — user has corrected this. Primary pattern is conflict avoidance, specifically the anticipated moment of having to tell a direct report their work isn't good enough. The lateness is the somatic/behavioural expression of avoidance of that future. Dad off the table today — father voice material still in background but user has set a clear limit, to be respected. Worked so far: lateness pattern named, conflict avoidance identified as the real gate, practical Thursday prep given. Queued: the conflict avoidance work properly — what happens inside when they picture that moment; where it comes from; whether it connects to the father prohibition; foreign material possibility around conflict = danger. Notes for next session: check in on Thursday outcome first. Then open the conflict piece: 'telling someone their work isn't good enough' — what happens inside, body location, origin. Watch for whether the father voice is connected to conflict prohibition ('don't get ahead of yourself' may include 'don't be the one who judges others').\"}",
+   "parsedReport": {
+    "intensity": 4,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "can't picture telling someone their work isn't good enough — that's the real dread, not impostor fear",
+      "context": {}
+     }
+    ],
+    "moveJustPerformed": [
+     "universal.witness_and_reflect",
+     "stage_8.cal_run"
+    ],
+    "clinicalRead": "User has redirected to practical support for Thursday, which is the right clinical response to honour. The formulation has been meaningfully revised this session — not impostor fear but conflict avoidance, specifically the moment of telling someone their work isn't good enough. Dad kept off table, noted. The conflict material is queued for post-Thursday work. Current task contract is being addressed: practical support for Thursday without sabotage. Keeping this session on the practical layer as requested is appropriate; the deeper conflict work waits.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. User applied for a step-up role; interview Thursday. IMPORTANT FORMULATION REVISION this session: the sabotage is not driven by impostor fear ('they'll find out') — user has corrected this. Primary pattern is conflict avoidance, specifically the anticipated moment of having to tell a direct report their work isn't good enough. The lateness is the somatic/behavioural expression of avoidance of that future. Dad off the table today — father voice material still in background but user has set a clear limit, to be respected. Worked so far: lateness pattern named, conflict avoidance identified as the real gate, practical Thursday prep given. Queued: the conflict avoidance work properly — what happens inside when they picture that moment; where it comes from; whether it connects to the father prohibition; foreign material possibility around conflict = danger. Notes for next session: check in on Thursday outcome first. Then open the conflict piece: 'telling someone their work isn't good enough' — what happens inside, body location, origin. Watch for whether the father voice is connected to conflict prohibition ('don't get ahead of yourself' may include 'don't be the one who judges others').",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "currentFocus": "practical preparation for Thursday interview — managing lateness risk",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 1912,
+    "totalMs": 22366
+   },
+   "usage": {
+    "inputTokens": 12619,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 838
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "a9f574d8",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 8 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  },
+  {
+   "n": 9,
+   "user": "I'm fine, calm actually. Maybe a 3. Thanks — I'll tell you how it goes.",
+   "visibleReply": "Good luck Thursday. Come back and tell me how it went.\n\n",
+   "rawReportJson": "{\"intensity\": 3, \"safetyFlag\": \"none\", \"recommendedAction\": \"stay\", \"channel\": \"cognitive\", \"clinicalRead\": \"User closing the session calmly and practically. Self-reported 3/10 — calm. No destabilisation this session; stability check score is user-volunteered (3) rather than formally elicited, but this reflects settled state. The formulation has been meaningfully revised this session: impostor fear deprioritised; conflict avoidance (specifically having to deliver negative feedback) is now the primary maintaining pattern for the sabotage. Dad remains off the table by user's explicit request. Thursday is the live test of the presenting goal. No clinical work left to do this turn — clean close.\", \"moveJustPerformed\": [\"universal.session_close\"], \"stabilityCheck\": {\"score\": 3, \"contextNote\": \"user_volunteered_at_close — note: score of 3 here reflects calm, not distress; user's framing was 'fine, calm actually' — this is an inverted self-report where low number = settled; no destabilisation occurred this session requiring a formal stability check\"}, \"continuityNote\": \"Presenting: three accidental late arrivals at step-up interviews. Goal: apply without sabotaging — Thursday is the live test.\\n\\nWorking formulation (revised this session, primary): The sabotage pattern is driven by conflict avoidance, not impostor fear. The specific trigger is the anticipated future demand of managing people — particularly the moment of having to tell someone their work isn't good enough. The user corrected the impostor reading explicitly and it should be deprioritised. The 'don't get ahead of yourself' father voice remains a possible contributor to the avoidance but is off the table by user's request today — hold lightly for later.\\n\\nResources: calm pre-interview state today; self-aware about the pattern; able to name the precise feared scenario (telling someone their work isn't good enough).\\n\\nWorked this session: reformulation from impostor fear to conflict avoidance; practical pre-Thursday grounding (two alarms, precise departure time, 'there's the thought' move); separation of Thursday task from the conflict question.\\n\\nQueued: the conflict work proper — what happens inside when they picture delivering difficult feedback; where that comes from; whether it connects to the father voice or elsewhere. Hold for after Thursday.\\n\\nNotes for next session: open with Thursday — how did it go, did the lateness thought arrive, what happened. If the interview went well, move into the conflict piece. If sabotage occurred, return to the lateness image and what pulled them back. Either way, the conflict-avoidance thread is the main work ahead.\", \"taskContract\": {\"presentingRequest\": \"understand and stop sabotaging job interviews\", \"expectedHelp\": \"understanding, then change\", \"currentFocus\": \"practical preparation for Thursday; conflict avoidance identified as the real underlying pattern\", \"completionCriterion\": \"apply for the next role without self-sabotage\"}, \"patternsTouched\": [{\"category\": \"conflict_avoidance\", \"description\": \"can't picture telling someone their work isn't good enough — that's the real dread\", \"context\": {\"trigger\": \"managing people\", \"specificFear\": \"delivering negative feedback\"}}]}",
+   "parsedReport": {
+    "intensity": 3,
+    "safetyFlag": "none",
+    "recommendedAction": "stay",
+    "channel": "cognitive",
+    "patternsTouched": [
+     {
+      "category": "conflict_avoidance",
+      "description": "can't picture telling someone their work isn't good enough — that's the real dread",
+      "context": {
+       "trigger": "managing people",
+       "specificFear": "delivering negative feedback"
+      }
+     }
+    ],
+    "stabilityCheck": {
+     "score": 3,
+     "contextNote": "user_volunteered_at_close — note: score of 3 here reflects calm, not distress; u"
+    },
+    "moveJustPerformed": [
+     "universal.session_close"
+    ],
+    "clinicalRead": "User closing the session calmly and practically. Self-reported 3/10 — calm. No destabilisation this session; stability check score is user-volunteered (3) rather than formally elicited, but this reflects settled state. The formulation has been meaningfully revised this session: impostor fear deprioritised; conflict avoidance (specifically having to deliver negative feedback) is now the primary maintaining pattern for the sabotage. Dad remains off the table by user's explicit request. Thursday is the live test of the presenting goal. No clinical work left to do this turn — clean close.",
+    "continuityNote": "Presenting: three accidental late arrivals at step-up interviews. Goal: apply without sabotaging — Thursday is the live test.\n\nWorking formulation (revised this session, primary): The sabotage pattern is driven by conflict avoidance, not impostor fear. The specific trigger is the anticipated future demand of managing people — particularly the moment of having to tell someone their work isn't good enough. The user corrected the impostor reading explicitly and it should be deprioritised. The 'don't get ahead of yourself' father voice remains a possible contributor to the avoidance but is off the table by user's request today — hold lightly for later.\n\nResources: calm pre-interview state today; self-aware about the pattern; able to name the precise feared scenario (telling someone their work isn't good enough).\n\nWorked this session: reformulation from impostor fear to conflict avoidance; practical pre-Thursday grounding (two alarms, precise departure time, 'there's the thought' move); separation of Thursday task from the conflict question.\n\nQueued: the conflict work proper — what happens inside when they picture delivering difficult feedback; where that comes from; whether it connects to the father voice or elsewhere. Hold for after Thursday.\n\nNotes for next session: open with Thursday — how did it go, did the lateness thought arrive, what happened. If the interview went well, move into the conflict piece. If sabotage occurred, return to the lateness image and what pulled them back. Either way, the conflict-avoidance thread is the main work ahead.",
+    "taskContract": {
+     "presentingRequest": "understand and stop sabotaging job interviews",
+     "expectedHelp": "understanding, then change",
+     "currentFocus": "practical preparation for Thursday; conflict avoidance identified as the real underlying pattern",
+     "completionCriterion": "apply for the next role without self-sabotage"
+    }
+   },
+   "parseFellBackToDefault": false,
+   "stopReason": "end_turn",
+   "thinkingChars": 0,
+   "timings": {
+    "requestStartMs": 0,
+    "firstThinkingMs": null,
+    "firstVisibleMs": 3556,
+    "totalMs": 21503
+   },
+   "usage": {
+    "inputTokens": 12904,
+    "cacheCreationTokens": 0,
+    "cacheReadTokens": 81562,
+    "outputTokens": 780
+   },
+   "blockSha": {
+    "b1": "cd027398",
+    "b2": "d8b5d282",
+    "b3": "d1fd1eb1",
+    "b4": "543c6ece"
+   },
+   "block3Text": "## Current user state (injected by code; for your reference)\n\n**Your primary signal is the user's current message and the live session state below. The historical notes further down are context to hold lightly — verify against today's evidence before reusing.**\n\n**Session task contract (the user's ask — in their words):**\n- Presenting request: \"understand and stop sabotaging job interviews\"\n- Expected help: \"understanding, then change\"\n- What \"addressed\" looks like: \"apply for the next role without self-sabotage\"\n_Check the route against this contract before selecting an intervention, and check it again before any close. Emerging material may become the current focus — it does not replace the presenting request unless the user changes direction. Update via `taskContract` in the state report when the user's words revise it._\n\n- Router's stage label: 1/8 (bookkeeping — reach for whichever stage's methodology fits the actual work this turn; all 8 playbooks are in your context above)\n- Current depth: surface\n- Processing channel detected: cognitive\n  Prefer narrative-family practices (Soft Why, voice mapping, clean identity statement) — and invite body location so the work does not stay in the head.\n- Last intensity reading: 4/10\n\n- Sessions so far: 2 · distinct days engaged: 2 · this session: message 9 (the user message you're about to read)\n- Last user turn: just now.\n- This is a CONTINUATION of the current session (last turn was under an hour ago). Do NOT run a session-open ritual, do NOT re-greet, do NOT assume the user is returning after a break. Pick up from where the conversation left off, even if the user's message is short.\n\n---\n\n**Historical context — not fact.** Notes below are captures from prior sessions. Use only if they clearly fit what the user is showing today. Do not reopen, repeat or deepen an old capture merely because it appears here — first verify against the user's live signal.\n\n**Unresolved patterns the user has surfaced (working notes — not diagnosis; use to recognise, not to name unless they name it):**\n- `fear_of_visibility` — \"cold dread when imagining being seen as someone who leads in a new context\"\n- `fear_of_visibility` — \"cold dread — not excitement — when imagining getting the bigger job; dropping feeling in stomach\"\n- `impostor_fear` — \"they'll find out — that I'm less than advertised\"\n- `father_voice` — \"don't get ahead of yourself — repeated by dad to all of us\"\n- `dont_get_ahead_of_yourself` — \"don't get ahead of yourself — a repeated message, now lives as dropping feeling in stomach, drives late arrivals at step-up interviews\"\n\n**Prior session notes (may be incomplete, outdated, or mistaken — use as context, not truth):**\n> Presenting: three 'accidental' late arrivals at step-up job interviews this year. User knows it isn't chance. Working formulation (primary, provisional — not yet confirmed): functional avoidance driven by anticipated exposure ('they'll find out') combined with an internalised prohibition against advancement ('don't get ahead of yourself' — father's repeated phrase). The sabotage pattern is consist\n>\n> [...older material in the middle omitted — see Journey Inspector for the full note]\n>\n> et — first session. Notes for next session: begin with the noticing task; follow the sentence ('don't get ahead of yourself') as the entry point into the dread pattern; do not open the father unless the user does; watch for whether the foreign-material move is appropriate once more picture is built."
+  }
+ ]
+}
