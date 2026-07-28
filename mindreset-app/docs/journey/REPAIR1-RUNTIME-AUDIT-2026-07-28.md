@@ -203,3 +203,39 @@ Yes — both appear in the successful build's route manifest:
 `ƒ` = server-rendered on demand, which is correct for both.
 
 ---
+
+## B — Targeted live validation
+
+### What the harness does and does not exercise (stated plainly)
+
+The Golden Harness **does not execute `app/api/journey/turn/route.ts`**. It never has. What it does run,
+per turn, is the same code the route runs:
+
+| Runtime stage | Exercised live? |
+|---|---|
+| Prompt assembly (`assembleSystemPromptBlocks`) | **yes** — real canon + real stage specs + real per-turn state block |
+| Anthropic call | **yes** — `claude-sonnet-4-6`, production `max_tokens`, streaming |
+| Streaming reply processor (private-tag stripping) | **yes** |
+| `splitReplyAndReport` + `parseStateReport` | **yes** — including the new trusted `observedAt` stamp |
+| **Closure guard** (`applyClosureGate` / `claimsClosure`) | **yes** — wired into the harness for this validation, with a real server timestamp and a prior-turn history accumulated from the run |
+| Prisma persistence + audit row + router | **no** — the harness reports what *would* be persisted |
+| Clerk auth, entitlement checks, red-flag verifier | **no** |
+
+So: parser, guard semantics, guard inputs and guard outputs are genuinely live. The DB write and the
+route's own try/catch wiring are verified by the deterministic tests (A2 block) and by the production
+build, not by these runs. That split is deliberate and is not papered over anywhere in this report.
+
+### A mid-validation finding that changed the prompt
+
+The first batch of live runs (S2 ×2, S6 ×2, pre-fix) showed **`distressIntensity` emitted on 0 of 8
+turns** — including T1 of both S6 reps, where the user says *"8 or 9 out of 10"*, and T1 of both S2 reps,
+where the user says *"like an 8 out of 10"*. `presentingRequestStatus`: also 0 of 8.
+
+Cause: Repair 1 added both fields to the schema, the parser and the stabilising-before-closing **prose**
+(`journey-master.md:345`), but never to the `<output_format>` **field catalogue** at `:691` — the list the
+model actually emits from. The `stabilityCheck` entry there still described only `score` + `contextNote`,
+with no mention of the `scale` marker that now decides closure validity.
+
+This was fixed (commit `5989043`) by completing the catalogue entry — no behavioural rules changed. The
+first batch was discarded as a pre-fix baseline and **all fixtures were re-run against the final prompt**;
+everything below is from that final batch.
