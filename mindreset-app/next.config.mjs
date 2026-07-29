@@ -31,6 +31,23 @@ const nextConfig = {
       '/api/themes/[moduleId]/turn': ['./docs/journey/**/*.md'],
     },
   },
+  // Canonical host consolidation. Google Search Console (2026-07-28) showed
+  // both `mindreset.ai` and `www.mindreset.ai` indexed as separate URLs,
+  // splitting ranking authority: non-www at position 18.5, www at 50.47.
+  // A 301 from www → non-www consolidates the signal so Google folds the
+  // two entries into a single canonical over its next few crawls.
+  // Placed here in code (not just Vercel dashboard) so the redirect can't
+  // silently regress if the dashboard primary-domain setting changes.
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.mindreset.ai' }],
+        destination: 'https://mindreset.ai/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 // Compose: next-intl wraps the base config, Sentry wraps that.
