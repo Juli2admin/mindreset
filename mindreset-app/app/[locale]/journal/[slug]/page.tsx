@@ -44,10 +44,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const article = getArticleBySlug(params.slug);
   if (!article) return {};
+  // Article body prose is English-only (lib/journal/articles.ts). Only
+  // index on native-prose locales; other locales stay noindex to avoid
+  // indexing English content on non-English URLs.
+  const isEnglishProseLocale = params.locale === 'en' || params.locale === 'ru';
   return {
     title: { absolute: article.metaTitle },
     description: article.metaDescription,
     alternates: pageAlternates(`/journal/${article.slug}`, params.locale),
+    robots: { index: isEnglishProseLocale, follow: true },
     authors: [{ name: article.author.name }],
     openGraph: {
       type: 'article',

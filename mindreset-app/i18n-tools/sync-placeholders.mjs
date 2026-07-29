@@ -42,9 +42,11 @@ const ALL_LOCALES = ["en", "ru", "fr", "de", "es", "it", "pl", "pt"];
 // Source locale — every other locale is keyed against this one.
 const SOURCE_LOCALE = "en";
 
-// Locales with hand-curated native-quality content — never overwritten.
-// Mirrors components/LanguagePicker.tsx `NATIVE_CONTENT_LOCALES`.
-const NATIVE_LOCALES = new Set(["en", "ru"]);
+// Locales with hand-curated or reviewed translations — never overwritten
+// by this script. Mirrors `NATIVE_CONTENT_LOCALES` in
+// `lib/seo/alternates.ts` and `components/LanguagePicker.tsx` (2026-07-29:
+// fr/de/es/it/pl/pt promoted alongside en/ru).
+const NATIVE_LOCALES = new Set(["en", "ru", "fr", "de", "es", "it", "pl", "pt"]);
 
 const PLACEHOLDER_LOCALES = ALL_LOCALES.filter(
   (l) => l !== SOURCE_LOCALE && !NATIVE_LOCALES.has(l),

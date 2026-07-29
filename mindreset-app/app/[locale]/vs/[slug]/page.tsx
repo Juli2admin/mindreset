@@ -50,10 +50,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const comparison = getComparisonBySlug(params.slug);
   if (!comparison) return {};
+  // Comparison body prose is English-only (lib/competitors/index.ts). Only
+  // index on native-prose locales; other locales stay noindex to avoid
+  // indexing English content on non-English URLs.
+  const isEnglishProseLocale = params.locale === 'en' || params.locale === 'ru';
   return {
     title: { absolute: comparison.metaTitle },
     description: comparison.metaDescription,
     alternates: pageAlternates(`/vs/${comparison.slug}`, params.locale),
+    robots: { index: isEnglishProseLocale, follow: true },
     openGraph: {
       type: 'article',
       title: `MindReset.ai vs ${comparison.name}`,

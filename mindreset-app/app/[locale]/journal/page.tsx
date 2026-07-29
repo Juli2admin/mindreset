@@ -23,11 +23,16 @@ export async function generateMetadata({
 }: {
   params: { locale: string };
 }): Promise<Metadata> {
+  // Article bodies are English-only (lib/journal/articles.ts). Only index
+  // on native-prose locales (en, ru); other locales stay noindex to avoid
+  // indexing English content on non-English URLs.
+  const isEnglishProseLocale = params.locale === 'en' || params.locale === 'ru';
   return {
     title: { absolute: 'Journal — notes on the slower work · MindReset.ai' },
     description:
       'Long-form notes on the slower work of midlife — patterns, practices, and small honest moments. From Julia Loya, founder of MindReset.',
     alternates: pageAlternates('/journal', params.locale),
+    robots: { index: isEnglishProseLocale, follow: true },
   };
 }
 
