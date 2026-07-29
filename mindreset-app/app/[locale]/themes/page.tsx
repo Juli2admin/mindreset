@@ -11,6 +11,7 @@ import { THEME_MODULES } from '@/lib/themes/modules';
 import { checkThemeModuleAccess } from '@/lib/themes/access';
 import TopBar from '@/components/TopBar';
 import Footer from '@/components/Footer';
+import { pageAlternates } from '@/lib/seo/alternates';
 import ThemesCatalogueClient from './ThemesCatalogueClient';
 
 export const dynamic = 'force-dynamic';
@@ -24,10 +25,16 @@ export async function generateMetadata({
     locale: params.locale,
     namespace: 'Themes',
   });
+  // Themes namespace is 7.7% translated on fr/de/es/it/pl/pt (2026-07-29).
+  // Index only on the natively-authored locales; other locales stay noindex
+  // until the namespace is filled. Canonical is self-referencing so each
+  // indexable variant declares its own URL.
+  const isNativelyAuthored = params.locale === 'en' || params.locale === 'ru';
   return {
     title: t('metaTitle'),
     description: t('metaDescription'),
-    robots: { index: true, follow: true },
+    alternates: pageAlternates('/themes', params.locale),
+    robots: { index: isNativelyAuthored, follow: true },
   };
 }
 

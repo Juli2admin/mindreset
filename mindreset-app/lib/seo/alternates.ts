@@ -26,20 +26,32 @@ import { routing } from '@/i18n/routing';
 // real launch domain, not the preview URL).
 export const SITE_URL = 'https://mindreset.ai';
 
-// Locales with hand-curated native content. Every other locale in
-// routing.ts serves byte-identical English (via i18n-tools/sync-
-// placeholders.mjs) and is treated as a placeholder locale — hidden
-// from search engines and excluded from hreflang / sitemap until real
-// translations ship.
+// Locales with hand-curated or reviewed translations. Included in
+// hreflang, sitemap, and eligible for indexing. Locales NOT in this set
+// are treated as placeholders and noindex'd at the layout level.
 //
-// Duplicated with intent in two other places (search these before
-// editing):
-//   - components/LanguagePicker.tsx     — controls which languages
-//     appear in the picker UI
-//   - i18n-tools/sync-placeholders.mjs  — controls which bundles get
-//     overwritten by the sync
-// Add a locale to all three the same day you add hand-curated content.
-export const NATIVE_CONTENT_LOCALES: ReadonlySet<string> = new Set(['en', 'ru']);
+// 2026-07-29: fr/de/es/it/pl/pt promoted to native. The 6 machine
+// locales carry translated Landing/About/Faq/Terms/Privacy/Screening/
+// ShareYourStory namespaces at 95-100% coverage (PR #242 + follow-ups).
+// Routes whose prose lives in English-only registries (`/journal/*`,
+// `/vs/*`) or whose content is still under-translated (`/states`,
+// `/themes`) carry their own per-page `robots` override to stay noindex
+// on the 6 machine locales — see those page.tsx files.
+//
+// Mirrored in:
+//   - components/LanguagePicker.tsx     — picker UI native set
+//   - i18n-tools/sync-placeholders.mjs  — bundles never overwritten by sync
+// Update all three the same day.
+export const NATIVE_CONTENT_LOCALES: ReadonlySet<string> = new Set([
+  'en',
+  'ru',
+  'fr',
+  'de',
+  'es',
+  'it',
+  'pl',
+  'pt',
+]);
 
 export function isPlaceholderLocale(locale: string): boolean {
   return routing.locales.includes(locale as (typeof routing.locales)[number])
