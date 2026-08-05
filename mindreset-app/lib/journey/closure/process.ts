@@ -98,6 +98,11 @@ export const CLOSURE_PROCESS_NONE: ClosureProcess = Object.freeze({
  * rounds. Phase 1 enforces this as a FIELD CONSTRAINT only: a transition that
  * would push the counter past the cap is rejected. What the sequence should
  * clinically DO when the cap is reached is not implemented here.
+ *
+ * Owner decision 2026-08-05: a round is consumed only when a stabilisation
+ * intervention is actually DELIVERED — i.e. on entry to
+ * DELIVERING_STABILISATION. Asking for a score never consumes one, so
+ * returning to AWAITING_POST_SCORE leaves the counter untouched.
  */
 export const MAX_STABILISATION_ROUNDS = 2;
 
@@ -157,11 +162,25 @@ export function blocksProgression(state: ClosureProcessState): boolean {
  * NORMAL_CLOSE (protocol §2) completes without a stabilisation sequence, so
  * NONE → CLOSED is a legal edge.
  *
- * OPEN QUESTION for the clinical phase, recorded rather than guessed: the
- * protocol does not say whether escalation ends a sequence as CLOSED or as
- * its own outcome, so HUMAN_SUPPORT is modelled as active with edges to both
- * terminals. A state with no exit would be a defect; these two edges are the
- * minimum that keeps the graph live.
+ * HUMAN_SUPPORT (owner decision 2026-08-05) is an ACTIVE human-handoff state,
+ * not a terminal outcome in itself. It has exactly two exits:
+ *   → CLOSED      only once human support is CONCRETELY CONFIRMED — the user
+ *                 has contacted a trusted person, a trusted person is
+ *                 physically present, contact with an urgent professional
+ *                 service is established, or an emergency handoff has been
+ *                 initiated and confirmed. CLOSED here means the closure
+ *                 completed THROUGH A CONFIRMED HUMAN HANDOFF. It does not
+ *                 mean the AI independently stabilised the user.
+ *   → INCOMPLETE  the user leaves, stops responding, or no handoff is
+ *                 confirmed.
+ * A distinct HUMAN_HANDOFF outcome may be added later alongside clinical
+ * outcome fields; it is deliberately NOT a runtime state in Phase 1.
+ *
+ * AWAITING_CLOSE_CONFIRMATION → AWAITING_POST_SCORE (owner decision
+ * 2026-08-05) lets a user who is no longer ready to close say so. It re-asks
+ * for a current score and therefore does NOT consume a stabilisation round —
+ * only delivering an intervention does. The decision logic that acts on the
+ * fresh score belongs to Phase 2 and is not implemented here.
  */
 export const ALLOWED_TRANSITIONS: Readonly<
   Record<ClosureProcessState, readonly ClosureProcessState[]>
@@ -175,7 +194,12 @@ export const ALLOWED_TRANSITIONS: Readonly<
     'HUMAN_SUPPORT',
     'INCOMPLETE',
   ],
-  AWAITING_CLOSE_CONFIRMATION: ['CLOSED', 'HUMAN_SUPPORT', 'INCOMPLETE'],
+  AWAITING_CLOSE_CONFIRMATION: [
+    'AWAITING_POST_SCORE',
+    'CLOSED',
+    'HUMAN_SUPPORT',
+    'INCOMPLETE',
+  ],
   HUMAN_SUPPORT: ['CLOSED', 'INCOMPLETE'],
   CLOSED: ['NONE'],
   INCOMPLETE: ['NONE', 'AWAITING_INITIAL_SCORE'],
