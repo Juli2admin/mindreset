@@ -21,6 +21,7 @@ import { checkStage4Gate } from './stage-gates';
 import type { JourneyState, JourneyPart } from '../state/types';
 import type { AuditTurn } from './history';
 import type { StateReport } from '../stateReport/schema';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 function makePart(overrides: Partial<JourneyPart> = {}): JourneyPart {
   return {
@@ -76,6 +77,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
     ...overrides,
   };
 }

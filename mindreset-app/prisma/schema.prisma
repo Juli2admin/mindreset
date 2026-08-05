@@ -783,6 +783,21 @@ model RecodeProgress {
   // (non-empty values only) so a sparse or generic model emission never
   // erases a valid contract.
   taskContractEncrypted        String?
+
+  // Activated Closure — Phase 1 (2026-08-05). SERVER-OWNED process state for
+  // the Activated Session Closure Protocol. Written only by code, never by
+  // the model, and never reconstructed from model-generated history. This is
+  // orchestration state; `cycleStatus` on JourneyTurn remains the separate
+  // model-reported clinical state. See lib/journey/closure/process.ts.
+  //
+  // Minimum operational set only — no clinical content, no score fields.
+  closureProcessState          String    @default("NONE") // see CLOSURE_PROCESS_STATES
+  closureRoute                 String?   // NORMAL_CLOSE | ACTIVATED_CLOSE
+  closureEnteredAt             DateTime? // when the current process was entered
+  closureTransitionedAt        DateTime? // last process transition (anchors the 4h interrupted check)
+  closureRoundCount            Int       @default(0) // stabilisation rounds delivered, 0..2
+  closureCompletedAt           DateTime? // historical marker — last sequence completed
+  closureIncompleteAt          DateTime? // historical marker — last sequence abandoned
 }
 
 // =============================================================================

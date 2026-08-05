@@ -5,8 +5,9 @@
 import prisma from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
 import { encrypt, decrypt } from '@/lib/encrypt';
-import type { JourneyChannel, MiiState } from './types';
+import type { JourneyChannel, JourneyDepth, MiiState } from './types';
 import type { StateReport, TaskContract } from '../stateReport/schema';
+import { blocksProgression, normaliseClosureProcess } from '../closure/process';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -90,6 +91,11 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
       anchorTextEncrypted: true,
       mii: true,
       taskContractEncrypted: true,
+      // Activated Closure Phase 1 — read the current depth and the
+      // server-owned process state so a closure in flight can hold depth
+      // where it is. Read from the row, never from the state report.
+      currentDepth: true,
+      closureProcessState: true,
     },
   });
   if (!current) return; // start endpoint must have been called first
@@ -113,7 +119,24 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     data.lastIntensity = u.lastIntensity;
     data.lastIntensityAt = new Date();
   }
-  if (u.recommendedDepth) data.currentDepth = u.recommendedDepth;
+  if (u.recommendedDepth) {
+    if (
+      shouldHoldDepthAdvance(
+        current.closureProcessState,
+        current.currentDepth,
+        u.recommendedDepth,
+      )
+    ) {
+      console.info('[journey/closure-process] depth advance held', {
+        userId,
+        from: current.currentDepth,
+        to: u.recommendedDepth,
+        processState: current.closureProcessState,
+      });
+    } else {
+      data.currentDepth = u.recommendedDepth;
+    }
+  }
   if (u.deepLayerContact) data.lastDeepLayerContactAt = new Date();
   if (u.continuityNote) data.continuityNoteEncrypted = encrypt(u.continuityNote);
 
@@ -136,6 +159,42 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     where: { userId },
     data,
   });
+}
+
+/**
+ * Depth ordering — surface → middle → deep. True only when `to` is strictly
+ * deeper than `from`; an unrecognised stored depth is treated as surface so
+ * the comparison never silently inverts. Covered via shouldHoldDepthAdvance.
+ */
+const DEPTH_RANK: Record<string, number> = { surface: 0, middle: 1, deep: 2 };
+
+function isDepthAdvance(
+  from: JourneyDepth | string | null | undefined,
+  to: JourneyDepth,
+): boolean {
+  return (DEPTH_RANK[to] ?? 0) > (DEPTH_RANK[from ?? 'surface'] ?? 0);
+}
+
+/**
+ * Activated Closure Phase 1 (2026-08-05) — the save layer's half of the
+ * progression block. Pure; exported for tests.
+ *
+ * While a closure sequence is mid-flight the user is being brought to a safe
+ * stop, so a DEEPENING of the recorded depth is held. A move back towards
+ * surface is always allowed — stepping shallower during a closure is the safe
+ * direction, exactly as the router still permits regression.
+ *
+ * Reads the SERVER-OWNED process state off the RecodeProgress row. It does not
+ * consult cycleStatus, cycleCanClose, hasOpenCycle or anything the model
+ * reported: those describe the clinical material, not the process.
+ */
+export function shouldHoldDepthAdvance(
+  processState: string | null | undefined,
+  from: JourneyDepth | string | null | undefined,
+  to: JourneyDepth,
+): boolean {
+  const state = normaliseClosureProcess({ state: processState ?? null }).state;
+  return blocksProgression(state) && isDepthAdvance(from, to);
 }
 
 /** Decrypt an encrypted-JSON column; null on any decrypt/parse failure. */

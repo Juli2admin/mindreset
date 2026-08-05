@@ -23,6 +23,7 @@ import {
 } from './stage-gates';
 import { loadRecentTurns, type AuditTurn } from './history';
 import { checkMoveBasedAdvance } from './move-based-advance';
+import { blocksProgression } from '../closure/process';
 
 // How many recent audit turns each gate inspects. Stage 4 looks at the most;
 // Stage 8 looks back further still (for week-count windowing).
@@ -75,6 +76,21 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
   // stale 'open' from an earlier turn self-heals on the next report.
   const openCycleOnLastTurn = last.report.cycleStatus === 'open';
 
+  // Activated Closure Phase 1 (2026-08-05) — server-owned progression block.
+  // While a closure sequence is mid-flight the user is being brought to a
+  // safe stop; no stage advancement or discharge may be RECORDED until it
+  // reaches NONE, CLOSED or INCOMPLETE.
+  //
+  // Placed alongside the open-cycle guard on purpose, and read the same way:
+  // both sit after regression handling, so stepping back stays available —
+  // regression during a closure is legitimate clinical movement.
+  //
+  // These are two SEPARATE authorities and neither replaces the other.
+  // openCycleOnLastTurn is MODEL-REPORTED clinical state read off the last
+  // turn's cycleStatus. closureProcessBlocks is SERVER-OWNED process state
+  // read off RecodeProgress. cycleStatus is not the process authority.
+  const closureProcessBlocks = blocksProgression(state.closureProcess.state);
+
   // Handle regression first — code honours the AI's "step back" signal even
   // if the user is otherwise stable. The accumulated landscape is preserved.
   if (action === 'regress_to_grounding') {
@@ -92,6 +108,12 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
 
   // Discharge gate at Stage 8
   if (state.currentStage === 8) {
+    if (closureProcessBlocks) {
+      return {
+        kind: 'stay',
+        reasons: [`closure_process_blocks_discharge:${state.closureProcess.state}`],
+      };
+    }
     if (openCycleOnLastTurn) {
       return { kind: 'stay', reasons: ['open_cycle_blocks_discharge'] };
     }
@@ -101,6 +123,14 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
       return { kind: 'discharge', from: 8, gateReasons: [] };
     }
     return { kind: 'stay', reasons: gate.reasons };
+  }
+
+  // Closure process in flight → no advancement this turn, either lane.
+  if (closureProcessBlocks) {
+    return {
+      kind: 'stay',
+      reasons: [`closure_process_blocks_advance:${state.closureProcess.state}`],
+    };
   }
 
   // Open cycle → no advancement this turn, either lane (see guard above).

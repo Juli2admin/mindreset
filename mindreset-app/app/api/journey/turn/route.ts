@@ -38,6 +38,10 @@ import {
   failSafeClosureGate,
   type ClosureGateResult,
 } from '@/lib/journey/closure/guard';
+// Activated Closure Phase 1 — server-owned process orchestration. Separate
+// concern from the guard above: the guard validates a closure CLAIM after the
+// reply has streamed; this owns the closure PROCESS before the model runs.
+import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
 import { loadRecentTurns } from '@/lib/journey/router/history';
 import {
   scanForJourneyRedFlag,
@@ -343,6 +347,30 @@ export async function POST(request: NextRequest) {
     });
     return cannedResponse(crisisResponse);
   }
+
+  // ------------------------------------------------------------------
+  // Activated Closure orchestration hook — Phase 1 (2026-08-05).
+  //
+  // Structural only. Sits AFTER crisis handling (so a red-flag turn never
+  // reaches it) and BEFORE prompt assembly (so later phases can decide what
+  // this turn must be while the reply is still ours to shape).
+  //
+  // Phase 1 reads the server-owned process state, applies the two automatic
+  // non-clinical transitions (4-hour interrupted-process expiry, CLOSED
+  // re-arm) and returns a typed decision. It does not enter Activated
+  // Closure, detect exit intent, alter the prompt, or emit any response —
+  // and on production data every process is NONE, so it is a no-op.
+  //
+  // Existing pre-LLM control pattern it deliberately mirrors: the
+  // frozenForReview branch above (persisted flag → read before the model
+  // call → typed outcome).
+  // ------------------------------------------------------------------
+  const closureOrchestration = await runClosureOrchestration(
+    userId,
+    state.closureProcess,
+  );
+  // The hook's record is authoritative for the rest of this turn.
+  state.closureProcess = closureOrchestration.process;
 
   // Persist the user's message before calling the LLM so we don't lose it on
   // an LLM error.

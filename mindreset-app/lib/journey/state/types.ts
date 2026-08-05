@@ -3,6 +3,7 @@
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
 import type { ModalityRejected, TaskContract } from '../stateReport/schema';
+import type { ClosureProcess } from '../closure/process';
 import type { OnboardingAnswers } from '@/lib/platform/types';
 
 export type JourneyChannel =
@@ -228,4 +229,16 @@ export type JourneyState = {
   // block ONLY until the Journey captures its own task contract; the
   // live contract always supersedes the sign-up answers.
   onboardingAnswers: OnboardingAnswers | null;
+
+  // Activated Closure — Phase 1 (2026-08-05). SERVER-OWNED orchestration
+  // state, read straight off RecodeProgress. Deliberately kept apart from the
+  // derived model-reported signals above:
+  //   * hasOpenCycle / openCycleDescription are DERIVED from the AI's own
+  //     state reports and describe the clinical material.
+  //   * closureProcess is PERSISTED by code and describes where a closure
+  //     sequence has got to. It is never inferred from cycleStatus,
+  //     cycleCanClose, hasOpenCycle, encrypted state reports or any other
+  //     model-generated history.
+  // See lib/journey/closure/process.ts for the transition model.
+  closureProcess: ClosureProcess;
 };

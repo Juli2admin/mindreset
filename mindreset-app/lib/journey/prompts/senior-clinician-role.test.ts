@@ -19,6 +19,7 @@ import { describe, expect, it } from 'vitest';
 import { assembleSystemPromptBlocks } from './assemble';
 import { sharedCore, loadMasterJourneyPrompt } from './load-spec';
 import type { JourneyState } from '../state/types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 function makeState(stage: number): JourneyState {
   return {
@@ -59,6 +60,7 @@ function makeState(stage: number): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
   };
 }
 

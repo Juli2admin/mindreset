@@ -4,6 +4,7 @@
 import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
+import { normaliseClosureProcess } from '../closure/process';
 import type { ModalityRejected, TaskContract } from '../stateReport/schema';
 import { getOnboardingAnswers } from '@/lib/platform/profile';
 import type {
@@ -41,7 +42,11 @@ function parseStoredJson<T>(v: string | null): T | null {
 // PR 5 / Bundle C — session boundary heuristic. Aligns with the
 // 4-hour threshold delayedCheck/signal.ts already uses for the soft
 // check-in trigger; the same threshold marks a new session.
-export const SESSION_BOUNDARY_MS = 4 * 60 * 60 * 1000;
+//
+// Defined in ./session-boundary.ts and re-exported here so every existing
+// import site keeps working; see that file for why it had to move.
+import { SESSION_BOUNDARY_MS } from './session-boundary';
+export { SESSION_BOUNDARY_MS };
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
@@ -328,6 +333,20 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     // Platform Step 3 part B (2026-07-20) — sign-up onboarding answers,
     // rendered only until the Journey's own task contract exists.
     onboardingAnswers: await getOnboardingAnswers(userId),
+    // Activated Closure Phase 1 (2026-08-05) — server-owned process state,
+    // read DIRECTLY from RecodeProgress. Never derived from cycleStatus,
+    // cycleCanClose, hasOpenCycle, encrypted state reports or any other
+    // model-generated history; the sensitivity signals above stay exactly as
+    // they were and remain a separate, model-reported concern.
+    closureProcess: normaliseClosureProcess({
+      state: progress.closureProcessState,
+      route: progress.closureRoute,
+      enteredAt: progress.closureEnteredAt,
+      transitionedAt: progress.closureTransitionedAt,
+      roundCount: progress.closureRoundCount,
+      completedAt: progress.closureCompletedAt,
+      incompleteAt: progress.closureIncompleteAt,
+    }),
   };
 }
 
