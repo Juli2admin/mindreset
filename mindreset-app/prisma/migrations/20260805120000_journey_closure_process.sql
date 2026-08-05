@@ -32,13 +32,14 @@
 --   closureRoundCount   : 0..2
 
 ALTER TABLE "RecodeProgress"
-  ADD COLUMN IF NOT EXISTS "closureProcessState"   text         NOT NULL DEFAULT 'NONE',
-  ADD COLUMN IF NOT EXISTS "closureRoute"          text,
-  ADD COLUMN IF NOT EXISTS "closureEnteredAt"      timestamp(3),
-  ADD COLUMN IF NOT EXISTS "closureTransitionedAt" timestamp(3),
-  ADD COLUMN IF NOT EXISTS "closureRoundCount"     integer      NOT NULL DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS "closureCompletedAt"    timestamp(3),
-  ADD COLUMN IF NOT EXISTS "closureIncompleteAt"   timestamp(3);
+  ADD COLUMN IF NOT EXISTS "closureProcessState"        text         NOT NULL DEFAULT 'NONE',
+  ADD COLUMN IF NOT EXISTS "closureRoute"               text,
+  ADD COLUMN IF NOT EXISTS "closureEnteredAt"           timestamp(3),
+  ADD COLUMN IF NOT EXISTS "closureTransitionedAt"      timestamp(3),
+  ADD COLUMN IF NOT EXISTS "closureRoundCount"          integer      NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "closureCompletedAt"         timestamp(3),
+  ADD COLUMN IF NOT EXISTS "closureIncompleteAt"        timestamp(3),
+  ADD COLUMN IF NOT EXISTS "closureFreezeInterruptedAt" timestamp(3);
 
 -- Verification — every existing user should read 'NONE' / 0 / NULL.
 --   SELECT "closureProcessState", "closureRoundCount", count(*)

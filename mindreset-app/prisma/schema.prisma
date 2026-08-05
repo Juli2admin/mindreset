@@ -798,6 +798,11 @@ model RecodeProgress {
   closureRoundCount            Int       @default(0) // stabilisation rounds delivered, 0..2
   closureCompletedAt           DateTime? // historical marker — last sequence completed
   closureIncompleteAt          DateTime? // historical marker — last sequence abandoned
+  // Set when a safety freeze lands on an ACTIVE sequence. The sequence is left
+  // untouched (freeze has absolute precedence); this marker is what survives
+  // the freeze — including one cleared by hand in SQL — so the first unfrozen
+  // turn ends the attempt instead of resuming it with stale measurements.
+  closureFreezeInterruptedAt   DateTime?
 }
 
 // =============================================================================

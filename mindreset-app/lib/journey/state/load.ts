@@ -346,6 +346,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
       roundCount: progress.closureRoundCount,
       completedAt: progress.closureCompletedAt,
       incompleteAt: progress.closureIncompleteAt,
+      freezeInterruptedAt: progress.closureFreezeInterruptedAt,
     }),
   };
 }

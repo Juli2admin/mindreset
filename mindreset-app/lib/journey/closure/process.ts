@@ -80,6 +80,18 @@ export type ClosureProcess = {
   completedAt: Date | null;
   /** Historical marker: when a sequence was last abandoned. Survives reset. */
   incompleteAt: Date | null;
+  /**
+   * Set when a safety freeze lands on an ACTIVE sequence. The sequence itself
+   * is left exactly as it was — freeze has absolute precedence and must not
+   * quietly bookkeep a frozen user's process. The marker is what makes the
+   * interruption survive the freeze, including a freeze cleared by hand in
+   * SQL, so the first unfrozen turn can end the attempt properly instead of
+   * resuming it mid-sequence with stale measurements.
+   *
+   * Invariant: only ever non-null while the state is active. normalise drops
+   * it otherwise.
+   */
+  freezeInterruptedAt: Date | null;
 };
 
 /** The default for every existing user and every idle process. */
@@ -91,6 +103,7 @@ export const CLOSURE_PROCESS_NONE: ClosureProcess = Object.freeze({
   roundCount: 0,
   completedAt: null,
   incompleteAt: null,
+  freezeInterruptedAt: null,
 });
 
 /**
@@ -254,6 +267,7 @@ export function transitionClosureProcess(
         enteredAt: now,
         transitionedAt: now,
         roundCount: 0,
+        freezeInterruptedAt: null,
       },
     };
   }
@@ -317,6 +331,7 @@ export function transitionClosureProcess(
         enteredAt: null,
         transitionedAt: now,
         roundCount: 0,
+        freezeInterruptedAt: null,
       },
     };
   }
@@ -327,12 +342,34 @@ export function transitionClosureProcess(
   };
 }
 
+/**
+ * Record that a safety freeze has landed on an active closure sequence.
+ * Pure — the caller persists the result.
+ *
+ * Freeze has absolute precedence, so this deliberately does NOT change the
+ * process state or the round count: the sequence is preserved exactly as it
+ * stood, and only the marker is added. Nothing is marked when no sequence is
+ * running, and an existing marker is never overwritten (freezeJourney is
+ * idempotent and must not restamp an earlier interruption).
+ */
+export function markFreezeInterruption(
+  current: ClosureProcess,
+  now: Date,
+): { marked: boolean; process: ClosureProcess } {
+  if (!isActiveProcessState(current.state)) return { marked: false, process: current };
+  if (current.freezeInterruptedAt) return { marked: false, process: current };
+  return { marked: true, process: { ...current, freezeInterruptedAt: now } };
+}
+
 export type ProcessResolution =
   | { changed: false; process: ClosureProcess; reason: null }
   | {
       changed: true;
       process: ClosureProcess;
-      reason: 'interrupted_process_expired' | 'closed_reset_on_new_turn';
+      reason:
+        | 'freeze_interrupted'
+        | 'interrupted_process_expired'
+        | 'closed_reset_on_new_turn';
     };
 
 /**
@@ -358,6 +395,29 @@ export function resolveClosureProcessForTurn(
   current: ClosureProcess,
   now: Date,
 ): ProcessResolution {
+  // 0. Freeze interruption outranks every other rule. Reaching this function
+  //    at all means the turn is NOT frozen — the orchestration hook sits
+  //    behind the freeze branch — so a marker here means a freeze landed on
+  //    an active sequence and has since been cleared, by the cooldown-lift
+  //    verifier or by hand in SQL. Either way the attempt is over: it must not
+  //    resume mid-sequence, and none of its measurements may be treated as
+  //    current evidence. Unlike the four-hour path, the round count is RESET —
+  //    nothing at all carries forward from a frozen attempt.
+  //
+  //    Phase 1 stops at INCOMPLETE. It does NOT enter AWAITING_INITIAL_SCORE;
+  //    Phase 2 uses the existing INCOMPLETE → AWAITING_INITIAL_SCORE edge to
+  //    begin a fresh assessment.
+  if (current.freezeInterruptedAt && isActiveProcessState(current.state)) {
+    const result = transitionClosureProcess(current, 'INCOMPLETE', { now });
+    if (result.ok) {
+      return {
+        changed: true,
+        process: { ...result.process, roundCount: 0, freezeInterruptedAt: null },
+        reason: 'freeze_interrupted',
+      };
+    }
+  }
+
   if (isActiveProcessState(current.state)) {
     const anchor = current.transitionedAt ?? current.enteredAt;
     if (anchor && now.getTime() - anchor.getTime() >= INTERRUPTED_PROCESS_MS) {
@@ -406,6 +466,7 @@ export function normaliseClosureProcess(raw: {
   roundCount?: number | null;
   completedAt?: Date | null;
   incompleteAt?: Date | null;
+  freezeInterruptedAt?: Date | null;
 }): ClosureProcess {
   const state = (CLOSURE_PROCESS_STATES as readonly string[]).includes(
     raw.state ?? '',
@@ -438,5 +499,11 @@ export function normaliseClosureProcess(raw: {
     roundCount,
     completedAt: raw.completedAt ?? null,
     incompleteAt: raw.incompleteAt ?? null,
+    // Invariant enforced at the storage boundary: the freeze marker is only
+    // meaningful on an ACTIVE sequence. On any other state it is stale and is
+    // dropped here, so the resolver never has to reason about that case.
+    freezeInterruptedAt: isActiveProcessState(state)
+      ? (raw.freezeInterruptedAt ?? null)
+      : null,
   };
 }

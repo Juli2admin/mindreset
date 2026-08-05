@@ -11,6 +11,10 @@
 
 import prisma from '@/lib/prisma';
 import type { RedFlagType } from './keywords';
+import {
+  markFreezeInterruption,
+  normaliseClosureProcess,
+} from '../closure/process';
 
 export type FreezeSource = 'keyword_scan' | 'verifier' | 'state_report';
 
@@ -32,7 +36,13 @@ export async function freezeJourney(args: FreezeArgs): Promise<void> {
   // Read current state first so we don't overwrite an existing freeze.
   const current = await prisma.recodeProgress.findUnique({
     where: { userId: args.userId },
-    select: { frozenForReview: true },
+    select: {
+      frozenForReview: true,
+      // Activated Closure Phase 1 — needed to decide whether this freeze is
+      // interrupting a live closure sequence.
+      closureProcessState: true,
+      closureFreezeInterruptedAt: true,
+    },
   });
   if (!current) return; // user has no Journey row — nothing to freeze
 
@@ -45,16 +55,41 @@ export async function freezeJourney(args: FreezeArgs): Promise<void> {
     return;
   }
 
-  await prisma.recodeProgress.update({
-    where: { userId: args.userId },
-    data: {
-      frozenForReview: true,
-      frozenAt: new Date(),
-      frozenReason: reason,
-    },
-  });
+  const now = new Date();
 
-  console.warn('[journey/freeze] FROZEN', { userId: args.userId, reason });
+  // Activated Closure Phase 1 (2026-08-05). If this freeze lands on an ACTIVE
+  // closure sequence, record that it was interrupted. The sequence itself is
+  // deliberately left untouched — freeze has absolute precedence and must not
+  // quietly bookkeep a frozen user's process, so the state and the round count
+  // stay exactly as they were and nothing becomes INCOMPLETE while the freeze
+  // holds. The marker is what survives the freeze, including one cleared by
+  // hand in SQL, so the first unfrozen turn can end the attempt properly
+  // instead of resuming it with stale measurements. All of the meaning lives
+  // in lib/journey/closure/process.ts; this is only the call site.
+  const interruption = markFreezeInterruption(
+    normaliseClosureProcess({
+      state: current.closureProcessState,
+      freezeInterruptedAt: current.closureFreezeInterruptedAt,
+    }),
+    now,
+  );
+
+  const data: Record<string, unknown> = {
+    frozenForReview: true,
+    frozenAt: now,
+    frozenReason: reason,
+  };
+  if (interruption.marked) {
+    data.closureFreezeInterruptedAt = interruption.process.freezeInterruptedAt;
+  }
+
+  await prisma.recodeProgress.update({ where: { userId: args.userId }, data });
+
+  console.warn('[journey/freeze] FROZEN', {
+    userId: args.userId,
+    reason,
+    closureInterrupted: interruption.marked ? current.closureProcessState : false,
+  });
 }
 
 function composeReason(

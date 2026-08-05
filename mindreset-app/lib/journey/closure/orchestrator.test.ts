@@ -138,6 +138,7 @@ describe('runClosureOrchestration (persisting)', () => {
       closureRoundCount: 1,
       closureCompletedAt: null,
       closureIncompleteAt: NOW,
+      closureFreezeInterruptedAt: null,
     });
   });
 
@@ -164,7 +165,7 @@ describe('runClosureOrchestration (persisting)', () => {
     });
   });
 
-  it('only ever writes the seven Phase 1 operational fields', async () => {
+  it('only ever writes the Phase 1 operational fields', async () => {
     await runClosureOrchestration(
       USER_ID,
       makeProcess({ state: 'CLOSED', completedAt: at(1000) }),
@@ -173,6 +174,7 @@ describe('runClosureOrchestration (persisting)', () => {
     expect(Object.keys(rpUpdates[0].data).sort()).toEqual([
       'closureCompletedAt',
       'closureEnteredAt',
+      'closureFreezeInterruptedAt',
       'closureIncompleteAt',
       'closureProcessState',
       'closureRoundCount',

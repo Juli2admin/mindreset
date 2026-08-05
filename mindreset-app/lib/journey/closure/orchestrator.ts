@@ -94,6 +94,7 @@ export async function runClosureOrchestration(
         closureRoundCount: resolution.process.roundCount,
         closureCompletedAt: resolution.process.completedAt,
         closureIncompleteAt: resolution.process.incompleteAt,
+        closureFreezeInterruptedAt: resolution.process.freezeInterruptedAt,
       },
     });
     console.info('[journey/closure-process] transition', {

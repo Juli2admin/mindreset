@@ -71,6 +71,7 @@ function progressRow(overrides: Record<string, unknown> = {}) {
     closureRoundCount: 0,
     closureCompletedAt: null,
     closureIncompleteAt: null,
+    closureFreezeInterruptedAt: null,
     ...overrides,
   };
 }
@@ -107,6 +108,7 @@ describe('loadJourneyState — closure process state', () => {
       roundCount: 1,
       completedAt: null,
       incompleteAt: null,
+      freezeInterruptedAt: null,
     });
   });
 

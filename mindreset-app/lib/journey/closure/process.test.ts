@@ -52,6 +52,7 @@ describe('default process state', () => {
       roundCount: 0,
       completedAt: null,
       incompleteAt: null,
+      freezeInterruptedAt: null,
     });
   });
 
