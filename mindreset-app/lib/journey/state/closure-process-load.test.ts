@@ -39,6 +39,14 @@ const USER_ID = 'user_test_closure_load';
 const ENTERED = new Date('2026-08-05T10:00:00.000Z');
 const TRANSITIONED = new Date('2026-08-05T10:12:00.000Z');
 
+// Turn timestamps MUST be relative to the real clock. deriveSensitivitySignals
+// measures them against Date.now() and SESSION_BOUNDARY_MS (4h): an absolute
+// date here passes on the day it is written and silently becomes a session
+// resume the next day, which empties the derived signals and fails the test.
+// ENTERED/TRANSITIONED above are only ever read back as stored column values,
+// never compared to a clock, so they are safe as fixed dates.
+const RECENT_TURN_AT = () => new Date(Date.now() - 5 * 60 * 1000);
+
 function progressRow(overrides: Record<string, unknown> = {}) {
   return {
     userId: USER_ID,
@@ -146,7 +154,7 @@ describe('loadJourneyState — closure process state', () => {
       if (args?.select && 'stateReportEncrypted' in args.select) {
         return Promise.resolve([
           {
-            createdAt: new Date('2026-08-05T11:59:00.000Z'),
+            createdAt: RECENT_TURN_AT(),
             stateReportEncrypted: `enc(${JSON.stringify({
               intensity: 7,
               safetyFlag: 'none',
@@ -158,9 +166,7 @@ describe('loadJourneyState — closure process state', () => {
           },
         ]);
       }
-      return Promise.resolve([
-        { createdAt: new Date('2026-08-05T11:59:00.000Z'), stageAtTurn: 3 },
-      ]);
+      return Promise.resolve([{ createdAt: RECENT_TURN_AT(), stageAtTurn: 3 }]);
     });
 
     const state = await loadJourneyState(USER_ID);
