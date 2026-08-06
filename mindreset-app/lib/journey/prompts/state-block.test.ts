@@ -6,6 +6,7 @@
 import { describe, expect, it } from 'vitest';
 import { assembleSystemPromptBlocks } from './assemble';
 import type { JourneyState } from '../state/types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
   return {
@@ -46,6 +47,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
     ...overrides,
   };
 }

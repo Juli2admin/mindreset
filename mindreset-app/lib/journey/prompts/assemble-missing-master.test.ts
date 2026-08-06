@@ -6,6 +6,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import type { JourneyState } from '../state/types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 // Force the master loader to report the prompt as missing.
 vi.mock('./load-spec', async (importOriginal) => {
@@ -52,6 +53,7 @@ function minimalState(): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
   };
 }
 

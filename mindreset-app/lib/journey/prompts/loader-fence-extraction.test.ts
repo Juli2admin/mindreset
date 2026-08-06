@@ -23,6 +23,7 @@ import { describe, expect, it } from 'vitest';
 import { loadMasterJourneyPrompt } from './load-spec';
 import { assembleSystemPromptBlocks } from './assemble';
 import type { JourneyState } from '../state/types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 const masterMdPath = path.join(
   process.cwd(),
@@ -118,6 +119,7 @@ function makeState(): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
   };
 }
 

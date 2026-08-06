@@ -15,6 +15,7 @@
 import { describe, expect, it } from 'vitest';
 import { assembleSystemPromptBlocks } from './assemble';
 import type { JourneyState } from '../state/types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 // The former standalone `assembleSystemPrompt(state)` string helper was removed
 // in the clean-runtime cleanup (it was dead in production — only tests called
@@ -65,6 +66,7 @@ function makeState(stage: number): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
   };
 }
 

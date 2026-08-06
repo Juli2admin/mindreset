@@ -65,6 +65,7 @@ import { applyStateReportToProgress, mergeTaskContract } from './save';
 import { assembleSystemPromptBlocks } from '../prompts/assemble';
 import { loadMasterJourneyPrompt } from '../prompts/load-spec';
 import type { JourneyState } from './types';
+import { CLOSURE_PROCESS_NONE } from '../closure/process';
 
 const USER_ID = 'user_test_task_contract';
 
@@ -268,6 +269,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
+    closureProcess: CLOSURE_PROCESS_NONE,
     ...overrides,
   };
 }
