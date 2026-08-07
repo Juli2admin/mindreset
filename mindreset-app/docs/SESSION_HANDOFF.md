@@ -1,216 +1,292 @@
-# SESSION HANDOFF — 2026-06-28
+# SESSION HANDOFF — 2026-08-06
 
 **Read this BEFORE CLAUDE.md.** Most recent operational state.
-Supersedes the prior handoff (2026-06-04, which itself superseded the
-2026-05-22 one — both archived in git).
+Supersedes the 2026-06-28 handoff (archived in git).
+
+---
+
+## ⛔ HARD CONSTRAINTS — read first, these are live
+
+### 1. The clinician prompt is FROZEN
+
+Owner decision, 2026-08-06. **Do not modify:** prompt, examples, canon,
+stage methodology, memory, practices, clinical reasoning, behavioural
+wording. This covers `docs/journey/00-shared-core.md`, `01`–`08` stage
+specs, and `docs/journey/runtime/journey-master.md`.
+
+The freeze lifts only when the owner says so — planned after the Closing
+and Memory work is complete and end-to-end tested.
+
+### 2. Remote refs need explicit approval
+
+Owner decision, 2026-08-05. Do not create, delete, archive, rename,
+overwrite or force-push **any** remote ref without asking first — even to
+preserve data. Ordinary pushes to an approved working branch are fine once
+that branch is approved. Never push to `main`.
+
+### 3. Migrations are never executed by the agent
+
+Standing project rule. Author the SQL, put it in the PR body, let Julia run
+it manually in Supabase. Never `prisma migrate` / `db push`.
+
+### 4. Clinical decisions are the owner's
+
+Owner decision, 2026-08-06: *"if implementation requires making a clinical
+decision that is not explicitly specified by the approved methodology, stop
+and ask rather than introducing a reasonable default."* This is absolute.
+Do not pick a sensible option and flag it — stop.
+
+---
+
+## The product goal (owner's framing, 2026-08-06)
+
+> We are not trying to produce a compliant AI. We are building an **AI
+> Clinician that genuinely thinks like an experienced clinical psychologist**
+> while operating safely within The Journey methodology.
+
+Evaluate every recommendation against that, not against isolated behaviours.
+The Journey should: understand the person across sessions; form and test
+clinical hypotheses; recognise patterns and stuck points; choose meaningful
+interventions; move the work forward; preserve continuity; stay natural and
+responsive; follow the methodology without becoming mechanical.
 
 ---
 
 ## TL;DR — where we are
 
-**The Journey 8-stage canon §10 audit is complete.** Eight small, focused
-PRs landed today (#177–#184) — one per stage. Every stage gate in
-`lib/journey/router/stage-gates.ts` now matches the documented method
-in `docs/journey/0X-stage-*.md §10`. All 151 tests pass.
+**Activated Closure Phase 1 is shipped and live** (`ab23525` + hotfix
+`efd81c5`, PRs #363/#364). Migration applied by the owner 2026-08-06;
+verified all 5 users on `NONE` / `0`.
 
-Owner ran two test sessions against the previous (buggy) gates and got
-stuck at Stage 1 across 67 turns / 2 sessions because the code required
-`formulation_confirmed` — a milestone invented in the master prompt's
-`<assessment_phase>` but NOT in canon §10. That whole class of false-
-negative gate is gone, plus seven other stage-specific tightening fixes.
+**Phase 2 (structural half) is approved and starting.** Plan agreed; two
+boundary questions are open and block its final step (see below).
 
-**Next move: owner runs a fresh live test against the aligned gates.**
-SQL to wipe Journey state (kept MiniMind untouched) was provided in chat
-and is repeated under "Wipe SQL" below.
+**A regression audit was completed and its conclusion was NOT accepted.**
+The owner is deliberately deferring the prompt question until Closing and
+Memory are done. Do not reopen it unprompted.
 
 ---
 
-## What is working (verified by tests this session)
+## Locked owner decisions — Activated Closure
 
-- **Stage 1 gate** (`checkStage1Gate`) — canon's 3 readiness tokens
-  (anchor-identified, emotion-or-body-state-named, orientation-present)
-  + looser safety guard (red_flag only blocks, watch passes per owner
-  sign-off Option B).
-- **Stage 2 gate** — three distinct conditions: emotion-named,
-  emotion-located, soft-why-asked. Previous single-regex shortcut gone.
-- **Stage 3 gate** — wired `adultSelfAnchorLinked` and
-  `heldEmotionInAdultSelf` (existed in schema since PR 4, never gated).
-- **Stage 4 gate (MII)** — MII-5 fallback now reads
-  `partSecured.adultSelfOffering` (canon-named) instead of Stage 3's
-  `adultSelfQualities` (wrong field).
-- **Stage 5 gate** — wired `somaticRelease: true` and `bodyConfirmation`
-  requirements. Without these the release / clean-identity statement
-  were head-only and still passed.
-- **Stage 6 gate** — adult self ≥ 70% across last 3 sessions added.
-  Uses two new session helpers (4-hour boundary).
-- **Stage 7 gate** — `safetyReorientation` tightened from "≥ 2 in window"
-  to "present in EACH of last 2 sessions" (canon: every Stage 7
-  session). Adult-self 70% across last 3 sessions added.
-- **Stage 8 gate (Discharge)** — Identity Reinforcement Check-In wired:
-  `adultSelfThisWeek` captured in each of last 4 sessions + "close" or
-  "steady" in ≥ 3 of them.
-- **Stage 8 unreachability bug fixed** — `standardGuards` was forcing
-  `recommendedAction === 'advance'`; Stage 8 emits `'discharge'`. The
-  gate was unreachable. Now `standardGuards` takes an `expectedAction`
-  parameter.
+These were decided in conversation and exist nowhere else. Treat as canon.
 
-All 151 vitest tests pass:
-`cd mindreset-app && npm test`.
+**Process semantics**
+- `CLOSED` means one Activated Closure sequence completed. It does **not**
+  mean the chat is permanently closed. A new substantive turn returns the
+  process to `NONE`.
+- An unfinished sequence left >4h is **retained** as `INCOMPLETE`. Old
+  stability scores are never reused; a fresh assessment is required when the
+  clinical sequence is connected. Route, entry time and round count are
+  preserved as the record.
+- The 4-hour threshold is the existing `SESSION_BOUNDARY_MS`, imported, never
+  redefined.
 
----
+**`HUMAN_SUPPORT`** is an **active human-handoff state**, not a terminal
+outcome. Two exits only:
+- → `CLOSED` *only* on concretely confirmed handoff (user contacted a trusted
+  person; trusted person physically present; urgent professional service
+  contacted; emergency handoff initiated and confirmed). `CLOSED` here means
+  the closure completed **through** that handoff — not that the AI
+  independently stabilised the user.
+- → `INCOMPLETE` when the user leaves, stops responding, or no handoff is
+  confirmed.
+- A distinct `HUMAN_HANDOFF` outcome may be added later with clinical outcome
+  fields. It is deliberately **not** a runtime state.
 
-## What is broken / unverified
+**Deterioration during `AWAITING_CLOSE_CONFIRMATION`**
+- `AWAITING_CLOSE_CONFIRMATION → AWAITING_POST_SCORE` is allowed.
+- It does **not** consume a stabilisation round. A round is consumed only
+  when a stabilisation intervention is actually **delivered** — i.e. on entry
+  to `DELIVERING_STABILISATION`.
+- Phase 2 decision logic: acceptable fresh score → back to
+  `AWAITING_CLOSE_CONFIRMATION`; below threshold with <2 completed rounds →
+  `DELIVERING_STABILISATION`; two rounds done, deterioration, uncertain
+  safety, or no safe plan → `HUMAN_SUPPORT`.
 
-- **Live test of the new gates is the next step.** Tests pass; real
-  session behaviour has not been verified yet. Owner about to run.
-- **safetyFlag floor at intensity ≥ 7** — small follow-up identified
-  but not built. The AI can currently emit `intensity: 8` with
-  `safetyFlag: 'none'`. The schema doesn't enforce the obvious
-  invariant. Worth a tiny PR.
-- **`I lost my thread` parse error** — recurring bug across sessions,
-  root cause not identified. Owner's previous test logs likely have
-  reproductions. Investigate when convenient.
-- **Family selection still drifting toward `regulation`** — partial fix
-  in PR 8. Last test session showed 3 distinct families in Part 2; not
-  yet a clean balanced distribution.
-- **Practice ratio still low** — AI selectively emits `practiceRun`;
-  some practices conducted in conversation don't get logged. PR 6
-  emission mandate partially working.
+**Freeze precedence (absolute)**
+- While `frozenForReview` is active: closure must not advance, closure
+  behaviour must not run, and the process must **not** automatically become
+  `INCOMPLETE`.
+- A freeze landing on an active sequence sets `closureFreezeInterruptedAt`
+  and changes nothing else.
+- On the first unfrozen turn the attempt converts to `INCOMPLETE`, the round
+  count **resets**, the marker clears. Phase 1 stops there — it does not
+  auto-enter `AWAITING_INITIAL_SCORE`.
+- Rationale: `clearFreezeForReview` nulls `frozenAt`/`frozenReason`, and a
+  manual SQL clear bypasses the helper entirely, so nothing else survives to
+  detect the freeze. Inferring it from `JourneyTurn` history is forbidden.
 
----
+**Exit-intent detection — approved design, Phase 2**
+Order: (1) crisis scan; (2) deterministic, locale-specific, high-precision
+detection of explicit stop / pause / leave / continue-later intent; (3) a
+separate ambiguous-intent path (e.g. "I can't do this any more") *after*
+crisis meaning is excluded; (4) model-reported exit intent may be retained as
+a supporting/audit signal only — **never** the current-turn gate.
+**A separate classifier call is NOT approved.** Deterministic detection is to
+be evaluated with the Golden Harness first.
 
-## Today's PRs (chronological, all merged)
-
-| PR | Stage | Title |
-|---|---|---|
-| #177 | 1 | Stage 1 gate — align with canon §10, remove invented `formulation_confirmed` |
-| #178 | 2 | Stage 2 gate — require all three distinct canon conditions |
-| #179 | 3 | Stage 3 gate — wire `adultSelfAnchorLinked` + `heldEmotionInAdultSelf` |
-| #180 | 4 | Stage 4 MII-5 — read `partSecured.adultSelfOffering`, not Stage 3 `adultSelfQualities` |
-| #181 | 5 | Stage 5 gate — require `somaticRelease` + `bodyConfirmation` |
-| #182 | 6 | Stage 6 gate — require adult self ≥ 70% across last 3 sessions |
-| #183 | 7 | Stage 7 gate — tighten `safetyReorientation` to every recent session + adult-self 70% |
-| #184 | 8 | Stage 8 gate — wire Identity Reinforcement Check-In + fix unreachable gate |
-
-`main` is at `2c91919` after #184.
+**Also settled**
+- Standard scale questions may be code-authored.
+- Personalised explanation, stabilisation and aftercare remain
+  model-authored.
+- Response buffering is out of scope.
 
 ---
 
-## Wipe SQL (owner uses this before fresh test)
+## Phase 1 — what shipped
 
-Run in Supabase SQL editor. Keeps MiniMind chat untouched (it lives on a
-separate data path; The Journey reads `JourneyTurn`, not MiniMind
-conversations).
+Server-owned closure process state on `RecodeProgress`, written only by code,
+never reconstructed from model output.
 
-```sql
-BEGIN;
-DELETE FROM "JourneyPracticeRun"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyMessage"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyTurn"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyPart"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyForeignFile"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneySignatureImage" WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "RecodeProgress"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-COMMIT;
-```
+| Concern | Owner |
+|---|---|
+| Closure **process** state | Server-owned orchestration — `RecodeProgress` |
+| `cycleStatus` / `cycleCanClose` / `hasOpenCycle` | Model-reported **clinical** state — not the process authority |
+| `closure/guard.ts` | Legacy **post-response record validator** — does not own process state |
 
-After this owner is back to Stage 1 with no parts, no foreign material,
-no audit log. `RecodeProgress` is recreated on next Journey turn.
+Do not merge these three concepts.
 
----
+- `lib/journey/closure/process.ts` — **single source of truth** for the eight
+  process values and all transitions. Pure. Never spread transition logic
+  elsewhere.
+- `lib/journey/closure/orchestrator.ts` — pre-LLM hook, mirrors the
+  `frozenForReview` pattern. Sits after crisis handling, before prompt
+  assembly (`route.ts` ~line 351).
+- `loadJourneyState` reads the process directly off the row.
+- `router.ts` + `state/save.ts` hold recorded stage/depth progression while a
+  sequence is active. Regression and shallowing stay available.
+- Eight columns, all `closure*`. Migration applied 2026-08-06.
 
-## Deferred canon §10 items (each needs a schema field + emit instruction)
-
-These were noted in the PR descriptions but not built. Each is its own
-small PR — schema add → master prompt emit instruction → save.ts wire →
-gate check → tests.
-
-**Stage 6**
-- `feltLikeMyself: string` — canon §10: "I feel like myself" on ≥ 2
-  different days. No field exists. Currently implicit in
-  `internalConsensus`.
-
-**Stage 7**
-- `identityAnchorRecalled: boolean` — canon §10: identity anchor recalled
-  at least once per Stage 7 session. No field exists.
-
-**Stage 8**
-- `identityAnchorWeeklyUse: boolean` (or count) — canon §10: identity
-  anchor used between sessions ≥ 1×/week. No field exists.
-- `feelLikeMyselfAndKnowHowToLive: string` — canon §10: "I feel like
-  myself, and I know how to live from here" on ≥ 2 different days. No
-  field exists.
-- `foreignMaterialReactivated: boolean` — canon §10: no active foreign
-  material reactivation. No field exists.
-- `partSeparatedInLastFourSessions: boolean` — canon §10: no part
-  flagged as separate / unseen in last 4 sessions. No field exists.
-
-The deferred items are NOT blocking for the live test. Without them the
-gates are looser than canon in these specific ways, but the structural
-"stuck at Stage 1" class of bug is fully fixed.
+Known limitations carried forward:
+1. Two `INCOMPLETE` records mean different things — the 4-hour path retains
+   `roundCount`, the freeze path resets it. `roundCount` on an `INCOMPLETE`
+   record is not a reliable count of rounds delivered.
+2. A freeze applied by hand in SQL sets no marker (`freezeJourney` is the
+   only writer). The reverse — code freeze, manual clear — is covered.
+3. `save.ts`'s depth guard is dormant: `recommendedDepth` is declared in
+   `Updates` but never set by the state-report pipeline.
 
 ---
 
-## What next session should know
+## Phase 2 (structural half) — approved scope, in progress
 
-### What owner most likely wants
-1. **First, ask if she's done the live test** and what happened. The
-   live test is the deliverable — code is ready, behaviour is not yet
-   confirmed.
-2. **If a real bug surfaced**: fix that. Don't propose deferred-item
-   work until the live test is working cleanly.
-3. **If live test is clean**: the safetyFlag-floor-at-7 PR is the next
-   small high-value item. Then optionally the deferred §10 items above.
+**In scope:** closing entry detection · `NORMAL_CLOSE` vs `ACTIVATED_CLOSE`
+routing · closure state sequencing · deterministic transition logic ·
+code-authored stability-scale flow · score handling · round counting · guard
+integration · persistence across turns · process orchestration.
 
-### Operating norms (load-bearing)
-- Owner = Julia (`jloya4436@gmail.com` for testing,
-  `loyayulia@gmail.com` for admin).
-- GitHub MCP owner param is `Juli2admin` (capital J), repo `mindreset`.
-- Owner says "merge" → agent clicks merge via
-  `mcp__github__merge_pull_request`, squash. Then `git checkout main &&
-  git pull && git branch -D <merged-branch>` and create next branch.
-- **One PR per change**, small and focused. Do NOT bundle multiple
-  stages, schema additions, or features into one PR. Owner explicitly
-  prefers many small PRs over one big one.
-- **No `git add -A`** — always specify files explicitly.
-- **Migrations are manual** — never run `prisma migrate` against any env.
-  If schema changes, propose the SQL in the PR body for owner to run.
+**Explicitly out:** stabilisation text · psychoeducation · personalised
+explanations · aftercare · generated practices · prompt instructions.
 
-### Working directory gotchas
-- `npm test` MUST be run from `/home/user/mindreset/mindreset-app`,
-  not the repo root. From repo root, prefix with `cd mindreset-app &&`.
-- `git` commands run from `/home/user/mindreset` (repo root); file
-  paths in `git add` are then `mindreset-app/lib/journey/...`.
+**Stop exactly where clinical content begins.**
 
-### Key files for The Journey
-- Gates: `mindreset-app/lib/journey/router/stage-gates.ts`
-- Helpers: `mindreset-app/lib/journey/router/history.ts` (added today:
-  `lastNSessionsTurns`, `countSessions`, `groupSessions`)
-- Schema: `mindreset-app/lib/journey/stateReport/schema.ts`
-- Persist: `mindreset-app/lib/journey/state/save.ts`
-- Load: `mindreset-app/lib/journey/state/load.ts`
-- Router: `mindreset-app/lib/journey/router/router.ts`
-- Master prompt: `mindreset-app/docs/journey/runtime/journey-master.md`
-- Canon §10 source of truth: `mindreset-app/docs/journey/0X-stage-*.md`
+Agreed plan: (1) exit-intent detector; (2) score persistence — four columns,
+second migration; (3) score fields + `scoreChange` + closure decision inside
+`process.ts`; (4) entry evaluation + routing in the orchestrator, using
+`state.lastIntensity` against the existing `DESTABILISATION_INTENSITY`;
+(5) score capture in `finaliseTurn` from the `stabilityCheck` Repair 1
+already parses; (6) guard integration by **importing constants and calling
+`evaluateClosureGate`** — `guard.ts` is not modified; (7) ⛔ seam — the
+orchestrator returns a typed decision naming the required turn but does not
+produce its text.
 
-### Pattern for follow-up alignment PRs
-The 8 PRs today all follow the same shape — repeat it:
-1. Read canon §10 in the stage's doc.
-2. Diff against `checkStageXGate` in `stage-gates.ts`.
-3. Add missing canonical requirement(s) inline. Document the alignment
-   in the function's docstring.
-4. Write `stageX-gate.test.ts` with passing path + regression guard
-   per new check + failure cases for existing checks.
-5. Run `npm test` from `mindreset-app/`. All pass.
-6. Commit + push + PR with the "Why / What changed / Tests / Migration"
-   body.
-7. Wait for owner "merge".
+### OPEN — these block step 7
 
-### Tone with this owner
-- Tight. No multi-paragraph explanations. Short user-facing updates only.
-- She's direct and reads diffs herself — don't over-explain code.
-- She has caught me before being biased toward "easy work" and toward
-  patches over solid fixes. If proposing the simpler of two options,
-  call out why it's simpler-on-merits, not simpler-for-me.
-- She will tell you when something is wrong. Take it directly, don't
-  defend.
+- **Q1: the stability-scale question wording.** User-visible copy, needs
+  en + ru at minimum, needs owner sign-off.
+- **Q2: what happens on the entry turn?** Protocol step 1 is
+  STOP_AND_EXPLAIN — personalised and model-authored, therefore excluded. So
+  does the code (a) record entry and let the model reply normally, with the
+  scale question next turn, or (b) go straight to the code-authored scale
+  question, skipping the explanation? **Clinical decision — do not pick one.**
+
+Proceeding without objection: ambiguous intent is recorded for audit and does
+**not** enter the protocol; `HUMAN_SUPPORT` becomes reachable but produces no
+behaviour; the second migration is treated as in-scope.
+
+---
+
+## Regression audit — findings ON RECORD, conclusion NOT accepted
+
+Completed 2026-08-06. The owner did **not** accept it and froze the prompt
+instead. Do not act on it. It is retained for the re-evaluation the owner
+scheduled *after* Closing and Memory are complete.
+
+**What was found.** After the #355 restore to the known-good `c26fb80`/#339
+baseline, four prompt PRs landed within 48 hours, none with a behavioural
+before/after: #356 (149 lines across all 8 stage specs), **#357
+"gather-before-depth"**, #358 "hygiene", #359 (senior-clinician block).
+
+#357 raised the formulation threshold, gated deep moves behind "picture
+gathered AND checked with the user", added "hold it silently… do NOT commit",
+weakened the share-back, and rewrote two worked examples from hypothesis to
+intake. #358 — labelled hygiene — added *"capability never overrides the
+gather-before-depth gate"*, closing the last route to depth. #359 explicitly
+subordinates itself to those gates.
+
+Observed in the real 2026-08-05/06 session: Stage 1/surface for all 10 turns,
+`witness_and_reflect` in 7 of 8, one depth move, zero practices, zero anchor
+recall despite an anchor being set, `recommendedAction: "stay"` ×10, no
+formulation ever shared. The model quotes the instruction back in its own
+`clinicalRead` five times ("не углублять", "не углубляться", "не глубокая
+работа", "No clinical intervention needed this turn").
+
+**Ruled out with proof:** Phase 1 (prompt assembly never reads
+`closureProcess`; the only `JSON.stringify` in `assemble.ts` is scoped to
+`pattern.context`; the failing turns predate the successful deploy), model
+config (`claude-sonnet-4-6`, unchanged since #125; no temperature set),
+`HISTORY_LIMIT = 30` (unchanged since #125), message ordering, cache split,
+the SEO PRs.
+
+**The owner's counter-argument, which the audit does not answer:** behaviour
+is observed changing between sessions with the prompt unmodified. A static
+prompt cause cannot explain dynamic variance. What remains in play is the
+per-turn-variable surface — state block, continuity note, derived signals,
+30-message history — plus model sampling. That is the Memory work, which is
+why it comes first.
+
+**Also unresolved:** #356's behavioural contribution is unquantified; no
+byte-exact assembled input was reconstructed for the failing session (needs
+decrypted state — the golden fixture `julia-2026-07-21.json` in `eval/` would
+permit it without a model call); no before/after exists for #356–#359.
+
+**Self-priming, measured:** `continuityNote` is copy-forward-and-append —
+turns 8→9→10 near-verbatim with one clause added each time. Model-generated
+hypotheses harden into asserted fact and are never re-tested
+("Внутренний разрыв с мужем завершён" ×3). The model is primed twice by its
+own output: ~15 prior replies in history *and* its own continuity note in the
+state block.
+
+---
+
+## Working agreements with the owner
+
+- Short updates. No menus of options. Act rather than offer.
+- Propose copy inline for line review before writing it to files.
+- Report failures plainly with the evidence; never claim green without it.
+- The stop-hook forces a commit before idle — the review gate is the PR
+  boundary, not mid-session.
+- `eval/` and `scripts/` are git-excluded. A clean checkout has neither, so
+  local `tsc`/build failures inside them are **not** regressions — verify by
+  moving them aside before declaring a build broken.
+- Tests must never pin an absolute timestamp near "now". `deriveSensitivity
+  Signals` measures against the real clock and `SESSION_BOUNDARY_MS`; an
+  absolute date passes on the day it is written and breaks the build the next
+  day. This took production builds down on 2026-08-06 (#364).
+
+---
+
+## Key anchors
+
+| Thing | Where |
+|---|---|
+| Closure transition model (single source of truth) | `lib/journey/closure/process.ts` |
+| Pre-LLM orchestration hook | `lib/journey/closure/orchestrator.ts` |
+| Legacy closure record validator | `lib/journey/closure/guard.ts` |
+| Turn route (hook at ~351, `finaliseTurn` below) | `app/api/journey/turn/route.ts` |
+| Prompt assembly (4 blocks, cached 1–2) | `lib/journey/prompts/assemble.ts` |
+| Session boundary constant | `lib/journey/state/session-boundary.ts` |
+| Golden Harness + fixtures (git-excluded) | `mindreset-app/eval/journey/` |
+| Preserved pre-Phase-1 evidence branch | `claude/archive-pre-phase1-eval-evidence-2026-08-05` |
+| Prior regression audits (archive branch only) | `docs/journey/audit-2026-07-26-*.md` |
