@@ -1,6 +1,6 @@
 // Server-owned stability-score capture — Activated Closure Phase 2.
 //
-// Deterministic, English-only, pure. Reads the score from the USER'S OWN
+// Deterministic, EN + RU, pure. Reads the score from the USER'S OWN
 // MESSAGE. The model's `stabilityCheck` is audit only and is never the
 // authority for a score captured here — owner decision 2026-08-06.
 //
@@ -22,10 +22,11 @@
 // "no score found", which produces no transition. A FALSE capture writes a
 // fabricated clinical number. Those costs are not symmetric.
 //
-// English only, matching Journey's existing deterministic-detection pattern
-// (verified 2026-08-06: lib/journey/safety/keywords.ts has no multilingual
-// detection). Bare digits and `N/10` are language-neutral, so a non-English
-// user answering "4" still works; only hedged English phrasing is recognised.
+// EN + RU (owner decision 2026-08-06). The safety property is UNCHANGED by
+// adding Russian: the filler set is a closed whitelist, so «4 часа сна»,
+// «через 15 минут» and «интервью через 4 часа» still reject — «часа»,
+// «минут», «сна», «интервью» and «через» are not filler and one unrecognised
+// token rejects the whole message.
 //
 // Nothing calls this module. It is dormant until the clinical half exists.
 
@@ -49,17 +50,37 @@ export type ScoreCaptureResult =
  * evidence-driven change after harness evaluation, never a guess.
  */
 const FILLER = new Set([
+  // --- EN ---
   'a', 'an', 'the', 'i', 'im', "i'm", 'id', "i'd", 'is', 'it', 'its', "it's", 'am',
   'about', 'around', 'roughly', 'maybe', 'probably',
   'say', 'think', 'guess', 'feel', 'like', 'sort', 'kind', 'of',
   'out', 'ten',
   'now', 'today', 'right', 'currently',
   'ok', 'okay', 'well', 'um', 'uh', 'hmm', 'yes', 'yeah',
+  // --- RU (owner decision 2026-08-06) ---
+  // Hedges and scale phrasing ONLY. Deliberately absent, and they are what
+  // keeps the trap cases out: часа, часов, минут, минуты, сна, интервью,
+  // через, лет, года, дней, недели. One such word rejects the whole message.
+  'где', 'то',            // «где-то» — the hyphen is stripped, so both halves
+  'примерно', 'около',
+  'наверное', 'наверно', 'может', 'быть',
+  'думаю', 'кажется', 'чувствую', 'себя',
+  'я', 'бы', 'скажем', 'сказал', 'сказала',
+  'сейчас', 'сегодня',
+  'ну', 'вот', 'да',
+  'на', 'из', 'десяти',
 ]);
 
 const WORD_NUMERALS: Record<string, number> = {
+  // EN
   one: 1, two: 2, three: 3, four: 4, five: 5,
   six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  // RU — nominative only. Oblique forms («четырёх», «пяти») are deliberately
+  // absent: they almost always appear inside a sentence rather than as a bare
+  // answer, so accepting them would cost precision. Note «десяти» is FILLER
+  // (the denominator in «из десяти»), while «десять» is the numeral.
+  'один': 1, 'одна': 1, 'два': 2, 'две': 2, 'три': 3, 'четыре': 4, 'пять': 5,
+  'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9, 'десять': 10,
 };
 
 /** `4/10` — one score token, not two numbers. */
@@ -82,13 +103,19 @@ const PUNCTUATION = /[.,!?;:()[\]{}"«»…—–\-_*+=<>|@#$%^&~`]/g;
  * Structural, applied before tokenisation.
  */
 const OUT_OF_TEN_PHRASE =
-  /\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:out\s+)?of\s+(?:10|ten)\b/g;
+  /(^|\s)(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:out\s+)?of\s+(?:10|ten)(\s|$)/g;
+
+/** Russian equivalent: «4 из 10», «четыре из десяти». `\b` is ASCII-only and
+ *  does not work with Cyrillic, so this anchors on whitespace instead. */
+const OUT_OF_TEN_PHRASE_RU =
+  /(^|\s)(\d{1,2}|один|одна|два|две|три|четыре|пять|шесть|семь|восемь|девять|десять)\s+из\s+(?:10|десяти|десять)(\s|$)/g;
 
 function tokenise(message: string): string[] {
   return message
     .toLowerCase()
     .replace(/’/g, "'")
-    .replace(OUT_OF_TEN_PHRASE, '$1')
+    .replace(OUT_OF_TEN_PHRASE, '$1$2$3')
+    .replace(OUT_OF_TEN_PHRASE_RU, '$1$2$3')
     .replace(PUNCTUATION, ' ')
     .split(/\s+/)
     .filter((t) => t.length > 0);

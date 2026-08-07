@@ -95,6 +95,13 @@ export async function runClosureOrchestration(
         closureCompletedAt: resolution.process.completedAt,
         closureIncompleteAt: resolution.process.incompleteAt,
         closureFreezeInterruptedAt: resolution.process.freezeInterruptedAt,
+        // Phase 2: the payload must carry EVERY ClosureProcess field, or a
+        // resolution that changes a score (entry clears them) would be lost
+        // on write while memory believed it persisted.
+        closureInitialScore: resolution.process.initialScore,
+        closureInitialScoreAt: resolution.process.initialScoreAt,
+        closurePostScore: resolution.process.postScore,
+        closurePostScoreAt: resolution.process.postScoreAt,
       },
     });
     console.info('[journey/closure-process] transition', {

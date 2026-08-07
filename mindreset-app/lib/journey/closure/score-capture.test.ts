@@ -75,12 +75,11 @@ describe('rejections', () => {
     expect(score('in 15 minutes')).toBeNull();
   });
 
-  it('non-Latin text is preserved as unrecognised, not stripped', () => {
-    // If tokenisation stripped Cyrillic, "4 часа сна" would reduce to "4"
-    // and be accepted. It must reject.
+  it('Russian words outside the filler set reject the whole message', () => {
+    // The safety property survives adding Russian: the filler set is a closed
+    // whitelist, and «часа»/«сна» are deliberately not in it.
     expect(score('4 часа сна')).toBeNull();
     expect(reason('4 часа сна')).toBe('unrecognised_content');
-    expect(score('четыре')).toBeNull();
   });
 
   it('multiple candidates are ambiguous, never guessed', () => {
@@ -130,5 +129,61 @@ describe('what a captured score means', () => {
     for (const m of fabricationAttempts) {
       expect(captureStabilityScore(m).found).toBe(false);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Russian (owner decision 2026-08-06) — added WITHOUT weakening the safety
+// property. The trap cases below are the acceptance criterion.
+// ---------------------------------------------------------------------------
+describe('Russian — genuine scale answers parse', () => {
+  it.each([
+    ['4', 4],
+    ['четыре', 4],
+    ['десять', 10],
+    ['где-то 4', 4],
+    ['наверное 7', 7],
+    ['примерно 5', 5],
+    ['около 6', 6],
+    ['думаю 3', 3],
+    ['я бы сказала 4', 4],
+    ['чувствую себя на 4', 4],
+    ['4 из 10', 4],
+    ['четыре из десяти', 4],
+    ['ну наверное 8', 8],
+  ] as [string, number][])('%s -> %i', (m, expected) => {
+    expect(score(m)).toBe(expected);
+  });
+});
+
+describe('Russian — the trap cases MUST still reject', () => {
+  // These are the owner-specified acceptance criterion for adding Russian.
+  it.each([
+    '4 часа сна',
+    'через 15 минут',
+    'интервью через 4 часа',
+    'собеседование через 4 часа',
+    'я спала 4 часа',
+    'мне 4 года',
+    'осталось 20 минут',
+    'встреча в 2 часа дня',
+  ])('%s', (m) => {
+    expect(score(m)).toBeNull();
+  });
+
+  it('rejects Russian oblique numeral forms — they appear inside sentences', () => {
+    expect(score('четырёх')).toBeNull();
+    expect(score('пяти')).toBeNull();
+  });
+
+  it('rejects a Russian range', () => {
+    expect(reason('3-4')).toBe('multiple_score_tokens');
+    expect(score('4 или 5')).toBeNull();
+  });
+
+  it('rejects ordinary Russian conversation', () => {
+    expect(score('я пошла в сад и там было хорошо')).toBeNull();
+    expect(score('мне плохо')).toBeNull();
+    expect(score('не знаю')).toBeNull();
   });
 });

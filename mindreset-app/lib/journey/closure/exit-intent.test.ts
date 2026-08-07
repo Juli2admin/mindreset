@@ -138,3 +138,67 @@ describe('audit trail', () => {
     expect(detectExitIntent('hello').matched).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Russian (owner decision 2026-08-06). Note JavaScript's \b is ASCII-only —
+// /\bмне\b/ does not match "мне пора" at all — so the matcher is space-padded.
+// These tests exist to prove the Russian list actually fires.
+// ---------------------------------------------------------------------------
+describe('Russian — session_exit', () => {
+  it.each([
+    'мне пора',
+    'мне нужно идти',
+    'мне надо идти',
+    'я пойду',
+    'давай закончим на сегодня',
+    'на сегодня хватит',
+    'продолжим завтра',
+    'давай в следующий раз',
+    'до свидания',
+    'до завтра',
+  ])('%s', (m) => expect(intentOf(m)).toBe('session_exit'));
+});
+
+describe('Russian — activity_stop never enters closure', () => {
+  it.each([
+    'мне нужно остановиться',
+    'я хочу остановиться',
+    'давай остановимся',
+    'я хочу закончить',
+    'хватит',
+    'стоп',
+    'давай о другом',
+  ])('%s', (m) => {
+    expect(intentOf(m)).toBe('activity_stop');
+    expect(intentOf(m)).not.toBe('session_exit');
+  });
+});
+
+describe('Russian — ambiguous and deliberation', () => {
+  it.each(['я больше не могу', 'какой смысл', 'я сдаюсь', 'это не работает'])(
+    '%s is ambiguous',
+    (m) => expect(intentOf(m)).toBe('ambiguous'),
+  );
+
+  it('deliberation about the self never enters', () => {
+    expect(intentOf('мне стоит пойти?')).toBe('ambiguous');
+    expect(intentOf('может мне уже закончить?')).toBe('ambiguous');
+  });
+});
+
+describe('Russian — precision', () => {
+  it('ordinary conversation does not fire', () => {
+    for (const m of [
+      'я пошла в сад',
+      'он уехал вчера',
+      'мне было хорошо сегодня',
+      'я хочу разобраться в этом',
+    ]) {
+      expect(intentOf(m)).toBe('none');
+    }
+  });
+
+  it('negation guard works in Russian', () => {
+    expect(intentOf('не хватит')).toBe('none');
+  });
+});

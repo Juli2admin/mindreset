@@ -26,6 +26,7 @@ import {
   isActiveProcessState,
   isAllowedTransition,
   isTerminalProcessState,
+  recordCapturedScore,
   normaliseClosureProcess,
   resolveClosureProcessForTurn,
   transitionClosureProcess,
@@ -692,5 +693,74 @@ describe('decideClosureOutcome', () => {
       decideClosureOutcome({ postScore: 7, roundsDelivered: 0, threshold: T }).outcome,
     ).toBe('AWAITING_CLOSE_CONFIRMATION');
     expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
+  });
+});
+
+describe('recordCapturedScore', () => {
+  const awaitingInitial = makeProcess({
+    state: 'AWAITING_INITIAL_SCORE',
+    route: 'ACTIVATED_CLOSE',
+  });
+  const awaitingPost = makeProcess({
+    state: 'AWAITING_POST_SCORE',
+    route: 'ACTIVATED_CLOSE',
+    initialScore: 3,
+    roundCount: 1,
+  });
+
+  it('fills the initial slot while awaiting the initial score', () => {
+    const r = recordCapturedScore(awaitingInitial, 4, NOW);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.slot).toBe('initial');
+    expect(r.process.initialScore).toBe(4);
+    expect(r.process.initialScoreAt).toEqual(NOW);
+    expect(r.process.postScore).toBeNull();
+  });
+
+  it('fills the post slot while awaiting the post score, leaving the initial intact', () => {
+    const r = recordCapturedScore(awaitingPost, 7, NOW);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.slot).toBe('post');
+    expect(r.process.postScore).toBe(7);
+    expect(r.process.postScoreAt).toEqual(NOW);
+    expect(r.process.initialScore).toBe(3);
+  });
+
+  it('does NOT advance the state — that is a transition', () => {
+    const r = recordCapturedScore(awaitingInitial, 4, NOW);
+    expect(r.ok && r.process.state).toBe('AWAITING_INITIAL_SCORE');
+  });
+
+  it('rejects in any state that is not waiting for a score', () => {
+    for (const state of CLOSURE_PROCESS_STATES.filter(
+      (s) => s !== 'AWAITING_INITIAL_SCORE' && s !== 'AWAITING_POST_SCORE',
+    )) {
+      expect(recordCapturedScore(makeProcess({ state }), 5, NOW)).toEqual({
+        ok: false,
+        reason: 'not_awaiting_a_score',
+      });
+    }
+  });
+
+  it('rejects out-of-range rather than clamping', () => {
+    for (const bad of [0, 11, -1, 100, 4.5, NaN]) {
+      expect(recordCapturedScore(awaitingInitial, bad, NOW)).toEqual({
+        ok: false,
+        reason: 'score_out_of_range',
+      });
+    }
+  });
+
+  it('feeds computeScoreChange once both slots are filled', () => {
+    const first = recordCapturedScore(awaitingInitial, 3, NOW);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    const moved = { ...first.process, state: 'AWAITING_POST_SCORE' as const };
+    const second = recordCapturedScore(moved, 8, NOW);
+    expect(second.ok).toBe(true);
+    if (!second.ok) return;
+    expect(computeScoreChange(second.process)).toBe(5);
   });
 });

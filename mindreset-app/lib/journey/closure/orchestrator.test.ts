@@ -139,6 +139,10 @@ describe('runClosureOrchestration (persisting)', () => {
       closureCompletedAt: null,
       closureIncompleteAt: NOW,
       closureFreezeInterruptedAt: null,
+      closureInitialScore: null,
+      closureInitialScoreAt: null,
+      closurePostScore: null,
+      closurePostScoreAt: null,
     });
   });
 
@@ -165,7 +169,7 @@ describe('runClosureOrchestration (persisting)', () => {
     });
   });
 
-  it('only ever writes the Phase 1 operational fields', async () => {
+  it('writes EVERY ClosureProcess field — payload and record must not diverge', async () => {
     await runClosureOrchestration(
       USER_ID,
       makeProcess({ state: 'CLOSED', completedAt: at(1000) }),
@@ -176,6 +180,10 @@ describe('runClosureOrchestration (persisting)', () => {
       'closureEnteredAt',
       'closureFreezeInterruptedAt',
       'closureIncompleteAt',
+      'closureInitialScore',
+      'closureInitialScoreAt',
+      'closurePostScore',
+      'closurePostScoreAt',
       'closureProcessState',
       'closureRoundCount',
       'closureRoute',

@@ -453,6 +453,52 @@ export function decideClosureOutcome(args: {
   return { outcome: 'HUMAN_SUPPORT', reason: 'below_threshold_rounds_exhausted' };
 }
 
+export type ScoreSlot = 'initial' | 'post';
+
+export type RecordScoreResult =
+  | { ok: true; process: ClosureProcess; slot: ScoreSlot }
+  | { ok: false; reason: 'not_awaiting_a_score' | 'score_out_of_range' };
+
+/**
+ * Place a CODE-CAPTURED score into the slot the current state is waiting for.
+ * Pure; the caller persists.
+ *
+ *   AWAITING_INITIAL_SCORE -> initialScore
+ *   AWAITING_POST_SCORE    -> postScore
+ *
+ * Any other state rejects: a score only means something while the process is
+ * actually waiting for one, and writing it elsewhere would record a
+ * measurement the sequence never asked for. The state is NOT advanced here —
+ * that is a transition, and transitions go through transitionClosureProcess.
+ *
+ * Out-of-range rejects rather than clamps, matching score-capture.ts: a stored
+ * score is always a number the user actually gave.
+ */
+export function recordCapturedScore(
+  current: ClosureProcess,
+  score: number,
+  now: Date,
+): RecordScoreResult {
+  if (!Number.isInteger(score) || score < 1 || score > 10) {
+    return { ok: false, reason: 'score_out_of_range' };
+  }
+  if (current.state === 'AWAITING_INITIAL_SCORE') {
+    return {
+      ok: true,
+      slot: 'initial',
+      process: { ...current, initialScore: score, initialScoreAt: now },
+    };
+  }
+  if (current.state === 'AWAITING_POST_SCORE') {
+    return {
+      ok: true,
+      slot: 'post',
+      process: { ...current, postScore: score, postScoreAt: now },
+    };
+  }
+  return { ok: false, reason: 'not_awaiting_a_score' };
+}
+
 export type ProcessResolution =
   | { changed: false; process: ClosureProcess; reason: null }
   | {
