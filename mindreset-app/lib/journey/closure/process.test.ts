@@ -21,6 +21,8 @@ import {
   INTERRUPTED_PROCESS_MS,
   MAX_STABILISATION_ROUNDS,
   blocksProgression,
+  computeScoreChange,
+  decideClosureOutcome,
   isActiveProcessState,
   isAllowedTransition,
   isTerminalProcessState,
@@ -31,6 +33,11 @@ import {
   type ClosureProcessState,
 } from './process';
 import { SESSION_BOUNDARY_MS } from '../state/session-boundary';
+// Imported here, not into process.ts: guard.ts -> state/load.ts ->
+// closure/process.ts, so a process.ts import of guard would close a cycle.
+// decideClosureOutcome therefore takes `threshold` as a parameter and the
+// pure module holds no opinion about its value.
+import { STABILITY_CLOSE_THRESHOLD } from './guard';
 
 const NOW = new Date('2026-08-05T12:00:00.000Z');
 const at = (msAgo: number) => new Date(NOW.getTime() - msAgo);
@@ -52,6 +59,10 @@ describe('default process state', () => {
       roundCount: 0,
       completedAt: null,
       incompleteAt: null,
+      initialScore: null,
+      initialScoreAt: null,
+      postScore: null,
+      postScoreAt: null,
       freezeInterruptedAt: null,
     });
   });
@@ -597,5 +608,89 @@ describe('normaliseClosureProcess', () => {
     for (const s of CLOSURE_PROCESS_STATES) {
       expect(normaliseClosureProcess({ state: s }).state).toBe(s);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 2 — score handling and the closure decision
+// ---------------------------------------------------------------------------
+describe('computeScoreChange', () => {
+  it('is null until both scores exist', () => {
+    expect(computeScoreChange(makeProcess())).toBeNull();
+    expect(computeScoreChange(makeProcess({ initialScore: 4 }))).toBeNull();
+    expect(computeScoreChange(makeProcess({ postScore: 7 }))).toBeNull();
+  });
+
+  it('is positive for improvement — the scale runs 1 overwhelmed to 10 grounded', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 4, postScore: 7 }))).toBe(3);
+  });
+
+  it('is negative for deterioration', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
+  });
+
+  it('is zero for no movement', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 5, postScore: 5 }))).toBe(0);
+  });
+});
+
+describe('decideClosureOutcome', () => {
+  const T = STABILITY_CLOSE_THRESHOLD;
+
+  it('at or above threshold proposes closing', () => {
+    for (const s of [T, T + 1, 10]) {
+      expect(
+        decideClosureOutcome({ postScore: s, roundsDelivered: 0, threshold: T }),
+      ).toEqual({
+        outcome: 'AWAITING_CLOSE_CONFIRMATION',
+        reason: 'score_at_or_above_threshold',
+      });
+    }
+  });
+
+  it('below threshold with rounds remaining stabilises again', () => {
+    for (const r of [0, 1]) {
+      expect(
+        decideClosureOutcome({ postScore: T - 1, roundsDelivered: r, threshold: T }),
+      ).toMatchObject({ outcome: 'DELIVERING_STABILISATION' });
+    }
+  });
+
+  it('below threshold with rounds exhausted escalates', () => {
+    expect(
+      decideClosureOutcome({
+        postScore: T - 1,
+        roundsDelivered: MAX_STABILISATION_ROUNDS,
+        threshold: T,
+      }),
+    ).toEqual({
+      outcome: 'HUMAN_SUPPORT',
+      reason: 'below_threshold_rounds_exhausted',
+    });
+  });
+
+  it('reuses the existing Repair 1 threshold rather than inventing one', () => {
+    expect(STABILITY_CLOSE_THRESHOLD).toBe(6);
+  });
+
+  it('every outcome it returns is a legal transition from AWAITING_POST_SCORE', () => {
+    const outcomes = [
+      decideClosureOutcome({ postScore: 8, roundsDelivered: 0, threshold: T }).outcome,
+      decideClosureOutcome({ postScore: 3, roundsDelivered: 0, threshold: T }).outcome,
+      decideClosureOutcome({ postScore: 3, roundsDelivered: 2, threshold: T }).outcome,
+    ];
+    for (const o of outcomes) {
+      expect(isAllowedTransition('AWAITING_POST_SCORE', o)).toBe(true);
+    }
+  });
+
+  it('does NOT act on deterioration — deliberately unresolved, raised not defaulted', () => {
+    // A 9 -> 7 fall is deterioration but 7 is above threshold. Whether that
+    // escalates is not settled by the approved wording, so the decision
+    // function does not consider it; computeScoreChange exposes the delta.
+    expect(
+      decideClosureOutcome({ postScore: 7, roundsDelivered: 0, threshold: T }).outcome,
+    ).toBe('AWAITING_CLOSE_CONFIRMATION');
+    expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
   });
 });

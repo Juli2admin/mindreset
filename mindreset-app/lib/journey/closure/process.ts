@@ -62,10 +62,10 @@ export const CLOSURE_ROUTES = ['NORMAL_CLOSE', 'ACTIVATED_CLOSE'] as const;
 export type ClosureRoute = (typeof CLOSURE_ROUTES)[number];
 
 /**
- * The minimum Phase 1 operational record. Deliberately carries NO clinical
- * content and NO score fields — those arrive with the clinical sequence in a
- * later phase. Every timestamp here is stamped by the server; none of them
- * can be supplied by the model.
+ * The operational record. Phase 1 established the process fields; Phase 2 adds
+ * the two stability scores. It still carries NO clinical CONTENT — no
+ * activation type, no plan, no wording. Every timestamp is stamped by the
+ * server; none can be supplied by the model.
  */
 export type ClosureProcess = {
   state: ClosureProcessState;
@@ -80,6 +80,17 @@ export type ClosureProcess = {
   completedAt: Date | null;
   /** Historical marker: when a sequence was last abandoned. Survives reset. */
   incompleteAt: Date | null;
+  /**
+   * The two stability scores, CAPTURED BY CODE from the user's own message
+   * (lib/journey/closure/score-capture.ts) — never read from the model's
+   * `stabilityCheck`, which is audit only. Because the code asked the
+   * question, `scale: 'stability'` and `source: 'user_reported'` are facts
+   * here rather than model claims. Timestamps are server-stamped.
+   */
+  initialScore: number | null;
+  initialScoreAt: Date | null;
+  postScore: number | null;
+  postScoreAt: Date | null;
   /**
    * Set when a safety freeze lands on an ACTIVE sequence. The sequence itself
    * is left exactly as it was — freeze has absolute precedence and must not
@@ -103,6 +114,10 @@ export const CLOSURE_PROCESS_NONE: ClosureProcess = Object.freeze({
   roundCount: 0,
   completedAt: null,
   incompleteAt: null,
+  initialScore: null,
+  initialScoreAt: null,
+  postScore: null,
+  postScoreAt: null,
   freezeInterruptedAt: null,
 });
 
@@ -267,6 +282,10 @@ export function transitionClosureProcess(
         enteredAt: now,
         transitionedAt: now,
         roundCount: 0,
+        initialScore: null,
+        initialScoreAt: null,
+        postScore: null,
+        postScoreAt: null,
         freezeInterruptedAt: null,
       },
     };
@@ -331,6 +350,10 @@ export function transitionClosureProcess(
         enteredAt: null,
         transitionedAt: now,
         roundCount: 0,
+        initialScore: null,
+        initialScoreAt: null,
+        postScore: null,
+        postScoreAt: null,
         freezeInterruptedAt: null,
       },
     };
@@ -359,6 +382,75 @@ export function markFreezeInterruption(
   if (!isActiveProcessState(current.state)) return { marked: false, process: current };
   if (current.freezeInterruptedAt) return { marked: false, process: current };
   return { marked: true, process: { ...current, freezeInterruptedAt: now } };
+}
+
+/** Clamp-free score normalisation: anything off-scale becomes null, never a
+ *  fabricated value. Mirrors score-capture.ts, which rejects rather than
+ *  clamps for the same reason. */
+function normaliseScore(v: number | null | undefined): number | null {
+  if (typeof v !== 'number' || !Number.isInteger(v)) return null;
+  return v >= 1 && v <= 10 ? v : null;
+}
+
+/**
+ * Protocol §8 — how far the user moved. Positive is improvement, because the
+ * stability scale runs 1 = overwhelmed to 10 = fully grounded.
+ * Returns null until both scores exist.
+ */
+export function computeScoreChange(process: ClosureProcess): number | null {
+  const { initialScore, postScore } = process;
+  if (initialScore === null || postScore === null) return null;
+  return postScore - initialScore;
+}
+
+export type ClosureOutcome =
+  | 'AWAITING_CLOSE_CONFIRMATION'
+  | 'DELIVERING_STABILISATION'
+  | 'HUMAN_SUPPORT';
+
+export type ClosureOutcomeReason =
+  | 'score_at_or_above_threshold'
+  | 'below_threshold_rounds_remain'
+  | 'below_threshold_rounds_exhausted';
+
+/**
+ * Protocol §9 — the closure decision, from owner-approved rules (2026-08-05).
+ * Pure arithmetic over a CODE-CAPTURED score; no clinical judgement.
+ *
+ *   at/above threshold                    -> AWAITING_CLOSE_CONFIRMATION
+ *   below, rounds remain                  -> DELIVERING_STABILISATION
+ *   below, rounds exhausted               -> HUMAN_SUPPORT
+ *
+ * DELIBERATELY NOT IMPLEMENTED. The owner's rule also lists "deterioration,
+ * uncertain safety or inability to establish a safe plan" as escalation
+ * triggers. Whether deterioration escalates when the score is nonetheless AT
+ * OR ABOVE threshold (e.g. 9 -> 7) is not resolved by the approved wording,
+ * and safety/plan adequacy are clinical judgements this layer cannot make.
+ * `computeScoreChange` exposes the delta; nothing here acts on it. Raised for
+ * decision rather than defaulted.
+ *
+ * `roundsDelivered` is the count of stabilisation rounds actually delivered —
+ * `ClosureProcess.roundCount`, which only increments on entry to
+ * DELIVERING_STABILISATION.
+ */
+export function decideClosureOutcome(args: {
+  postScore: number;
+  roundsDelivered: number;
+  threshold: number;
+}): { outcome: ClosureOutcome; reason: ClosureOutcomeReason } {
+  if (args.postScore >= args.threshold) {
+    return {
+      outcome: 'AWAITING_CLOSE_CONFIRMATION',
+      reason: 'score_at_or_above_threshold',
+    };
+  }
+  if (args.roundsDelivered < MAX_STABILISATION_ROUNDS) {
+    return {
+      outcome: 'DELIVERING_STABILISATION',
+      reason: 'below_threshold_rounds_remain',
+    };
+  }
+  return { outcome: 'HUMAN_SUPPORT', reason: 'below_threshold_rounds_exhausted' };
 }
 
 export type ProcessResolution =
@@ -466,6 +558,10 @@ export function normaliseClosureProcess(raw: {
   roundCount?: number | null;
   completedAt?: Date | null;
   incompleteAt?: Date | null;
+  initialScore?: number | null;
+  initialScoreAt?: Date | null;
+  postScore?: number | null;
+  postScoreAt?: Date | null;
   freezeInterruptedAt?: Date | null;
 }): ClosureProcess {
   const state = (CLOSURE_PROCESS_STATES as readonly string[]).includes(
@@ -499,6 +595,10 @@ export function normaliseClosureProcess(raw: {
     roundCount,
     completedAt: raw.completedAt ?? null,
     incompleteAt: raw.incompleteAt ?? null,
+    initialScore: normaliseScore(raw.initialScore),
+    initialScoreAt: raw.initialScoreAt ?? null,
+    postScore: normaliseScore(raw.postScore),
+    postScoreAt: raw.postScoreAt ?? null,
     // Invariant enforced at the storage boundary: the freeze marker is only
     // meaningful on an ACTIVE sequence. On any other state it is stale and is
     // dropped here, so the resolver never has to reason about that case.

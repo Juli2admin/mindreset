@@ -803,6 +803,13 @@ model RecodeProgress {
   // the freeze — including one cleared by hand in SQL — so the first unfrozen
   // turn ends the attempt instead of resuming it with stale measurements.
   closureFreezeInterruptedAt   DateTime?
+  // Phase 2 (2026-08-06) — the two stability scores, CAPTURED BY CODE from the
+  // user's own message (lib/journey/closure/score-capture.ts). The model's
+  // stabilityCheck is audit only and is never the authority for these.
+  closureInitialScore          Int?      // 1..10, stability scale (10 = grounded)
+  closureInitialScoreAt        DateTime?
+  closurePostScore             Int?      // 1..10
+  closurePostScoreAt           DateTime?
 }
 
 // =============================================================================
