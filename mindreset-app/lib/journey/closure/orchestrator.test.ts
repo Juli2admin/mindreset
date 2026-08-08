@@ -39,6 +39,24 @@ const USER_ID = 'user_test_closure_orchestrator';
 const NOW = new Date('2026-08-05T12:00:00.000Z');
 const at = (msAgo: number) => new Date(NOW.getTime() - msAgo);
 
+/**
+ * Phase 2 shim. The hook now takes an input object; these Phase 1 cases only
+ * exercise the automatic transitions, so they pass an empty message and no
+ * session history — no exit intent, no measurement, no behaviour change.
+ */
+const runOrch = (
+  current: Parameters<typeof runClosureOrchestration>[1]['current'],
+  overrides: Partial<Parameters<typeof runClosureOrchestration>[1]> = {},
+) =>
+  runClosureOrchestration(USER_ID, {
+    current,
+    userMessage: '',
+    locale: null,
+    loadSessionTurns: async () => [],
+    now: NOW,
+    ...overrides,
+  });
+
 function makeProcess(overrides: Partial<ClosureProcess> = {}): ClosureProcess {
   return { ...CLOSURE_PROCESS_NONE, ...overrides };
 }
@@ -96,38 +114,30 @@ describe('decideClosureOrchestration (pure)', () => {
 
 describe('runClosureOrchestration (persisting)', () => {
   it('writes nothing for an idle process — the production no-op path', async () => {
-    const decision = await runClosureOrchestration(USER_ID, makeProcess(), NOW);
+    const decision = await runOrch(makeProcess());
     expect(rpUpdates).toHaveLength(0);
     expect(decision.kind).toBe('proceed');
     expect(decision.process.state).toBe('NONE');
   });
 
   it('writes nothing for a sequence still inside the four-hour boundary', async () => {
-    await runClosureOrchestration(
-      USER_ID,
-      makeProcess({
+    await runOrch(makeProcess({
         state: 'DELIVERING_STABILISATION',
         route: 'ACTIVATED_CLOSE',
         transitionedAt: at(INTERRUPTED_PROCESS_MS - 1),
-      }),
-      NOW,
-    );
+      }));
     expect(rpUpdates).toHaveLength(0);
   });
 
   it('persists the whole record on an interrupted-process conversion', async () => {
     const enteredAt = at(INTERRUPTED_PROCESS_MS + 600_000);
-    await runClosureOrchestration(
-      USER_ID,
-      makeProcess({
+    await runOrch(makeProcess({
         state: 'AWAITING_POST_SCORE',
         route: 'ACTIVATED_CLOSE',
         enteredAt,
         transitionedAt: at(INTERRUPTED_PROCESS_MS + 1),
         roundCount: 1,
-      }),
-      NOW,
-    );
+      }));
     expect(rpUpdates).toHaveLength(1);
     expect(rpUpdates[0].where).toEqual({ userId: USER_ID });
     expect(rpUpdates[0].data).toEqual({
@@ -139,22 +149,22 @@ describe('runClosureOrchestration (persisting)', () => {
       closureCompletedAt: null,
       closureIncompleteAt: NOW,
       closureFreezeInterruptedAt: null,
+      closureInitialScore: null,
+      closureInitialScoreAt: null,
+      closurePostScore: null,
+      closurePostScoreAt: null,
     });
   });
 
   it('persists the CLOSED re-arm', async () => {
     const completedAt = at(60_000);
-    await runClosureOrchestration(
-      USER_ID,
-      makeProcess({
+    await runOrch(makeProcess({
         state: 'CLOSED',
         route: 'ACTIVATED_CLOSE',
         enteredAt: at(600_000),
         completedAt,
         roundCount: 2,
-      }),
-      NOW,
-    );
+      }));
     expect(rpUpdates).toHaveLength(1);
     expect(rpUpdates[0].data).toMatchObject({
       closureProcessState: 'NONE',
@@ -165,17 +175,17 @@ describe('runClosureOrchestration (persisting)', () => {
     });
   });
 
-  it('only ever writes the Phase 1 operational fields', async () => {
-    await runClosureOrchestration(
-      USER_ID,
-      makeProcess({ state: 'CLOSED', completedAt: at(1000) }),
-      NOW,
-    );
+  it('writes EVERY ClosureProcess field — payload and record must not diverge', async () => {
+    await runOrch(makeProcess({ state: 'CLOSED', completedAt: at(1000) }));
     expect(Object.keys(rpUpdates[0].data).sort()).toEqual([
       'closureCompletedAt',
       'closureEnteredAt',
       'closureFreezeInterruptedAt',
       'closureIncompleteAt',
+      'closureInitialScore',
+      'closureInitialScoreAt',
+      'closurePostScore',
+      'closurePostScoreAt',
       'closureProcessState',
       'closureRoundCount',
       'closureRoute',
@@ -184,11 +194,7 @@ describe('runClosureOrchestration (persisting)', () => {
   });
 
   it('never touches currentStage, currentDepth or any clinical column', async () => {
-    await runClosureOrchestration(
-      USER_ID,
-      makeProcess({ state: 'CLOSED', completedAt: at(1000) }),
-      NOW,
-    );
+    await runOrch(makeProcess({ state: 'CLOSED', completedAt: at(1000) }));
     for (const forbidden of [
       'currentStage',
       'currentDepth',
@@ -208,7 +214,7 @@ describe('runClosureOrchestration (persisting)', () => {
       route: 'ACTIVATED_CLOSE',
       transitionedAt: at(INTERRUPTED_PROCESS_MS + 1),
     });
-    const decision = await runClosureOrchestration(USER_ID, stored, NOW);
+    const decision = await runOrch(stored);
     // Memory must not claim a transition the store refused.
     expect(decision.kind).toBe('proceed');
     expect(decision.process).toEqual(stored);
@@ -218,11 +224,7 @@ describe('runClosureOrchestration (persisting)', () => {
   it('does not throw when the database is unavailable', async () => {
     rpUpdateImpl.mockImplementation(() => Promise.reject(new Error('db down')));
     await expect(
-      runClosureOrchestration(
-        USER_ID,
-        makeProcess({ state: 'CLOSED', completedAt: at(1000) }),
-        NOW,
-      ),
+      runOrch(makeProcess({ state: 'CLOSED', completedAt: at(1000) })),
     ).resolves.toMatchObject({ kind: 'proceed' });
   });
 });

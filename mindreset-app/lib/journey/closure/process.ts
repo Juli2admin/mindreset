@@ -62,10 +62,10 @@ export const CLOSURE_ROUTES = ['NORMAL_CLOSE', 'ACTIVATED_CLOSE'] as const;
 export type ClosureRoute = (typeof CLOSURE_ROUTES)[number];
 
 /**
- * The minimum Phase 1 operational record. Deliberately carries NO clinical
- * content and NO score fields — those arrive with the clinical sequence in a
- * later phase. Every timestamp here is stamped by the server; none of them
- * can be supplied by the model.
+ * The operational record. Phase 1 established the process fields; Phase 2 adds
+ * the two stability scores. It still carries NO clinical CONTENT — no
+ * activation type, no plan, no wording. Every timestamp is stamped by the
+ * server; none can be supplied by the model.
  */
 export type ClosureProcess = {
   state: ClosureProcessState;
@@ -80,6 +80,17 @@ export type ClosureProcess = {
   completedAt: Date | null;
   /** Historical marker: when a sequence was last abandoned. Survives reset. */
   incompleteAt: Date | null;
+  /**
+   * The two stability scores, CAPTURED BY CODE from the user's own message
+   * (lib/journey/closure/score-capture.ts) — never read from the model's
+   * `stabilityCheck`, which is audit only. Because the code asked the
+   * question, `scale: 'stability'` and `source: 'user_reported'` are facts
+   * here rather than model claims. Timestamps are server-stamped.
+   */
+  initialScore: number | null;
+  initialScoreAt: Date | null;
+  postScore: number | null;
+  postScoreAt: Date | null;
   /**
    * Set when a safety freeze lands on an ACTIVE sequence. The sequence itself
    * is left exactly as it was — freeze has absolute precedence and must not
@@ -103,6 +114,10 @@ export const CLOSURE_PROCESS_NONE: ClosureProcess = Object.freeze({
   roundCount: 0,
   completedAt: null,
   incompleteAt: null,
+  initialScore: null,
+  initialScoreAt: null,
+  postScore: null,
+  postScoreAt: null,
   freezeInterruptedAt: null,
 });
 
@@ -199,7 +214,18 @@ export const ALLOWED_TRANSITIONS: Readonly<
   Record<ClosureProcessState, readonly ClosureProcessState[]>
 > = Object.freeze({
   NONE: ['AWAITING_INITIAL_SCORE', 'CLOSED'],
-  AWAITING_INITIAL_SCORE: ['DELIVERING_STABILISATION', 'HUMAN_SUPPORT', 'INCOMPLETE'],
+  // AWAITING_CLOSE_CONFIRMATION added 2026-08-08 (measurement-first correction).
+  // The initial score can now END the sequence, not only start a stabilisation
+  // round: a user-reported reading at or above STABILITY_CLOSE_THRESHOLD means
+  // no stabilisation is required and the close may be confirmed. Its absence
+  // was the last artefact of the original design, in which entry implied the
+  // user was already known to need stabilising.
+  AWAITING_INITIAL_SCORE: [
+    'AWAITING_CLOSE_CONFIRMATION',
+    'DELIVERING_STABILISATION',
+    'HUMAN_SUPPORT',
+    'INCOMPLETE',
+  ],
   DELIVERING_STABILISATION: ['AWAITING_POST_SCORE', 'HUMAN_SUPPORT', 'INCOMPLETE'],
   AWAITING_POST_SCORE: [
     'DELIVERING_STABILISATION',
@@ -254,19 +280,33 @@ export function transitionClosureProcess(
   // Entry — a fresh sequence. Approved semantics: an earlier attempt is never
   // reused, so the round counter restarts and the entry timestamp is fresh.
   // The historical completedAt / incompleteAt markers are preserved.
+  // Measurement-first correction (owner decision 2026-08-08). Entry no longer
+  // requires a route, because at entry the route is NOT YET KNOWN.
+  //
+  // Historical destabilisation establishes only that a CURRENT stability
+  // measurement is required before this session may close. It does not say the
+  // user is activated now. The user's own reported score decides that, and the
+  // route is the OUTCOME of the score, not an input to entry:
+  //   score >= STABILITY_CLOSE_THRESHOLD -> no stabilisation ran -> NORMAL_CLOSE
+  //   score <  STABILITY_CLOSE_THRESHOLD -> stabilisation runs    -> ACTIVATED_CLOSE
+  // The route is assigned on the first transition out of this state.
+  //
+  // `route: null` here is deliberate and is NOT inherited from a previous
+  // sequence — a fresh attempt reuses nothing, per the approved semantics.
   if (to === 'AWAITING_INITIAL_SCORE') {
-    if (!opts.route) {
-      return { ok: false, reason: 'route_required', process: current };
-    }
     return {
       ok: true,
       process: {
         ...current,
         state: to,
-        route: opts.route,
+        route: opts.route ?? null,
         enteredAt: now,
         transitionedAt: now,
         roundCount: 0,
+        initialScore: null,
+        initialScoreAt: null,
+        postScore: null,
+        postScoreAt: null,
         freezeInterruptedAt: null,
       },
     };
@@ -299,7 +339,16 @@ export function transitionClosureProcess(
     }
     return {
       ok: true,
-      process: { ...current, state: to, transitionedAt: now, roundCount: nextRound },
+      process: {
+        ...current,
+        state: to,
+        // Route as outcome: entering stabilisation IS the activated path, so a
+        // caller may record it here. A route already on the record wins nothing
+        // over an explicit one, and absence keeps whatever is stored.
+        route: opts.route ?? current.route,
+        transitionedAt: now,
+        roundCount: nextRound,
+      },
     };
   }
 
@@ -331,14 +380,27 @@ export function transitionClosureProcess(
         enteredAt: null,
         transitionedAt: now,
         roundCount: 0,
+        initialScore: null,
+        initialScoreAt: null,
+        postScore: null,
+        postScoreAt: null,
         freezeInterruptedAt: null,
       },
     };
   }
 
+  // Remaining edges — including AWAITING_INITIAL_SCORE -> AWAITING_CLOSE_
+  // CONFIRMATION, the measurement-first path where the initial score cleared the
+  // threshold and no stabilisation was ever needed. A caller may record the
+  // resolved route here; omitting it keeps whatever is already stored.
   return {
     ok: true,
-    process: { ...current, state: to, transitionedAt: now },
+    process: {
+      ...current,
+      state: to,
+      route: opts.route ?? current.route,
+      transitionedAt: now,
+    },
   };
 }
 
@@ -359,6 +421,121 @@ export function markFreezeInterruption(
   if (!isActiveProcessState(current.state)) return { marked: false, process: current };
   if (current.freezeInterruptedAt) return { marked: false, process: current };
   return { marked: true, process: { ...current, freezeInterruptedAt: now } };
+}
+
+/** Clamp-free score normalisation: anything off-scale becomes null, never a
+ *  fabricated value. Mirrors score-capture.ts, which rejects rather than
+ *  clamps for the same reason. */
+function normaliseScore(v: number | null | undefined): number | null {
+  if (typeof v !== 'number' || !Number.isInteger(v)) return null;
+  return v >= 1 && v <= 10 ? v : null;
+}
+
+/**
+ * Protocol §8 — how far the user moved. Positive is improvement, because the
+ * stability scale runs 1 = overwhelmed to 10 = fully grounded.
+ * Returns null until both scores exist.
+ */
+export function computeScoreChange(process: ClosureProcess): number | null {
+  const { initialScore, postScore } = process;
+  if (initialScore === null || postScore === null) return null;
+  return postScore - initialScore;
+}
+
+export type ClosureOutcome =
+  | 'AWAITING_CLOSE_CONFIRMATION'
+  | 'DELIVERING_STABILISATION'
+  | 'HUMAN_SUPPORT';
+
+export type ClosureOutcomeReason =
+  | 'score_at_or_above_threshold'
+  | 'below_threshold_rounds_remain'
+  | 'below_threshold_rounds_exhausted';
+
+/**
+ * Protocol §9 — the closure decision, from owner-approved rules (2026-08-05).
+ * Pure arithmetic over a CODE-CAPTURED score; no clinical judgement.
+ *
+ *   at/above threshold                    -> AWAITING_CLOSE_CONFIRMATION
+ *   below, rounds remain                  -> DELIVERING_STABILISATION
+ *   below, rounds exhausted               -> HUMAN_SUPPORT
+ *
+ * DELIBERATELY NOT IMPLEMENTED. The owner's rule also lists "deterioration,
+ * uncertain safety or inability to establish a safe plan" as escalation
+ * triggers. Whether deterioration escalates when the score is nonetheless AT
+ * OR ABOVE threshold (e.g. 9 -> 7) is not resolved by the approved wording,
+ * and safety/plan adequacy are clinical judgements this layer cannot make.
+ * `computeScoreChange` exposes the delta; nothing here acts on it. Raised for
+ * decision rather than defaulted.
+ *
+ * `roundsDelivered` is the count of stabilisation rounds actually delivered —
+ * `ClosureProcess.roundCount`, which only increments on entry to
+ * DELIVERING_STABILISATION.
+ */
+export function decideClosureOutcome(args: {
+  postScore: number;
+  roundsDelivered: number;
+  threshold: number;
+}): { outcome: ClosureOutcome; reason: ClosureOutcomeReason } {
+  if (args.postScore >= args.threshold) {
+    return {
+      outcome: 'AWAITING_CLOSE_CONFIRMATION',
+      reason: 'score_at_or_above_threshold',
+    };
+  }
+  if (args.roundsDelivered < MAX_STABILISATION_ROUNDS) {
+    return {
+      outcome: 'DELIVERING_STABILISATION',
+      reason: 'below_threshold_rounds_remain',
+    };
+  }
+  return { outcome: 'HUMAN_SUPPORT', reason: 'below_threshold_rounds_exhausted' };
+}
+
+export type ScoreSlot = 'initial' | 'post';
+
+export type RecordScoreResult =
+  | { ok: true; process: ClosureProcess; slot: ScoreSlot }
+  | { ok: false; reason: 'not_awaiting_a_score' | 'score_out_of_range' };
+
+/**
+ * Place a CODE-CAPTURED score into the slot the current state is waiting for.
+ * Pure; the caller persists.
+ *
+ *   AWAITING_INITIAL_SCORE -> initialScore
+ *   AWAITING_POST_SCORE    -> postScore
+ *
+ * Any other state rejects: a score only means something while the process is
+ * actually waiting for one, and writing it elsewhere would record a
+ * measurement the sequence never asked for. The state is NOT advanced here —
+ * that is a transition, and transitions go through transitionClosureProcess.
+ *
+ * Out-of-range rejects rather than clamps, matching score-capture.ts: a stored
+ * score is always a number the user actually gave.
+ */
+export function recordCapturedScore(
+  current: ClosureProcess,
+  score: number,
+  now: Date,
+): RecordScoreResult {
+  if (!Number.isInteger(score) || score < 1 || score > 10) {
+    return { ok: false, reason: 'score_out_of_range' };
+  }
+  if (current.state === 'AWAITING_INITIAL_SCORE') {
+    return {
+      ok: true,
+      slot: 'initial',
+      process: { ...current, initialScore: score, initialScoreAt: now },
+    };
+  }
+  if (current.state === 'AWAITING_POST_SCORE') {
+    return {
+      ok: true,
+      slot: 'post',
+      process: { ...current, postScore: score, postScoreAt: now },
+    };
+  }
+  return { ok: false, reason: 'not_awaiting_a_score' };
 }
 
 export type ProcessResolution =
@@ -466,6 +643,10 @@ export function normaliseClosureProcess(raw: {
   roundCount?: number | null;
   completedAt?: Date | null;
   incompleteAt?: Date | null;
+  initialScore?: number | null;
+  initialScoreAt?: Date | null;
+  postScore?: number | null;
+  postScoreAt?: Date | null;
   freezeInterruptedAt?: Date | null;
 }): ClosureProcess {
   const state = (CLOSURE_PROCESS_STATES as readonly string[]).includes(
@@ -499,6 +680,10 @@ export function normaliseClosureProcess(raw: {
     roundCount,
     completedAt: raw.completedAt ?? null,
     incompleteAt: raw.incompleteAt ?? null,
+    initialScore: normaliseScore(raw.initialScore),
+    initialScoreAt: raw.initialScoreAt ?? null,
+    postScore: normaliseScore(raw.postScore),
+    postScoreAt: raw.postScoreAt ?? null,
     // Invariant enforced at the storage boundary: the freeze marker is only
     // meaningful on an ACTIVE sequence. On any other state it is stale and is
     // dropped here, so the resolver never has to reason about that case.

@@ -365,12 +365,54 @@ export async function POST(request: NextRequest) {
   // frozenForReview branch above (persisted flag → read before the model
   // call → typed outcome).
   // ------------------------------------------------------------------
-  const closureOrchestration = await runClosureOrchestration(
-    userId,
-    state.closureProcess,
-  );
+  const closureOrchestration = await runClosureOrchestration(userId, {
+    current: state.closureProcess,
+    userMessage,
+    locale: body.locale ?? null,
+    // Lazy: only loaded when an explicit session exit was detected on an idle
+    // process, so ordinary turns pay for no extra query.
+    loadSessionTurns: () =>
+      loadRecentTurns(userId, 30).then((turns) =>
+        turns.map((t) => ({
+          n: 0,
+          createdAt: t.createdAt,
+          intensity: t.intensityReported,
+          safetyFlag: t.safetyFlag,
+          cycleStatus: t.report?.cycleStatus ?? null,
+        })),
+      ),
+    now: new Date(),
+  });
   // The hook's record is authoritative for the rest of this turn.
   state.closureProcess = closureOrchestration.process;
+
+  // Phase 2 short-circuit. When the closure process requires a code-authored
+  // step, the model is NOT called this turn.
+  //
+  // This is the only control point that can work. The reply streams at
+  // controller.enqueue below, which is the irreversibility point — no guard,
+  // router or audit check downstream of it can prevent a user-visible goodbye.
+  // On 2026-08-08 the clinician ended a session in which intensity reached 6 on
+  // eleven turns without ever asking for a stability reading; every enforcement
+  // layer in the system ran after the words had already gone.
+  //
+  // Mirrors the two established pre-LLM short-circuits above: the crisis
+  // keyword scan and the frozen-for-review branch.
+  if (closureOrchestration.kind === 'deliver') {
+    await persistMessages(
+      userId,
+      state.currentStage,
+      userMessage,
+      closureOrchestration.text,
+    );
+    await markFirstAccessAndIncrement(purchase.id);
+    console.info('[journey/closure-process] delivered code-authored step', {
+      userId,
+      step: closureOrchestration.step,
+      processState: closureOrchestration.process.state,
+    });
+    return cannedResponse(closureOrchestration.text);
+  }
 
   // Persist the user's message before calling the LLM so we don't lose it on
   // an LLM error.
