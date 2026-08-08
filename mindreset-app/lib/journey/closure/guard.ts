@@ -229,10 +229,17 @@ export function findDestabilisation(
  * It is never a fallback for a missing measurement timestamp; a measurement
  * with no trusted `observedAt` is blocked, not assumed to be from now.
  */
+export type CapturedMeasurement = {
+  score: number;
+  /** Server-stamped time the code captured it. */
+  at: Date | string | null;
+};
+
 export function evaluateClosureGate(
   report: StateReport,
   priorTurns: ClosureTurn[],
   turnAt: Date = new Date(),
+  captured?: CapturedMeasurement | null,
 ): ClosureGateResult {
   const none: ClosureGateResult = {
     outcome: 'not_applicable',
@@ -274,6 +281,54 @@ export function evaluateClosureGate(
   const destabAt = iso(destab.createdAt);
   const destabMs = ms(destab.createdAt);
   const reasons: ClosureBlockReason[] = [];
+
+  // ---------------------------------------------------------------------
+  // Single measurement authority (2026-08-08).
+  //
+  // When Phase 2 asked the approved stability question and parsed the user's
+  // own answer, the resulting score is STRONGER evidence than anything this
+  // function can check on `report.stabilityCheck`, because the four checks
+  // below exist to establish facts that the code-captured path establishes by
+  // CONSTRUCTION:
+  //
+  //   scale === 'stability'    the explicit question was asked  -> code asked it
+  //   source === 'user_reported'  the user gave the number      -> code parsed
+  //                                                                their message
+  //   server-stamped observedAt   the time is untampered        -> server stamped
+  //   ordering vs destabilisation                               -> checked here
+  //
+  // The model cannot forge it: it never passes through the state report. Every
+  // Repair 1 invariant is preserved — nothing is loosened, and the legacy
+  // `stabilityCheck` path below is untouched for the case where the CLINICIAN
+  // asked. Without this, a real user-reported 8 would be recorded as
+  // `no_stability_measurement`, because the guard looks somewhere the score no
+  // longer lives.
+  // ---------------------------------------------------------------------
+  if (captured && typeof captured.score === 'number') {
+    const capturedMs = captured.at ? ms(captured.at) : NaN;
+    const fresh =
+      Number.isFinite(capturedMs) &&
+      capturedMs >= destabMs &&
+      turnAt.getTime() - capturedMs <= MAX_MEASUREMENT_AGE_MS;
+    if (fresh) {
+      if (captured.score >= STABILITY_CLOSE_THRESHOLD) {
+        return {
+          outcome: 'passed',
+          reasons: [],
+          detail: `code-captured user-reported stability ${captured.score} at or above ${STABILITY_CLOSE_THRESHOLD}`,
+          destabilisedAt: destabAt,
+        };
+      }
+      return {
+        outcome: 'blocked',
+        reasons: ['below_threshold'],
+        detail: `code-captured user-reported stability ${captured.score} below ${STABILITY_CLOSE_THRESHOLD}`,
+        destabilisedAt: destabAt,
+      };
+    }
+    // Stale or unordered: fall through to the legacy path rather than trust it.
+  }
+
   const sc = report.stabilityCheck;
 
   // A destabilisation we cannot place in time cannot be ordered against.
@@ -361,8 +416,9 @@ export function applyClosureGate(
   report: StateReport,
   priorTurns: ClosureTurn[],
   turnAt: Date = new Date(),
+  captured?: CapturedMeasurement | null,
 ): { report: StateReport; gate: ClosureGateResult } {
-  const gate = evaluateClosureGate(report, priorTurns, turnAt);
+  const gate = evaluateClosureGate(report, priorTurns, turnAt, captured);
   if (gate.outcome !== 'blocked') return { report, gate };
   return { report: withBlockedGate(report, gate), gate };
 }

@@ -69,6 +69,7 @@ const runOrch = (current: Parameters<typeof runClosureOrchestration>[1]['current
     userMessage: '',
     locale: null,
     loadSessionTurns: async () => [],
+    countUserMessagesSince: async () => 1,
     now: NOW,
   });
 

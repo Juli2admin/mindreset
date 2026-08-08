@@ -223,7 +223,11 @@ const COOPERATIVE: string[] = [
   'давайте',
 ];
 
-/** Someone other than the user is doing it — "He is going to leave tomorrow". */
+/**
+ * Someone other than the user is doing it — "He is going to leave tomorrow" —
+ * or the user is REPORTING someone's words rather than speaking them: "I never
+ * said goodbye", «он сказал увидимся завтра».
+ */
 const THIRD_PERSON: string[] = [
   ' he ',
   ' she ',
@@ -233,6 +237,78 @@ const THIRD_PERSON: string[] = [
   ' он ',
   ' она ',
   ' они ',
+  ' said ',
+  ' told ',
+  ' сказал ',
+  ' сказала ',
+  ' говорит ',
+];
+
+/**
+ * A departure verb is only an exit when it is TERMINAL. With a complement it is
+ * a metaphor, a direction or a relationship — "go deeper", "go back to that",
+ * «уйти от него», «ухожу в себя». Those are ordinary clinical material and must
+ * never end a session.
+ */
+const COMPLEMENT: string[] = [
+  'deeper',
+  'back',
+  'through',
+  'further',
+  'away',
+  'into',
+  'on',
+  'дальше',
+  'вперёд',
+  'глубже',
+  'в',
+  'от',
+  'к',
+  'из',
+  'туда',
+  'сюда',
+];
+
+/** Obligation or imminence — what made the original whole phrases precise. */
+const OBLIGATION: string[] = [
+  'need to',
+  'needed to',
+  'have to',
+  'has to',
+  'got to',
+  'must',
+  'нужно',
+  'надо',
+];
+
+/** Ignorable tail after a terminal predicate — "I should go now". */
+const TAIL_FILLER: string[] = [
+  'now',
+  'yet',
+  'please',
+  'сейчас',
+  'уже',
+  'пожалуйста',
+];
+
+/** Ignorable residue around a standalone sign-off — "ok, goodbye". */
+const SIGNOFF_FILLER: string[] = [
+  'ok',
+  'okay',
+  'well',
+  'thanks',
+  'thank',
+  'you',
+  'so',
+  'and',
+  'please',
+  'ну',
+  'и',
+  'ок',
+  'спасибо',
+  'пожалуйста',
+  'ладно',
+  'хорошо',
 ];
 
 /** Volition negation — forms intent when it governs a CONTINUE predicate. */
@@ -307,6 +383,47 @@ function governedBy(text: string, index: number, phrases: string[]): boolean {
   return phrases.some((p) => before.includes(p));
 }
 
+/** The whitespace-separated tokens after a matched phrase. */
+function tokensAfter(text: string, hit: Hit): string[] {
+  return text
+    .slice(hit.index + hit.phrase.length + 1)
+    .trim()
+    .split(' ')
+    .filter(Boolean);
+}
+
+/**
+ * Terminal = nothing meaningful follows the predicate. "I should go now" is
+ * terminal; "I want to go deeper" is not.
+ */
+function isTerminal(text: string, hit: Hit): boolean {
+  return tokensAfter(text, hit).every((t) => TAIL_FILLER.includes(t));
+}
+
+/** The predicate is carrying a complement, so it is not a departure. */
+function hasComplement(text: string, hit: Hit): boolean {
+  const next = tokensAfter(text, hit)[0];
+  return next !== undefined && COMPLEMENT.includes(next);
+}
+
+/**
+ * A sign-off only counts when it IS the utterance. Removing it must leave
+ * nothing substantive behind — otherwise the phrase is being talked ABOUT
+ * ("до завтра ещё далеко", "I never said goodbye to my father") rather than
+ * used to leave.
+ */
+function isStandalone(text: string, hit: Hit): boolean {
+  const residue = (
+    text.slice(0, hit.index) +
+    ' ' +
+    text.slice(hit.index + hit.phrase.length + 1)
+  )
+    .trim()
+    .split(' ')
+    .filter(Boolean);
+  return residue.every((t) => SIGNOFF_FILLER.includes(t));
+}
+
 /**
  * Classify a user message.
  *
@@ -335,9 +452,13 @@ export function detectExitIntent(message: string): ExitIntentResult {
   const idiom = find(text, TOPICAL_IDIOM);
   if (idiom) return { intent: 'activity_stop', matched: idiom.phrase };
 
-  // 4. Self-contained sign-offs need no scope marker.
+  // 4. Sign-offs need no scope marker — but they must BE the utterance, not
+  //    appear inside one. Substring presence alone was a live false-positive
+  //    surface: «до завтра ещё далеко», "I never said goodbye to my father".
   const signoff = find(text, SIGNOFF);
-  if (signoff) return { intent: 'session_exit', matched: signoff.phrase };
+  if (signoff && isStandalone(text, signoff)) {
+    return { intent: 'session_exit', matched: signoff.phrase };
+  }
 
   const topic = has(text, SCOPE_TOPIC);
   const sessionScope = has(text, SCOPE_SESSION);
@@ -380,9 +501,18 @@ export function detectExitIntent(message: string): ExitIntentResult {
     return { intent: 'session_exit', matched: predicate.phrase };
   }
 
-  // 11. No scope marker. Departure is inherently session-scoped; everything
-  //     else stays conservative.
-  if (predicate === depart) return { intent: 'session_exit', matched: predicate.phrase };
+  // 11. No scope marker. A departure verb is session-scoped ONLY when it is
+  //     terminal or under an obligation, and never when it carries a
+  //     complement. This is what the original whole-phrase list encoded
+  //     ("I need to go", «мне пора») and what bare-predicate matching lost:
+  //     "I want to go deeper", "let's go back to that", «я хочу уйти от него»,
+  //     «я ухожу в себя», «пора что-то менять» are all ordinary material.
+  if (predicate === depart) {
+    if (hasComplement(text, predicate)) return NO_INTENT;
+    const obliged = governedBy(text, predicate.index, OBLIGATION);
+    if (!obliged && !isTerminal(text, predicate)) return NO_INTENT;
+    return { intent: 'session_exit', matched: predicate.phrase };
+  }
   if (predicate === done) return { intent: 'ambiguous', matched: predicate.phrase };
   return { intent: 'activity_stop', matched: predicate.phrase };
 }

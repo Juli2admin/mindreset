@@ -851,3 +851,94 @@ describe('regression: the two confirmed live failures are now caught', () => {
     expect(g.reasons).toContain('below_threshold');
   });
 });
+
+describe('code-captured measurement is the single authority (2026-08-08)', () => {
+  // Phase 2 asks the approved stability question and parses the user's own
+  // answer. That score never passes through the state report, so the model
+  // cannot forge it — it is stronger evidence than anything `stabilityCheck`
+  // can carry, and the guard must look where the score now lives.
+  const closing = () =>
+    base({ intensity: 3, cycleCanClose: true, presentingRequestStatus: 'addressed' });
+
+  it('a fresh captured score at or above threshold passes with no stabilityCheck', () => {
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 8,
+      at: AFTER,
+    });
+    expect(g.outcome).toBe('passed');
+    expect(g.reasons).toEqual([]);
+  });
+
+  it('a fresh captured score below threshold blocks, and does not read as missing', () => {
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 4,
+      at: AFTER,
+    });
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('below_threshold');
+    expect(g.reasons).not.toContain('no_stability_measurement');
+  });
+
+  it('an ISO timestamp is accepted the same as a Date', () => {
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 7,
+      at: AFTER.toISOString(),
+    });
+    expect(g.outcome).toBe('passed');
+  });
+
+  it('a capture predating the spike cannot validate the close', () => {
+    // Same ordering rule as T10 — a measurement taken before the
+    // destabilisation says nothing about the state being closed on.
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 9,
+      at: T0,
+    });
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('no_stability_measurement');
+  });
+
+  it('a stale capture falls through to the legacy path rather than being trusted', () => {
+    const stale = new Date(AFTER.getTime() - MAX_MEASUREMENT_AGE_MS - 1000);
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 9,
+      at: stale,
+    });
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('no_stability_measurement');
+  });
+
+  it('a capture with no timestamp is not assumed to be from now', () => {
+    const g = evaluateClosureGate(closing(), spikedHistory, AFTER, {
+      score: 9,
+      at: null,
+    });
+    expect(g.outcome).toBe('blocked');
+    expect(g.reasons).toContain('no_stability_measurement');
+  });
+
+  it('passing no capture leaves the legacy stabilityCheck path exactly as it was', () => {
+    const withCheck = base({
+      intensity: 3,
+      cycleCanClose: true,
+      presentingRequestStatus: 'addressed',
+      stabilityCheck: { score: 7, scale: 'stability', source: 'user_reported' },
+    });
+    expect(evaluateClosureGate(withCheck, spikedHistory, AFTER).outcome).toBe('passed');
+    expect(evaluateClosureGate(closing(), spikedHistory, AFTER).outcome).toBe('blocked');
+  });
+
+  it('proportionality is unchanged — a calm session needs no capture', () => {
+    const g = evaluateClosureGate(closing(), calmHistory, AFTER, null);
+    expect(g.outcome).toBe('not_applicable');
+  });
+
+  it('applyClosureGate writes the passed capture through to the report', () => {
+    const { report: out, gate } = applyClosureGate(closing(), spikedHistory, AFTER, {
+      score: 8,
+      at: AFTER,
+    });
+    expect(gate.outcome).toBe('passed');
+    expect(out.cycleCanClose).toBe(true);
+  });
+});

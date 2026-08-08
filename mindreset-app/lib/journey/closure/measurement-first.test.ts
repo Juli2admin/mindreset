@@ -57,12 +57,14 @@ const run = (
   userMessage: string,
   turns: ClosureTurn[] = [],
   locale: string | null = null,
+  spoken = 1,
 ) =>
   runClosureOrchestration(USER_ID, {
     current,
     userMessage,
     locale,
     loadSessionTurns: async () => turns,
+    countUserMessagesSince: async () => spoken,
     now: NOW,
   });
 
@@ -100,6 +102,7 @@ describe('entry — only an explicit session exit is considered', () => {
         loaded = true;
         return [];
       },
+      countUserMessagesSince: async () => 1,
       now: NOW,
     });
     expect(d.kind).toBe('proceed');
@@ -157,10 +160,13 @@ describe('the score decides the route', () => {
   const awaiting = () =>
     proc({ state: 'AWAITING_INITIAL_SCORE', enteredAt: minsAgo(1), transitionedAt: minsAgo(1) });
 
-  it('at or above threshold → NORMAL_CLOSE, no stabilisation ever runs', async () => {
+  it('at or above threshold → CLOSED, no stabilisation ever runs', async () => {
     const d = await run(awaiting(), '8');
-    expect(d.kind).toBe('proceed');
-    expect(d.process.state).toBe('AWAITING_CLOSE_CONFIRMATION');
+    // No second confirmation question: the explicit session_exit was the consent.
+    expect(d.kind).toBe('constrain');
+    if (d.kind !== 'constrain') return;
+    expect(d.note).toBe('closing');
+    expect(d.process.state).toBe('CLOSED');
     expect(d.process.route).toBe('NORMAL_CLOSE');
     expect(d.process.roundCount).toBe(0);
     expect(d.process.initialScore).toBe(8);
@@ -168,7 +174,9 @@ describe('the score decides the route', () => {
 
   it('below threshold → ACTIVATED_CLOSE and a stabilisation round', async () => {
     const d = await run(awaiting(), 'наверное 4');
-    expect(d.kind).toBe('proceed');
+    expect(d.kind).toBe('constrain');
+    if (d.kind !== 'constrain') return;
+    expect(d.note).toBe('stabilisation');
     expect(d.process.state).toBe('DELIVERING_STABILISATION');
     expect(d.process.route).toBe('ACTIVATED_CLOSE');
     expect(d.process.roundCount).toBe(1);
@@ -208,7 +216,7 @@ describe('CASE B — historical destabilisation is not latched as current activa
     // ...and the user's own current score decides it needs no stabilisation.
     const scored = await run(entered.process, '8');
     expect(scored.process.route).toBe('NORMAL_CLOSE');
-    expect(scored.process.state).toBe('AWAITING_CLOSE_CONFIRMATION');
+    expect(scored.process.state).toBe('CLOSED');
     expect(scored.process.roundCount).toBe(0);
   });
 });
@@ -222,6 +230,7 @@ describe('fail-safe', () => {
       loadSessionTurns: async () => {
         throw new Error('db down');
       },
+      countUserMessagesSince: async () => 1,
       now: NOW,
     });
     expect(d.kind).toBe('proceed');

@@ -38,6 +38,7 @@ import {
 import { detectExitIntent } from './exit-intent';
 import { captureStabilityScore } from './score-capture';
 import { getStabilityQuestionForLocale } from './stability-question';
+import type { ClosureNoteKind } from './state-notes';
 import {
   currentSessionTurns,
   findDestabilisation,
@@ -75,6 +76,18 @@ export type ClosureOrchestrationDecision =
       text: string;
       /** Why this step was delivered, for logs and audit. */
       step: 'stability_question' | 'stability_question_reask';
+    }
+  | {
+      kind: 'constrain';
+      process: ClosureProcess;
+      resolved: ProcessResolution['reason'];
+      /**
+       * Run the ordinary model turn, but with a platform note naming the step
+       * the server-owned process is in. For states whose action is CLINICAL
+       * and cannot be code-authored. The note asks; where an exit must be
+       * earned, structured evidence verifies (stabilisation-evidence.ts).
+       */
+      note: ClosureNoteKind;
     };
 
 export type ClosureOrchestrationInput = {
@@ -87,6 +100,12 @@ export type ClosureOrchestrationInput = {
    * has been detected and the process is idle, so ordinary turns pay nothing.
    */
   loadSessionTurns: () => Promise<ClosureTurn[]>;
+  /**
+   * Lazily counts the user's messages strictly after `since`. Called ONLY while
+   * a score is outstanding. This is how "first non-answer" is told from
+   * "second" without a new persisted counter or a schema change.
+   */
+  countUserMessagesSince: (since: Date) => Promise<number>;
   now: Date;
 };
 
@@ -143,7 +162,8 @@ export async function runClosureOrchestration(
   userId: string,
   input: ClosureOrchestrationInput,
 ): Promise<ClosureOrchestrationDecision> {
-  const { current, userMessage, locale, loadSessionTurns, now } = input;
+  const { current, userMessage, locale, loadSessionTurns, countUserMessagesSince, now } =
+    input;
 
   // 1. Automatic, non-clinical transitions first (Phase 1, unchanged).
   const { decision, resolution } = decideClosureOrchestration(current, now);
@@ -162,20 +182,61 @@ export async function runClosureOrchestration(
     if (!written.persisted) resolved = null;
   }
 
-  // 2. Awaiting the required measurement: read the user's own number.
-  if (process.state === 'AWAITING_INITIAL_SCORE') {
+  // 2. A stabilisation round is owed. The action is CLINICAL and cannot be
+  //    code-authored, so the turn proceeds to the model carrying a platform
+  //    note. It does NOT advance here — finaliseTurn advances it only on
+  //    structured evidence that a stabilising practice actually completed.
+  if (process.state === 'DELIVERING_STABILISATION') {
+    return { kind: 'constrain', process, resolved, note: 'stabilisation' };
+  }
+
+  // 3. Awaiting a required measurement — the same handler for both scores.
+  if (
+    process.state === 'AWAITING_INITIAL_SCORE' ||
+    process.state === 'AWAITING_POST_SCORE'
+  ) {
+    // How many times the user has spoken since arriving in this state. Zero
+    // means we have not asked yet (the post-score state is entered after the
+    // reply has streamed); one means this is the first non-answer; two or more
+    // means they are not going to give a number.
+    const anchor = process.transitionedAt ?? process.enteredAt ?? now;
+    let spoken: number;
+    try {
+      spoken = await countUserMessagesSince(anchor);
+    } catch {
+      // Unknown is not "many". Ask rather than release.
+      spoken = 1;
+    }
+
+    if (spoken === 0) {
+      return {
+        kind: 'deliver',
+        process,
+        resolved,
+        text: getStabilityQuestionForLocale(locale),
+        step: 'stability_question',
+      };
+    }
+
     const captured = captureStabilityScore(userMessage);
 
     if (!captured.found) {
-      // No usable number this turn. The methodology is explicit that the close
-      // does not proceed without one, so the question is asked again rather
-      // than handing the turn back to the clinician — which is precisely how
-      // the 2026-08-08 session ended with no measurement at all.
+      // Q5 — owner decision 2026-08-08. One re-ask, then release.
       //
-      // ⚠️ Q5 (repeated non-answer / refusal) is an UNRESOLVED CLINICAL
-      // QUESTION. Code does the mechanically safe thing and nothing more; it
-      // invents no refusal handling. The existing 4-hour interrupted-process
-      // rule remains the escape hatch.
+      // The user has already said they want to leave. Asking a third time
+      // would trap them in the session, and the platform must never do that.
+      // So: no fabricated score, no successful-close claim, the attempt stays
+      // on record as INCOMPLETE, and the clinician gives a short warm close.
+      if (spoken >= 2) {
+        const released = transitionClosureProcess(process, 'INCOMPLETE', { now });
+        if (released.ok) {
+          process = (
+            await persistProcess(userId, process, released.process, 'score_refused')
+          ).process;
+        }
+        return { kind: 'constrain', process, resolved, note: 'incomplete' };
+      }
+
       return {
         kind: 'deliver',
         process,
@@ -185,22 +246,38 @@ export async function runClosureOrchestration(
       };
     }
 
+    // recordCapturedScore routes to the initial or post slot by current state.
     const recorded = recordCapturedScore(process, captured.score, now);
     if (recorded.ok) {
       process = (await persistProcess(userId, process, recorded.process, null)).process;
     }
 
-    // 3. The user's current score decides the route — not the history.
+    // 4. The user's current score decides the outcome — not the history.
     const outcome = decideClosureOutcome({
       postScore: captured.score,
       roundsDelivered: process.roundCount,
       threshold: STABILITY_CLOSE_THRESHOLD,
     });
+    // Route as outcome: ACTIVATED_CLOSE once any stabilisation was involved,
+    // NORMAL_CLOSE when the measurement alone settled it.
     const route =
-      outcome.outcome === 'DELIVERING_STABILISATION' ? 'ACTIVATED_CLOSE' : 'NORMAL_CLOSE';
+      outcome.outcome === 'DELIVERING_STABILISATION' || process.roundCount > 0
+        ? 'ACTIVATED_CLOSE'
+        : 'NORMAL_CLOSE';
     const moved = transitionClosureProcess(process, outcome.outcome, { now, route });
     if (moved.ok) {
       process = (await persistProcess(userId, process, moved.process, outcome.reason)).process;
+    }
+
+    // The turn now carries the clinical step the new state calls for.
+    if (moved.ok && moved.process.state === 'CLOSED') {
+      return { kind: 'constrain', process, resolved, note: 'closing' };
+    }
+    if (moved.ok && moved.process.state === 'DELIVERING_STABILISATION') {
+      return { kind: 'constrain', process, resolved, note: 'stabilisation' };
+    }
+    if (moved.ok && moved.process.state === 'INCOMPLETE') {
+      return { kind: 'constrain', process, resolved, note: 'incomplete' };
     }
 
     // Everything downstream of the measurement is clinical CONTENT —

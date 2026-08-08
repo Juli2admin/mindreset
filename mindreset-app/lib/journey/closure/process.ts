@@ -214,20 +214,20 @@ export const ALLOWED_TRANSITIONS: Readonly<
   Record<ClosureProcessState, readonly ClosureProcessState[]>
 > = Object.freeze({
   NONE: ['AWAITING_INITIAL_SCORE', 'CLOSED'],
-  // AWAITING_CLOSE_CONFIRMATION added 2026-08-08 (measurement-first correction).
-  // The initial score can now END the sequence, not only start a stabilisation
-  // round: a user-reported reading at or above STABILITY_CLOSE_THRESHOLD means
-  // no stabilisation is required and the close may be confirmed. Its absence
-  // was the last artefact of the original design, in which entry implied the
-  // user was already known to need stabilising.
+  // CLOSED added 2026-08-08 (product simplification). A score at or above the
+  // threshold ENDS the sequence: the user's explicit session_exit already was
+  // the consent, so there is no second confirmation question to ask. Its
+  // absence was the last artefact of the original design, in which entry
+  // implied the user was already known to need stabilising.
   AWAITING_INITIAL_SCORE: [
-    'AWAITING_CLOSE_CONFIRMATION',
+    'CLOSED',
     'DELIVERING_STABILISATION',
     'HUMAN_SUPPORT',
     'INCOMPLETE',
   ],
   DELIVERING_STABILISATION: ['AWAITING_POST_SCORE', 'HUMAN_SUPPORT', 'INCOMPLETE'],
   AWAITING_POST_SCORE: [
+    'CLOSED',
     'DELIVERING_STABILISATION',
     'AWAITING_CLOSE_CONFIRMATION',
     'HUMAN_SUPPORT',
@@ -355,7 +355,15 @@ export function transitionClosureProcess(
   if (to === 'CLOSED') {
     return {
       ok: true,
-      process: { ...current, state: to, transitionedAt: now, completedAt: now },
+      process: {
+        ...current,
+        state: to,
+        // Route as outcome: a close reached from a score records which route it
+        // turned out to be. Absence keeps whatever is already stored.
+        route: opts.route ?? current.route,
+        transitionedAt: now,
+        completedAt: now,
+      },
     };
   }
 
@@ -442,10 +450,7 @@ export function computeScoreChange(process: ClosureProcess): number | null {
   return postScore - initialScore;
 }
 
-export type ClosureOutcome =
-  | 'AWAITING_CLOSE_CONFIRMATION'
-  | 'DELIVERING_STABILISATION'
-  | 'HUMAN_SUPPORT';
+export type ClosureOutcome = 'CLOSED' | 'DELIVERING_STABILISATION' | 'INCOMPLETE';
 
 export type ClosureOutcomeReason =
   | 'score_at_or_above_threshold'
@@ -453,20 +458,30 @@ export type ClosureOutcomeReason =
   | 'below_threshold_rounds_exhausted';
 
 /**
- * Protocol §9 — the closure decision, from owner-approved rules (2026-08-05).
- * Pure arithmetic over a CODE-CAPTURED score; no clinical judgement.
+ * The closure decision. Pure arithmetic over a CODE-CAPTURED score; no clinical
+ * judgement anywhere in it.
  *
- *   at/above threshold                    -> AWAITING_CLOSE_CONFIRMATION
- *   below, rounds remain                  -> DELIVERING_STABILISATION
- *   below, rounds exhausted               -> HUMAN_SUPPORT
+ *   at/above threshold        -> CLOSED       (no stabilisation was needed)
+ *   below, rounds remain      -> DELIVERING_STABILISATION
+ *   below, rounds exhausted   -> INCOMPLETE
  *
- * DELIBERATELY NOT IMPLEMENTED. The owner's rule also lists "deterioration,
- * uncertain safety or inability to establish a safe plan" as escalation
- * triggers. Whether deterioration escalates when the score is nonetheless AT
- * OR ABOVE threshold (e.g. 9 -> 7) is not resolved by the approved wording,
- * and safety/plan adequacy are clinical judgements this layer cannot make.
- * `computeScoreChange` exposes the delta; nothing here acts on it. Raised for
- * decision rather than defaulted.
+ * PRODUCT SIMPLIFICATION, owner decision 2026-08-08. Two outcomes changed:
+ *
+ *   AWAITING_CLOSE_CONFIRMATION -> CLOSED. The user's explicit session_exit IS
+ *   the consent; asking them to confirm a decision they already made re-opens
+ *   it. There is no second confirmation step.
+ *
+ *   HUMAN_SUPPORT -> INCOMPLETE. MindReset is self-help and provides no human-
+ *   support service or managed handoff, so the sequence must not route into one.
+ *   INCOMPLETE is the honest record: the user asked to leave, the stability
+ *   criterion was not reached, no score is fabricated, nothing claims the close
+ *   completed successfully, and the user is released rather than trapped. Crisis
+ *   and emergency handling are a SEPARATE mechanism and are unchanged — the
+ *   keyword scan runs before this hook is ever reached.
+ *
+ * Both AWAITING_CLOSE_CONFIRMATION and HUMAN_SUPPORT remain in the transition
+ * table as legacy states. Nothing produces them any more; this function was
+ * their only producer.
  *
  * `roundsDelivered` is the count of stabilisation rounds actually delivered —
  * `ClosureProcess.roundCount`, which only increments on entry to
@@ -478,10 +493,7 @@ export function decideClosureOutcome(args: {
   threshold: number;
 }): { outcome: ClosureOutcome; reason: ClosureOutcomeReason } {
   if (args.postScore >= args.threshold) {
-    return {
-      outcome: 'AWAITING_CLOSE_CONFIRMATION',
-      reason: 'score_at_or_above_threshold',
-    };
+    return { outcome: 'CLOSED', reason: 'score_at_or_above_threshold' };
   }
   if (args.roundsDelivered < MAX_STABILISATION_ROUNDS) {
     return {
@@ -489,7 +501,7 @@ export function decideClosureOutcome(args: {
       reason: 'below_threshold_rounds_remain',
     };
   }
-  return { outcome: 'HUMAN_SUPPORT', reason: 'below_threshold_rounds_exhausted' };
+  return { outcome: 'INCOMPLETE', reason: 'below_threshold_rounds_exhausted' };
 }
 
 export type ScoreSlot = 'initial' | 'post';

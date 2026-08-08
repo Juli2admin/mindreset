@@ -53,6 +53,7 @@ const runOrch = (
     userMessage: '',
     locale: null,
     loadSessionTurns: async () => [],
+    countUserMessagesSince: async () => 1,
     now: NOW,
     ...overrides,
   });
@@ -215,8 +216,9 @@ describe('runClosureOrchestration (persisting)', () => {
       transitionedAt: at(INTERRUPTED_PROCESS_MS + 1),
     });
     const decision = await runOrch(stored);
-    // Memory must not claim a transition the store refused.
-    expect(decision.kind).toBe('proceed');
+    // Memory must not claim a transition the store refused. The record is still
+    // AWAITING_POST_SCORE in the database, so the turn correctly goes on asking
+    // for the score — what must not happen is claiming the conversion landed.
     expect(decision.process).toEqual(stored);
     expect(decision.resolved).toBeNull();
   });

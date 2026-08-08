@@ -202,10 +202,17 @@ describe('allowed transitions', () => {
 // Rejected invalid transitions
 // ---------------------------------------------------------------------------
 describe('rejected invalid transitions', () => {
-  it('cannot skip from entry straight to CLOSED', () => {
-    const p = makeProcess({ state: 'AWAITING_INITIAL_SCORE', route: 'ACTIVATED_CLOSE' });
-    const r = transitionClosureProcess(p, 'CLOSED', { now: NOW });
-    expect(r).toEqual({ ok: false, reason: 'invalid_transition', process: p });
+  // Product simplification 2026-08-08: entry -> CLOSED is now the CORRECT path
+  // when the initial score clears the threshold. The old pin asserted the
+  // opposite and is replaced by the measurement-first case below.
+  it('may go from entry straight to CLOSED when the score suffices', () => {
+    const p = makeProcess({ state: 'AWAITING_INITIAL_SCORE' });
+    const r = transitionClosureProcess(p, 'CLOSED', { now: NOW, route: 'NORMAL_CLOSE' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.state).toBe('CLOSED');
+    expect(r.process.route).toBe('NORMAL_CLOSE');
+    expect(r.process.roundCount).toBe(0);
   });
 
   it('cannot go backwards from AWAITING_POST_SCORE to AWAITING_INITIAL_SCORE', () => {
@@ -273,10 +280,12 @@ describe('rejected invalid transitions', () => {
 // ---------------------------------------------------------------------------
 
 describe('measurement-first — route resolves from the initial score', () => {
-  it('allows AWAITING_INITIAL_SCORE -> AWAITING_CLOSE_CONFIRMATION', () => {
-    expect(
-      isAllowedTransition('AWAITING_INITIAL_SCORE', 'AWAITING_CLOSE_CONFIRMATION'),
-    ).toBe(true);
+  it('allows AWAITING_INITIAL_SCORE -> CLOSED', () => {
+    expect(isAllowedTransition('AWAITING_INITIAL_SCORE', 'CLOSED')).toBe(true);
+  });
+
+  it('allows AWAITING_POST_SCORE -> CLOSED', () => {
+    expect(isAllowedTransition('AWAITING_POST_SCORE', 'CLOSED')).toBe(true);
   });
 
   it('records NORMAL_CLOSE when the initial score cleared the threshold', () => {
@@ -286,7 +295,7 @@ describe('measurement-first — route resolves from the initial score', () => {
     expect(entered.ok).toBe(true);
     if (!entered.ok) return;
 
-    const r = transitionClosureProcess(entered.process, 'AWAITING_CLOSE_CONFIRMATION', {
+    const r = transitionClosureProcess(entered.process, 'CLOSED', {
       now: NOW,
       route: 'NORMAL_CLOSE',
     });
@@ -721,12 +730,15 @@ describe('computeScoreChange', () => {
 describe('decideClosureOutcome', () => {
   const T = STABILITY_CLOSE_THRESHOLD;
 
-  it('at or above threshold proposes closing', () => {
+  // Product simplification 2026-08-08: a sufficient score CLOSES. The user's
+  // explicit session_exit was already the consent, so there is no second
+  // confirmation step to propose.
+  it('at or above threshold closes', () => {
     for (const s of [T, T + 1, 10]) {
       expect(
         decideClosureOutcome({ postScore: s, roundsDelivered: 0, threshold: T }),
       ).toEqual({
-        outcome: 'AWAITING_CLOSE_CONFIRMATION',
+        outcome: 'CLOSED',
         reason: 'score_at_or_above_threshold',
       });
     }
@@ -740,7 +752,11 @@ describe('decideClosureOutcome', () => {
     }
   });
 
-  it('below threshold with rounds exhausted escalates', () => {
+  // Product simplification 2026-08-08: MindReset is self-help and provides no
+  // human-support service, so the bounded rounds terminate in INCOMPLETE — the
+  // honest record. The user is released, no score is fabricated, and nothing
+  // claims the close completed. Crisis handling is a separate mechanism.
+  it('below threshold with rounds exhausted records INCOMPLETE, never a handoff', () => {
     expect(
       decideClosureOutcome({
         postScore: T - 1,
@@ -748,9 +764,23 @@ describe('decideClosureOutcome', () => {
         threshold: T,
       }),
     ).toEqual({
-      outcome: 'HUMAN_SUPPORT',
+      outcome: 'INCOMPLETE',
       reason: 'below_threshold_rounds_exhausted',
     });
+  });
+
+  it('never produces HUMAN_SUPPORT or AWAITING_CLOSE_CONFIRMATION — legacy states', () => {
+    for (const score of [1, 3, T - 1, T, 10]) {
+      for (const rounds of [0, 1, MAX_STABILISATION_ROUNDS]) {
+        const { outcome } = decideClosureOutcome({
+          postScore: score,
+          roundsDelivered: rounds,
+          threshold: T,
+        });
+        expect(outcome).not.toBe('HUMAN_SUPPORT');
+        expect(outcome).not.toBe('AWAITING_CLOSE_CONFIRMATION');
+      }
+    }
   });
 
   it('reuses the existing Repair 1 threshold rather than inventing one', () => {
@@ -774,7 +804,7 @@ describe('decideClosureOutcome', () => {
     // function does not consider it; computeScoreChange exposes the delta.
     expect(
       decideClosureOutcome({ postScore: 7, roundsDelivered: 0, threshold: T }).outcome,
-    ).toBe('AWAITING_CLOSE_CONFIRMATION');
+    ).toBe('CLOSED');
     expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
   });
 });

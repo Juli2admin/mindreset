@@ -42,6 +42,12 @@ import {
 // concern from the guard above: the guard validates a closure CLAIM after the
 // reply has streamed; this owns the closure PROCESS before the model runs.
 import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
+import { appendClosureNote } from '@/lib/journey/closure/state-notes';
+import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
+import {
+  transitionClosureProcess,
+  type ClosureProcess,
+} from '@/lib/journey/closure/process';
 import { loadRecentTurns } from '@/lib/journey/router/history';
 import {
   scanForJourneyRedFlag,
@@ -381,6 +387,13 @@ export async function POST(request: NextRequest) {
           cycleStatus: t.report?.cycleStatus ?? null,
         })),
       ),
+    // Lazy: called only while a required score is outstanding. One indexed
+    // count; it is how "first non-answer" is told from "second" without a new
+    // persisted counter or a schema change.
+    countUserMessagesSince: (since: Date) =>
+      prisma.journeyMessage.count({
+        where: { userId, role: 'user', createdAt: { gt: since } },
+      }),
     now: new Date(),
   });
   // The hook's record is authoritative for the rest of this turn.
@@ -475,7 +488,17 @@ export async function POST(request: NextRequest) {
   // never compounds across turns. See lib/journey/prompts/emission-
   // reminder.ts for the AiUsage-backed diagnosis (mid-session turns
   // dropping to reply-only output, 18 consecutive report-less turns).
-  const messages: Anthropic.MessageParam[] = appendEmissionReminder(maskedHistory);
+  // Closure state note (Phase 2). When the server-owned process is in a state
+  // whose action is CLINICAL and cannot be code-authored, the turn still runs
+  // the model — but carrying a platform note naming the required step, so a
+  // blocking state is never invisible to the clinician. Same mechanism and same
+  // non-persisted, outbound-only contract as the emission reminder, which is
+  // appended after it so the output-format reminder stays last.
+  const withClosureNote =
+    closureOrchestration.kind === 'constrain'
+      ? appendClosureNote(maskedHistory, closureOrchestration.note)
+      : maskedHistory;
+  const messages: Anthropic.MessageParam[] = appendEmissionReminder(withClosureNote);
 
   const stream = anthropic.messages.stream({
     model,
@@ -562,6 +585,7 @@ export async function POST(request: NextRequest) {
                 recentForVerifier: decryptedHistory.slice(0, -1),
                 stopReason: msg?.stop_reason ?? null,
                 outputTokens: msg?.usage?.output_tokens ?? null,
+                closureProcess: state.closureProcess,
               }),
             )
             // The reply has already streamed by this point; a background
@@ -610,6 +634,8 @@ async function finaliseTurn(args: {
   // logs whatever it has.
   stopReason: string | null;
   outputTokens: number | null;
+  /** Authoritative closure record as the pre-LLM hook left it this turn. */
+  closureProcess: ClosureProcess;
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   // ONE trusted server clock reading governs this whole turn: it is stamped
@@ -660,6 +686,19 @@ async function finaliseTurn(args: {
           // loadRecentTurns has no session filter; the guard narrows the
           // window to this session relative to this timestamp (B1).
           observedAt,
+          // Single measurement authority: when Phase 2 asked the approved
+          // question and parsed the user's own answer, THAT is the reading the
+          // guard validates against. Most recent slot wins. Without this the
+          // guard would look only at `report.stabilityCheck` and record a real
+          // user-reported score as `no_stability_measurement`.
+          args.closureProcess.postScore !== null
+            ? { score: args.closureProcess.postScore, at: args.closureProcess.postScoreAt }
+            : args.closureProcess.initialScore !== null
+              ? {
+                  score: args.closureProcess.initialScore,
+                  at: args.closureProcess.initialScoreAt,
+                }
+              : null,
         );
         report = gated.report;
         closureGate = gated.gate;
@@ -841,6 +880,18 @@ async function finaliseTurn(args: {
     report: finalReport,
   });
 
+  // Closure Phase 2 — the VERIFY half of constrain-then-verify.
+  //
+  // DELIVERING_STABILISATION is the one live closure state whose action is
+  // clinical and cannot be code-authored, so the pre-LLM note asks for it. The
+  // process advances only on structured evidence that a stabilising practice
+  // actually completed — never on the clinician's say-so. No evidence means the
+  // state holds and the note is delivered again next turn, which is the safe
+  // direction: the user is not moved on from a stabilisation that never ran.
+  if (args.closureProcess.state === 'DELIVERING_STABILISATION') {
+    await advanceAfterStabilisation(args.userId, args.closureProcess, finalReport);
+  }
+
   // Router — decide stage transition. Runs AFTER the audit row is written
   // so the gate functions can inspect the just-completed turn. Skipped if
   // the user was just frozen this turn (the frozen path is its own holding
@@ -857,6 +908,59 @@ async function finaliseTurn(args: {
       // Non-fatal — the user's turn already streamed cleanly. Worst case
       // they stay in the current stage until the next turn re-evaluates.
     }
+  }
+}
+
+/**
+ * Advance DELIVERING_STABILISATION -> AWAITING_POST_SCORE, but only when this
+ * turn's report proves a stabilising practice completed. Never throws — this
+ * runs after the reply has streamed and must not cost the user anything.
+ */
+async function advanceAfterStabilisation(
+  userId: string,
+  current: ClosureProcess,
+  report: StateReport,
+): Promise<void> {
+  const evidence = stabilisationDelivered(report);
+  if (evidence.delivered !== true) {
+    console.info('[journey/closure-process] stabilisation not evidenced; holding', {
+      userId,
+      evidence,
+    });
+    return;
+  }
+  const moved = transitionClosureProcess(current, 'AWAITING_POST_SCORE', {
+    now: new Date(),
+  });
+  if (!moved.ok) return;
+  try {
+    await prisma.recodeProgress.update({
+      where: { userId },
+      data: {
+        closureProcessState: moved.process.state,
+        closureRoute: moved.process.route,
+        closureEnteredAt: moved.process.enteredAt,
+        closureTransitionedAt: moved.process.transitionedAt,
+        closureRoundCount: moved.process.roundCount,
+        closureCompletedAt: moved.process.completedAt,
+        closureIncompleteAt: moved.process.incompleteAt,
+        closureFreezeInterruptedAt: moved.process.freezeInterruptedAt,
+        closureInitialScore: moved.process.initialScore,
+        closureInitialScoreAt: moved.process.initialScoreAt,
+        closurePostScore: moved.process.postScore,
+        closurePostScoreAt: moved.process.postScoreAt,
+      },
+    });
+    console.info('[journey/closure-process] stabilisation evidenced; awaiting post score', {
+      userId,
+      family: evidence.family,
+      name: evidence.name,
+    });
+  } catch (err) {
+    console.error('[journey/closure-process] post-stabilisation persist failed', {
+      userId,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 }
 

@@ -288,13 +288,11 @@ describe('compositional — precision guards', () => {
     }
   });
 
-  // KNOWN LIMIT, unchanged from the original implementation and therefore not
-  // a regression: the sign-off components are matched as bare substrings, so a
-  // sentence that merely contains «до завтра» ("до завтра ещё далеко") is read
-  // as a sign-off. Pinned here so the behaviour is visible rather than
-  // discovered later; narrowing it would change an existing classification.
-  it('sign-off components are substring-matched (known precision limit)', () => {
-    expect(intentOf('до завтра ещё далеко')).toBe('session_exit');
+  // Formerly pinned as a "known limit". Once the detector went live that limit
+  // became a real false positive that could enter Closing, so the rule was
+  // tightened: a sign-off must BE the utterance, not appear inside one.
+  it('a sign-off talked ABOUT is not a sign-off', () => {
+    expect(intentOf('до завтра ещё далеко')).not.toBe('session_exit');
   });
 
   it('a third party leaving is not the user leaving', () => {
@@ -321,6 +319,64 @@ describe('compositional — precision guards', () => {
       'давай в следующий раз',
     ]) {
       expect(detectExitIntent(m).matched).toBeTruthy();
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Live-detector precision corrections (2026-08-08).
+//
+// Reducing the original whole-phrase lists to bare predicates broadened
+// matching and introduced false positives that would have entered Closing.
+// Every case below must NOT be a session exit.
+// ---------------------------------------------------------------------------
+
+describe('precision — departure verbs carrying a complement are not exits', () => {
+  it.each([
+    'I want to go deeper',
+    "let's go back to that",
+    'I want to go through it again',
+    'я хочу уйти от него',
+    'я ухожу в себя',
+    'мне нужно идти дальше',
+  ])('%s', (m) => expect(intentOf(m)).not.toBe('session_exit'));
+});
+
+describe('precision — a departure verb needs obligation or terminal position', () => {
+  it('«пора что-то менять» is reflection, not leaving', () => {
+    expect(intentOf('пора что-то менять')).not.toBe('session_exit');
+  });
+
+  it('the accepted true exits still fire', () => {
+    for (const m of [
+      'I need to go',
+      'I have to go',
+      "I've got to go",
+      'I should go now',
+      'Sorry, I NEED TO GO — my train is here',
+      'мне пора',
+      'мне пора идти',
+      'мне нужно идти',
+      'мне надо идти',
+      'я пойду',
+      "I'm logging off",
+    ]) {
+      expect(intentOf(m)).toBe('session_exit');
+    }
+  });
+});
+
+describe('precision — sign-offs must be the utterance', () => {
+  it.each([
+    'до завтра ещё далеко',
+    'I never said goodbye to my father',
+    'я не сказала ему до свидания',
+    'он сказал увидимся завтра',
+  ])('%s', (m) => expect(intentOf(m)).not.toBe('session_exit'));
+
+  it('standalone sign-offs still fire, with tolerated filler', () => {
+    for (const m of ['Goodbye', 'Bye for now', 'See you tomorrow', 'до свидания', 'до завтра', 'ок, до свидания']) {
+      expect(intentOf(m)).toBe('session_exit');
     }
   });
 });
