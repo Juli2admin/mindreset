@@ -177,15 +177,21 @@ export function parseStateReport(
   opts: ParseStateReportOptions = {},
 ): StateReport {
   const observedAtIso = (opts.observedAt ?? new Date()).toISOString();
-  if (!raw) return { ...DEFENSIVE_DEFAULT };
+  // BP-D (2026-08-08). Every branch below returns the defensive default, which
+  // means the required three are OUR values, not the model's. Mark them so a
+  // later reader can tell "the model reported 5" from "nothing was reported".
+  // Without the marker the stored blob is well-formed JSON and the two cases
+  // are indistinguishable on re-read. Fail-safe behaviour is unchanged — only
+  // the provenance is now recorded.
+  if (!raw) return { ...DEFENSIVE_DEFAULT, _defaultedReport: true };
   let obj: Record<string, unknown>;
   try {
     obj = JSON.parse(raw);
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
-      return { ...DEFENSIVE_DEFAULT, _raw: raw };
+      return { ...DEFENSIVE_DEFAULT, _raw: raw, _defaultedReport: true };
     }
   } catch {
-    return { ...DEFENSIVE_DEFAULT, _raw: raw };
+    return { ...DEFENSIVE_DEFAULT, _raw: raw, _defaultedReport: true };
   }
 
   const intensity = clamp(toNumber(obj.intensity, 5), 0, 10);
@@ -197,6 +203,11 @@ export function parseStateReport(
     safetyFlag,
     recommendedAction,
   };
+
+  // BP-D — carry the marker back out when re-reading a stored blob that was
+  // written from a defaulted report. The model never emits this field, so a
+  // `true` here can only have come from a prior parse of ours.
+  if (obj._defaultedReport === true) report._defaultedReport = true;
 
   const channel = pickEnumOptional(obj.channel, CHANNELS);
   if (channel) report.channel = channel;

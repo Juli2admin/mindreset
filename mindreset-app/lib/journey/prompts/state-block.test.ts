@@ -48,6 +48,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     taskContract: null,
     onboardingAnswers: null,
     closureProcess: CLOSURE_PROCESS_NONE,
+    workingMemory: null,
     ...overrides,
   };
 }
