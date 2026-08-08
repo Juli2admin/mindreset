@@ -2,7 +2,13 @@
 // These describe the *decrypted* shape in memory; storage at rest is
 // encrypted per UK GDPR Article 9. See lib/encrypt.ts.
 
-import type { ModalityRejected, TaskContract } from '../stateReport/schema';
+import type {
+  CycleStatus,
+  ModalityRejected,
+  PracticeFamily,
+  PracticeRunStatus,
+  TaskContract,
+} from '../stateReport/schema';
 import type { ClosureProcess } from '../closure/process';
 import type { OnboardingAnswers } from '@/lib/platform/types';
 
@@ -241,4 +247,84 @@ export type JourneyState = {
   //     model-generated history.
   // See lib/journey/closure/process.ts for the transition model.
   closureProcess: ClosureProcess;
+
+  // Clinician Working Memory (2026-08-08). The clinician's own analytical
+  // output from earlier turns in THIS session, projected back so it is
+  // available before the next reply instead of only to code and the audit log.
+  //
+  // Derived in load.ts by deriveWorkingMemory from the same recent state
+  // reports the sensitivity signals already read — no extra query, no extra
+  // decrypt, no extra model call. Recomputed every turn and never persisted,
+  // so it cannot accumulate or drift.
+  //
+  // null when there is nothing to report (first turn of a session, session
+  // resume, or no usable material). Every member is independently nullable:
+  // ABSENT MUST STAY DISTINGUISHABLE FROM A VALUE, which is the same
+  // principle BP-D enforces upstream.
+  workingMemory: ClinicalWorkingMemory | null;
+};
+
+/** One practice the clinician ran earlier in this session, as it recorded it. */
+export type WorkingMemoryPractice = {
+  family: PracticeFamily | null;
+  name: string | null;
+  status: PracticeRunStatus;
+  modalitySwitched: { from: string; to: string } | null;
+};
+
+/**
+ * One prior `clinicalRead`. Provisional reasoning the clinician wrote at the
+ * time — never a finding, never re-derived, never summarised by code.
+ */
+export type WorkingMemoryDelta = {
+  /** 1 = the turn immediately before this one. */
+  turnsAgo: number;
+  text: string;
+};
+
+/**
+ * A scaled measurement with its provenance intact. Repair 1 semantics are
+ * preserved deliberately: `scale` and `source` travel WITH the number, because
+ * a score whose scale or reporter is unknown cannot be read as a stability
+ * reading. `ageMinutes` is computed from the server-stamped `observedAt`.
+ */
+export type WorkingMemoryReading = {
+  score: number;
+  scale: 'stability' | 'ambiguous' | null;
+  source: string | null;
+  ageMinutes: number;
+};
+
+/**
+ * Bounded projection of the clinician's own analytical state for the current
+ * session. Facts only — every member restates something the clinician already
+ * emitted, or is arithmetic over such values. No interpretation happens here
+ * or in the renderer; the clinician remains the only interpreter.
+ */
+export type ClinicalWorkingMemory = {
+  /**
+   * Intensity readings across this session, oldest first. Excludes any turn
+   * whose report was defaulted (BP-D) — a parser default is not a reading.
+   * null below two usable readings: one point is already rendered separately
+   * and a single value has no trajectory.
+   */
+  activation: {
+    readings: number[];
+    max: number;
+    direction: 'rising' | 'falling' | 'steady';
+  } | null;
+  /** Safety as the clinician itself flagged it. Defaulted turns excluded. */
+  safety: { current: SafetyFlag; sessionWorst: SafetyFlag } | null;
+  /** Most recent first, capped. Empty when none recorded. */
+  practices: WorkingMemoryPractice[];
+  /** Most recent first, capped. Empty when none available. */
+  formulationDeltas: WorkingMemoryDelta[];
+  /** As the clinician last recorded it — a claim, not a verified outcome. */
+  requestStatus: 'addressed' | 'parked' | 'unresolved' | null;
+  /** Kept as the enum: `closing` is not `open` and must not collapse into it. */
+  cycleStatus: CycleStatus | null;
+  adultSelf: { present: boolean; turnsAgo: number } | null;
+  /** Dropped entirely once past MAX_MEASUREMENT_AGE_MS — never shown stale. */
+  stability: WorkingMemoryReading | null;
+  distress: WorkingMemoryReading | null;
 };

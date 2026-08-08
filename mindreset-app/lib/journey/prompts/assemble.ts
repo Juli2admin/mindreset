@@ -73,6 +73,120 @@ const CHANNEL_FAMILY_GUIDANCE: Record<string, string> = {
     'Weave two families that match what the user is actually showing you this turn — do not default to regulation.',
 };
 
+/**
+ * Plain-English restatement of a recorded practice status. These are the
+ * master prompt's own definitions of each value, not an assessment of how the
+ * practice went — the system does not record that (see `status` in the state
+ * report schema: it captures how a run TERMINATED, never its effect).
+ */
+const PRACTICE_STATUS_PHRASE: Record<string, string> = {
+  started: 'started',
+  mid: 'in progress',
+  completed: 'completed',
+  aborted_user_request: "stopped at the user's request",
+  aborted_overwhelm: "stopped as the user's window of tolerance was being exceeded",
+};
+
+const SAFETY_PHRASE: Record<string, string> = {
+  none: 'no safety concern flagged',
+  watch: 'watch',
+  red_flag: 'red flag',
+};
+
+/**
+ * Render the Clinician Working Memory section.
+ *
+ * Returns [] when there is nothing to say, so the section disappears entirely
+ * rather than rendering empty scaffolding.
+ *
+ * THE ONE RULE: every clause is a restatement of a recorded value or
+ * arithmetic over recorded values. "Activation has risen" is arithmetic;
+ * "the user is deteriorating" would be a judgement and is not permitted here.
+ * "Recorded as open" attributes; "ready to close" would decide. The clinician
+ * reads these facts and does the interpreting.
+ */
+function renderWorkingMemory(wm: JourneyState['workingMemory']): string[] {
+  if (!wm) return [];
+  const out: string[] = [];
+
+  if (wm.activation) {
+    const { readings, max, direction } = wm.activation;
+    const verb =
+      direction === 'rising'
+        ? 'has risen'
+        : direction === 'falling'
+          ? 'has eased'
+          : 'has held steady';
+    out.push(
+      `- Activation ${verb} across this session: ${readings.join(' → ')} (${readings.length} readings, highest ${max}).`,
+    );
+  }
+  if (wm.safety) {
+    const current = SAFETY_PHRASE[wm.safety.current] ?? wm.safety.current;
+    out.push(
+      wm.safety.sessionWorst !== wm.safety.current
+        ? `- Your latest safety read: ${current}. Earlier this session you flagged ${SAFETY_PHRASE[wm.safety.sessionWorst] ?? wm.safety.sessionWorst}.`
+        : `- Your latest safety read: ${current}.`,
+    );
+  }
+  if (wm.practices.length > 0) {
+    const items = wm.practices.map((p) => {
+      const bits = [p.family ?? 'practice'];
+      if (p.name) bits.push(`"${p.name}"`);
+      bits.push(PRACTICE_STATUS_PHRASE[p.status] ?? p.status);
+      if (p.modalitySwitched) {
+        bits.push(`switched ${p.modalitySwitched.from} → ${p.modalitySwitched.to}`);
+      }
+      return bits.join(' — ');
+    });
+    out.push(
+      `- Practices you have already run this session (most recent first): ${items.join('; ')}. How each one landed is not recorded — only how it ended.`,
+    );
+  }
+  if (wm.cycleStatus && wm.cycleStatus !== 'closed') {
+    out.push(`- You recorded the therapeutic cycle as **${wm.cycleStatus}**.`);
+  }
+  if (wm.requestStatus) {
+    out.push(`- You last recorded the presenting request as **${wm.requestStatus}**.`);
+  }
+  if (wm.adultSelf) {
+    out.push(
+      `- Adult Self recorded as ${wm.adultSelf.present ? 'present' : 'not present'} ${wm.adultSelf.turnsAgo === 1 ? 'on the last turn' : `${wm.adultSelf.turnsAgo} turns ago`}.`,
+    );
+  }
+  if (wm.stability) {
+    const s = wm.stability;
+    const scale =
+      s.scale === 'stability'
+        ? 'on the stability scale'
+        : 'scale never established — cannot validate a close';
+    out.push(
+      `- Last stability reading: ${s.score}/10, ${scale}, ${s.source ?? 'source not recorded'}, ${s.ageMinutes} min ago.`,
+    );
+  }
+  if (wm.distress) {
+    const d = wm.distress;
+    out.push(
+      `- Last distress reading: ${d.score}/10 on the distress scale, ${d.source ?? 'source not recorded'}, ${d.ageMinutes} min ago.`,
+    );
+  }
+  if (wm.formulationDeltas.length > 0) {
+    out.push('- Your recent notes to yourself, newest first:');
+    for (const d of wm.formulationDeltas) {
+      const when = d.turnsAgo === 1 ? 'last turn' : `${d.turnsAgo} turns ago`;
+      out.push(`  - ${when}: "${d.text}"`);
+    }
+  }
+
+  if (out.length === 0) return [];
+
+  return [
+    '',
+    "**Your own clinical working notes from earlier in this session.** Private — injected by code from what you recorded on previous turns. This is your working memory, not something to recite: never read it back to the user, never quote it, never name it. Your notes below are what you thought at the time — provisional, and today's signal can revise any of them. Anything not listed here was not recorded, which is not the same as it not having happened.",
+    ...out,
+  ];
+}
+
 function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
@@ -205,6 +319,21 @@ function renderStateBlock(state: JourneyState): string {
     lines.push(
       `**Recent channel shift detected.** The user has moved between processing channels in the last few turns (e.g. imagery → somatic, cognitive → emotional). Assess in your <assessment> block whether the shift has stabilised or is still moving.`,
     );
+  }
+
+  // Clinician Working Memory (2026-08-08). The clinician's own analytical
+  // output from earlier turns in THIS session, returned so it is available
+  // before the next reply instead of only to code and the audit log.
+  //
+  // Sits here deliberately: with the LIVE session signals above, and ABOVE the
+  // historical-context divider below. This is current-session material and must
+  // not read as "captures from prior sessions".
+  //
+  // RESTATEMENT ONLY. Every line below restates a value the clinician itself
+  // emitted, or states arithmetic over such values. No line draws a clinical
+  // conclusion. Absent data is omitted, never defaulted.
+  for (const line of renderWorkingMemory(state.workingMemory)) {
+    lines.push(line);
   }
 
   if (state.anchorText) {

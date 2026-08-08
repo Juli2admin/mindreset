@@ -31,6 +31,7 @@
 
 import type { StateReport } from '../stateReport/schema';
 import { SESSION_BOUNDARY_MS } from '../state/load';
+import { MAX_MEASUREMENT_AGE_MS } from './measurement-age';
 
 /**
  * Stability threshold for a permitted close.
@@ -63,8 +64,14 @@ export const DESTABILISATION_INTENSITY = 6;
  * A missing or malformed model claim is simply ignored; validity then rests
  * entirely on the server-side stamp, never on model output.
  */
-/** How far the model's claimed measurement time may lag the server stamp. */
-export const MAX_MEASUREMENT_AGE_MS = 30 * 60 * 1000; // 30 minutes
+/**
+ * How far the model's claimed measurement time may lag the server stamp.
+ *
+ * Defined in ./measurement-age.ts and re-exported here so every existing
+ * import site keeps working; see that file for why it had to move. Value and
+ * meaning are unchanged.
+ */
+export { MAX_MEASUREMENT_AGE_MS };
 /** Tolerance for benign clock differences before a claim counts as future-dated. */
 export const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000; // 2 minutes
 

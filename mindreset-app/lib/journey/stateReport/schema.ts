@@ -495,4 +495,25 @@ export type StateReport = {
 
   // Raw shape if parse partially failed
   _raw?: string;
+
+  /**
+   * BP-D marker (2026-08-08). True when the three required fields in THIS
+   * report are parser defaults rather than model output — i.e. the model
+   * emitted no readable `<state-report>` at all and `parseStateReport`
+   * returned its defensive default (`intensity: 5`, `safetyFlag: 'watch'`,
+   * `recommendedAction: 'stay'`).
+   *
+   * WHY IT HAS TO BE PERSISTED, NOT RECOMPUTED. `finaliseTurn` stores
+   * `JSON.stringify(report)`, so a defaulted turn is written to the audit log
+   * as perfectly well-formed JSON. Re-parsing it on a later turn takes the
+   * happy path and the defaults become indistinguishable from a genuine
+   * clinical reading. The marker travels inside the stored blob so the
+   * distinction survives; `parseStateReport` copies it back out on re-read.
+   *
+   * Consumers must treat a marked report's intensity/safetyFlag as ABSENT,
+   * never as measurements. Underscore-prefixed like `_raw` /
+   * `_deliveredBeforeFreeze`: a runtime annotation, not part of the model's
+   * schema, and never emitted by the model.
+   */
+  _defaultedReport?: true;
 };

@@ -5,7 +5,13 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
 import { normaliseClosureProcess } from '../closure/process';
-import type { ModalityRejected, TaskContract } from '../stateReport/schema';
+import { MAX_MEASUREMENT_AGE_MS } from '../closure/measurement-age';
+import type {
+  ModalityRejected,
+  PracticeRun,
+  StateReport,
+  TaskContract,
+} from '../stateReport/schema';
 import { getOnboardingAnswers } from '@/lib/platform/profile';
 import type {
   JourneyState,
@@ -17,6 +23,11 @@ import type {
   JourneyPattern,
   CompassionBridgeQuality,
   MiiState,
+  SafetyFlag,
+  ClinicalWorkingMemory,
+  WorkingMemoryDelta,
+  WorkingMemoryPractice,
+  WorkingMemoryReading,
 } from './types';
 
 function decryptOrNull(v: string | null): string | null {
@@ -50,6 +61,22 @@ export { SESSION_BOUNDARY_MS };
 
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
+
+// Clinician Working Memory bounds (2026-08-08). Structural caps, not
+// heuristics: the projection is rebuilt from scratch every turn, so these
+// fix its maximum size for a user on turn 10 and on turn 10,000 alike.
+//
+// MAX_WM_DELTAS (3)      — the only turn-count the methodology itself states
+//                          is "the last 2-3 turns" (Sensitivity Layer Q2).
+//                          Short on purpose: prior reasoning re-injected in
+//                          volume hardens superseded hypotheses.
+// MAX_WM_DELTA_CHARS (240) — the same slice already applied to
+//                          openCycleDescription at the render site.
+// MAX_WM_PRACTICES (5)   — matches the PR M1 landscape caps; the ten-turn
+//                          read window bounds it above in any case.
+const MAX_WM_DELTAS = 3;
+const MAX_WM_DELTA_CHARS = 240;
+const MAX_WM_PRACTICES = 5;
 
 /**
  * Coarse AI-facing time bucket for "how long since the previous turn."
@@ -327,6 +354,9 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     openCycleDescription: sensitivity.openCycleDescription,
     sessionRejectedModalities: sensitivity.sessionRejectedModalities,
     recentChannelShift: sensitivity.recentChannelShift,
+    // Clinician Working Memory — derived from the same recent reports the
+    // signals above already read. See deriveWorkingMemory.
+    workingMemory: sensitivity.workingMemory,
     taskContract: parseStoredJson<TaskContract>(
       decryptOrNull(progress.taskContractEncrypted),
     ),
@@ -385,15 +415,54 @@ export type SensitivityInputRow = {
   report: StateReportForSensitivity | null;
 };
 
-// Narrower shape of the state report — only the fields sensitivity
-// derivation reads. Keeps the pure helper decoupled from the full
-// StateReport type shape.
+// Narrower shape of the state report — the fields the two pure derivations
+// read. Keeps the helpers decoupled from the full StateReport type shape.
+//
+// BP-A (2026-08-08). This projection is where the clinician's own analytical
+// output used to stop: the runtime decrypts and FULLY parses the last ten
+// reports on the pre-LLM path, then kept four fields and dropped the rest.
+// The additions below are read by deriveWorkingMemory. Every field is
+// optional, so deriveSensitivitySignals and its tests are unaffected.
 export type StateReportForSensitivity = {
   cycleStatus?: 'open' | 'closing' | 'closed';
   clinicalRead?: string;
   modalityRejected?: ModalityRejected[];
   channelShiftDetected?: boolean;
+  // --- carried for the working-memory projection ---
+  intensity?: number;
+  safetyFlag?: SafetyFlag;
+  practiceRun?: PracticeRun;
+  presentingRequestStatus?: 'addressed' | 'parked' | 'unresolved';
+  adultSelfPresent?: boolean;
+  stabilityCheck?: StateReport['stabilityCheck'];
+  distressIntensity?: StateReport['distressIntensity'];
+  /** BP-D — true when this report's required three are parser defaults. */
+  _defaultedReport?: true;
 };
+
+/**
+ * Walk backwards from most-recent (rows are already newest-first), stopping at
+ * the first row that would sit BEFORE a session boundary relative to the row
+ * that follows it in the walk. Boundary rule matches the same
+ * >=SESSION_BOUNDARY_MS threshold used everywhere else in the codebase.
+ *
+ * Extracted 2026-08-08 so the sensitivity signals and the working-memory
+ * projection share ONE definition of "this session" rather than each keeping
+ * their own copy. Behaviour is unchanged.
+ */
+function collectCurrentSessionRows(
+  rows: SensitivityInputRow[],
+  nowMs: number,
+): SensitivityInputRow[] {
+  const out: SensitivityInputRow[] = [];
+  let prevMs = nowMs;
+  for (const row of rows) {
+    if (prevMs - row.createdAtMs >= SESSION_BOUNDARY_MS) break;
+    out.push(row);
+    prevMs = row.createdAtMs;
+  }
+  return out;
+}
 
 export function deriveSensitivitySignals(
   rows: SensitivityInputRow[],
@@ -418,18 +487,7 @@ export function deriveSensitivitySignals(
   // anything on the fresh session.
   if (isSessionResume) return emptyResult;
 
-  // Walk backwards from most-recent (rows are already newest-first),
-  // stopping at the first row that would sit BEFORE a session boundary
-  // relative to the row that follows it in the walk. Boundary rule
-  // matches the same >=SESSION_BOUNDARY_MS threshold used everywhere
-  // else in the codebase.
-  const currentSessionRows: SensitivityInputRow[] = [];
-  let prevMs = nowMs;
-  for (const row of rows) {
-    if (prevMs - row.createdAtMs >= SESSION_BOUNDARY_MS) break;
-    currentSessionRows.push(row);
-    prevMs = row.createdAtMs;
-  }
+  const currentSessionRows = collectCurrentSessionRows(rows, nowMs);
 
   let hasOpenCycle = false;
   let openCycleDescription: string | null = null;
@@ -471,6 +529,195 @@ export function deriveSensitivitySignals(
   };
 }
 
+/**
+ * Clinician Working Memory — the clinician's own analytical output from
+ * earlier turns in THIS session, projected back for the next reply.
+ *
+ * FACTS ONLY. Every value here either restates something the clinician itself
+ * emitted, or is arithmetic over such values (a direction, a maximum, an age,
+ * a count). This function performs no clinical reasoning and must never start:
+ * "activation rose" is arithmetic, "the user is deteriorating" is a judgement;
+ * "recorded as aborted_overwhelm" is a restatement, "the practice did not
+ * help" is not in the data at all. The clinician remains the only interpreter.
+ *
+ * Absent stays absent. Nothing is inferred, defaulted or back-filled — if a
+ * source is missing the member is null and the renderer omits it.
+ *
+ * Pure; `nowMs` injected. Same rows the sensitivity signals already walk, so
+ * no extra query, decrypt, parse or model call. Recomputed every turn and
+ * never persisted, so it cannot accumulate.
+ *
+ * `openCycleDescriptionInUse` is the clinicalRead already rendering inside the
+ * open-cycle block; it is skipped here so the same text cannot appear twice.
+ */
+export function deriveWorkingMemory(
+  rows: SensitivityInputRow[],
+  isSessionResume: boolean,
+  nowMs: number,
+  openCycleDescriptionInUse: string | null,
+): ClinicalWorkingMemory | null {
+  if (rows.length === 0) return null;
+  // A resume starts a new session: session-scoped memory is legitimately
+  // empty. Same rule the sensitivity signals apply, for the same reason.
+  if (isSessionResume) return null;
+
+  const sessionRows = collectCurrentSessionRows(rows, nowMs);
+  if (sessionRows.length === 0) return null;
+
+  // BP-D — a report that was defaulted carries no measurement. Its intensity
+  // and safetyFlag are OUR fail-safe values, not the clinician's reading, and
+  // must not enter a trajectory or a safety history as though they were.
+  const measured = sessionRows.filter(
+    (r) => r.report && r.report._defaultedReport !== true,
+  );
+
+  // --- 1. Activation trajectory (oldest first) --------------------------
+  const intensitiesNewestFirst = measured
+    .map((r) => r.report?.intensity)
+    .filter((v): v is number => typeof v === 'number');
+  const readings = intensitiesNewestFirst.slice().reverse();
+  let activation: ClinicalWorkingMemory['activation'] = null;
+  if (readings.length >= 2) {
+    const first = readings[0];
+    const last = readings[readings.length - 1];
+    activation = {
+      readings,
+      max: Math.max(...readings),
+      direction: last > first ? 'rising' : last < first ? 'falling' : 'steady',
+    };
+  }
+
+  // --- 2. Regulation / safety status ------------------------------------
+  const flags = measured
+    .map((r) => r.report?.safetyFlag)
+    .filter((v): v is SafetyFlag => v === 'none' || v === 'watch' || v === 'red_flag');
+  let safety: ClinicalWorkingMemory['safety'] = null;
+  if (flags.length > 0) {
+    const rank: Record<SafetyFlag, number> = { none: 0, watch: 1, red_flag: 2 };
+    let worst: SafetyFlag = flags[0];
+    for (const f of flags) if (rank[f] > rank[worst]) worst = f;
+    safety = { current: flags[0], sessionWorst: worst };
+  }
+
+  // --- 3. Practices attempted this session ------------------------------
+  const practices: WorkingMemoryPractice[] = [];
+  for (const row of sessionRows) {
+    const pr = row.report?.practiceRun;
+    if (!pr || pr.kind === 'none') continue;
+    practices.push({
+      family: pr.family ?? null,
+      name: pr.name ?? null,
+      status: pr.status,
+      modalitySwitched: pr.modalitySwitched ?? null,
+    });
+    if (practices.length >= MAX_WM_PRACTICES) break;
+  }
+
+  // --- 4. Provisional formulation deltas --------------------------------
+  const formulationDeltas: WorkingMemoryDelta[] = [];
+  for (let i = 0; i < sessionRows.length; i++) {
+    const text = sessionRows[i].report?.clinicalRead?.trim();
+    if (!text) continue;
+    if (openCycleDescriptionInUse && text === openCycleDescriptionInUse.trim()) continue;
+    formulationDeltas.push({ turnsAgo: i + 1, text: text.slice(0, MAX_WM_DELTA_CHARS) });
+    if (formulationDeltas.length >= MAX_WM_DELTAS) break;
+  }
+
+  // --- 5-7. Newest recorded value wins ----------------------------------
+  let requestStatus: ClinicalWorkingMemory['requestStatus'] = null;
+  let cycleStatus: ClinicalWorkingMemory['cycleStatus'] = null;
+  let adultSelf: ClinicalWorkingMemory['adultSelf'] = null;
+  for (let i = 0; i < sessionRows.length; i++) {
+    const r = sessionRows[i].report;
+    if (!r) continue;
+    if (requestStatus === null && r.presentingRequestStatus) {
+      requestStatus = r.presentingRequestStatus;
+    }
+    if (cycleStatus === null && r.cycleStatus) cycleStatus = r.cycleStatus;
+    if (adultSelf === null && typeof r.adultSelfPresent === 'boolean') {
+      adultSelf = { present: r.adultSelfPresent, turnsAgo: i + 1 };
+    }
+  }
+
+  // --- 8. Fresh grounding readings, provenance intact -------------------
+  const stability = firstFreshReading(
+    sessionRows,
+    nowMs,
+    (r) => r.stabilityCheck,
+    true,
+  );
+  const distress = firstFreshReading(
+    sessionRows,
+    nowMs,
+    (r) => r.distressIntensity,
+    false,
+  );
+
+  const empty =
+    activation === null &&
+    safety === null &&
+    practices.length === 0 &&
+    formulationDeltas.length === 0 &&
+    requestStatus === null &&
+    cycleStatus === null &&
+    adultSelf === null &&
+    stability === null &&
+    distress === null;
+  if (empty) return null;
+
+  return {
+    activation,
+    safety,
+    practices,
+    formulationDeltas,
+    requestStatus,
+    cycleStatus,
+    adultSelf,
+    stability,
+    distress,
+  };
+}
+
+/**
+ * Newest measurement whose SERVER-STAMPED `observedAt` is still within
+ * MAX_MEASUREMENT_AGE_MS. A reading past that bound is dropped outright rather
+ * than shown as stale — the closure guard applies the same threshold to the
+ * same field, so freshness has one meaning in the runtime.
+ *
+ * `observedAt` is used deliberately, never the model-supplied `measuredAt`.
+ * `scale` and `source` travel with the number because a score without them
+ * cannot be read as a stability reading (Repair 1).
+ */
+function firstFreshReading(
+  sessionRows: SensitivityInputRow[],
+  nowMs: number,
+  pick: (
+    r: NonNullable<SensitivityInputRow['report']>,
+  ) => { score: number; scale?: string; source?: string; observedAt?: string } | undefined,
+  carryScale: boolean,
+): WorkingMemoryReading | null {
+  for (const row of sessionRows) {
+    if (!row.report) continue;
+    const m = pick(row.report);
+    if (!m || typeof m.score !== 'number' || !m.observedAt) continue;
+    const observedMs = Date.parse(m.observedAt);
+    if (Number.isNaN(observedMs)) continue;
+    const ageMs = nowMs - observedMs;
+    if (ageMs < 0 || ageMs > MAX_MEASUREMENT_AGE_MS) continue;
+    return {
+      score: m.score,
+      scale: carryScale
+        ? m.scale === 'stability' || m.scale === 'ambiguous'
+          ? m.scale
+          : 'ambiguous'
+        : null,
+      source: m.source ?? null,
+      ageMinutes: Math.floor(ageMs / 60000),
+    };
+  }
+  return null;
+}
+
 async function loadRecentSensitivitySignals(
   userId: string,
   isSessionResume: boolean,
@@ -479,6 +726,7 @@ async function loadRecentSensitivitySignals(
   openCycleDescription: string | null;
   sessionRejectedModalities: ModalityRejected[];
   recentChannelShift: boolean;
+  workingMemory: ClinicalWorkingMemory | null;
 }> {
   const rows = await prisma.journeyTurn.findMany({
     where: { userId },
@@ -496,13 +744,33 @@ async function loadRecentSensitivitySignals(
           clinicalRead: full.clinicalRead,
           modalityRejected: full.modalityRejected,
           channelShiftDetected: full.channelShiftDetected,
+          // BP-A — the parse above already produced all of these; they used to
+          // be dropped here.
+          intensity: full.intensity,
+          safetyFlag: full.safetyFlag,
+          practiceRun: full.practiceRun,
+          presentingRequestStatus: full.presentingRequestStatus,
+          adultSelfPresent: full.adultSelfPresent,
+          stabilityCheck: full.stabilityCheck,
+          distressIntensity: full.distressIntensity,
+          _defaultedReport: full._defaultedReport,
         };
       } catch {
-        // decrypt / parse failure — leave null so the pure helper
-        // treats the row as unusable.
+        // decrypt / parse failure — leave null so the pure helpers
+        // treat the row as unusable.
       }
     }
     return { createdAtMs: row.createdAt.getTime(), report };
   });
-  return deriveSensitivitySignals(inputRows, isSessionResume, Date.now());
+  const nowMs = Date.now();
+  const signals = deriveSensitivitySignals(inputRows, isSessionResume, nowMs);
+  return {
+    ...signals,
+    workingMemory: deriveWorkingMemory(
+      inputRows,
+      isSessionResume,
+      nowMs,
+      signals.openCycleDescription,
+    ),
+  };
 }
