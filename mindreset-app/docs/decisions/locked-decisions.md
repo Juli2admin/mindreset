@@ -386,3 +386,84 @@ Locked during the PR 3 / PR 4 / PR 5 build-out:
   are dropped, and legacy goal answers read as talk_through — the
   Journey is never inferred for someone who was never asked the depth
   question. Supersedes the v1 scoring engine (PR #335's mapping tables).
+
+## Journey Closing (2026-08-08)
+
+Ratified during PRs #365 and #366 and the post-merge cleanup. These were
+previously recorded only in PR bodies and session chat.
+
+- **2026-08-08** **Measurement-first Closing.** Two different questions,
+  answered by two different things. *Historical destabilisation* in the
+  session answers only **"does this close require a current stability
+  measurement?"**. The user's **own current reported score** answers **"is
+  this person stable enough to close?"**. Historical destabilisation is
+  **not** current activation — a session that spiked earlier and has
+  genuinely settled must be able to close normally. `ClosureRoute` is
+  therefore an **outcome** of the measurement, never an input to entry.
+  The close threshold **remains 6**. An ordinary close (no measurement
+  required) **does not enter Activated Closing** at all.
+
+- **2026-08-08** **An explicit `session_exit` is the user's decision to
+  leave — there is no second confirmation question.** Asking someone to
+  confirm a decision they have already made re-opens it. The former
+  `AWAITING_CLOSE_CONFIRMATION` state is removed from the product.
+
+- **2026-08-08** **MindReset provides no Human Support service.** The
+  platform is self-help. There is no human-support service and no managed
+  handoff, and Closing must never route into one. The former
+  `HUMAN_SUPPORT` state is removed from the product. **Crisis and
+  emergency handling are a SEPARATE, unchanged mechanism** that runs
+  before the Closing hook is reached — nothing in Closing alters it.
+
+- **2026-08-08** **Bounded stabilisation and honest outcomes.** Score at or
+  above threshold → successful close (`CLOSED`). Below threshold with
+  rounds remaining → another stabilisation round. **Rounds exhausted below
+  threshold → `INCOMPLETE`.** `INCOMPLETE` keeps the attempt on record,
+  fabricates no score, and claims no successful closure.
+
+- **2026-08-08** **Refusal handling (Q5): one re-ask, then release.** First
+  non-answer → one re-ask. Second non-answer or refusal → `INCOMPLETE`.
+  Never a third ask — the user has already said they want to leave, and the
+  platform must not trap them.
+
+- **2026-08-08** **Code-owned required questions short-circuit BEFORE the
+  model call.** The stability question is code-authored and locale-aware
+  and is delivered by a short-circuit at `route.ts` before prompt assembly.
+  `controller.enqueue` is the irreversibility point — nothing downstream
+  can prevent a user-visible goodbye — so enforcement is a short-circuit,
+  never a prompt hint.
+
+- **2026-08-08** **Constrain, then verify.** Clinician-generated
+  stabilisation is constrained by process state (a pre-LLM platform note
+  naming the current step) and **verified from structured evidence**: the
+  process advances only on a `practiceRun` in the `regulation` or `somatic`
+  family at `status: "completed"`. No evidence holds the state rather than
+  moving the user on. An instruction alone is what failed on 2026-08-08.
+
+- **2026-08-08** **Both measurement provenance paths are valid under the
+  common guard contract.** *Code-captured* (the platform asked the approved
+  question and parsed the user's own answer) and *clinician-elicited* (the
+  value arrives on `stabilityCheck`). The code-captured path is
+  authoritative when fresh and correctly ordered against the
+  destabilisation, because the model cannot forge it — it never passes
+  through the state report. The legacy `stabilityCheck` path is unchanged.
+
+- **2026-08-08** **Compositional EN/RU exit detection.** Exit intent is
+  composed from predicate × scope × negation role, with a
+  volition-vs-capability axis (`не хочу` vs `не могу`) separating exit from
+  exhaustion — without touching the crisis boundary. It is not a list of
+  whole sentences.
+
+- **2026-08-08** **No post-LLM verifier for the wording of the final
+  close.** The closure decision is code-owned; `CLOSED` is reached only
+  after a validated current-state measurement; `INCOMPLETE` claims no
+  successful closure; the Clinician remains responsible for natural
+  clinical wording and aftercare. We are not adding another enforcement
+  layer for prose quality.
+
+- **2026-08-08** **One canonical `ClosureProcess` persistence writer.**
+  `lib/journey/closure/persist.ts` owns the single field-to-column map; an
+  omitted field is a compile error. `process.ts` stays pure and
+  database-free. Fail-safe rule preserved: a failed write returns the
+  record as the store holds it — **memory must never claim a transition the
+  store refused** — and the writer never throws.

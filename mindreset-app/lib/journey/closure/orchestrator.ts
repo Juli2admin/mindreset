@@ -26,7 +26,7 @@
 // persisted flag → read before the model call → typed decision. The freeze
 // path short-circuits; this one does not, yet.
 
-import prisma from '@/lib/prisma';
+import { persistClosureProcess } from './persist';
 import {
   decideClosureOutcome,
   recordCapturedScore,
@@ -336,56 +336,8 @@ export async function runClosureOrchestration(
 }
 
 /**
- * Persist a process record. Returns what the store actually holds.
- *
- * Fail-safe on write error: return the record as it still stands in the
- * database rather than an in-memory value the database does not hold. The
- * process state is server-owned; memory must never claim a transition the
- * store refused. Never throws — a failure here must not cost the user a turn.
+ * Local alias for the canonical writer. The payload — and the fail-safe rule
+ * that memory must never claim a transition the store refused — lives in
+ * persist.ts, which is the only module that spells out the columns.
  */
-async function persistProcess(
-  userId: string,
-  from: ClosureProcess,
-  next: ClosureProcess,
-  reason: string | null,
-): Promise<{ process: ClosureProcess; persisted: boolean }> {
-  const current = from;
-  const resolution = { process: next, reason };
-  try {
-    await prisma.recodeProgress.update({
-      where: { userId },
-      data: {
-        closureProcessState: resolution.process.state,
-        closureRoute: resolution.process.route,
-        closureEnteredAt: resolution.process.enteredAt,
-        closureTransitionedAt: resolution.process.transitionedAt,
-        closureRoundCount: resolution.process.roundCount,
-        closureCompletedAt: resolution.process.completedAt,
-        closureIncompleteAt: resolution.process.incompleteAt,
-        closureFreezeInterruptedAt: resolution.process.freezeInterruptedAt,
-        // Phase 2: the payload must carry EVERY ClosureProcess field, or a
-        // resolution that changes a score (entry clears them) would be lost
-        // on write while memory believed it persisted.
-        closureInitialScore: resolution.process.initialScore,
-        closureInitialScoreAt: resolution.process.initialScoreAt,
-        closurePostScore: resolution.process.postScore,
-        closurePostScoreAt: resolution.process.postScoreAt,
-      },
-    });
-    console.info('[journey/closure-process] transition', {
-      userId,
-      from: current.state,
-      to: resolution.process.state,
-      reason: resolution.reason,
-    });
-    return { process: resolution.process, persisted: true };
-  } catch (err) {
-    console.error('[journey/closure-process] persist failed; keeping stored state', {
-      userId,
-      from: current.state,
-      to: resolution.process.state,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return { process: current, persisted: false };
-  }
-}
+const persistProcess = persistClosureProcess;

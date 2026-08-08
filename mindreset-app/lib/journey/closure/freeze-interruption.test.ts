@@ -282,7 +282,7 @@ describe('first unfrozen turn — ending the interrupted attempt', () => {
   });
 
   it('persists the conversion through the orchestrator', async () => {
-    const decision = await runOrch(inFlight('AWAITING_CLOSE_CONFIRMATION', {
+    const decision = await runOrch(inFlight('AWAITING_POST_SCORE', {
         roundCount: 2,
         freezeInterruptedAt: at(300_000),
       }));

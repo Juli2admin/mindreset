@@ -1,216 +1,222 @@
-# SESSION HANDOFF — 2026-06-28
+# SESSION HANDOFF — 2026-08-08
 
 **Read this BEFORE CLAUDE.md.** Most recent operational state.
-Supersedes the prior handoff (2026-06-04, which itself superseded the
-2026-05-22 one — both archived in git).
+Supersedes the prior handoff (2026-06-28, archived in git).
+
+This document records **settled facts and decisions only**. Anything not
+written here is not settled. If something below contradicts an older
+document, this document wins.
 
 ---
 
 ## TL;DR — where we are
 
-**The Journey 8-stage canon §10 audit is complete.** Eight small, focused
-PRs landed today (#177–#184) — one per stage. Every stage gate in
-`lib/journey/router/stage-gates.ts` now matches the documented method
-in `docs/journey/0X-stage-*.md §10`. All 151 tests pass.
+Journey **Closing** is complete and live on `main`. Two PRs landed:
 
-Owner ran two test sessions against the previous (buggy) gates and got
-stuck at Stage 1 across 67 turns / 2 sessions because the code required
-`formulation_confirmed` — a milestone invented in the master prompt's
-`<assessment_phase>` but NOT in canon §10. That whole class of false-
-negative gate is gone, plus seven other stage-specific tightening fixes.
+- **#365 — Clinician Working Memory.** Merged (`d65ae91`).
+- **#366 — Activated Closing Phase 2, measurement-first.** Merged (`0d935f8`).
 
-**Next move: owner runs a fresh live test against the aligned gates.**
-SQL to wipe Journey state (kept MiniMind untouched) was provided in chat
-and is repeated under "Wipe SQL" below.
+The stability-score migration has been **run successfully in production**
+(four nullable columns on `RecodeProgress`, verified: all four present,
+zero rows populated at the time of the run).
+
+A post-merge cleanup pass followed; see *Post-merge cleanup* below.
 
 ---
 
-## What is working (verified by tests this session)
+## PR #365 — Clinician Working Memory (merged)
 
-- **Stage 1 gate** (`checkStage1Gate`) — canon's 3 readiness tokens
-  (anchor-identified, emotion-or-body-state-named, orientation-present)
-  + looser safety guard (red_flag only blocks, watch passes per owner
-  sign-off Option B).
-- **Stage 2 gate** — three distinct conditions: emotion-named,
-  emotion-located, soft-why-asked. Previous single-regex shortcut gone.
-- **Stage 3 gate** — wired `adultSelfAnchorLinked` and
-  `heldEmotionInAdultSelf` (existed in schema since PR 4, never gated).
-- **Stage 4 gate (MII)** — MII-5 fallback now reads
-  `partSecured.adultSelfOffering` (canon-named) instead of Stage 3's
-  `adultSelfQualities` (wrong field).
-- **Stage 5 gate** — wired `somaticRelease: true` and `bodyConfirmation`
-  requirements. Without these the release / clean-identity statement
-  were head-only and still passed.
-- **Stage 6 gate** — adult self ≥ 70% across last 3 sessions added.
-  Uses two new session helpers (4-hour boundary).
-- **Stage 7 gate** — `safetyReorientation` tightened from "≥ 2 in window"
-  to "present in EACH of last 2 sessions" (canon: every Stage 7
-  session). Adult-self 70% across last 3 sessions added.
-- **Stage 8 gate (Discharge)** — Identity Reinforcement Check-In wired:
-  `adultSelfThisWeek` captured in each of last 4 sessions + "close" or
-  "steady" in ≥ 3 of them.
-- **Stage 8 unreachability bug fixed** — `standardGuards` was forcing
-  `recommendedAction === 'advance'`; Stage 8 emits `'discharge'`. The
-  gate was unreachable. Now `standardGuards` takes an `expectedAction`
-  parameter.
+The background clinical analysis is **private working clinical memory**. It
+informs the Clinician's reasoning and is never surfaced to the user.
 
-All 151 vitest tests pass:
-`cd mindreset-app && npm test`.
+- **BP-A closed.** The `StateReportForSensitivity` narrowing that silently
+  dropped the return path is fixed. The analysis now actually reaches the
+  Clinician.
+- **BP-D closed.** The fabricated `intensity = 5` / `safetyFlag = 'watch'`
+  defaults are gone. Absent values read as absent, not as invented clinical
+  facts.
+- **BP-E remains open and SEPARATE.** It did not block #365 and does not
+  block Closing. It is not in scope for any Closing work.
 
 ---
 
-## What is broken / unverified
+## PR #366 — Activated Closing Phase 2 (merged)
 
-- **Live test of the new gates is the next step.** Tests pass; real
-  session behaviour has not been verified yet. Owner about to run.
-- **safetyFlag floor at intensity ≥ 7** — small follow-up identified
-  but not built. The AI can currently emit `intensity: 8` with
-  `safetyFlag: 'none'`. The schema doesn't enforce the obvious
-  invariant. Worth a tiny PR.
-- **`I lost my thread` parse error** — recurring bug across sessions,
-  root cause not identified. Owner's previous test logs likely have
-  reproductions. Investigate when convenient.
-- **Family selection still drifting toward `regulation`** — partial fix
-  in PR 8. Last test session showed 3 distinct families in Part 2; not
-  yet a clean balanced distribution.
-- **Practice ratio still low** — AI selectively emits `practiceRun`;
-  some practices conducted in conversation don't get logged. PR 6
-  emission mandate partially working.
+### The failure this closed
 
----
+On **2026-08-08 08:49** the Clinician ended a session in which intensity
+reached **6 on eleven turns**, with **no stability measurement ever taken**.
+Its own state report recorded *"closing gently without forcing a stability
+number she hasn't offered"*, and `claimsClosure` was false, so the closure
+guard was never called. Every enforcement layer ran **after** the reply had
+already streamed.
 
-## Today's PRs (chronological, all merged)
+### Measurement-first semantics (settled)
 
-| PR | Stage | Title |
-|---|---|---|
-| #177 | 1 | Stage 1 gate — align with canon §10, remove invented `formulation_confirmed` |
-| #178 | 2 | Stage 2 gate — require all three distinct canon conditions |
-| #179 | 3 | Stage 3 gate — wire `adultSelfAnchorLinked` + `heldEmotionInAdultSelf` |
-| #180 | 4 | Stage 4 MII-5 — read `partSecured.adultSelfOffering`, not Stage 3 `adultSelfQualities` |
-| #181 | 5 | Stage 5 gate — require `somaticRelease` + `bodyConfirmation` |
-| #182 | 6 | Stage 6 gate — require adult self ≥ 70% across last 3 sessions |
-| #183 | 7 | Stage 7 gate — tighten `safetyReorientation` to every recent session + adult-self 70% |
-| #184 | 8 | Stage 8 gate — wire Identity Reinforcement Check-In + fix unreachable gate |
+Two different questions, answered by two different things:
 
-`main` is at `2c91919` after #184.
+| Question | Answered by |
+|---|---|
+| Does this close require a **current stability measurement**? | **historical destabilisation** in this session |
+| Is this person **stable enough to close**? | the user's **own current reported score** |
 
----
+**Historical destabilisation means "measurement required". It does NOT mean
+"currently activated".** A session that spiked earlier and has genuinely
+settled must be able to close normally. `ClosureRoute` is an **outcome** of
+the measurement, never an input to entry.
 
-## Wipe SQL (owner uses this before fresh test)
+- **Threshold remains 6.** Unchanged.
+- **An ordinary close does not enter Activated Closing.** When no measurement
+  is required there is no process entry at all.
 
-Run in Supabase SQL editor. Keeps MiniMind chat untouched (it lives on a
-separate data path; The Journey reads `JourneyTurn`, not MiniMind
-conversations).
+### The Closing flow
 
-```sql
-BEGIN;
-DELETE FROM "JourneyPracticeRun"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyMessage"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyTurn"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyPart"           WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneyForeignFile"    WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "JourneySignatureImage" WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-DELETE FROM "RecodeProgress"        WHERE "userId" = (SELECT id FROM "User" WHERE email = 'jloya4436@gmail.com');
-COMMIT;
+Five reachable states. Not every path visits every state.
+
+```
+NONE
+  -> AWAITING_INITIAL_SCORE
+  -> DELIVERING_STABILISATION
+  -> AWAITING_POST_SCORE
+  -> CLOSED  /  INCOMPLETE
 ```
 
-After this owner is back to Stage 1 with no parts, no foreign material,
-no audit log. `RecodeProgress` is recreated on next Journey turn.
+- An explicit **`session_exit` is the user's decision to leave**. There is
+  **no second confirmation question** — asking someone to confirm a decision
+  they have already made re-opens it.
+- **Score ≥ threshold → successful close** (`CLOSED`).
+- **Stabilisation is bounded.** Below threshold with rounds remaining runs
+  another round; **rounds exhausted below threshold → `INCOMPLETE`**.
+- **First non-answer → one re-ask.** **Second non-answer or refusal →
+  `INCOMPLETE`.** Never a third ask, never a fabricated score, never a
+  claimed successful close.
+- `INCOMPLETE` is the honest record: the attempt stays on file, `completedAt`
+  is untouched, and the user is released rather than trapped.
+
+### No Human Support service
+
+**MindReset provides no human-support service and no managed handoff.** The
+platform is self-help. Closing must never route into one.
+
+**Crisis and emergency handling are a SEPARATE, unchanged mechanism.** The
+keyword scan runs before the Closing hook is ever reached. Nothing in Closing
+alters it.
+
+### Enforcement
+
+- **Code-owned required questions short-circuit BEFORE the model call.** The
+  stability question is code-authored and locale-aware, and it is delivered
+  by a short-circuit at `route.ts` before prompt assembly. This is the only
+  control point that can work: `controller.enqueue` is the irreversibility
+  point, and nothing downstream can prevent a user-visible goodbye.
+  Enforcement is a short-circuit, never a prompt hint.
+- **Clinician-generated stabilisation is constrained by process state and
+  verified from structured evidence.** A pre-LLM platform note names the step
+  the process is in; the process advances only on a `practiceRun` in the
+  `regulation` or `somatic` family at `status: "completed"`. No evidence holds
+  the state rather than moving the user on. *Constrain, then verify.*
+- **Compositional EN/RU exit detection is live.** Predicate (continue / stop /
+  depart / done / signoff) × scope (session vs topic) × negation role, plus a
+  volition-vs-capability axis (`не хочу` vs `не могу`) that separates exit from
+  exhaustion without touching the crisis boundary.
+
+### Measurement provenance
+
+**Both provenance paths are valid under the common guard contract:**
+
+- **code-captured** — the platform asked the approved stability question and
+  parsed the user's own answer;
+- **clinician-elicited** — the Clinician asked, and the value arrives on
+  `stabilityCheck`.
+
+The code-captured path is authoritative when it is fresh and correctly ordered
+against the destabilisation, because the model cannot forge it — it never
+passes through the state report. The legacy `stabilityCheck` path is
+unchanged, and every existing guard invariant still holds.
+
+### The master prompt is unchanged
+
+The English stability question was lifted **verbatim** from
+`journey-master.md:342` under owner approval. No prompt, canon, example,
+methodology or Practices change was made by #365 or #366.
 
 ---
 
-## Deferred canon §10 items (each needs a schema field + emit instruction)
+## Post-merge cleanup (2026-08-08)
 
-These were noted in the PR descriptions but not built. Each is its own
-small PR — schema add → master prompt emit instruction → save.ts wire →
-gate check → tests.
+A bounded hygiene pass after #366. **No product behaviour change, no schema
+change, no migration.**
 
-**Stage 6**
-- `feltLikeMyself: string` — canon §10: "I feel like myself" on ≥ 2
-  different days. No field exists. Currently implicit in
-  `internalConsensus`.
+1. **One canonical persistence writer.** The twelve-column `ClosureProcess`
+   payload was duplicated by hand in two writers; a new field added to one and
+   missed in the other would have been dropped on write while memory believed
+   it persisted. `lib/journey/closure/persist.ts` now holds the single
+   field-to-column map, and an omission is a **compile error**. Fail-safe
+   semantics are unchanged: a failed write returns the record as the store
+   holds it, so memory never claims a transition the store refused.
 
-**Stage 7**
-- `identityAnchorRecalled: boolean` — canon §10: identity anchor recalled
-  at least once per Stage 7 session. No field exists.
-
-**Stage 8**
-- `identityAnchorWeeklyUse: boolean` (or count) — canon §10: identity
-  anchor used between sessions ≥ 1×/week. No field exists.
-- `feelLikeMyselfAndKnowHowToLive: string` — canon §10: "I feel like
-  myself, and I know how to live from here" on ≥ 2 different days. No
-  field exists.
-- `foreignMaterialReactivated: boolean` — canon §10: no active foreign
-  material reactivation. No field exists.
-- `partSeparatedInLastFourSessions: boolean` — canon §10: no part
-  flagged as separate / unseen in last 4 sessions. No field exists.
-
-The deferred items are NOT blocking for the live test. Without them the
-gates are looser than canon in these specific ways, but the structural
-"stuck at Stage 1" class of bug is fully fixed.
+2. **Two dead states removed.** `AWAITING_CLOSE_CONFIRMATION` and
+   `HUMAN_SUPPORT` are gone from the state union, transition table, active-state
+   classification, tests and comments. Neither ever had a runtime producer, so
+   no persisted row can hold either value. `closureProcessState` is plain
+   `text` with no enum and no CHECK constraint, so **no migration was needed**;
+   `normaliseClosureProcess` still degrades any unrecognised string to `NONE`.
 
 ---
 
-## What next session should know
+## Standing engineering rules for this work
 
-### What owner most likely wants
-1. **First, ask if she's done the live test** and what happened. The
-   live test is the deliverable — code is ready, behaviour is not yet
-   confirmed.
-2. **If a real bug surfaced**: fix that. Don't propose deferred-item
-   work until the live test is working cleanly.
-3. **If live test is clean**: the safetyFlag-floor-at-7 PR is the next
-   small high-value item. Then optionally the deferred §10 items above.
+- **No paid model runs, Golden Harness runs, benchmarks or live API
+  experiments** without explicit owner approval for that exact run.
+- **Do not rebuild missing infrastructure** without approval.
+- **Do not implement anything until the owner approves the exact change.**
+- **Do not choose architecture or methodology for the owner.**
+- **Use existing evidence first.** If something is already proven or rejected,
+  do not test it again.
+- **All migrations are run manually by Julia.** Never `prisma migrate dev`,
+  `migrate deploy`, or `db push`.
+- **No remote ref creation, deletion or force-push without asking.** Never
+  push to `main`.
+- If implementation requires a **clinical decision not explicitly specified by
+  the approved methodology, STOP and ask** rather than introducing a reasonable
+  default.
 
-### Operating norms (load-bearing)
-- Owner = Julia (`jloya4436@gmail.com` for testing,
-  `loyayulia@gmail.com` for admin).
-- GitHub MCP owner param is `Juli2admin` (capital J), repo `mindreset`.
-- Owner says "merge" → agent clicks merge via
-  `mcp__github__merge_pull_request`, squash. Then `git checkout main &&
-  git pull && git branch -D <merged-branch>` and create next branch.
-- **One PR per change**, small and focused. Do NOT bundle multiple
-  stages, schema additions, or features into one PR. Owner explicitly
-  prefers many small PRs over one big one.
-- **No `git add -A`** — always specify files explicitly.
-- **Migrations are manual** — never run `prisma migrate` against any env.
-  If schema changes, propose the SQL in the PR body for owner to run.
+### Frozen without explicit approval
 
-### Working directory gotchas
-- `npm test` MUST be run from `/home/user/mindreset/mindreset-app`,
-  not the repo root. From repo root, prefix with `cd mindreset-app &&`.
-- `git` commands run from `/home/user/mindreset` (repo root); file
-  paths in `git add` are then `mindreset-app/lib/journey/...`.
+The Journey master prompt, `<examples>`, `<output_format>`, canon (Shared
+Core, Practice Generation Algorithm, all 8 stage specs), stages and
+progression rules, clinical wording, and the `assemble.ts` state-block copy.
 
-### Key files for The Journey
-- Gates: `mindreset-app/lib/journey/router/stage-gates.ts`
-- Helpers: `mindreset-app/lib/journey/router/history.ts` (added today:
-  `lastNSessionsTurns`, `countSessions`, `groupSessions`)
-- Schema: `mindreset-app/lib/journey/stateReport/schema.ts`
-- Persist: `mindreset-app/lib/journey/state/save.ts`
-- Load: `mindreset-app/lib/journey/state/load.ts`
-- Router: `mindreset-app/lib/journey/router/router.ts`
-- Master prompt: `mindreset-app/docs/journey/runtime/journey-master.md`
-- Canon §10 source of truth: `mindreset-app/docs/journey/0X-stage-*.md`
+### Decision authorities
 
-### Pattern for follow-up alignment PRs
-The 8 PRs today all follow the same shape — repeat it:
-1. Read canon §10 in the stage's doc.
-2. Diff against `checkStageXGate` in `stage-gates.ts`.
-3. Add missing canonical requirement(s) inline. Document the alignment
-   in the function's docstring.
-4. Write `stageX-gate.test.ts` with passing path + regression guard
-   per new check + failure cases for existing checks.
-5. Run `npm test` from `mindreset-app/`. All pass.
-6. Commit + push + PR with the "Why / What changed / Tests / Migration"
-   body.
-7. Wait for owner "merge".
+Exactly three: **Engineering verification**, **Architecture/Product
+decision**, **Clinical methodology**.
 
-### Tone with this owner
-- Tight. No multi-paragraph explanations. Short user-facing updates only.
-- She's direct and reads diffs herself — don't over-explain code.
-- She has caught me before being biased toward "easy work" and toward
-  patches over solid fixes. If proposing the simpler of two options,
-  call out why it's simpler-on-merits, not simpler-for-me.
-- She will tell you when something is wrong. Take it directly, don't
-  defend.
+---
+
+## Rejected — do not reopen
+
+| # | Rejected hypothesis |
+|---|---|
+| R1 | `lastIntensity` as route authority |
+| R2 | `findDestabilisation()` as a *current-activation* authority |
+| R3 | A targeted pre-LLM activation classifier |
+| R4 | Server-independent activation inference |
+| R5 | "Zero valid closes ever" |
+| R6 | Prompt / example changes to fix Closing |
+| R7 | `evaluateClosureGate()` as authority over the Closing process |
+
+Also settled and closed: **no post-LLM verifier for the wording of the final
+close.** The closure decision is code-owned, `CLOSED` is reached only after a
+validated current-state measurement, `INCOMPLETE` claims no successful
+closure, and prose quality remains the Clinician's responsibility. We are not
+adding another enforcement layer for prose.
+
+---
+
+## Not in scope / still open
+
+- **BP-E** — open, separate, not part of Closing.
+- Deterioration above threshold (e.g. 9 → 7) is **deliberately unresolved**.
+  `decideClosureOutcome` does not act on it; `computeScoreChange` exposes the
+  delta for whoever settles it later.

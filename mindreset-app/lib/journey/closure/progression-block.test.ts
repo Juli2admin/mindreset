@@ -272,12 +272,12 @@ describe('closure process and cycleStatus are separate authorities', () => {
     const decision = await decideRoute(
       makeState({
         hasOpenCycle: false,
-        closureProcess: closureProcess('AWAITING_CLOSE_CONFIRMATION'),
+        closureProcess: closureProcess('AWAITING_POST_SCORE'),
       }),
     );
     expect(decision.kind).toBe('stay');
     expect((decision as { kind: 'stay'; reasons: string[] }).reasons).toContain(
-      'closure_process_blocks_advance:AWAITING_CLOSE_CONFIRMATION',
+      'closure_process_blocks_advance:AWAITING_POST_SCORE',
     );
   });
 });

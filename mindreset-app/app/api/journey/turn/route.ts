@@ -44,6 +44,7 @@ import {
 import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
 import { appendClosureNote } from '@/lib/journey/closure/state-notes';
 import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
+import { persistClosureProcess } from '@/lib/journey/closure/persist';
 import {
   transitionClosureProcess,
   type ClosureProcess,
@@ -933,33 +934,19 @@ async function advanceAfterStabilisation(
     now: new Date(),
   });
   if (!moved.ok) return;
-  try {
-    await prisma.recodeProgress.update({
-      where: { userId },
-      data: {
-        closureProcessState: moved.process.state,
-        closureRoute: moved.process.route,
-        closureEnteredAt: moved.process.enteredAt,
-        closureTransitionedAt: moved.process.transitionedAt,
-        closureRoundCount: moved.process.roundCount,
-        closureCompletedAt: moved.process.completedAt,
-        closureIncompleteAt: moved.process.incompleteAt,
-        closureFreezeInterruptedAt: moved.process.freezeInterruptedAt,
-        closureInitialScore: moved.process.initialScore,
-        closureInitialScoreAt: moved.process.initialScoreAt,
-        closurePostScore: moved.process.postScore,
-        closurePostScoreAt: moved.process.postScoreAt,
-      },
-    });
+  // One canonical writer (persist.ts) — it owns the column payload and the
+  // fail-safe on write error, and never throws.
+  const written = await persistClosureProcess(
+    userId,
+    current,
+    moved.process,
+    'stabilisation_evidenced',
+  );
+  if (written.persisted) {
     console.info('[journey/closure-process] stabilisation evidenced; awaiting post score', {
       userId,
       family: evidence.family,
       name: evidence.name,
-    });
-  } catch (err) {
-    console.error('[journey/closure-process] post-stabilisation persist failed', {
-      userId,
-      error: err instanceof Error ? err.message : String(err),
     });
   }
 }

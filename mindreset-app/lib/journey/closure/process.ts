@@ -29,28 +29,48 @@
 import { SESSION_BOUNDARY_MS } from '../state/session-boundary';
 
 /**
- * The eight process values of the Activated Session Closure Protocol §15.
+ * The six process values of Closing.
  *
  *   NONE                       no closure sequence is running
- *   AWAITING_INITIAL_SCORE     stop-and-explain delivered; first score pending
+ *   AWAITING_INITIAL_SCORE     stability question delivered; first score pending
  *   DELIVERING_STABILISATION   a stabilisation round is in flight
  *   AWAITING_POST_SCORE        stabilisation delivered; post score pending
- *   AWAITING_CLOSE_CONFIRMATION closure decision made; confirmation pending
- *   HUMAN_SUPPORT              escalated out of the self-help sequence
- *   CLOSED                     an Activated Closure sequence COMPLETED
+ *   CLOSED                     a closure sequence COMPLETED
  *   INCOMPLETE                 a sequence was started and not completed
+ *
+ * Not every close visits every state: a measurement at or above the threshold
+ * goes straight to CLOSED, and a close that needs no measurement never enters
+ * the sequence at all.
  *
  * CLOSED does not mean the chat is permanently closed. It means one closure
  * sequence finished. A new substantive turn returns the process to NONE
  * (see resolveClosureProcessForTurn).
+ *
+ * REMOVED 2026-08-08 (post-#366 cleanup). Two states were dropped as not part
+ * of the product:
+ *
+ *   AWAITING_CLOSE_CONFIRMATION — the user's explicit `session_exit` already
+ *   expresses the decision to leave. Asking them to confirm a decision they
+ *   have made re-opens it, so there is no second confirmation question.
+ *
+ *   HUMAN_SUPPORT — MindReset is self-help and provides no human-support
+ *   service or managed handoff, so the sequence must not route into one.
+ *   INCOMPLETE is the honest record for a close that could not be settled.
+ *   Crisis and emergency handling are a SEPARATE, unchanged mechanism that
+ *   runs before this module is reached.
+ *
+ * Neither ever had a runtime producer: nothing outside this file's own
+ * transition table ever named them (verified across the full git history of
+ * lib/ and app/), so no persisted row can hold either value. Storage is `text`
+ * with no enum and no CHECK constraint, so their removal needs no migration —
+ * and normaliseClosureProcess degrades any unrecognised string to NONE, which
+ * keeps a hand-written row safe rather than crashing.
  */
 export const CLOSURE_PROCESS_STATES = [
   'NONE',
   'AWAITING_INITIAL_SCORE',
   'DELIVERING_STABILISATION',
   'AWAITING_POST_SCORE',
-  'AWAITING_CLOSE_CONFIRMATION',
-  'HUMAN_SUPPORT',
   'CLOSED',
   'INCOMPLETE',
 ] as const;
@@ -157,8 +177,6 @@ const ACTIVE_STATES: readonly ClosureProcessState[] = [
   'AWAITING_INITIAL_SCORE',
   'DELIVERING_STABILISATION',
   'AWAITING_POST_SCORE',
-  'AWAITING_CLOSE_CONFIRMATION',
-  'HUMAN_SUPPORT',
 ];
 
 /** True when a closure sequence has ended (CLOSED or INCOMPLETE). */
@@ -184,62 +202,26 @@ export function blocksProgression(state: ClosureProcessState): boolean {
 /**
  * Allowed transitions. Anything not listed here is invalid.
  *
- * Entry (NONE / INCOMPLETE → AWAITING_INITIAL_SCORE) is defined but never
- * invoked in Phase 1 — nothing enters Activated Closure yet.
+ * NORMAL_CLOSE completes without a stabilisation sequence, so NONE → CLOSED is
+ * a legal edge.
  *
- * NORMAL_CLOSE (protocol §2) completes without a stabilisation sequence, so
- * NONE → CLOSED is a legal edge.
+ * AWAITING_INITIAL_SCORE → CLOSED (2026-08-08). A score at or above the
+ * threshold ENDS the sequence: the user's explicit session_exit already was
+ * the consent, so there is no second confirmation question to ask. Its absence
+ * was the last artefact of the original design, in which entry implied the
+ * user was already known to need stabilising.
  *
- * HUMAN_SUPPORT (owner decision 2026-08-05) is an ACTIVE human-handoff state,
- * not a terminal outcome in itself. It has exactly two exits:
- *   → CLOSED      only once human support is CONCRETELY CONFIRMED — the user
- *                 has contacted a trusted person, a trusted person is
- *                 physically present, contact with an urgent professional
- *                 service is established, or an emergency handoff has been
- *                 initiated and confirmed. CLOSED here means the closure
- *                 completed THROUGH A CONFIRMED HUMAN HANDOFF. It does not
- *                 mean the AI independently stabilised the user.
- *   → INCOMPLETE  the user leaves, stops responding, or no handoff is
- *                 confirmed.
- * A distinct HUMAN_HANDOFF outcome may be added later alongside clinical
- * outcome fields; it is deliberately NOT a runtime state in Phase 1.
- *
- * AWAITING_CLOSE_CONFIRMATION → AWAITING_POST_SCORE (owner decision
- * 2026-08-05) lets a user who is no longer ready to close say so. It re-asks
- * for a current score and therefore does NOT consume a stabilisation round —
- * only delivering an intervention does. The decision logic that acts on the
- * fresh score belongs to Phase 2 and is not implemented here.
+ * Every active state also reaches INCOMPLETE, which is what guarantees an exit
+ * from anywhere in the sequence: a refusal, a freeze interruption, or a
+ * four-hour stall all end the attempt honestly rather than trapping the user.
  */
 export const ALLOWED_TRANSITIONS: Readonly<
   Record<ClosureProcessState, readonly ClosureProcessState[]>
 > = Object.freeze({
   NONE: ['AWAITING_INITIAL_SCORE', 'CLOSED'],
-  // CLOSED added 2026-08-08 (product simplification). A score at or above the
-  // threshold ENDS the sequence: the user's explicit session_exit already was
-  // the consent, so there is no second confirmation question to ask. Its
-  // absence was the last artefact of the original design, in which entry
-  // implied the user was already known to need stabilising.
-  AWAITING_INITIAL_SCORE: [
-    'CLOSED',
-    'DELIVERING_STABILISATION',
-    'HUMAN_SUPPORT',
-    'INCOMPLETE',
-  ],
-  DELIVERING_STABILISATION: ['AWAITING_POST_SCORE', 'HUMAN_SUPPORT', 'INCOMPLETE'],
-  AWAITING_POST_SCORE: [
-    'CLOSED',
-    'DELIVERING_STABILISATION',
-    'AWAITING_CLOSE_CONFIRMATION',
-    'HUMAN_SUPPORT',
-    'INCOMPLETE',
-  ],
-  AWAITING_CLOSE_CONFIRMATION: [
-    'AWAITING_POST_SCORE',
-    'CLOSED',
-    'HUMAN_SUPPORT',
-    'INCOMPLETE',
-  ],
-  HUMAN_SUPPORT: ['CLOSED', 'INCOMPLETE'],
+  AWAITING_INITIAL_SCORE: ['CLOSED', 'DELIVERING_STABILISATION', 'INCOMPLETE'],
+  DELIVERING_STABILISATION: ['AWAITING_POST_SCORE', 'INCOMPLETE'],
+  AWAITING_POST_SCORE: ['CLOSED', 'DELIVERING_STABILISATION', 'INCOMPLETE'],
   CLOSED: ['NONE'],
   INCOMPLETE: ['NONE', 'AWAITING_INITIAL_SCORE'],
 });
@@ -465,23 +447,14 @@ export type ClosureOutcomeReason =
  *   below, rounds remain      -> DELIVERING_STABILISATION
  *   below, rounds exhausted   -> INCOMPLETE
  *
- * PRODUCT SIMPLIFICATION, owner decision 2026-08-08. Two outcomes changed:
- *
- *   AWAITING_CLOSE_CONFIRMATION -> CLOSED. The user's explicit session_exit IS
- *   the consent; asking them to confirm a decision they already made re-opens
- *   it. There is no second confirmation step.
- *
- *   HUMAN_SUPPORT -> INCOMPLETE. MindReset is self-help and provides no human-
- *   support service or managed handoff, so the sequence must not route into one.
- *   INCOMPLETE is the honest record: the user asked to leave, the stability
- *   criterion was not reached, no score is fabricated, nothing claims the close
- *   completed successfully, and the user is released rather than trapped. Crisis
- *   and emergency handling are a SEPARATE mechanism and are unchanged — the
- *   keyword scan runs before this hook is ever reached.
- *
- * Both AWAITING_CLOSE_CONFIRMATION and HUMAN_SUPPORT remain in the transition
- * table as legacy states. Nothing produces them any more; this function was
- * their only producer.
+ * PRODUCT SIMPLIFICATION, owner decision 2026-08-08. This function was the only
+ * producer of the two states removed in the post-#366 cleanup — see
+ * CLOSURE_PROCESS_STATES for why neither is part of Closing. In short: an
+ * explicit session_exit is already the user's decision to leave, so there is no
+ * confirmation step; and MindReset provides no human-support service, so
+ * INCOMPLETE is the honest record for a close that could not be settled. Crisis
+ * and emergency handling are a SEPARATE, unchanged mechanism — the keyword scan
+ * runs before this hook is ever reached.
  *
  * `roundsDelivered` is the count of stabilisation rounds actually delivered —
  * `ClosureProcess.roundCount`, which only increments on entry to

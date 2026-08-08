@@ -111,8 +111,6 @@ describe('terminal and non-terminal meanings', () => {
       'AWAITING_INITIAL_SCORE',
       'DELIVERING_STABILISATION',
       'AWAITING_POST_SCORE',
-      'AWAITING_CLOSE_CONFIRMATION',
-      'HUMAN_SUPPORT',
     ];
     for (const s of active) {
       expect(isActiveProcessState(s)).toBe(true);
@@ -121,7 +119,7 @@ describe('terminal and non-terminal meanings', () => {
     }
   });
 
-  it('classifies all eight states exactly once', () => {
+  it('classifies all six states exactly once', () => {
     for (const s of CLOSURE_PROCESS_STATES) {
       const buckets = [
         s === 'NONE',
@@ -143,7 +141,6 @@ describe('allowed transitions', () => {
       'AWAITING_INITIAL_SCORE',
       'DELIVERING_STABILISATION',
       'AWAITING_POST_SCORE',
-      'AWAITING_CLOSE_CONFIRMATION',
       'CLOSED',
     ];
     for (const to of path) {
@@ -237,7 +234,7 @@ describe('rejected invalid transitions', () => {
 
   it('rejects a rejected transition without mutating the record', () => {
     const p = makeProcess({ state: 'CLOSED', completedAt: at(1000) });
-    const r = transitionClosureProcess(p, 'HUMAN_SUPPORT', { now: NOW });
+    const r = transitionClosureProcess(p, 'DELIVERING_STABILISATION', { now: NOW });
     expect(r.ok).toBe(false);
     if (r.ok) return;
     expect(r.process).toBe(p);
@@ -364,126 +361,45 @@ describe('stabilisation round field constraint', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Deterioration during AWAITING_CLOSE_CONFIRMATION (owner decision 2026-08-05)
+// Re-measurement after a stabilisation round
+//
+// Replaces the former "deterioration during AWAITING_CLOSE_CONFIRMATION" block.
+// That state is gone (post-#366 cleanup) — an explicit session_exit already IS
+// the user's decision to leave, so nothing waits on a confirmation. The
+// invariants that still matter are about the round cap, and they belong to
+// AWAITING_POST_SCORE, which is where re-measurement actually happens.
 // ---------------------------------------------------------------------------
-describe('deterioration during AWAITING_CLOSE_CONFIRMATION', () => {
-  it('allows a return to AWAITING_POST_SCORE', () => {
-    expect(isAllowedTransition('AWAITING_CLOSE_CONFIRMATION', 'AWAITING_POST_SCORE'))
-      .toBe(true);
-  });
-
-  it('does NOT consume a stabilisation round — only delivery does', () => {
+describe('re-measurement and the round cap', () => {
+  it('a below-threshold post score can start a second round', () => {
     const p = makeProcess({
-      state: 'AWAITING_CLOSE_CONFIRMATION',
+      state: 'AWAITING_POST_SCORE',
       route: 'ACTIVATED_CLOSE',
       roundCount: 1,
     });
-    const r = transitionClosureProcess(p, 'AWAITING_POST_SCORE', { now: NOW });
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    expect(r.process.state).toBe('AWAITING_POST_SCORE');
-    expect(r.process.roundCount).toBe(1);
-    expect(r.process.transitionedAt).toEqual(NOW);
-  });
-
-  it('leaves the cap reachable — one delivered round still remains after a fall-back', () => {
-    // Round 1 delivered, close proposed, user deteriorates, fresh score asked
-    // for. The second DELIVERED round must still be available.
-    let p = makeProcess({
-      state: 'AWAITING_CLOSE_CONFIRMATION',
-      route: 'ACTIVATED_CLOSE',
-      roundCount: 1,
-    });
-    p = transitionClosureProcess(p, 'AWAITING_POST_SCORE', { now: NOW }).process;
-    const second = transitionClosureProcess(p, 'DELIVERING_STABILISATION', {
-      now: NOW,
-    });
+    const second = transitionClosureProcess(p, 'DELIVERING_STABILISATION', { now: NOW });
     expect(second.ok).toBe(true);
     if (!second.ok) return;
     expect(second.process.roundCount).toBe(MAX_STABILISATION_ROUNDS);
   });
 
-  it('a fall-back after two delivered rounds cannot start a third', () => {
-    // The Phase 2 rule routes this case to HUMAN_SUPPORT; Phase 1 only has to
-    // guarantee the field constraint holds.
-    let p = makeProcess({
-      state: 'AWAITING_CLOSE_CONFIRMATION',
+  it('cannot start a third round once the cap is reached', () => {
+    const p = makeProcess({
+      state: 'AWAITING_POST_SCORE',
       route: 'ACTIVATED_CLOSE',
       roundCount: MAX_STABILISATION_ROUNDS,
     });
-    p = transitionClosureProcess(p, 'AWAITING_POST_SCORE', { now: NOW }).process;
-    expect(p.roundCount).toBe(MAX_STABILISATION_ROUNDS);
     expect(
       transitionClosureProcess(p, 'DELIVERING_STABILISATION', { now: NOW }),
     ).toMatchObject({ ok: false, reason: 'round_limit_exceeded' });
-    // ...and escalation stays reachable from there.
-    expect(isAllowedTransition('AWAITING_POST_SCORE', 'HUMAN_SUPPORT')).toBe(true);
+    // ...and the honest exit stays reachable from there. This is the ONLY exit
+    // for an exhausted sequence — there is no escalation target any more.
+    expect(isAllowedTransition('AWAITING_POST_SCORE', 'INCOMPLETE')).toBe(true);
   });
 
-  it('the fall-back is one-way — AWAITING_POST_SCORE cannot jump back to confirmation without a decision', () => {
-    // AWAITING_POST_SCORE → AWAITING_CLOSE_CONFIRMATION IS allowed (that is the
-    // "acceptable fresh score" path). What must not exist is a route that skips
-    // the score entirely.
-    expect(isAllowedTransition('AWAITING_POST_SCORE', 'AWAITING_CLOSE_CONFIRMATION'))
-      .toBe(true);
-    expect(isAllowedTransition('AWAITING_CLOSE_CONFIRMATION', 'DELIVERING_STABILISATION'))
-      .toBe(false);
-  });
-
-  it('still permits the ordinary exits from AWAITING_CLOSE_CONFIRMATION', () => {
-    for (const to of ['CLOSED', 'HUMAN_SUPPORT', 'INCOMPLETE'] as const) {
-      expect(isAllowedTransition('AWAITING_CLOSE_CONFIRMATION', to)).toBe(true);
-    }
-  });
-});
-
-describe('HUMAN_SUPPORT — active human-handoff state', () => {
-  it('is active, not terminal', () => {
-    expect(isActiveProcessState('HUMAN_SUPPORT')).toBe(true);
-    expect(isTerminalProcessState('HUMAN_SUPPORT')).toBe(false);
-    expect(blocksProgression('HUMAN_SUPPORT')).toBe(true);
-  });
-
-  it('exits only to CLOSED (confirmed handoff) or INCOMPLETE (no handoff)', () => {
-    expect([...ALLOWED_TRANSITIONS.HUMAN_SUPPORT].sort()).toEqual([
-      'CLOSED',
-      'INCOMPLETE',
-    ]);
-  });
-
-  it('is reachable from every point in the sequence where escalation can arise', () => {
-    for (const from of [
-      'AWAITING_INITIAL_SCORE',
-      'DELIVERING_STABILISATION',
-      'AWAITING_POST_SCORE',
-      'AWAITING_CLOSE_CONFIRMATION',
-    ] as ClosureProcessState[]) {
-      expect(isAllowedTransition(from, 'HUMAN_SUPPORT')).toBe(true);
-    }
-  });
-
-  it('records a confirmed handoff as a completed sequence', () => {
-    const p = makeProcess({
-      state: 'HUMAN_SUPPORT',
-      route: 'ACTIVATED_CLOSE',
-      enteredAt: at(600_000),
-      roundCount: 2,
-    });
-    const r = transitionClosureProcess(p, 'CLOSED', { now: NOW });
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    expect(r.process.state).toBe('CLOSED');
-    expect(r.process.completedAt).toEqual(NOW);
-    // CLOSED here means "completed through a confirmed human handoff", not
-    // "the AI independently stabilised the user". Phase 1 stores no outcome
-    // field to tell those apart — see the note in process.ts.
-    expect(r.process.route).toBe('ACTIVATED_CLOSE');
-  });
-
-  it('records an unconfirmed handoff as INCOMPLETE, keeping the attempt', () => {
+  it('records an exhausted sequence as INCOMPLETE, keeping the attempt', () => {
     const enteredAt = at(600_000);
     const p = makeProcess({
-      state: 'HUMAN_SUPPORT',
+      state: 'AWAITING_POST_SCORE',
       route: 'ACTIVATED_CLOSE',
       enteredAt,
       roundCount: 2,
@@ -495,11 +411,51 @@ describe('HUMAN_SUPPORT — active human-handoff state', () => {
     expect(r.process.incompleteAt).toEqual(NOW);
     expect(r.process.enteredAt).toEqual(enteredAt);
     expect(r.process.roundCount).toBe(2);
+    // Nothing claims the close completed.
+    expect(r.process.completedAt).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The removed states (post-#366 cleanup, 2026-08-08)
+// ---------------------------------------------------------------------------
+describe('AWAITING_CLOSE_CONFIRMATION and HUMAN_SUPPORT are gone', () => {
+  const REMOVED = ['AWAITING_CLOSE_CONFIRMATION', 'HUMAN_SUPPORT'];
+
+  it('neither is a closure process state', () => {
+    for (const gone of REMOVED) {
+      expect(CLOSURE_PROCESS_STATES as readonly string[]).not.toContain(gone);
+    }
   });
 
-  it('is not re-enterable without going through a reset', () => {
-    expect(isAllowedTransition('HUMAN_SUPPORT', 'AWAITING_INITIAL_SCORE')).toBe(false);
-    expect(isAllowedTransition('HUMAN_SUPPORT', 'DELIVERING_STABILISATION')).toBe(false);
+  it('neither appears anywhere in the transition table', () => {
+    for (const gone of REMOVED) {
+      expect(Object.keys(ALLOWED_TRANSITIONS)).not.toContain(gone);
+      for (const targets of Object.values(ALLOWED_TRANSITIONS)) {
+        expect(targets as readonly string[]).not.toContain(gone);
+      }
+    }
+  });
+
+  it('the live flow is exactly the five reachable states plus NONE', () => {
+    expect([...CLOSURE_PROCESS_STATES]).toEqual([
+      'NONE',
+      'AWAITING_INITIAL_SCORE',
+      'DELIVERING_STABILISATION',
+      'AWAITING_POST_SCORE',
+      'CLOSED',
+      'INCOMPLETE',
+    ]);
+  });
+
+  it('a persisted row holding a removed value loads safely as NONE', () => {
+    // Backward safety: storage is plain text, so an old or hand-written row
+    // could in principle carry one. Unknown must degrade, never crash.
+    for (const gone of REMOVED) {
+      const loaded = normaliseClosureProcess({ state: gone, roundCount: 2 });
+      expect(loaded.state).toBe('NONE');
+      expect(blocksProgression(loaded.state)).toBe(false);
+    }
   });
 });
 
@@ -769,19 +725,6 @@ describe('decideClosureOutcome', () => {
     });
   });
 
-  it('never produces HUMAN_SUPPORT or AWAITING_CLOSE_CONFIRMATION — legacy states', () => {
-    for (const score of [1, 3, T - 1, T, 10]) {
-      for (const rounds of [0, 1, MAX_STABILISATION_ROUNDS]) {
-        const { outcome } = decideClosureOutcome({
-          postScore: score,
-          roundsDelivered: rounds,
-          threshold: T,
-        });
-        expect(outcome).not.toBe('HUMAN_SUPPORT');
-        expect(outcome).not.toBe('AWAITING_CLOSE_CONFIRMATION');
-      }
-    }
-  });
 
   it('reuses the existing Repair 1 threshold rather than inventing one', () => {
     expect(STABILITY_CLOSE_THRESHOLD).toBe(6);
