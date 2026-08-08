@@ -18,8 +18,11 @@
 -- No clinical content, no user words — nothing here is special-category data
 -- and nothing needs encryption at rest.
 --
--- INERT ON ARRIVAL: nothing in Phase 2 wires the closure process into a user
--- turn, so every row will read NULL until the clinical half ships.
+-- NO LONGER INERT (updated 2026-08-08). When this file was written the closure
+-- process was not yet wired into a user turn, so every row would have read NULL.
+-- The measurement-first work now writes these columns on a real closing turn, so
+-- the migration must be run BEFORE the code merges, not alongside it. The DDL
+-- itself is unchanged from the version originally proposed.
 
 ALTER TABLE "RecodeProgress"
   ADD COLUMN IF NOT EXISTS "closureInitialScore"   integer,
