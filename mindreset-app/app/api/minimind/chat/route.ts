@@ -13,6 +13,7 @@ import {
   getMinimindCooldownHoldingForLocale,
   getMinimindCooldownLiftForLocale,
 } from '@/lib/minimind/safety/canned-responses';
+import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import { loadUserMemoryContext } from '@/lib/minimind/memory/loader';
 import { getOnboardingAnswers } from '@/lib/platform/profile';
 import { buildOnboardingContextBlock } from '@/lib/platform/onboarding-context';
@@ -280,13 +281,17 @@ export async function POST(req: NextRequest) {
   }
 
   // Locale-picked canned messages. PR π (2026-07-11) — was English-only.
-  const crisisResponse = getMinimindCrisisResponseForLocale(billingUser.locale);
-  const cooldownHoldingMessage = getMinimindCooldownHoldingForLocale(
-    billingUser.locale,
-  );
-  const cooldownLiftMessage = getMinimindCooldownLiftForLocale(
-    billingUser.locale,
-  );
+  //
+  // The language is the one the user is ACTUALLY writing in, not the stored
+  // account preference alone. Same defect and same fix as the Journey turn
+  // route (2026-08-08): a stored `en` preference on a user writing Russian sent
+  // the code-authored crisis response in the wrong language. Falls back to
+  // billingUser.locale when the message carries no script signal.
+  const conversationLocale = resolveConversationLocale(message, billingUser.locale);
+  const crisisResponse = getMinimindCrisisResponseForLocale(conversationLocale);
+  const cooldownHoldingMessage =
+    getMinimindCooldownHoldingForLocale(conversationLocale);
+  const cooldownLiftMessage = getMinimindCooldownLiftForLocale(conversationLocale);
 
   // ==========================================================================
   // BRANCH: Conversation is in crisis cooldown

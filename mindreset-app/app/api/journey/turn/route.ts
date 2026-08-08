@@ -45,6 +45,8 @@ import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
 import { appendClosureNote } from '@/lib/journey/closure/state-notes';
 import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
 import { persistClosureProcess } from '@/lib/journey/closure/persist';
+import { closeCorrectionFor } from '@/lib/journey/closure/close-guard';
+import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
   type ClosureProcess,
@@ -146,9 +148,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // The language for every code-authored conversational message this turn.
+  //
+  // NOT the URL locale on its own. On 2026-08-08 a Russian session received the
+  // code-authored stability question in English because the user was on an
+  // English-locale URL while writing Russian — the Clinician follows the
+  // language the user actually writes in, and platform strings did not.
+  // resolveConversationLocale reads this turn's own message and falls back to
+  // the URL locale when the text carries no script signal, so it can only ever
+  // correct a wrong locale, never introduce one.
+  const conversationLocale = resolveConversationLocale(userMessage, body.locale ?? null);
+
   // Localised crisis response. Default to EN if absent or unknown — never
   // silently fail to deliver SOME canned response in a Red Flag situation.
-  const crisisResponse = getCrisisResponseForLocale(body.locale ?? null);
+  const crisisResponse = getCrisisResponseForLocale(conversationLocale);
 
   // Pre-launch audit fixes B2 + B5 (2026-07-11): fetch deletedAt +
   // screeningResult before any expensive work. Blocks (a) users who have
@@ -290,7 +303,7 @@ export async function POST(request: NextRequest) {
         cleared,
         reasoning: liftVerdict.reasoning,
       });
-      const liftMessage = getCooldownLiftMessageForLocale(body.locale ?? null);
+      const liftMessage = getCooldownLiftMessageForLocale(conversationLocale);
       // Overwrite the just-persisted canned response with the lift
       // message so the user's next page load shows the correct history.
       // Small extra write, but the accurate transcript matters
@@ -375,7 +388,7 @@ export async function POST(request: NextRequest) {
   const closureOrchestration = await runClosureOrchestration(userId, {
     current: state.closureProcess,
     userMessage,
-    locale: body.locale ?? null,
+    locale: conversationLocale,
     // Lazy: only loaded when an explicit session exit was detected on an idle
     // process, so ordinary turns pay for no extra query.
     loadSessionTurns: () =>
@@ -539,6 +552,51 @@ export async function POST(request: NextRequest) {
         const tail = finaliseStream(processor);
         if (tail.length > 0) {
           controller.enqueue(encoder.encode(tail));
+        }
+
+        // Closing invariant, user-visible half (owner-approved 2026-08-08).
+        //
+        // While the closure process is in DELIVERING_STABILISATION its platform
+        // note says "Do not close the session on this turn." On 2026-08-08, at a
+        // user-reported stability of 5 — below the threshold of 6 — the Clinician
+        // delivered the practice AND said goodbye. The record stayed honest
+        // (cycleCanClose false) but the user was told the session was finished.
+        //
+        // This is the last point at which anything can still reach the user:
+        // after controller.close() the reply is gone. The Clinician's prose is
+        // delivered untouched above; code appends ONE approved sentence that
+        // corrects only the forbidden implication. The trigger is the model's own
+        // structured `universal.session_close` claim — no wording is inspected —
+        // and only in the one state whose note forbids closing, so legitimate
+        // CLOSED and INCOMPLETE turns are never touched.
+        try {
+          const closureNote =
+            closureOrchestration.kind === 'constrain' ? closureOrchestration.note : null;
+          if (closureNote === 'stabilisation') {
+            const split = splitReplyAndReport(processor.fullText);
+            const report = parseStateReport(split.rawStateReport, {
+              observedAt: new Date(),
+            });
+            const correction = closeCorrectionFor({
+              note: closureNote,
+              report,
+              locale: conversationLocale,
+            });
+            if (correction) {
+              controller.enqueue(encoder.encode(`\n\n${correction}`));
+              console.info('[journey/closure-process] close claim corrected', {
+                userId,
+                processState: closureOrchestration.process.state,
+              });
+            }
+          }
+        } catch (err) {
+          // Never cost the user their reply over this — the stabilisation text
+          // has already streamed and is the clinically important part.
+          console.error('[journey/closure-process] close-guard failed', {
+            userId,
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
