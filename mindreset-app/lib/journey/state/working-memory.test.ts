@@ -148,9 +148,12 @@ describe('deriveWorkingMemory — practices', () => {
     expect(wm?.practices[0].family).toBe('somatic');
   });
 
-  it('caps at five', () => {
+  it('applies no separate cap — the report window is the only bound', () => {
+    // One practiceRun per report, so the hard ceiling is the existing take:10
+    // read window, narrowed to the current session. Eight in-session runs all
+    // come back.
     const rows = Array.from({ length: 8 }, (_, i) => row(i + 1, run(`P${i}`, 'completed')));
-    expect(deriveWorkingMemory(rows, false, NOW, null)?.practices).toHaveLength(5);
+    expect(deriveWorkingMemory(rows, false, NOW, null)?.practices).toHaveLength(8);
   });
 
   it("skips kind 'none'", () => {

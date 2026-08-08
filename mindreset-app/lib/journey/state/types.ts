@@ -315,7 +315,11 @@ export type ClinicalWorkingMemory = {
   } | null;
   /** Safety as the clinician itself flagged it. Defaulted turns excluded. */
   safety: { current: SafetyFlag; sessionWorst: SafetyFlag } | null;
-  /** Most recent first, capped. Empty when none recorded. */
+  /**
+   * Most recent first. Empty when none recorded. No separate cap — bounded by
+   * the report window (one practiceRun per report, `take: 10` reports, then
+   * narrowed to the current session).
+   */
   practices: WorkingMemoryPractice[];
   /** Most recent first, capped. Empty when none available. */
   formulationDeltas: WorkingMemoryDelta[];

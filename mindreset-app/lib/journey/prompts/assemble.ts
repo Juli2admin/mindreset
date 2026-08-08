@@ -156,10 +156,10 @@ function renderWorkingMemory(wm: JourneyState['workingMemory']): string[] {
   }
   if (wm.stability) {
     const s = wm.stability;
+    // State only. Whether a reading permits a close is Closing's business,
+    // not working memory's — this reports the recorded condition and stops.
     const scale =
-      s.scale === 'stability'
-        ? 'on the stability scale'
-        : 'scale never established — cannot validate a close';
+      s.scale === 'stability' ? 'on the stability scale' : 'scale not established';
     out.push(
       `- Last stability reading: ${s.score}/10, ${scale}, ${s.source ?? 'source not recorded'}, ${s.ageMinutes} min ago.`,
     );
@@ -180,9 +180,13 @@ function renderWorkingMemory(wm: JourneyState['workingMemory']): string[] {
 
   if (out.length === 0) return [];
 
+  // Heading is deliberately factual framing only. It states what the material
+  // IS and nothing more — no behavioural instruction. The internal-only and
+  // privacy rules already in Shared Core §3/§4, <memory> and Trap 11 remain
+  // authoritative and are not restated here.
   return [
     '',
-    "**Your own clinical working notes from earlier in this session.** Private — injected by code from what you recorded on previous turns. This is your working memory, not something to recite: never read it back to the user, never quote it, never name it. Your notes below are what you thought at the time — provisional, and today's signal can revise any of them. Anything not listed here was not recorded, which is not the same as it not having happened.",
+    "**Clinical working memory from earlier in this session.** These are your own prior clinical notes and recorded observations. Prior interpretations are provisional; use the user's current message as the primary signal.",
     ...out,
   ];
 }

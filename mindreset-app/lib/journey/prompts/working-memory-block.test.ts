@@ -75,12 +75,12 @@ function stateBlock(state: JourneyState): string {
 
 describe('working-memory section — absence', () => {
   it('renders nothing when workingMemory is null', () => {
-    expect(stateBlock(makeState())).not.toContain('clinical working notes');
+    expect(stateBlock(makeState())).not.toContain('Clinical working memory from earlier in this session');
   });
 
   it('renders nothing when every member is empty', () => {
     expect(stateBlock(makeState({ workingMemory: EMPTY_WM }))).not.toContain(
-      'clinical working notes',
+      'Clinical working memory from earlier in this session',
     );
   });
 
@@ -90,7 +90,7 @@ describe('working-memory section — absence', () => {
         workingMemory: { ...EMPTY_WM, cycleStatus: 'open' },
       }),
     );
-    expect(text).toContain('clinical working notes');
+    expect(text).toContain('Clinical working memory from earlier in this session');
     expect(text).toContain('**open**');
     expect(text).not.toContain('Activation');
     expect(text).not.toContain('safety read');
@@ -162,7 +162,7 @@ describe('working-memory section — restatement only', () => {
     expect(text).toContain('3 min ago');
   });
 
-  it('flags an ambiguous scale as unable to validate a close', () => {
+  it('reports an unestablished scale as state, without any closing verdict', () => {
     const text = stateBlock(
       makeState({
         workingMemory: {
@@ -171,10 +171,13 @@ describe('working-memory section — restatement only', () => {
         },
       }),
     );
-    expect(text).toContain('cannot validate a close');
+    expect(text).toContain('scale not established');
+    // Closing is out of scope for working memory — it reports state only.
+    expect(text).not.toContain('validate a close');
+    expect(text).not.toContain('cannot close');
   });
 
-  it('marks prior reasoning as provisional and private', () => {
+  it('marks prior reasoning as provisional', () => {
     const text = stateBlock(
       makeState({
         workingMemory: {
@@ -185,13 +188,13 @@ describe('working-memory section — restatement only', () => {
     );
     expect(text).toContain('Holding a parts reading lightly.');
     expect(text).toContain('last turn');
-    expect(text).toContain('provisional');
-    expect(text).toContain('never read it back to the user');
+    expect(text).toContain('Prior interpretations are provisional');
+    expect(text).toContain("use the user's current message as the primary signal");
   });
 
   it("does not render a closed cycle as if material were still open", () => {
     const text = stateBlock(makeState({ workingMemory: { ...EMPTY_WM, cycleStatus: 'closed' } }));
-    expect(text).not.toContain('clinical working notes');
+    expect(text).not.toContain('Clinical working memory from earlier in this session');
   });
 });
 
@@ -203,7 +206,7 @@ describe('working-memory section — placement', () => {
         workingMemory: { ...EMPTY_WM, cycleStatus: 'open' },
       }),
     );
-    const wmIdx = text.indexOf('clinical working notes');
+    const wmIdx = text.indexOf('Clinical working memory from earlier in this session');
     const historicalIdx = text.indexOf('Historical context — not fact');
     expect(wmIdx).toBeGreaterThan(-1);
     expect(historicalIdx).toBeGreaterThan(-1);

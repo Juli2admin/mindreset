@@ -72,11 +72,13 @@ const DAY_MS = 24 * HOUR_MS;
 //                          volume hardens superseded hypotheses.
 // MAX_WM_DELTA_CHARS (240) — the same slice already applied to
 //                          openCycleDescription at the render site.
-// MAX_WM_PRACTICES (5)   — matches the PR M1 landscape caps; the ten-turn
-//                          read window bounds it above in any case.
+//
+// Practices carry NO separate cap. The existing report window bounds them:
+// at most one practiceRun per state report and at most `take: 10` reports,
+// narrowed further by the current-session walk. A second number here would be
+// an arbitrary one.
 const MAX_WM_DELTAS = 3;
 const MAX_WM_DELTA_CHARS = 240;
-const MAX_WM_PRACTICES = 5;
 
 /**
  * Coarse AI-facing time bucket for "how long since the previous turn."
@@ -610,7 +612,6 @@ export function deriveWorkingMemory(
       status: pr.status,
       modalitySwitched: pr.modalitySwitched ?? null,
     });
-    if (practices.length >= MAX_WM_PRACTICES) break;
   }
 
   // --- 4. Provisional formulation deltas --------------------------------
