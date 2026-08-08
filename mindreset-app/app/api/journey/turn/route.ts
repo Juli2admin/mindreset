@@ -45,6 +45,7 @@ import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
 import { appendClosureNote } from '@/lib/journey/closure/state-notes';
 import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
 import { persistClosureProcess } from '@/lib/journey/closure/persist';
+import { closeCorrectionFor } from '@/lib/journey/closure/close-guard';
 import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
@@ -551,6 +552,51 @@ export async function POST(request: NextRequest) {
         const tail = finaliseStream(processor);
         if (tail.length > 0) {
           controller.enqueue(encoder.encode(tail));
+        }
+
+        // Closing invariant, user-visible half (owner-approved 2026-08-08).
+        //
+        // While the closure process is in DELIVERING_STABILISATION its platform
+        // note says "Do not close the session on this turn." On 2026-08-08, at a
+        // user-reported stability of 5 — below the threshold of 6 — the Clinician
+        // delivered the practice AND said goodbye. The record stayed honest
+        // (cycleCanClose false) but the user was told the session was finished.
+        //
+        // This is the last point at which anything can still reach the user:
+        // after controller.close() the reply is gone. The Clinician's prose is
+        // delivered untouched above; code appends ONE approved sentence that
+        // corrects only the forbidden implication. The trigger is the model's own
+        // structured `universal.session_close` claim — no wording is inspected —
+        // and only in the one state whose note forbids closing, so legitimate
+        // CLOSED and INCOMPLETE turns are never touched.
+        try {
+          const closureNote =
+            closureOrchestration.kind === 'constrain' ? closureOrchestration.note : null;
+          if (closureNote === 'stabilisation') {
+            const split = splitReplyAndReport(processor.fullText);
+            const report = parseStateReport(split.rawStateReport, {
+              observedAt: new Date(),
+            });
+            const correction = closeCorrectionFor({
+              note: closureNote,
+              report,
+              locale: conversationLocale,
+            });
+            if (correction) {
+              controller.enqueue(encoder.encode(`\n\n${correction}`));
+              console.info('[journey/closure-process] close claim corrected', {
+                userId,
+                processState: closureOrchestration.process.state,
+              });
+            }
+          }
+        } catch (err) {
+          // Never cost the user their reply over this — the stabilisation text
+          // has already streamed and is the clinically important part.
+          console.error('[journey/closure-process] close-guard failed', {
+            userId,
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
