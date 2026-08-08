@@ -379,6 +379,10 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
       completedAt: progress.closureCompletedAt,
       incompleteAt: progress.closureIncompleteAt,
       freezeInterruptedAt: progress.closureFreezeInterruptedAt,
+      initialScore: progress.closureInitialScore,
+      initialScoreAt: progress.closureInitialScoreAt,
+      postScore: progress.closurePostScore,
+      postScoreAt: progress.closurePostScoreAt,
     }),
   };
 }

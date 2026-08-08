@@ -62,6 +62,17 @@ const USER_ID = 'user_test_freeze_interruption';
 const NOW = new Date('2026-08-05T12:00:00.000Z');
 const at = (msAgo: number) => new Date(NOW.getTime() - msAgo);
 
+/** Phase 2 shim — see orchestrator.test.ts. Freeze precedence is unchanged. */
+const runOrch = (current: Parameters<typeof runClosureOrchestration>[1]['current']) =>
+  runClosureOrchestration(USER_ID, {
+    current,
+    userMessage: '',
+    locale: null,
+    loadSessionTurns: async () => [],
+    countUserMessagesSince: async () => 1,
+    now: NOW,
+  });
+
 const ACTIVE_STATES = CLOSURE_PROCESS_STATES.filter(isActiveProcessState);
 const INACTIVE_STATES: ClosureProcessState[] = ['NONE', 'CLOSED', 'INCOMPLETE'];
 
@@ -271,14 +282,10 @@ describe('first unfrozen turn — ending the interrupted attempt', () => {
   });
 
   it('persists the conversion through the orchestrator', async () => {
-    const decision = await runClosureOrchestration(
-      USER_ID,
-      inFlight('AWAITING_CLOSE_CONFIRMATION', {
+    const decision = await runOrch(inFlight('AWAITING_CLOSE_CONFIRMATION', {
         roundCount: 2,
         freezeInterruptedAt: at(300_000),
-      }),
-      NOW,
-    );
+      }));
     expect(decision.kind).toBe('proceed');
     expect(decision.resolved).toBe('freeze_interrupted');
     expect(rpUpdates).toHaveLength(1);

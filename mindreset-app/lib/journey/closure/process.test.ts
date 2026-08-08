@@ -21,9 +21,12 @@ import {
   INTERRUPTED_PROCESS_MS,
   MAX_STABILISATION_ROUNDS,
   blocksProgression,
+  computeScoreChange,
+  decideClosureOutcome,
   isActiveProcessState,
   isAllowedTransition,
   isTerminalProcessState,
+  recordCapturedScore,
   normaliseClosureProcess,
   resolveClosureProcessForTurn,
   transitionClosureProcess,
@@ -31,6 +34,11 @@ import {
   type ClosureProcessState,
 } from './process';
 import { SESSION_BOUNDARY_MS } from '../state/session-boundary';
+// Imported here, not into process.ts: guard.ts -> state/load.ts ->
+// closure/process.ts, so a process.ts import of guard would close a cycle.
+// decideClosureOutcome therefore takes `threshold` as a parameter and the
+// pure module holds no opinion about its value.
+import { STABILITY_CLOSE_THRESHOLD } from './guard';
 
 const NOW = new Date('2026-08-05T12:00:00.000Z');
 const at = (msAgo: number) => new Date(NOW.getTime() - msAgo);
@@ -52,6 +60,10 @@ describe('default process state', () => {
       roundCount: 0,
       completedAt: null,
       incompleteAt: null,
+      initialScore: null,
+      initialScoreAt: null,
+      postScore: null,
+      postScoreAt: null,
       freezeInterruptedAt: null,
     });
   });
@@ -190,10 +202,17 @@ describe('allowed transitions', () => {
 // Rejected invalid transitions
 // ---------------------------------------------------------------------------
 describe('rejected invalid transitions', () => {
-  it('cannot skip from entry straight to CLOSED', () => {
-    const p = makeProcess({ state: 'AWAITING_INITIAL_SCORE', route: 'ACTIVATED_CLOSE' });
-    const r = transitionClosureProcess(p, 'CLOSED', { now: NOW });
-    expect(r).toEqual({ ok: false, reason: 'invalid_transition', process: p });
+  // Product simplification 2026-08-08: entry -> CLOSED is now the CORRECT path
+  // when the initial score clears the threshold. The old pin asserted the
+  // opposite and is replaced by the measurement-first case below.
+  it('may go from entry straight to CLOSED when the score suffices', () => {
+    const p = makeProcess({ state: 'AWAITING_INITIAL_SCORE' });
+    const r = transitionClosureProcess(p, 'CLOSED', { now: NOW, route: 'NORMAL_CLOSE' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.state).toBe('CLOSED');
+    expect(r.process.route).toBe('NORMAL_CLOSE');
+    expect(r.process.roundCount).toBe(0);
   });
 
   it('cannot go backwards from AWAITING_POST_SCORE to AWAITING_INITIAL_SCORE', () => {
@@ -224,11 +243,96 @@ describe('rejected invalid transitions', () => {
     expect(r.process).toBe(p);
   });
 
-  it('requires a route when entering a sequence', () => {
+  // Measurement-first correction (owner decision 2026-08-08). This replaces the
+  // former "requires a route when entering a sequence" pin. Entry now means only
+  // "a current stability measurement is required before this session may close";
+  // which route it turns out to be is decided by the user's own score.
+  it('enters WITHOUT a route — the route is not yet knowable at entry', () => {
     const r = transitionClosureProcess(makeProcess(), 'AWAITING_INITIAL_SCORE', {
       now: NOW,
     });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.state).toBe('AWAITING_INITIAL_SCORE');
+    expect(r.process.route).toBeNull();
+  });
+
+  it('does not inherit a route from a previous attempt on re-entry', () => {
+    const prior = makeProcess({
+      state: 'INCOMPLETE',
+      route: 'ACTIVATED_CLOSE',
+      incompleteAt: at(1000),
+    });
+    const r = transitionClosureProcess(prior, 'AWAITING_INITIAL_SCORE', { now: NOW });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.route).toBeNull();
+  });
+
+  it('still requires a route on the direct NONE -> CLOSED ordinary close', () => {
+    const r = transitionClosureProcess(makeProcess(), 'CLOSED', { now: NOW });
     expect(r).toMatchObject({ ok: false, reason: 'route_required' });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Measurement-first: the initial score can end the sequence
+// ---------------------------------------------------------------------------
+
+describe('measurement-first — route resolves from the initial score', () => {
+  it('allows AWAITING_INITIAL_SCORE -> CLOSED', () => {
+    expect(isAllowedTransition('AWAITING_INITIAL_SCORE', 'CLOSED')).toBe(true);
+  });
+
+  it('allows AWAITING_POST_SCORE -> CLOSED', () => {
+    expect(isAllowedTransition('AWAITING_POST_SCORE', 'CLOSED')).toBe(true);
+  });
+
+  it('records NORMAL_CLOSE when the initial score cleared the threshold', () => {
+    const entered = transitionClosureProcess(makeProcess(), 'AWAITING_INITIAL_SCORE', {
+      now: NOW,
+    });
+    expect(entered.ok).toBe(true);
+    if (!entered.ok) return;
+
+    const r = transitionClosureProcess(entered.process, 'CLOSED', {
+      now: NOW,
+      route: 'NORMAL_CLOSE',
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.route).toBe('NORMAL_CLOSE');
+    // No stabilisation ever ran.
+    expect(r.process.roundCount).toBe(0);
+  });
+
+  it('records ACTIVATED_CLOSE when stabilisation is required', () => {
+    const entered = transitionClosureProcess(makeProcess(), 'AWAITING_INITIAL_SCORE', {
+      now: NOW,
+    });
+    expect(entered.ok).toBe(true);
+    if (!entered.ok) return;
+
+    const r = transitionClosureProcess(entered.process, 'DELIVERING_STABILISATION', {
+      now: NOW,
+      route: 'ACTIVATED_CLOSE',
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.route).toBe('ACTIVATED_CLOSE');
+    expect(r.process.roundCount).toBe(1);
+  });
+
+  it('keeps a stored route when a later transition supplies none', () => {
+    const p = makeProcess({
+      state: 'DELIVERING_STABILISATION',
+      route: 'ACTIVATED_CLOSE',
+      roundCount: 1,
+    });
+    const r = transitionClosureProcess(p, 'AWAITING_POST_SCORE', { now: NOW });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.process.route).toBe('ACTIVATED_CLOSE');
   });
 });
 
@@ -597,5 +701,179 @@ describe('normaliseClosureProcess', () => {
     for (const s of CLOSURE_PROCESS_STATES) {
       expect(normaliseClosureProcess({ state: s }).state).toBe(s);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 2 — score handling and the closure decision
+// ---------------------------------------------------------------------------
+describe('computeScoreChange', () => {
+  it('is null until both scores exist', () => {
+    expect(computeScoreChange(makeProcess())).toBeNull();
+    expect(computeScoreChange(makeProcess({ initialScore: 4 }))).toBeNull();
+    expect(computeScoreChange(makeProcess({ postScore: 7 }))).toBeNull();
+  });
+
+  it('is positive for improvement — the scale runs 1 overwhelmed to 10 grounded', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 4, postScore: 7 }))).toBe(3);
+  });
+
+  it('is negative for deterioration', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
+  });
+
+  it('is zero for no movement', () => {
+    expect(computeScoreChange(makeProcess({ initialScore: 5, postScore: 5 }))).toBe(0);
+  });
+});
+
+describe('decideClosureOutcome', () => {
+  const T = STABILITY_CLOSE_THRESHOLD;
+
+  // Product simplification 2026-08-08: a sufficient score CLOSES. The user's
+  // explicit session_exit was already the consent, so there is no second
+  // confirmation step to propose.
+  it('at or above threshold closes', () => {
+    for (const s of [T, T + 1, 10]) {
+      expect(
+        decideClosureOutcome({ postScore: s, roundsDelivered: 0, threshold: T }),
+      ).toEqual({
+        outcome: 'CLOSED',
+        reason: 'score_at_or_above_threshold',
+      });
+    }
+  });
+
+  it('below threshold with rounds remaining stabilises again', () => {
+    for (const r of [0, 1]) {
+      expect(
+        decideClosureOutcome({ postScore: T - 1, roundsDelivered: r, threshold: T }),
+      ).toMatchObject({ outcome: 'DELIVERING_STABILISATION' });
+    }
+  });
+
+  // Product simplification 2026-08-08: MindReset is self-help and provides no
+  // human-support service, so the bounded rounds terminate in INCOMPLETE — the
+  // honest record. The user is released, no score is fabricated, and nothing
+  // claims the close completed. Crisis handling is a separate mechanism.
+  it('below threshold with rounds exhausted records INCOMPLETE, never a handoff', () => {
+    expect(
+      decideClosureOutcome({
+        postScore: T - 1,
+        roundsDelivered: MAX_STABILISATION_ROUNDS,
+        threshold: T,
+      }),
+    ).toEqual({
+      outcome: 'INCOMPLETE',
+      reason: 'below_threshold_rounds_exhausted',
+    });
+  });
+
+  it('never produces HUMAN_SUPPORT or AWAITING_CLOSE_CONFIRMATION — legacy states', () => {
+    for (const score of [1, 3, T - 1, T, 10]) {
+      for (const rounds of [0, 1, MAX_STABILISATION_ROUNDS]) {
+        const { outcome } = decideClosureOutcome({
+          postScore: score,
+          roundsDelivered: rounds,
+          threshold: T,
+        });
+        expect(outcome).not.toBe('HUMAN_SUPPORT');
+        expect(outcome).not.toBe('AWAITING_CLOSE_CONFIRMATION');
+      }
+    }
+  });
+
+  it('reuses the existing Repair 1 threshold rather than inventing one', () => {
+    expect(STABILITY_CLOSE_THRESHOLD).toBe(6);
+  });
+
+  it('every outcome it returns is a legal transition from AWAITING_POST_SCORE', () => {
+    const outcomes = [
+      decideClosureOutcome({ postScore: 8, roundsDelivered: 0, threshold: T }).outcome,
+      decideClosureOutcome({ postScore: 3, roundsDelivered: 0, threshold: T }).outcome,
+      decideClosureOutcome({ postScore: 3, roundsDelivered: 2, threshold: T }).outcome,
+    ];
+    for (const o of outcomes) {
+      expect(isAllowedTransition('AWAITING_POST_SCORE', o)).toBe(true);
+    }
+  });
+
+  it('does NOT act on deterioration — deliberately unresolved, raised not defaulted', () => {
+    // A 9 -> 7 fall is deterioration but 7 is above threshold. Whether that
+    // escalates is not settled by the approved wording, so the decision
+    // function does not consider it; computeScoreChange exposes the delta.
+    expect(
+      decideClosureOutcome({ postScore: 7, roundsDelivered: 0, threshold: T }).outcome,
+    ).toBe('CLOSED');
+    expect(computeScoreChange(makeProcess({ initialScore: 9, postScore: 7 }))).toBe(-2);
+  });
+});
+
+describe('recordCapturedScore', () => {
+  const awaitingInitial = makeProcess({
+    state: 'AWAITING_INITIAL_SCORE',
+    route: 'ACTIVATED_CLOSE',
+  });
+  const awaitingPost = makeProcess({
+    state: 'AWAITING_POST_SCORE',
+    route: 'ACTIVATED_CLOSE',
+    initialScore: 3,
+    roundCount: 1,
+  });
+
+  it('fills the initial slot while awaiting the initial score', () => {
+    const r = recordCapturedScore(awaitingInitial, 4, NOW);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.slot).toBe('initial');
+    expect(r.process.initialScore).toBe(4);
+    expect(r.process.initialScoreAt).toEqual(NOW);
+    expect(r.process.postScore).toBeNull();
+  });
+
+  it('fills the post slot while awaiting the post score, leaving the initial intact', () => {
+    const r = recordCapturedScore(awaitingPost, 7, NOW);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.slot).toBe('post');
+    expect(r.process.postScore).toBe(7);
+    expect(r.process.postScoreAt).toEqual(NOW);
+    expect(r.process.initialScore).toBe(3);
+  });
+
+  it('does NOT advance the state — that is a transition', () => {
+    const r = recordCapturedScore(awaitingInitial, 4, NOW);
+    expect(r.ok && r.process.state).toBe('AWAITING_INITIAL_SCORE');
+  });
+
+  it('rejects in any state that is not waiting for a score', () => {
+    for (const state of CLOSURE_PROCESS_STATES.filter(
+      (s) => s !== 'AWAITING_INITIAL_SCORE' && s !== 'AWAITING_POST_SCORE',
+    )) {
+      expect(recordCapturedScore(makeProcess({ state }), 5, NOW)).toEqual({
+        ok: false,
+        reason: 'not_awaiting_a_score',
+      });
+    }
+  });
+
+  it('rejects out-of-range rather than clamping', () => {
+    for (const bad of [0, 11, -1, 100, 4.5, NaN]) {
+      expect(recordCapturedScore(awaitingInitial, bad, NOW)).toEqual({
+        ok: false,
+        reason: 'score_out_of_range',
+      });
+    }
+  });
+
+  it('feeds computeScoreChange once both slots are filled', () => {
+    const first = recordCapturedScore(awaitingInitial, 3, NOW);
+    expect(first.ok).toBe(true);
+    if (!first.ok) return;
+    const moved = { ...first.process, state: 'AWAITING_POST_SCORE' as const };
+    const second = recordCapturedScore(moved, 8, NOW);
+    expect(second.ok).toBe(true);
+    if (!second.ok) return;
+    expect(computeScoreChange(second.process)).toBe(5);
   });
 });
