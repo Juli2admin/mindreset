@@ -44,6 +44,7 @@ import {
   scanForStateRedFlag,
   getStateCrisisResponseForLocale,
 } from '@/lib/states/safety/red-flag';
+import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import { detectCompletion } from '@/lib/states/completion';
 import { recordAiUsage } from '@/lib/ai-usage/record';
 
@@ -133,7 +134,12 @@ export async function POST(
   if (!sessionId) {
     return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 });
   }
-  const locale = body.locale === 'ru' ? 'ru' : 'en';
+  // Language for the code-authored crisis response: the language the user is
+  // ACTUALLY writing in, not the URL locale alone. Same defect and same fix as
+  // the Journey turn route (2026-08-08) — falls back to the URL locale when the
+  // message carries no script signal.
+  const locale =
+    resolveConversationLocale(userMessage, body.locale) === 'ru' ? 'ru' : 'en';
   const crisisResponse = getStateCrisisResponseForLocale(locale);
 
   // Deletion gate — mirrors Journey B2 fix. A user in the 30-day grace

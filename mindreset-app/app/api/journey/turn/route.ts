@@ -45,6 +45,7 @@ import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
 import { appendClosureNote } from '@/lib/journey/closure/state-notes';
 import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
 import { persistClosureProcess } from '@/lib/journey/closure/persist';
+import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
   type ClosureProcess,
@@ -146,9 +147,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // The language for every code-authored conversational message this turn.
+  //
+  // NOT the URL locale on its own. On 2026-08-08 a Russian session received the
+  // code-authored stability question in English because the user was on an
+  // English-locale URL while writing Russian — the Clinician follows the
+  // language the user actually writes in, and platform strings did not.
+  // resolveConversationLocale reads this turn's own message and falls back to
+  // the URL locale when the text carries no script signal, so it can only ever
+  // correct a wrong locale, never introduce one.
+  const conversationLocale = resolveConversationLocale(userMessage, body.locale ?? null);
+
   // Localised crisis response. Default to EN if absent or unknown — never
   // silently fail to deliver SOME canned response in a Red Flag situation.
-  const crisisResponse = getCrisisResponseForLocale(body.locale ?? null);
+  const crisisResponse = getCrisisResponseForLocale(conversationLocale);
 
   // Pre-launch audit fixes B2 + B5 (2026-07-11): fetch deletedAt +
   // screeningResult before any expensive work. Blocks (a) users who have
@@ -290,7 +302,7 @@ export async function POST(request: NextRequest) {
         cleared,
         reasoning: liftVerdict.reasoning,
       });
-      const liftMessage = getCooldownLiftMessageForLocale(body.locale ?? null);
+      const liftMessage = getCooldownLiftMessageForLocale(conversationLocale);
       // Overwrite the just-persisted canned response with the lift
       // message so the user's next page load shows the correct history.
       // Small extra write, but the accurate transcript matters
@@ -375,7 +387,7 @@ export async function POST(request: NextRequest) {
   const closureOrchestration = await runClosureOrchestration(userId, {
     current: state.closureProcess,
     userMessage,
-    locale: body.locale ?? null,
+    locale: conversationLocale,
     // Lazy: only loaded when an explicit session exit was detected on an idle
     // process, so ordinary turns pay for no extra query.
     loadSessionTurns: () =>
