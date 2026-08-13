@@ -15,6 +15,10 @@ import type {
   NextBestMode,
   TaskContract,
   PatternProvenance,
+  TherapeuticTarget,
+  MechanismCandidate,
+  TargetStatus,
+  EpistemicLevel,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
@@ -25,6 +29,8 @@ import {
   CYCLE_STATUSES,
   NEXT_BEST_MODES,
   PATTERN_PROVENANCE_SET,
+  TARGET_STATUS_SET,
+  EPISTEMIC_LEVEL_SET,
 } from './schema';
 import type {
   JourneyChannel,
@@ -517,18 +523,151 @@ const GENERIC_CONTRACT_VALUE_RE =
   /^(none|n\/a|na|unknown|unclear|not\s+(yet\s+)?(clear|known|sure)(\s+yet)?|tbd|todo|-+|\.+|\?+|null|nothing)$/i;
 const MAX_CONTRACT_FIELD_CHARS = 300;
 
+// Middle Layer PR 3 (2026-08-13) — caps for the Target / mechanism
+// differential. Engineering limits on an encrypted blob, not clinical
+// judgements: the contract is decrypted and JSON-parsed on every turn, so
+// an unbounded differential would grow the per-turn cost without bound.
+const MAX_CORROBORATION_ENTRIES = 6;
+const MAX_MECHANISM_CANDIDATES = 6;
+const MAX_EVIDENCE_ENTRIES = 6;
+
+/**
+ * Shared cleaning rule for every free-text field in the contract, legacy and
+ * new alike: trim, reject under 3 chars, reject placeholder values, cap at
+ * 300. Returns undefined when nothing survives.
+ */
+function cleanContractString(raw: unknown): string | undefined {
+  if (typeof raw !== 'string') return undefined;
+  const trimmed = raw.trim();
+  if (trimmed.length < 3) return undefined;
+  if (GENERIC_CONTRACT_VALUE_RE.test(trimmed)) return undefined;
+  return trimmed.slice(0, MAX_CONTRACT_FIELD_CHARS);
+}
+
+/** Cleans a string array, dropping members that fail the field rule. */
+function cleanContractStringList(
+  raw: unknown,
+  cap: number,
+): string[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: string[] = [];
+  for (const item of raw) {
+    const cleaned = cleanContractString(item);
+    if (cleaned !== undefined && !out.includes(cleaned)) out.push(cleaned);
+    if (out.length >= cap) break;
+  }
+  return out.length > 0 ? out : undefined;
+}
+
+/**
+ * Middle Layer PR 3 — the Target (MIDDLE_LAYER.md §4).
+ *
+ * Every part is optional: a partially assembled Target is the normal
+ * mid-investigation state. But an object with NO surviving part is not a
+ * Target at all, and returns undefined rather than an empty husk that the
+ * merge layer would then have to store.
+ *
+ * `status` is self-reported and strictly validated; an invalid value leaves
+ * the field absent rather than defaulting, exactly as PR 2's provenance
+ * does. Nothing reads it yet either way.
+ */
+export function parseTherapeuticTarget(
+  v: unknown,
+): TherapeuticTarget | undefined {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
+  const obj = v as Record<string, unknown>;
+  const out: TherapeuticTarget = {};
+
+  const phenomenon = cleanContractString(obj.phenomenon);
+  if (phenomenon !== undefined) out.phenomenon = phenomenon;
+  const inTheirTerms = cleanContractString(obj.inTheirTerms);
+  if (inTheirTerms !== undefined) out.inTheirTerms = inTheirTerms;
+  const direction = cleanContractString(obj.direction);
+  if (direction !== undefined) out.direction = direction;
+
+  const corroboration = cleanContractStringList(
+    obj.corroboration,
+    MAX_CORROBORATION_ENTRIES,
+  );
+  if (corroboration !== undefined) out.corroboration = corroboration;
+
+  if (
+    typeof obj.provenance === 'string' &&
+    PATTERN_PROVENANCE_SET.has(obj.provenance)
+  ) {
+    out.provenance = obj.provenance as PatternProvenance;
+  }
+  if (typeof obj.status === 'string' && TARGET_STATUS_SET.has(obj.status)) {
+    out.status = obj.status as TargetStatus;
+  }
+
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/**
+ * Middle Layer PR 3 — the mechanism differential (MIDDLE_LAYER.md §1, §3b,
+ * §5.1).
+ *
+ * `reading` is required — a candidate that cannot be stated is not a
+ * candidate — so an entry without one is dropped while its siblings survive.
+ * Duplicate readings collapse to the last one, matching how patternsTouched
+ * already dedups.
+ */
+export function parseMechanismDifferential(
+  v: unknown,
+): MechanismCandidate[] | undefined {
+  if (!Array.isArray(v)) return undefined;
+  const byReading = new Map<string, MechanismCandidate>();
+  for (const item of v) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+    const obj = item as Record<string, unknown>;
+    const reading = cleanContractString(obj.reading);
+    if (reading === undefined) continue;
+
+    const entry: MechanismCandidate = { reading };
+
+    const supports = cleanContractStringList(obj.supports, MAX_EVIDENCE_ENTRIES);
+    if (supports !== undefined) entry.supports = supports;
+    const countsAgainst = cleanContractStringList(
+      obj.countsAgainst,
+      MAX_EVIDENCE_ENTRIES,
+    );
+    if (countsAgainst !== undefined) entry.countsAgainst = countsAgainst;
+
+    if (typeof obj.level === 'string' && EPISTEMIC_LEVEL_SET.has(obj.level)) {
+      entry.level = obj.level as EpistemicLevel;
+    }
+    if (
+      typeof obj.provenance === 'string' &&
+      PATTERN_PROVENANCE_SET.has(obj.provenance)
+    ) {
+      entry.provenance = obj.provenance as PatternProvenance;
+    }
+
+    byReading.set(reading, entry);
+  }
+  if (byReading.size === 0) return undefined;
+  return Array.from(byReading.values()).slice(0, MAX_MECHANISM_CANDIDATES);
+}
+
 export function parseTaskContract(v: unknown): TaskContract | undefined {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return undefined;
   const obj = v as Record<string, unknown>;
   const out: TaskContract = {};
   for (const field of TASK_CONTRACT_FIELDS) {
-    const raw = obj[field];
-    if (typeof raw !== 'string') continue;
-    const trimmed = raw.trim();
-    if (trimmed.length < 3) continue;
-    if (GENERIC_CONTRACT_VALUE_RE.test(trimmed)) continue;
-    out[field] = trimmed.slice(0, MAX_CONTRACT_FIELD_CHARS);
+    const cleaned = cleanContractString(obj[field]);
+    if (cleaned !== undefined) out[field] = cleaned;
   }
+
+  // Middle Layer PR 3. Parsed alongside the legacy fields, into the same
+  // object. A report may legally carry a Target and no legacy field at all
+  // — so these count toward "did anything survive", and a target-only
+  // emission is NOT discarded.
+  const target = parseTherapeuticTarget(obj.target);
+  if (target !== undefined) out.target = target;
+  const differential = parseMechanismDifferential(obj.mechanismDifferential);
+  if (differential !== undefined) out.mechanismDifferential = differential;
+
   return Object.keys(out).length > 0 ? out : undefined;
 }
 
