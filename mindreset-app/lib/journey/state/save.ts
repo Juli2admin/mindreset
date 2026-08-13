@@ -8,6 +8,8 @@ import { encrypt, decrypt } from '@/lib/encrypt';
 import type { JourneyChannel, JourneyDepth, MiiState } from './types';
 import type { StateReport, TaskContract } from '../stateReport/schema';
 import { blocksProgression, normaliseClosureProcess } from '../closure/process';
+import { evaluateSufficiency } from '../middleLayer/sufficiency';
+import { logSufficiencyShadow } from '../middleLayer/shadow-log';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -153,6 +155,32 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     const existing = decryptJsonOrNull<TaskContract>(current.taskContractEncrypted);
     const merged = mergeTaskContract(existing, u.taskContractPatch);
     if (merged) data.taskContractEncrypted = encrypt(JSON.stringify(merged));
+  }
+
+  // Middle Layer PR 4 (2026-08-13) — SHADOW MODE sufficiency evaluation.
+  //
+  // Runs on the contract as it will be stored after this turn's merge, and
+  // writes its verdict into the two server-owned columns. It licenses
+  // NOTHING: no gate, no depth decision, no route, no prompt reads these.
+  // The whole point is to accumulate a reviewable record of what the Middle
+  // Layer WOULD have licensed, before anything is allowed to act on it.
+  //
+  // Folded into the existing `data` object, so this costs zero extra
+  // queries. Wrapped so a shadow-path defect can never cost a user their
+  // turn — the state save must survive a validator that throws.
+  try {
+    const contractForShadow = data.taskContractEncrypted
+      ? decryptJsonOrNull<TaskContract>(data.taskContractEncrypted as string)
+      : decryptJsonOrNull<TaskContract>(current.taskContractEncrypted);
+    const verdict = evaluateSufficiency(contractForShadow);
+    data.middleLayerTargetStatus = verdict.target.status;
+    data.middleLayerMechanismStatus = verdict.mechanism.status;
+    logSufficiencyShadow(userId, verdict);
+  } catch (err) {
+    console.error('[journey/middle-layer] shadow evaluation failed (ignored)', {
+      userId,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   await prisma.recodeProgress.update({

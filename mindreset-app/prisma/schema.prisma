@@ -784,6 +784,30 @@ model RecodeProgress {
   // erases a valid contract.
   taskContractEncrypted        String?
 
+  // Middle Layer PR 4 (2026-08-13) — SHADOW MODE. Code's own verdict on the
+  // two sufficiencies of MIDDLE_LAYER.md §3. Written ONLY by
+  // lib/journey/middleLayer/sufficiency.ts, never by the model, and
+  // deliberately separate from the model's self-reported `target.status`
+  // inside taskContractEncrypted — a claim and a finding must not share a
+  // field. Same server-owned discipline as the closure columns below.
+  //
+  // The canonical rule requires the gate to be "independently satisfied AND
+  // PERSISTED" — these columns are that persistence. Nothing reads them
+  // yet: no gate, no depth, no router, no prompt.
+  //
+  //   middleLayerTargetStatus     none | proposed | established
+  //   middleLayerMechanismStatus  none | candidate | leading | established
+  //
+  // The licensed rung is NOT stored — it is a pure derivation from these
+  // two (see deriveLicensedRung), and storing a derived value alongside its
+  // inputs would only create something that can drift out of agreement.
+  //
+  // NULL means never evaluated (every row before this PR). Strings rather
+  // than Prisma enums, matching closureProcessState and the repo's
+  // convention for constrained-value columns.
+  middleLayerTargetStatus      String?
+  middleLayerMechanismStatus   String?
+
   // Activated Closure — Phase 1 (2026-08-05). SERVER-OWNED process state for
   // the Activated Session Closure Protocol. Written only by code, never by
   // the model, and never reconstructed from model-generated history. This is
