@@ -179,6 +179,8 @@ The MiniMind v2.3 system prompt exists in TWO places:
 |---|---|
 | Roadmap (v1, 15 May 2026 — out of date in places) | `mindreset-app/docs/roadmap/MindReset_Roadmap_v1.md` |
 | MiniMind prompt canonical | `mindreset-app/docs/minimind/MiniMind_System_Prompt_v2.3.md` |
+| Journey clinical manual (source of truth) | `mindreset-app/docs/journey/CLINICAL_MANUAL.md` |
+| Journey Middle Layer — investigation/target canon (approved, not yet injected) | `mindreset-app/docs/journey/MIDDLE_LAYER.md` |
 | Data-model overview | `mindreset-app/architecture.md` |
 | Running log of lessons / dropped features | `docs/carry-forward.md` |
 | Legal documents | `docs/MindReset_Legal_Documents_EN.md` |

@@ -7,6 +7,9 @@
 > **Companion document:** `PRACTICE_GENERATION_ALGORITHM.md` (how practices are generated
 > dynamically at runtime — the two documents together define the therapeutic layer).
 >
+> **Companion document:** `MIDDLE_LAYER.md` (approved Middle Layer v0.2 — investigation,
+> differential, sufficiency, therapeutic target). Not injected into the runtime prompt.
+>
 > Formatting note: converted from the original `.docx`. Word-on-own-line artifacts
 > ("MindReset" appearing between paragraphs) are docx→text conversion side-effects,
 > not method content. Content itself is verbatim.
