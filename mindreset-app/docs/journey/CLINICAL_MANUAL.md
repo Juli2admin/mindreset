@@ -13,6 +13,9 @@
 > Layer specifies what must be established before that question may be asked at all.
 > It is approved canon, not yet injected into the runtime prompt.
 >
+> **Companion document:** `MIDDLE_LAYER.md` (approved Middle Layer v0.2 — investigation,
+> differential, sufficiency, therapeutic target). Not injected into the runtime prompt.
+>
 > Formatting note: converted from the original `.docx`. Word-on-own-line artifacts
 > ("MindReset" appearing between paragraphs) are docx→text conversion side-effects,
 > not method content. Content itself is verbatim.
