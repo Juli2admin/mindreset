@@ -78,6 +78,10 @@ import {
   checkJourneyMonthlyCap,
   journeyMonthlyCapRejectionPayload,
 } from '@/lib/ai-usage/monthly-cap';
+import {
+  isHiddenReasoningDelta,
+  resolveThinkingConfig,
+} from '@/lib/journey/thinking-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -514,12 +518,29 @@ export async function POST(request: NextRequest) {
       : maskedHistory;
   const messages: Anthropic.MessageParam[] = appendEmissionReminder(withClosureNote);
 
-  const stream = anthropic.messages.stream({
+  // Native pre-response deliberation (2026-08-13), flag-gated on JOURNEY_THINKING.
+  // Flag off ⇒ mode 'off' ⇒ no thinking, no output_config, maxTokens === MAX_TOKENS,
+  // so these params are byte-identical to production. The thinking /
+  // output_config fields are cast on because SDK 0.30.1 predates them; see
+  // lib/journey/thinking-config.ts for why that is safe here.
+  const thinkingCfg = resolveThinkingConfig(MAX_TOKENS);
+  if (thinkingCfg.mode !== 'off') {
+    console.info(
+      '[journey/turn] adaptive thinking on',
+      JSON.stringify({ maxTokens: thinkingCfg.maxTokens, ...thinkingCfg.detail }),
+    );
+  }
+  const streamParams = {
     model,
-    max_tokens: MAX_TOKENS,
+    max_tokens: thinkingCfg.maxTokens,
     system: systemBlocks,
     messages,
-  });
+    ...(thinkingCfg.thinking ? { thinking: thinkingCfg.thinking } : {}),
+    ...(thinkingCfg.output_config ? { output_config: thinkingCfg.output_config } : {}),
+  };
+  const stream = anthropic.messages.stream(
+    streamParams as unknown as Anthropic.MessageStreamParams,
+  );
 
   // Streaming pipeline — PR α (2026-07-09) uses a dedicated state
   // machine at lib/journey/streaming/reply-processor.ts. Two tags are
@@ -539,6 +560,20 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       try {
         for await (const event of stream) {
+          // Hidden-reasoning guard. With thinking on, the model streams
+          // thinking_delta / signature_delta events. They are private
+          // reasoning: they must never reach the user's stream, and never
+          // reach processor.fullText — the string handed to
+          // splitReplyAndReport — or hidden reasoning would contaminate both
+          // the visible reply and the parsed <state-report>. The text_delta
+          // branch below already excludes them; skipping explicitly keeps the
+          // invariant true if that branch is ever widened.
+          if (
+            event.type === 'content_block_delta' &&
+            isHiddenReasoningDelta(event.delta)
+          ) {
+            continue;
+          }
           if (
             event.type === 'content_block_delta' &&
             event.delta.type === 'text_delta'
