@@ -966,6 +966,23 @@ model JourneyPattern {
   active                          Boolean        @default(true)
   context                         Json?          // optional structured extras — e.g. { ageTag: 9 }
 
+  // Middle Layer PR 2 (2026-08-13) — evidentiary provenance of this pattern.
+  // One of 'user' | 'elicited' | 'clinician', or NULL.
+  //
+  //   user      — the user said it, unprompted, in their own words
+  //   elicited  — the clinician offered it and the user confirmed or corrected it
+  //   clinician — the clinician supplied it; the user has not confirmed it
+  //   NULL      — unknown. Legacy rows are NULL, and NULL must earn NO
+  //               evidentiary credit anywhere downstream. Never treat an
+  //               absent provenance as 'user'.
+  //
+  // Representation only in this PR: nothing reads this column yet. It is a
+  // String rather than a Prisma enum to match the repo's existing convention
+  // for constrained-value columns (closureProcessState, channel,
+  // compassionBridgeQuality), which keeps adding a value migration-free.
+  // The value domain is enforced in TypeScript and at the parser boundary.
+  provenance                      String?
+
   // One row per (user, category) — dedup on category, not description.
   // Description evolves as the user's words about the pattern deepen; the
   // category label stays stable.
