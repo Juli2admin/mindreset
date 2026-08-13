@@ -110,6 +110,25 @@ export const THERAPEUTIC_MODES = [
 ] as const;
 export type TherapeuticMode = (typeof THERAPEUTIC_MODES)[number];
 
+// Middle Layer PR 2 (2026-08-13). Evidentiary provenance of a pattern claim.
+//
+//   user      — the user said it, unprompted, in their own words
+//   elicited  — the clinician offered it and the user confirmed or corrected it
+//   clinician — the clinician supplied it; the user has not confirmed it
+//
+// Deliberately has NO 'unknown' member. Absence *is* unknown, represented by
+// the field being absent and the DB column being NULL — so no value in this
+// union can ever be mistaken for a positive claim, and an absent provenance
+// can never be silently coerced into 'user'.
+//
+// Representation only: nothing consumes this for gating yet (Middle Layer
+// PR 2 is a no-behaviour-change PR). See docs/journey/MIDDLE_LAYER.md §1(4).
+export const PATTERN_PROVENANCES = ['user', 'elicited', 'clinician'] as const;
+export type PatternProvenance = (typeof PATTERN_PROVENANCES)[number];
+export const PATTERN_PROVENANCE_SET: ReadonlySet<string> = new Set(
+  PATTERN_PROVENANCES,
+);
+
 export const MODALITIES_REJECTED = [
   'body',
   'imagery',
@@ -214,6 +233,11 @@ export type StateReport = {
     category: string;
     description: string;
     context?: Record<string, unknown>;
+    /**
+     * Middle Layer PR 2 — evidentiary provenance. Optional; absent means
+     * unknown, and unknown earns NO evidentiary credit. Never defaulted.
+     */
+    provenance?: PatternProvenance;
   }>;
 
   // Landscape updates (mutate existing rows rather than insert new ones)

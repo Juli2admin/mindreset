@@ -14,6 +14,7 @@ import type {
   CycleStatus,
   NextBestMode,
   TaskContract,
+  PatternProvenance,
 } from './schema';
 import {
   CANONICAL_MOVES_SET,
@@ -23,6 +24,7 @@ import {
   MODALITIES_REJECTED,
   CYCLE_STATUSES,
   NEXT_BEST_MODES,
+  PATTERN_PROVENANCE_SET,
 } from './schema';
 import type {
   JourneyChannel,
@@ -687,11 +689,21 @@ const MAX_PATTERN_DESCRIPTION = 200;
 
 export function parsePatternsTouched(
   v: unknown,
-): Array<{ category: string; description: string; context?: Record<string, unknown> }> | undefined {
+): Array<{
+  category: string;
+  description: string;
+  context?: Record<string, unknown>;
+  provenance?: PatternProvenance;
+}> | undefined {
   if (!Array.isArray(v)) return undefined;
   const byCategory = new Map<
     string,
-    { category: string; description: string; context?: Record<string, unknown> }
+    {
+      category: string;
+      description: string;
+      context?: Record<string, unknown>;
+      provenance?: PatternProvenance;
+    }
   >();
   for (const item of v) {
     if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
@@ -704,10 +716,22 @@ export function parsePatternsTouched(
       category: string;
       description: string;
       context?: Record<string, unknown>;
+      provenance?: PatternProvenance;
     } = {
       category,
       description: description.slice(0, MAX_PATTERN_DESCRIPTION),
     };
+    // Middle Layer PR 2. provenance is optional and STRICTLY validated: only
+    // an exact member of PATTERN_PROVENANCES is kept. Anything else — a typo,
+    // an invented value, 'unknown', wrong case, a non-string — leaves the
+    // field ABSENT rather than guessed at. Absent means unknown, and unknown
+    // must earn no evidentiary credit downstream. Never coerce to 'user'.
+    if (
+      typeof obj.provenance === 'string' &&
+      PATTERN_PROVENANCE_SET.has(obj.provenance)
+    ) {
+      entry.provenance = obj.provenance as PatternProvenance;
+    }
     if (
       obj.context &&
       typeof obj.context === 'object' &&

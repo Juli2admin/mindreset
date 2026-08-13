@@ -472,6 +472,12 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
   // observation adding { ageTag: 9 } does not clobber a prior
   // { channel: 'visual' }. If the AI omits context, existing context is
   // preserved untouched.
+  //
+  // Middle Layer PR 2 (2026-08-13). provenance follows the same
+  // omission convention as context: when the AI supplies a valid value it
+  // is written (last write wins); when it is absent the stored value is
+  // left untouched, and on a new row it stays NULL. NULL means unknown and
+  // earns no evidentiary credit — nothing reads this column yet.
   if (report.patternsTouched && report.patternsTouched.length > 0) {
     for (const p of report.patternsTouched) {
       if (!p.category || !p.description) continue;
@@ -496,6 +502,7 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
             userDescriptionEncrypted: encrypt(p.description),
             lastConfirmedAt: now,
             ...(mergedContext !== undefined ? { context: mergedContext } : {}),
+            ...(p.provenance !== undefined ? { provenance: p.provenance } : {}),
           },
         });
       } else {
@@ -511,6 +518,7 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
             firstObservedAt: now,
             lastConfirmedAt: now,
             ...(newContext !== undefined ? { context: newContext } : {}),
+            ...(p.provenance !== undefined ? { provenance: p.provenance } : {}),
           },
         });
       }
