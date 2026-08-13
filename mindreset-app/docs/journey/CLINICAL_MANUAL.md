@@ -7,12 +7,6 @@
 > **Companion document:** `PRACTICE_GENERATION_ALGORITHM.md` (how practices are generated
 > dynamically at runtime — the two documents together define the therapeutic layer).
 >
-> **Companion document:** `MIDDLE_LAYER.md` (the clinical reasoning that must happen
-> *before* a block or practice is selected — investigation, differential, sufficiency,
-> therapeutic target). This manual specifies *when a block is appropriate*; the Middle
-> Layer specifies what must be established before that question may be asked at all.
-> It is approved canon, not yet injected into the runtime prompt.
->
 > **Companion document:** `MIDDLE_LAYER.md` (approved Middle Layer v0.2 — investigation,
 > differential, sufficiency, therapeutic target). Not injected into the runtime prompt.
 >
