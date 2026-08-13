@@ -191,6 +191,22 @@ function renderWorkingMemory(wm: JourneyState['workingMemory']): string[] {
   ];
 }
 
+/**
+ * Middle Layer PR 3 (2026-08-13). True when a stored contract carries at
+ * least one of the four legacy fields — i.e. when there is something for the
+ * state block to actually render.
+ *
+ * PR 3 added `target` and `mechanismDifferential` to the same blob and
+ * neither is injected into the prompt. This predicate is what keeps that
+ * true: a contract holding only Middle Layer data renders exactly as no
+ * contract at all, so storing a Target cannot change what the model sees.
+ */
+function hasLegacyContractFields(tc: NonNullable<JourneyState['taskContract']>): boolean {
+  return Boolean(
+    tc.presentingRequest || tc.expectedHelp || tc.currentFocus || tc.completionCriterion,
+  );
+}
+
 function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
@@ -208,7 +224,17 @@ function renderStateBlock(state: JourneyState): string {
   // so it is available before intervention selection and checked before
   // any close. Emerging material may shift currentFocus; it must never
   // silently replace presentingRequest.
-  if (state.taskContract) {
+  //
+  // Middle Layer PR 3 (2026-08-13) — the gate below tests the four LEGACY
+  // fields, not the truthiness of state.taskContract. PR 3 stores `target`
+  // and `mechanismDifferential` inside the same blob, and neither is
+  // injected into the prompt. Without this narrowing, a contract holding
+  // only a Target would satisfy `if (state.taskContract)`, suppress the
+  // "no contract captured yet" invitation, and render a header with no
+  // bullets under it — a silent runtime behaviour change caused by data
+  // that is supposed to be inert. Rendering must depend on the legacy
+  // fields alone until a later PR deliberately changes it.
+  if (state.taskContract && hasLegacyContractFields(state.taskContract)) {
     const tc = state.taskContract;
     lines.push("**Session task contract (the user's ask — in their words):**");
     if (tc.presentingRequest) lines.push(`- Presenting request: "${tc.presentingRequest}"`);

@@ -165,6 +165,102 @@ export type TaskContract = {
   expectedHelp?: string; // what they expect from this conversation
   currentFocus?: string; // where the work actually is right now
   completionCriterion?: string; // what "addressed" would look like — their words
+
+  // ---- Middle Layer PR 3 (2026-08-13) — representation only ----
+  // Both fields below are OPTIONAL and are read by NOTHING: no gate, no
+  // router, no depth, no rung, no state block. They are stored so that a
+  // later PR can validate them. Their presence must never change any
+  // runtime behaviour, which is why the state-block renderer gates on the
+  // legacy fields alone (see prompts/assemble.ts).
+  target?: TherapeuticTarget;
+  mechanismDifferential?: MechanismCandidate[];
+};
+
+// Middle Layer PR 3 (2026-08-13) — the epistemic ladder of
+// docs/journey/MIDDLE_LAYER.md §1, minus its top rung.
+//
+//   observation          — noticed once; most observations should lapse
+//   hypothesis           — a candidate explanation, living in a differential
+//   working_formulation  — the leading explanation, promoted under §1's four
+//                          conditions
+//
+// THERAPEUTIC TARGET is deliberately NOT a member. In the canon it is the
+// ladder's top rung, but it is a rung for the *pattern*, not for a causal
+// reading (§3b, §4.4) — so a mechanism candidate can never legally hold it,
+// and giving the enum a value no mechanism may take would invite exactly the
+// welding of cause into Target that §4.4 was rewritten to prevent.
+export const EPISTEMIC_LEVELS = [
+  'observation',
+  'hypothesis',
+  'working_formulation',
+] as const;
+export type EpistemicLevel = (typeof EPISTEMIC_LEVELS)[number];
+export const EPISTEMIC_LEVEL_SET: ReadonlySet<string> = new Set(EPISTEMIC_LEVELS);
+
+// Middle Layer PR 3 — how settled the Target is, AS SELF-REPORTED by the
+// clinician. NOT authoritative, and nothing derives permission from it.
+//
+//   proposed — offered, not yet recognised by the user in their own terms
+//   held     — the user has recognised the core as theirs
+//
+// Target *sufficiency* (§3a) is a separate, derived judgement that this
+// field does not and must not stand in for: a model that emits
+// status:'held' has claimed something, not established it. The validator
+// that decides whether the claim is earned arrives in PR 4.
+export const TARGET_STATUSES = ['proposed', 'held'] as const;
+export type TargetStatus = (typeof TARGET_STATUSES)[number];
+export const TARGET_STATUS_SET: ReadonlySet<string> = new Set(TARGET_STATUSES);
+
+// Middle Layer PR 3 — a Therapeutic Target (docs/journey/MIDDLE_LAYER.md §4).
+// "A statement, not a category" — mechanism-free, four parts. Every part is
+// optional here because this is a representation of work in progress: a
+// partially assembled Target is the normal mid-investigation state, and the
+// shape must be able to hold it without either lying or refusing it.
+//
+// The mechanism deliberately does NOT live here. §4.4 was re-scoped to the
+// pattern level precisely so the causal explanation stays out of the Target;
+// it lives in mechanismDifferential, beside this, never inside it.
+export type TherapeuticTarget = {
+  /** §4.1 — the phenomenon: a specific, present-tense thing that happens. */
+  phenomenon?: string;
+  /** §4.2 — in their terms: the user's own words for the core of it. */
+  inTheirTerms?: string;
+  /** §4.3 — the direction: what the user wants to be different. */
+  direction?: string;
+  /**
+   * §4.4 — corroboration: the independent sources establishing the pattern
+   * as recurring and real. A list because §1's standard is explicitly that
+   * one vivid instance is not enough, however striking.
+   */
+  corroboration?: string[];
+  /** Where the Target's core claim came from. Shares PR 2's union. */
+  provenance?: PatternProvenance;
+  /** Self-reported settledness. Not authoritative — see TARGET_STATUSES. */
+  status?: TargetStatus;
+};
+
+// Middle Layer PR 3 — one member of the mechanism differential
+// (docs/journey/MIDDLE_LAYER.md §1 HYPOTHESIS, §3b, §5.1).
+//
+// The differential holds the realistic competing causal readings, MindReset
+// and ordinary alike — "she was a prospective employer" is a legitimate
+// member. `reading` is the only required field: a candidate that cannot be
+// stated is not a candidate.
+export type MechanismCandidate = {
+  /** The causal reading itself, in one statement. */
+  reading: string;
+  /** §1 — what supports this reading. */
+  supports?: string[];
+  /**
+   * §1 — what counts against this reading. Evidence already in hand, not
+   * the prospective test; the question that would discriminate is §2's
+   * DISCRIMINATE move and is not represented here.
+   */
+  countsAgainst?: string[];
+  /** Where this candidate sits on the ladder. Self-reported, not derived. */
+  level?: EpistemicLevel;
+  /** Where the reading came from. Shares PR 2's union. */
+  provenance?: PatternProvenance;
 };
 
 export type PracticeFamily =

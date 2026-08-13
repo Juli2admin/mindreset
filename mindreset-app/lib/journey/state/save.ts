@@ -219,6 +219,23 @@ function decryptJsonOrNull<T>(v: string | null): T | null {
  *     currentFocus; the prompt instructs the model to revise
  *     presentingRequest only on an explicit change of direction.
  *   - Returns null only when both sides are empty.
+ *
+ * Middle Layer PR 3 (2026-08-13) adds `target` and `mechanismDifferential`
+ * to the same blob, with two DIFFERENT merge semantics, chosen to match what
+ * each structure does clinically:
+ *
+ *   - `target` merges FIELD-WISE, like the legacy contract: a supplied part
+ *     updates its field, an omitted part keeps its stored value. A Target is
+ *     assembled over turns, so a partial emission must not erase the parts
+ *     already established.
+ *   - `mechanismDifferential` REPLACES WHOLESALE when supplied, and is
+ *     preserved when omitted. It is the one structure here that must be able
+ *     to SHRINK: MIDDLE_LAYER.md §1 makes demotion real work and §5.3
+ *     requires honestly holding that no reading has won, and a merge-by-
+ *     reading policy would make a discredited candidate permanent. Wholesale
+ *     replacement is the only policy under which a candidate can be dropped.
+ *
+ * Neither field is read by anything yet.
  */
 export function mergeTaskContract(
   existing: TaskContract | null,
@@ -236,6 +253,18 @@ export function mergeTaskContract(
       merged[field] = v.trim().slice(0, 300);
     }
   }
+
+  // Target — field-wise, no-clobber, same spirit as the legacy fields.
+  if (patch.target) {
+    merged.target = { ...(merged.target ?? {}), ...patch.target };
+  }
+
+  // Mechanism differential — wholesale replacement, so the differential can
+  // lose a candidate as well as gain one.
+  if (patch.mechanismDifferential) {
+    merged.mechanismDifferential = patch.mechanismDifferential;
+  }
+
   return Object.keys(merged).length > 0 ? merged : null;
 }
 
