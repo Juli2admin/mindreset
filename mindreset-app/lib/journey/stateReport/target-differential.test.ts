@@ -271,13 +271,16 @@ describe('parseTherapeuticTarget', () => {
     expect(r?.direction).toHaveLength(300);
   });
 
-  it('dedups and caps corroboration at 6', () => {
+  it('dedups corroboration but does NOT cap it', () => {
     const r = parseTherapeuticTarget({
       phenomenon: TARGET.phenomenon,
-      corroboration: ['the interview', 'the interview', ...Array.from({ length: 10 }, (_, i) => `episode ${i}`)],
+      corroboration: ['the interview', 'the interview', ...Array.from({ length: 20 }, (_, i) => `episode ${i}`)],
     });
-    expect(r?.corroboration).toHaveLength(6);
+    // 1 unique + 20 = 21. How many corroborating episodes a pattern has is a
+    // clinical fact about the case; truncating it would discard evidence.
+    expect(r?.corroboration).toHaveLength(21);
     expect(r?.corroboration?.[0]).toBe('the interview');
+    expect(r?.corroboration?.at(-1)).toBe('episode 19');
   });
 
   it('drops a non-array corroboration rather than wrapping it', () => {
@@ -388,26 +391,51 @@ describe('parseMechanismDifferential', () => {
     }
   });
 
-  it('dedups by reading — last wins — and caps at 6 candidates', () => {
+  it('dedups by reading — last wins — but does NOT cap the candidate list', () => {
     const r = parseMechanismDifferential([
       { reading: 'an introjected rule', level: 'observation' },
       { reading: 'an introjected rule', level: 'hypothesis' },
-      ...Array.from({ length: 12 }, (_, i) => ({ reading: `reading number ${i}` })),
+      ...Array.from({ length: 20 }, (_, i) => ({ reading: `reading number ${i}` })),
     ]);
-    expect(r).toHaveLength(6);
+    // 1 unique + 20 = 21. Truncating a differential would misrepresent it as
+    // narrower than it is — the opposite of what §1 asks the differential to do.
+    expect(r).toHaveLength(21);
     expect(r?.[0]).toEqual({ reading: 'an introjected rule', level: 'hypothesis' });
+    expect(r?.at(-1)).toEqual({ reading: 'reading number 19' });
   });
 
-  it('caps supports and countsAgainst at 6 each', () => {
+  it('does NOT cap supports or countsAgainst', () => {
     const r = parseMechanismDifferential([
       {
         reading: 'an introjected rule',
-        supports: Array.from({ length: 10 }, (_, i) => `support ${i}`),
-        countsAgainst: Array.from({ length: 10 }, (_, i) => `against ${i}`),
+        supports: Array.from({ length: 20 }, (_, i) => `support ${i}`),
+        countsAgainst: Array.from({ length: 20 }, (_, i) => `against ${i}`),
       },
     ]);
-    expect(r?.[0].supports).toHaveLength(6);
-    expect(r?.[0].countsAgainst).toHaveLength(6);
+    expect(r?.[0].supports).toHaveLength(20);
+    expect(r?.[0].countsAgainst).toHaveLength(20);
+  });
+
+  it('nothing accumulates across turns — a large differential is still bounded by one emission', () => {
+    // The invariant that makes the absence of a cap safe: the differential is
+    // replaced wholesale on merge, so a 21-candidate emission followed by a
+    // 1-candidate emission stores ONE candidate, not 22.
+    const big = Array.from({ length: 21 }, (_, i) => ({ reading: `reading number ${i}` }));
+    const merged = mergeTaskContract(
+      { ...LEGACY, mechanismDifferential: big },
+      { mechanismDifferential: [{ reading: 'the one that survived' }] },
+    );
+    expect(merged?.mechanismDifferential).toHaveLength(1);
+  });
+
+  it('corroboration is likewise replaced wholesale, not appended', () => {
+    const merged = mergeTaskContract(
+      { ...LEGACY, target: { ...TARGET, corroboration: ['a', 'b', 'c'].map((s) => `episode ${s}`) } },
+      { target: { corroboration: ['episode d'] } },
+    );
+    expect(merged?.target?.corroboration).toEqual(['episode d']);
+    // ...while the other Target parts still merge field-wise.
+    expect(merged?.target?.phenomenon).toBe(TARGET.phenomenon);
   });
 });
 

@@ -523,13 +523,24 @@ const GENERIC_CONTRACT_VALUE_RE =
   /^(none|n\/a|na|unknown|unclear|not\s+(yet\s+)?(clear|known|sure)(\s+yet)?|tbd|todo|-+|\.+|\?+|null|nothing)$/i;
 const MAX_CONTRACT_FIELD_CHARS = 300;
 
-// Middle Layer PR 3 (2026-08-13) — caps for the Target / mechanism
-// differential. Engineering limits on an encrypted blob, not clinical
-// judgements: the contract is decrypted and JSON-parsed on every turn, so
-// an unbounded differential would grow the per-turn cost without bound.
-const MAX_CORROBORATION_ENTRIES = 6;
-const MAX_MECHANISM_CANDIDATES = 6;
-const MAX_EVIDENCE_ENTRIES = 6;
+// Middle Layer PR 3 (2026-08-13) — the clinical collections below carry NO
+// entry-count cap, by owner decision. How many corroborating episodes a
+// pattern has, or how many readings belong in a differential, is a clinical
+// fact about the case; truncating it silently would discard evidence and
+// misrepresent the differential as narrower than it is.
+//
+// Two invariants already bound the size without a number being invented:
+//
+//   1. Every string still passes MAX_CONTRACT_FIELD_CHARS (300) — the
+//      pre-existing legacy contract rule, applied unchanged to the new
+//      fields.
+//   2. Nothing ACCUMULATES across turns. mechanismDifferential is replaced
+//      wholesale on merge, and target.corroboration is replaced wholesale
+//      by the object spread within the field-wise target merge. Every
+//      collection is therefore bounded by a SINGLE state report, which is
+//      itself bounded by the model's output token limit.
+//
+// So the blob cannot grow turn-on-turn, and no cap is required to stop it.
 
 /**
  * Shared cleaning rule for every free-text field in the contract, legacy and
@@ -544,17 +555,16 @@ function cleanContractString(raw: unknown): string | undefined {
   return trimmed.slice(0, MAX_CONTRACT_FIELD_CHARS);
 }
 
-/** Cleans a string array, dropping members that fail the field rule. */
-function cleanContractStringList(
-  raw: unknown,
-  cap: number,
-): string[] | undefined {
+/**
+ * Cleans a string array, dropping members that fail the field rule and
+ * collapsing duplicates. Uncapped — see the note above.
+ */
+function cleanContractStringList(raw: unknown): string[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   const out: string[] = [];
   for (const item of raw) {
     const cleaned = cleanContractString(item);
     if (cleaned !== undefined && !out.includes(cleaned)) out.push(cleaned);
-    if (out.length >= cap) break;
   }
   return out.length > 0 ? out : undefined;
 }
@@ -585,10 +595,7 @@ export function parseTherapeuticTarget(
   const direction = cleanContractString(obj.direction);
   if (direction !== undefined) out.direction = direction;
 
-  const corroboration = cleanContractStringList(
-    obj.corroboration,
-    MAX_CORROBORATION_ENTRIES,
-  );
+  const corroboration = cleanContractStringList(obj.corroboration);
   if (corroboration !== undefined) out.corroboration = corroboration;
 
   if (
@@ -626,12 +633,9 @@ export function parseMechanismDifferential(
 
     const entry: MechanismCandidate = { reading };
 
-    const supports = cleanContractStringList(obj.supports, MAX_EVIDENCE_ENTRIES);
+    const supports = cleanContractStringList(obj.supports);
     if (supports !== undefined) entry.supports = supports;
-    const countsAgainst = cleanContractStringList(
-      obj.countsAgainst,
-      MAX_EVIDENCE_ENTRIES,
-    );
+    const countsAgainst = cleanContractStringList(obj.countsAgainst);
     if (countsAgainst !== undefined) entry.countsAgainst = countsAgainst;
 
     if (typeof obj.level === 'string' && EPISTEMIC_LEVEL_SET.has(obj.level)) {
@@ -647,7 +651,7 @@ export function parseMechanismDifferential(
     byReading.set(reading, entry);
   }
   if (byReading.size === 0) return undefined;
-  return Array.from(byReading.values()).slice(0, MAX_MECHANISM_CANDIDATES);
+  return Array.from(byReading.values());
 }
 
 export function parseTaskContract(v: unknown): TaskContract | undefined {
