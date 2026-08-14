@@ -78,7 +78,16 @@ describe('diagnostic discipline — differential thinking restored', () => {
   });
 
   it('the continuity-note working formulation reflects the differential', () => {
-    expect(master).toContain('the small differential of possible explanations you are holding open (none promoted yet)');
+    // Reworded by PR 9 (2026-08-14). The original assertion pinned the exact
+    // phrase "the small differential of possible explanations you are holding
+    // open (none promoted yet)", whose trailing clause let a formulation be
+    // promoted in prose on two of §1's four conditions. The differential
+    // requirement this test exists to guard is unchanged — only the sentence
+    // carrying it moved. The four-condition standard itself is asserted in
+    // pressure-field-cleanup.test.ts.
+    expect(master).toContain(
+      'the differential of realistic explanations you are currently holding open, with what supports and what weighs against each',
+    );
   });
 });
 
