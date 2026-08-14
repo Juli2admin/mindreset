@@ -33,11 +33,15 @@ describe('CANONICAL_MOVES vocabulary — sanity checks', () => {
     expect(CANONICAL_MOVES).not.toContain('stage_4.post_deep_check_in');
   });
 
-  it('has all 38 approved moves — 16 universal + 22 stage-scoped', () => {
-    expect(CANONICAL_MOVES).toHaveLength(38);
+  it('has all 44 approved moves — 22 universal + 22 stage-scoped', () => {
+    // Middle Layer PR 5 (2026-08-14) added the six investigative moves of
+    // MIDDLE_LAYER.md §2. They are universal, NOT stage-scoped: the
+    // stage-scoped count is unchanged at 22, which is what keeps
+    // investigation from advancing anyone through a stage.
+    expect(CANONICAL_MOVES).toHaveLength(44);
     const universal = CANONICAL_MOVES.filter((m) => m.startsWith('universal.'));
     const stageScoped = CANONICAL_MOVES.filter((m) => m.startsWith('stage_'));
-    expect(universal).toHaveLength(16);
+    expect(universal).toHaveLength(22);
     expect(stageScoped).toHaveLength(22);
   });
 

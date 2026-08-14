@@ -49,6 +49,19 @@ export const CANONICAL_MOVES = [
   'universal.session_close',
   'universal.red_flag_response',
   'universal.rupture_receive',
+  // Middle Layer PR 5 (2026-08-14) — the six investigative moves of
+  // MIDDLE_LAYER.md §2. Each investigative turn does exactly one of these.
+  //
+  // Deliberately `universal.*`: investigation is not a stage, and
+  // move-based-advance.ts counts only `stage_N.*` moves toward
+  // advancement. Naming what you are investigating with must never, by
+  // itself, push a user through a stage.
+  'universal.investigate_gather',
+  'universal.investigate_deepen',
+  'universal.investigate_compare',
+  'universal.investigate_discriminate',
+  'universal.investigate_check',
+  'universal.investigate_hold',
   // Stage 1 — Stabilisation
   'stage_1.assessment_gather',
   'stage_1.anchor_capture',

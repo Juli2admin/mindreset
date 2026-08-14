@@ -184,8 +184,10 @@ describe('assembleSystemPromptBlocks — Anthropic prompt caching (PR λ)', () =
     expect(blocks[0].text).toContain('Guided Inner Landscape');
     expect(blocks[0].text).toContain('Narrative Rewriting');
     expect(blocks[0].text).toContain('Self-Compassion');
-    // Canon header now says "Three sources of clinical method follow".
-    expect(blocks[0].text).toContain('Three sources of clinical method');
+    // Middle Layer PR 5 (2026-08-14) — the canon block now carries FOUR
+    // sources: Shared Core, the Middle Layer, the Practice Generation
+    // Algorithm, and all 8 stage specs.
+    expect(blocks[0].text).toContain('Four sources of clinical method');
   });
 
   it('canon block includes ALL 8 stage specs (not just the current one)', () => {
