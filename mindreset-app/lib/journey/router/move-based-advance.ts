@@ -41,6 +41,8 @@
 
 import type { AuditTurn } from './history';
 import type { SafetyFlag } from '../state/types';
+// Middle Layer PR 7' (2026-08-14).
+import { RUNG_3_MOVE_IDS, RUNG3_REFUSED } from '../middleLayer/rung3-advancement';
 
 // Sustained-work thresholds, tuned to prefer safety over speed (owner
 // decision 2026-07-07: strict > responsive on the first cut).
@@ -72,12 +74,22 @@ export type MoveBasedAdvanceResult = {
  *
  * Exported for testing.
  */
-export function getStageFromTurnMoves(turn: AuditTurn): number | null {
+export function getStageFromTurnMoves(
+  turn: AuditTurn,
+  rung3Licensed = true,
+): number | null {
   const moves = turn.report.moveJustPerformed;
   if (!Array.isArray(moves) || moves.length === 0) return null;
   let maxStage: number | null = null;
   for (const id of moves) {
     if (typeof id !== 'string') continue;
+    // Middle Layer PR 7' — a move on the explicit Rung-3 allowlist earns no
+    // advancement credit while Rung 3 is unlicensed. The move stays in the
+    // archived report; it is simply skipped when computing the stage this
+    // turn demonstrates. Rung-2 siblings (origin_voice_mapping,
+    // first_contact, ...) are untouched, and a turn that ALSO carries a
+    // legitimate lower-stage move still counts for that move.
+    if (!rung3Licensed && RUNG_3_MOVE_IDS.has(id)) continue;
     const m = MOVE_ID_STAGE_RE.exec(id);
     if (!m) continue; // universal or unrecognised prefix
     const n = Number(m[1]);
@@ -112,6 +124,14 @@ export function getStageFromTurnMoves(turn: AuditTurn): number | null {
 export function checkMoveBasedAdvance(
   currentStage: number,
   turns: AuditTurn[],
+  /**
+   * Middle Layer PR 7' — whether Rung-3 work may count for advancement.
+   * Sourced from the PERSISTED rung (state.middleLayer, PR 6), never
+   * recomputed and never taken from a model-emitted status. Defaults to
+   * true so the lane's own semantics are unchanged for every non-Rung-3
+   * move.
+   */
+  rung3Licensed = true,
 ): MoveBasedAdvanceResult {
   if (currentStage < 1 || currentStage >= 8) {
     return {
@@ -167,7 +187,7 @@ export function checkMoveBasedAdvance(
   // this same subset (see below).
   const qualifying: AuditTurn[] = [];
   for (const t of turns) {
-    const stageFromMove = getStageFromTurnMoves(t);
+    const stageFromMove = getStageFromTurnMoves(t, rung3Licensed);
     if (stageFromMove === null || stageFromMove < targetStage) continue;
     if (t.safetyFlag !== REQUIRED_SAFETY) continue;
     if (t.intensityReported === null) continue;

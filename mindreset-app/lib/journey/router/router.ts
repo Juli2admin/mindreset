@@ -10,6 +10,7 @@
 
 import prisma from '@/lib/prisma';
 import type { JourneyState } from '../state/types';
+import { rung3SignalsLicensed } from '../middleLayer/rung3-advancement';
 import {
   checkStage1Gate,
   checkStage2Gate,
@@ -159,7 +160,14 @@ export async function decideRoute(state: JourneyState): Promise<RouteDecision> {
   // Does not require the LLM's `recommendedAction === 'advance'` — that
   // is the deliberate divergence and the whole reason this lane exists.
   // See lib/journey/router/move-based-advance.ts for the rule.
-  const moveResult = checkMoveBasedAdvance(state.currentStage, turns);
+  // Middle Layer PR 7' (2026-08-14) — the persisted licensed rung decides
+  // whether Rung-3 moves may count. Read from state.middleLayer (PR 6),
+  // which came from the two server-owned columns PR 4's validator writes.
+  const moveResult = checkMoveBasedAdvance(
+    state.currentStage,
+    turns,
+    rung3SignalsLicensed(state),
+  );
   if (moveResult.canAdvance) {
     const to = state.currentStage + 1;
     return {

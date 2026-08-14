@@ -21,7 +21,13 @@ import type { JourneyState, JourneyForeignFile } from '../state/types';
 import type { AuditTurn } from './history';
 import type { StateReport } from '../stateReport/schema';
 import { CLOSURE_PROCESS_NONE } from '../closure/process';
-import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
+import { normaliseMiddleLayerState } from '../middleLayer/sufficiency';
+
+/** Built through the real normaliser, so it exercises the production path. */
+const MIDDLE_LAYER_RUNG_3 = normaliseMiddleLayerState({
+  targetStatus: 'established',
+  mechanismStatus: 'established',
+});
 
 function makeFile(overrides: Partial<JourneyForeignFile> = {}): JourneyForeignFile {
   return {
@@ -77,7 +83,13 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
-    closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
+    closureProcess: CLOSURE_PROCESS_NONE,
+    // Middle Layer PR 7' (2026-08-14) — these gates turn on Rung-3 signals
+    // (symbolic return, clean identity statement, identity anchor, symbolic
+    // identity map), so "all canon conditions met" now includes Mechanism
+    // Sufficiency. The base fixture is licensed; individual tests below
+    // override it back down to prove the guard bites.
+    middleLayer: MIDDLE_LAYER_RUNG_3,
     workingMemory: null,
     ...overrides,
   };
