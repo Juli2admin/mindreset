@@ -15,6 +15,10 @@
 //   - AI's recommendedAction === 'advance' (advisory; code makes the final call)
 
 import type { JourneyState } from '../state/types';
+// Middle Layer PR 7' (2026-08-14) — Rung-3 signals earn no advancement
+// credit below the persisted licensed rung. The data is untouched; only the
+// gate's willingness to count it changes.
+import { rung3SignalsLicensed, RUNG3_REFUSED } from '../middleLayer/rung3-advancement';
 import {
   type AuditTurn,
   countSessions,
@@ -336,6 +340,9 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   // release by setting releasedAt on the foreign file.
   const anyReleased = state.foreignFiles.some((f) => f.releasedAt != null);
   if (!anyReleased) reasons.push('no_symbolic_return_completed');
+  // PR 7' — the release row STAYS (PR 8' owns persistence). It just cannot
+  // be an advancement key while Rung 3 is unlicensed.
+  else if (!rung3SignalsLicensed(state)) reasons.push(RUNG3_REFUSED.SYMBOLIC_RETURN);
   // Canon §10: somaticRelease: true must be confirmed at least once.
   // Without this, the release was head-only.
   const somaticConfirmed = turns.some((t) => t.report.somaticRelease === true);
@@ -347,6 +354,8 @@ export function checkStage5Gate(state: JourneyState, turns: AuditTurn[]): GateRe
       t.report.cleanIdentityStatement.length > 0,
   );
   if (!cleanStatementSeen) reasons.push('clean_identity_statement_missing');
+  // PR 7' — identity-level work is Rung 3 (§6), whatever stage it sits in.
+  else if (!rung3SignalsLicensed(state)) reasons.push(RUNG3_REFUSED.CLEAN_IDENTITY_STATEMENT);
   // Canon §10: the statement must be confirmed in the body, captured as
   // bodyConfirmation in the user's own words.
   const bodyConfirmed = turns.some(
@@ -404,6 +413,7 @@ export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   const reasons = standardGuards(state, turns, 5);
   if (!state.anchorText) reasons.push('anchor_missing');
   if (!state.identityAnchor) reasons.push('identity_anchor_not_set');
+  else if (!rung3SignalsLicensed(state)) reasons.push(RUNG3_REFUSED.IDENTITY_ANCHOR);
   // Internal consensus reached on ≥ 2 distinct days. Canon §10 names
   // this exactly as `internalConsensus: true`.
   const consensusTwice = heldOnDistinctDays(
@@ -476,10 +486,12 @@ export function checkStage6Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 export function checkStage7Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 5);
   if (!state.identityAnchor) reasons.push('identity_anchor_missing');
+  else if (!rung3SignalsLicensed(state)) reasons.push(RUNG3_REFUSED.IDENTITY_ANCHOR);
 
   // Symbolic Identity Map captured at least once
   const mapCaptured = turns.some((t) => typeof t.report.symbolicIdentityMap === 'string');
   if (!mapCaptured) reasons.push('symbolic_identity_map_missing');
+  else if (!rung3SignalsLicensed(state)) reasons.push(RUNG3_REFUSED.SYMBOLIC_IDENTITY_MAP);
 
   // At least 3 emerging qualities across ≥ 2 sessions
   const allQualities = new Set<string>();
