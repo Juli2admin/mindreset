@@ -249,8 +249,15 @@ export type TherapeuticTarget = {
 export type MechanismCandidate = {
   /** The causal reading itself, in one statement. */
   reading: string;
-  /** §1 — what supports this reading. */
+  /** §1 — what supports this reading. Scratchpad; licenses nothing. */
   supports?: string[];
+  /**
+   * §1(3) — Middle Layer PR 4b. Corroborating INSTANCE KEYS, each resolved
+   * by code against a user-confirmed `instance` exchange. Not free evidence
+   * text: a key that resolves to nothing earns nothing, because only the
+   * user can say two instances are distinct (owner decision 3).
+   */
+  corroboration?: string[];
   /**
    * §1 — what counts against this reading. Evidence already in hand, not
    * the prospective test; the question that would discriminate is §2's
@@ -366,6 +373,35 @@ export type StateReport = {
   // the next user response can always invalidate the release hypothesis.
   releaseConfirmed?: { description: string };
   releaseInvalidated?: { description: string; reason?: string };
+
+  // ---- Middle Layer PR 4b (2026-08-13) — evidence exchanges ----
+  // Seven emissions, three lifecycles, all mirroring the release trio above:
+  // the model OFFERS, and only a LATER turn can confirm or contradict. Every
+  // one of these is a CLAIM. The code-stamped outcome in
+  // JourneyEvidenceExchange is the finding.
+  //
+  // The model must never emit offeredAt / confirmedAt / contradictedAt —
+  // the parser strips them if it tries. That strip is the integrity boundary
+  // of the whole Middle Layer gate.
+  //
+  // §1(2) — a causal reading put to the user, and what came back.
+  mechanismOffered?: { reading: string };
+  mechanismConfirmed?: { reading: string };
+  mechanismContradicted?: { reading: string };
+  // §1(3) — a corroborating instance put to the user AS DISTINCT from the
+  // others. Code cannot tell one life episode from two (owner decision 3);
+  // only the user can, so only the user's confirmation counts one.
+  instanceOffered?: { instance: string };
+  instanceConfirmed?: { instance: string };
+  // §4.2 — the Target's wording put to the user as theirs. Recognition is
+  // CONSTITUTIVE here, not evidential: a Target the user recognises as
+  // theirs IS in their terms. recognitionContradicted covers rejection,
+  // correction and narrowing alike — all three require the same fresh
+  // recognition, so code never has to tell them apart (owner ruling,
+  // 2026-08-13).
+  recognitionOffered?: { recognition: string };
+  recognitionConfirmed?: { recognition: string };
+  recognitionContradicted?: { recognition: string };
 
   // Stage-specific captures (named per the specs)
   anchorIdentified?: string; // Stage 1 — set once

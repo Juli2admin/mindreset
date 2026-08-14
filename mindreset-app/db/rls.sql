@@ -74,6 +74,8 @@ ALTER TABLE public."JourneyPart"           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."JourneyForeignFile"    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."JourneySignatureImage" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."JourneyMessage"        ENABLE ROW LEVEL SECURITY;
+-- Middle Layer PR 4b (2026-08-13).
+ALTER TABLE public."JourneyEvidenceExchange" ENABLE ROW LEVEL SECURITY;
 
 -- -----------------------------------------------------------------------------
 -- Block 2: Strip the table-level grants from anon and authenticated.
@@ -109,5 +111,7 @@ REVOKE ALL ON public."JourneyPart"           FROM anon, authenticated;
 REVOKE ALL ON public."JourneyForeignFile"    FROM anon, authenticated;
 REVOKE ALL ON public."JourneySignatureImage" FROM anon, authenticated;
 REVOKE ALL ON public."JourneyMessage"        FROM anon, authenticated;
+-- Middle Layer PR 4b (2026-08-13).
+REVOKE ALL ON public."JourneyEvidenceExchange" FROM anon, authenticated;
 
 COMMIT;
