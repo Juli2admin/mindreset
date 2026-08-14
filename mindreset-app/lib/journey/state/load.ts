@@ -5,6 +5,7 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
 import { normaliseClosureProcess } from '../closure/process';
+import { normaliseMiddleLayerState } from '../middleLayer/sufficiency';
 import { MAX_MEASUREMENT_AGE_MS } from '../closure/measurement-age';
 import type {
   ModalityRejected,
@@ -370,6 +371,14 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     // cycleCanClose, hasOpenCycle, encrypted state reports or any other
     // model-generated history; the sensitivity signals above stay exactly as
     // they were and remain a separate, model-reported concern.
+    // Middle Layer PR 6 (2026-08-14) — the persisted licensed rung. Both
+    // columns come from the same `progress` row already fetched above (the
+    // findUnique has no `select`, so they cost no extra query). Read, never
+    // recomputed: §8, permission derives from persisted state.
+    middleLayer: normaliseMiddleLayerState({
+      targetStatus: progress.middleLayerTargetStatus,
+      mechanismStatus: progress.middleLayerMechanismStatus,
+    }),
     closureProcess: normaliseClosureProcess({
       state: progress.closureProcessState,
       route: progress.closureRoute,

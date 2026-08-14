@@ -44,6 +44,7 @@ import {
 import type { JourneyState, JourneyForeignFile } from '../state/types';
 import type { AuditTurn } from '../router/history';
 import type { StateReport } from '../stateReport/schema';
+import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
 
 function closureProcess(state: ClosureProcessState): ClosureProcess {
   return {
@@ -109,7 +110,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
-    closureProcess: CLOSURE_PROCESS_NONE,
+    closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
     workingMemory: null,
     ...overrides,
   };

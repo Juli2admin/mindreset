@@ -10,6 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { assembleSystemPromptBlocks } from './assemble';
 import type { ClinicalWorkingMemory, JourneyState } from '../state/types';
 import { CLOSURE_PROCESS_NONE } from '../closure/process';
+import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
 
 function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
   return {
@@ -50,7 +51,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
-    closureProcess: CLOSURE_PROCESS_NONE,
+    closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
     workingMemory: null,
     ...overrides,
   };

@@ -208,6 +208,63 @@ function hasLegacyContractFields(tc: NonNullable<JourneyState['taskContract']>):
   );
 }
 
+/**
+ * Middle Layer PR 6 (2026-08-14) — the licensed rung as platform fact.
+ *
+ * Short by design. The full method is in the canon block above; this block
+ * carries only the code-owned facts needed for one decision, plus what each
+ * rung actually opens. Every line here is derived from the two server-owned
+ * columns — nothing the model reported this turn contributes.
+ *
+ * ADVISORY in this PR. Nothing refuses work on the strength of it yet.
+ */
+function renderMiddleLayerBlock(ml: JourneyState['middleLayer']): string[] {
+  const lines: string[] = [];
+  lines.push('');
+  lines.push(
+    `**Licensed depth — Middle Layer rung ${ml.licensedRung} (platform-derived fact, not your assessment):**`,
+  );
+  lines.push(
+    `- Target: ${ml.targetStatus} · Mechanism: ${ml.mechanismStatus}`,
+  );
+
+  // What this rung opens. The point of naming it positively is that a low
+  // rung is a description of what is available, never an instruction to
+  // hold back — §6's "take the least deep action the evidence supports,
+  // and act as soon as it is selectable".
+  if (ml.licensedRung === 1) {
+    lines.push(
+      "- **Rung 1 is open, and it is real work:** reflection, clarification, bounded answers, grounding, light regulation, staying with a feeling, receiving a rupture. Investigation runs alongside it. This is not an instruction to hold back or to do nothing — it is the depth the evidence currently supports, and §6 says act as soon as an action is selectable.",
+    );
+  } else if (ml.licensedRung === 2) {
+    lines.push(
+      "- **Rung 2 is open:** the Target is established, so any clinically appropriate work that directly serves it is available **now** — behaviour rehearsal, live tracking of the pattern, body-signal work, surface practices, whatever fits — provided it does not require an unconfirmed causal hypothesis to be treated as true. You do **not** need to know why the pattern runs to work on it. Do not keep investigating for causal certainty this decision does not need: §7 is explicit that another general clarifying question here is the failure. The mechanism differential advances *through* this work, not instead of it.",
+    );
+  } else {
+    lines.push(
+      '- **Rung 3 is open:** a mechanism reading has met Mechanism Sufficiency — it beat its differential and survived the user\'s correction — so deep causal work organised around **that** mechanism is licensed. Still take the least deep action the evidence supports.',
+    );
+  }
+
+  // What is missing, mapped from the status alone. Not a second validator —
+  // a fixed lookup from a status to the canonical requirement it has not met.
+  if (ml.targetStatus !== 'established') {
+    lines.push(
+      `- To reach Rung 2: the Target needs all four parts of §4, the user's own recognition of it confirmed **on a later turn than you offered it**, and two separate occasions the user has confirmed as distinct.`,
+    );
+  } else if (ml.mechanismStatus !== 'established') {
+    lines.push(
+      `- To reach Rung 3: one causal reading must beat its differential and be confirmed by the user on a later turn, with its own corroborating instances. Currently ${ml.mechanismStatus === 'leading' ? 'you have named a leading reading — that is your claim, and it is not yet sufficiency' : 'no reading has been put to the user and confirmed'}.`,
+    );
+  }
+
+  lines.push(
+    "_Derived by code from persisted evidence — the user's confirmed recognitions, confirmed distinct instances, and confirmed or contradicted exchanges. You do not set this and cannot raise it by naming a cue, matching a playbook, recognising a stage pattern, or reporting a formulation as settled; a status you emit is a claim, and this line is the finding. It governs **depth only** — which stage's methodology you consult is entirely your call, all 8 playbooks remain available, and the stage label below stays bookkeeping._",
+  );
+  lines.push('');
+  return lines;
+}
+
 function renderStateBlock(state: JourneyState): string {
   const lines: string[] = [];
   lines.push('## Current user state (injected by code; for your reference)');
@@ -262,6 +319,12 @@ function renderStateBlock(state: JourneyState): string {
       lines.push('');
     }
   }
+  // Middle Layer PR 6 (2026-08-14) — the licensed rung, rendered directly
+  // after the task contract because it governs what may be done ABOUT that
+  // contract. Advisory in this PR: nothing refuses a turn on the strength of
+  // it (PR 7 gates depth, PR 8 refuses Rung-3 captures).
+  lines.push(...renderMiddleLayerBlock(state.middleLayer));
+
   // PR λ (2026-07-11) — the router's current bookkeeping label, not a
   // capability gate. All 8 stage specs are in the AI's canon block above;
   // the AI reaches for whichever stage's methodology fits the turn.

@@ -65,6 +65,7 @@ import { assembleSystemPromptBlocks } from '../prompts/assemble';
 import { loadMasterJourneyPrompt } from '../prompts/load-spec';
 import { CLOSURE_PROCESS_NONE } from '../closure/process';
 import type { JourneyState } from '../state/types';
+import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
 
 /** Mirrors the fixture in prompts/state-block.test.ts. */
 function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
@@ -106,7 +107,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     recentChannelShift: false,
     taskContract: null,
     onboardingAnswers: null,
-    closureProcess: CLOSURE_PROCESS_NONE,
+    closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
     workingMemory: null,
     ...overrides,
   };

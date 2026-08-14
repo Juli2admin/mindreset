@@ -92,6 +92,7 @@ import { applyStateReportToProgress } from '../state/save';
 import { assembleSystemPromptBlocks } from '../prompts/assemble';
 import { CLOSURE_PROCESS_NONE } from '../closure/process';
 import type { JourneyState } from '../state/types';
+import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
 
 const R = SUFFICIENCY_REASONS;
 
@@ -189,7 +190,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     sessionCount: 1, daysEngaged: 1, thisSessionMessageCount: 0, stageJustAdvanced: false,
     hoursSinceLastTurn: null, isSessionResume: false, hasOpenCycle: false,
     openCycleDescription: null, sessionRejectedModalities: [], recentChannelShift: false,
-    taskContract: null, onboardingAnswers: null, closureProcess: CLOSURE_PROCESS_NONE,
+    taskContract: null, onboardingAnswers: null, closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
     workingMemory: null, ...overrides,
   };
 }
