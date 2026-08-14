@@ -34,6 +34,15 @@ import { loadMasterJourneyPrompt } from './load-spec';
 
 const master = loadMasterJourneyPrompt() ?? '';
 
+/** The `<clinical_reading>` bullet that states the case-formulation rule. */
+function caseFormulationBullet(): string {
+  const start = master.indexOf('- **The case formulation (one primary, evolving).**');
+  expect(start).toBeGreaterThan(-1);
+  const end = master.indexOf('\n- **Evaluate new information', start);
+  expect(end).toBeGreaterThan(start);
+  return master.slice(start, end);
+}
+
 /** The `<memory>` section's continuity-note specification. */
 function continuityNoteSpec(): string {
   const start = master.indexOf('Continuity note — your running case formulation');
@@ -65,6 +74,147 @@ describe('master prompt loads', () => {
   it('is a non-empty string', () => {
     expect(typeof master).toBe('string');
     expect(master.length).toBeGreaterThan(1000);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 0. <clinical_reading> case-formulation bullet — the reconciliation
+// ---------------------------------------------------------------------------
+//
+// Added after the PR 9 dependency check. The bullet stated a TWO-condition
+// promotion bar while the continuityNote spec (below) stated four — two
+// sentences in the same prompt, read on the same turn, giving different
+// answers to the same question. §1 already won by the CANON_PROMPT_HEADER
+// precedence paragraph, so this makes the prose say what the canon already
+// required.
+//
+// The bullet bundles three rules §1 does NOT contain — the singleton rule,
+// the stability rule, and "observation level may be the right judgement".
+// Those are asserted verbatim below: the edit had to be surgical on the
+// threshold clause and nothing else.
+
+describe('case formulation bullet — the §1 four-condition bar', () => {
+  it('the old two-condition threshold is gone', () => {
+    expect(master).not.toContain(
+      'only when it is **clearly better supported than the realistic alternatives** and has **survived at least one opportunity',
+    );
+    expect(master).not.toContain('than the realistic alternatives');
+  });
+
+  it('states the Middle Layer §1 standard in full, all four conditions', () => {
+    const bullet = caseFormulationBullet();
+    expect(bullet).toContain('Middle Layer §1 standard in full — all four');
+    expect(bullet).toContain('clearly better supported than each realistic alternative');
+    expect(bullet).toContain(
+      'survived at least one genuine opportunity for the user to correct or contradict it',
+    );
+    expect(bullet).toContain('independently corroborated');
+    expect(bullet).toMatch(/said \(U\)/);
+    expect(bullet).toMatch(/confirmed when offered \(E\)/);
+    expect(bullet).toMatch(/\(C\)\*\* marked unconfirmed and never load-bearing/);
+  });
+
+  it('states the SAME bar as the continuityNote spec', () => {
+    // The contradiction this reconciliation exists to remove. Both sites
+    // must name §1 in full and both must carry all four conditions.
+    for (const spec of [caseFormulationBullet(), continuityNoteSpec()]) {
+      expect(spec).toContain('Middle Layer §1 standard in full');
+      expect(spec).toContain('all four');
+      expect(spec).toContain('clearly better supported than each realistic alternative');
+      expect(spec).toMatch(/survived at least one genuine opportunity/);
+      expect(spec).toMatch(/independently corroborated/);
+      expect(spec).toMatch(/never load-bearing/);
+    }
+  });
+});
+
+describe('case formulation bullet — everything else is unchanged', () => {
+  // Requirement 2 of the approved correction. Each of these is a rule §1
+  // does not contain; deleting one by replacing the whole bullet with §1
+  // would have been a behaviour change outside PR 9.
+
+  it('keeps the singleton rule', () => {
+    expect(caseFormulationBullet()).toContain(
+      'there is never more than one primary formulation at a time',
+    );
+    expect(caseFormulationBullet()).toContain(
+      'you may hold **one or more alternative formulations under evaluation** alongside the single primary one',
+    );
+  });
+
+  it('keeps the stability rule', () => {
+    expect(caseFormulationBullet()).toContain('you do NOT generate a new one each turn');
+  });
+
+  it('keeps observation level as a legitimate professional judgement', () => {
+    expect(caseFormulationBullet()).toContain(
+      'You are equally free to decide that continuing at observation level is presently the better clinical decision, because a formulation would be premature — this is an intentional professional judgement, not a failure to formulate.',
+    );
+  });
+
+  it('keeps the rule that a new topic does not create a new formulation', () => {
+    expect(caseFormulationBullet()).toContain(
+      'A new topic, example, emotion, memory, or difficulty does not by itself create a new formulation or prove a new root cause.',
+    );
+  });
+
+  it('keeps the differential requirement and the not-merely-coherent clause', () => {
+    const bullet = caseFormulationBullet();
+    expect(bullet).toContain(
+      'hold two or more possible explanations open as a small internal differential and do NOT promote any one of them to the primary formulation',
+    );
+    expect(bullet).toContain(
+      'early possibilities must remain possibilities, not become the organising truth of the conversation',
+    );
+    expect(bullet).toContain(
+      'merely because it explains the material more coherently than remaining at observation level',
+    );
+    expect(bullet).toContain(
+      'A formulation is provisional, evidence-based, and continuously tested against the user',
+    );
+  });
+});
+
+describe('case formulation bullet — sharing is decoupled from promotion', () => {
+  // The stuck-era regression this guards. "primary **working formulation**"
+  // and "your **working case formulation**" (the share-back at :276) are
+  // near-identical phrases. Without this, a stricter bar reads as "I have no
+  // formulation, so there is nothing to share back" — and the share-back is
+  // what produces `recommendedAction: "advance"` for the classic gates.
+
+  it('says the bar governs internal promotion, not checking with the user', () => {
+    expect(caseFormulationBullet()).toContain(
+      '**This bar governs what you internally treat as the leading explanation — not what you may check with the user.**',
+    );
+  });
+
+  it('says share-back and lighter checking happen earlier on their own conditions', () => {
+    expect(caseFormulationBullet()).toMatch(
+      /Collaborative share-back and lighter checking happen earlier, on their own conditions/,
+    );
+  });
+
+  it('says checking is evidence-gathering, never a way of clearing the bar', () => {
+    expect(caseFormulationBullet()).toMatch(
+      /how you \*gather\* evidence toward this bar, never a way of clearing it/,
+    );
+  });
+
+  it('says agreement with a shared factual picture is not a promoted cause', () => {
+    expect(caseFormulationBullet()).toMatch(
+      /confirms the picture, not a cause — it is one of the four conditions, not all four/,
+    );
+  });
+
+  it('leaves the sharing conditions themselves untouched', () => {
+    // The lower, separate bar at :66 and the share-back trigger at :276 are
+    // outside this correction and must read exactly as before.
+    expect(master).toContain(
+      'You may share part of it only when: it is supported by repeated or converging evidence;',
+    );
+    expect(master).toContain(
+      'THE SHARE-BACK MILESTONE. When the picture feels comprehensive — roughly 2–4 sessions in, with the major dimensions filled — there is a specific moment that closes Block 1:',
+    );
   });
 });
 

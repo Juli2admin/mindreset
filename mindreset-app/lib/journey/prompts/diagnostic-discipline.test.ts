@@ -71,10 +71,17 @@ describe('diagnostic discipline — differential thinking restored', () => {
   });
 
   it('a primary formulation requires being better-supported than alternatives AND surviving contradiction', () => {
+    // Reworded by PR 9 (2026-08-14). These two conditions were the WHOLE
+    // promotion bar in <clinical_reading>; Middle Layer §1 requires four.
+    // Both original conditions are still required — they are now conditions
+    // 1 and 2 of four. The full four-condition assertion lives in
+    // pressure-field-cleanup.test.ts.
     expect(master).toContain(
-      'clearly better supported than the realistic alternatives',
+      'clearly better supported than each realistic alternative',
     );
-    expect(master).toContain('survived at least one opportunity for the user to correct or contradict it');
+    expect(master).toContain(
+      'survived at least one genuine opportunity for the user to correct or contradict it',
+    );
   });
 
   it('the continuity-note working formulation reflects the differential', () => {
