@@ -11,6 +11,13 @@ import { blocksProgression, normaliseClosureProcess } from '../closure/process';
 import { evaluateSufficiency } from '../middleLayer/sufficiency';
 import { logSufficiencyShadow } from '../middleLayer/shadow-log';
 import { applyEvidenceExchanges, loadEvidence } from '../middleLayer/evidence';
+// Middle Layer PR 8' (2026-08-14) — Rung-3 capture refusal. PR 7' owns
+// advancement; this owns persistence. Neither rewrites the archived report.
+import {
+  isRung3Licensed,
+  logRung3PersistenceRefusal,
+  RUNG3_PERSISTENCE_REFUSED,
+} from '../middleLayer/rung3-persistence';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -94,11 +101,18 @@ export async function applyStateReportToProgress(
     });
   }
 
-  await applyUpdates(userId, updates);
-  await applyLandscapeAdditions(userId, report);
+  // Middle Layer PR 8' — applyUpdates already reads the progress row, so the
+  // licence is derived from THAT read and handed on. One query, and both
+  // writers in a turn see the same answer.
+  const rung3 = await applyUpdates(userId, updates);
+  await applyLandscapeAdditions(userId, report, rung3);
 }
 
-async function applyUpdates(userId: string, u: Updates): Promise<void> {
+/**
+ * Returns whether Rung-3 work is licensed for this user, derived from the
+ * same row it already fetched (Middle Layer PR 8'). Fails closed to false.
+ */
+async function applyUpdates(userId: string, u: Updates): Promise<boolean> {
   // Read current state so we can: (a) not overwrite the anchor once set,
   // (b) merge the MII patch into the existing JSON.
   const current = await prisma.recodeProgress.findUnique({
@@ -112,9 +126,15 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
       // where it is. Read from the row, never from the state report.
       currentDepth: true,
       closureProcessState: true,
+      // Middle Layer PR 8' — the persisted licence, read here so the guard
+      // costs no extra round-trip.
+      middleLayerTargetStatus: true,
+      middleLayerMechanismStatus: true,
     },
   });
-  if (!current) return; // start endpoint must have been called first
+  if (!current) return false; // start endpoint must have been called first
+
+  const rung3 = isRung3Licensed(current);
 
   const data: Record<string, unknown> = {
     lastActivityAt: new Date(),
@@ -126,8 +146,15 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     data.anchorSetAt = new Date();
   }
   if (u.identityAnchor) {
-    data.identityAnchorEncrypted = encrypt(u.identityAnchor);
-    data.identityAnchorSetAt = new Date();
+    // PR 8' — the Identity Anchor is identity-level work (§6 Rung 3). Below
+    // rung 3 the claim stays in the archived report but does not become
+    // persisted identity authority the Clinician reads back as established.
+    if (rung3) {
+      data.identityAnchorEncrypted = encrypt(u.identityAnchor);
+      data.identityAnchorSetAt = new Date();
+    } else {
+      logRung3PersistenceRefusal(userId, RUNG3_PERSISTENCE_REFUSED.IDENTITY_ANCHOR);
+    }
   }
   if (u.processingChannel) data.processingChannel = u.processingChannel;
   if (u.adultSelfQualities) data.adultSelfQualitiesEncrypted = encrypt(u.adultSelfQualities);
@@ -206,6 +233,8 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     where: { userId },
     data,
   });
+
+  return rung3;
 }
 
 /**
@@ -315,7 +344,11 @@ export function mergeTaskContract(
   return Object.keys(merged).length > 0 ? merged : null;
 }
 
-async function applyLandscapeAdditions(userId: string, report: StateReport): Promise<void> {
+async function applyLandscapeAdditions(
+  userId: string,
+  report: StateReport,
+  rung3: boolean,
+): Promise<void> {
   // Parts touched — upsert. Match on the user's exact words. If a JourneyPart
   // row already exists for this user with the same decrypted description,
   // touch updatedAt only. Otherwise insert a new row. Stops the same part
@@ -422,7 +455,14 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
   // in code: a claim and a confirmation for the same material in one state
   // report can never confirm same-turn.
   const claimedThisCall = new Set<string>();
-  if (report.foreignFileReleased?.description) {
+  // PR 8' — foreign-material release is §6's named Rung-3 exemplar. Below
+  // rung 3 no claim is stamped and no file row is created through the
+  // RELEASE path; `foreignFilesTouched` remains the ungated identification
+  // path, because identification is not release.
+  if (report.foreignFileReleased?.description && !rung3) {
+    logRung3PersistenceRefusal(userId, RUNG3_PERSISTENCE_REFUSED.FOREIGN_FILE_RELEASED);
+  }
+  if (report.foreignFileReleased?.description && rung3) {
     const all = await prisma.journeyForeignFile.findMany({
       where: { userId, releasedAt: null },
       select: {
@@ -485,7 +525,13 @@ async function applyLandscapeAdditions(userId: string, report: StateReport): Pro
   // provisional claim from an EARLIER turn can be confirmed; confirmation
   // stamps releasedAt, which is what the Stage 5 gate counts. The
   // claimedThisCall guard makes same-turn claim+confirm a no-op.
+  if (report.releaseConfirmed?.description && !rung3) {
+    // PR 8' — releasedAt is the authoritative release and the Stage 5 gate's
+    // key. It is never stamped below rung 3.
+    logRung3PersistenceRefusal(userId, RUNG3_PERSISTENCE_REFUSED.RELEASE_CONFIRMED);
+  }
   if (
+    rung3 &&
     report.releaseConfirmed?.description &&
     !claimedThisCall.has(report.releaseConfirmed.description)
   ) {
