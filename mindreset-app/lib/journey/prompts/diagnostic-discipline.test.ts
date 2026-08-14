@@ -60,10 +60,24 @@ describe('diagnostic discipline — depth is proportionate to evidence (availabl
     );
   });
 
-  it('a deep/high-certainty intervention is gated on a gathered AND checked picture', () => {
+  it('a deep/high-certainty intervention is gated on sufficiency, not on a checking event', () => {
+    // REWRITTEN by PR 11's blocker fix. The old conjunction — "gathered AND
+    // the emerging picture has been checked with the user" — made a
+    // user-checking event an independent depth prerequisite, which is the
+    // same coupling PR 10 removed from the router and PR 11 removed from
+    // Block. The gate it guards is unchanged in force and stricter in
+    // substance: §3a/§3b require corroboration, provenance and a survived
+    // correction, none of which a global "yes" supplies.
     expect(master).toContain(
-      'must NOT begin until the relevant history, chronology, dynamics and present situation have been gathered AND the emerging picture has been checked with the user',
+      'no work may begin beyond the evidence that actually supports it, and the **licensed rung reports that ceiling**',
     );
+    expect(master).toContain('needs **Target Sufficiency** (§3a)');
+    expect(master).toContain('needs **Mechanism Sufficiency** (§3b)');
+    // And the paragraph's own evidence standards are untouched.
+    expect(master).toContain(
+      'The evidence must also be **relevant to the specific intervention**, not merely plentiful',
+    );
+    expect(master).toContain('a single vivid moment or general rapport is not enough');
   });
 
   it('the old unqualified trigger is gone', () => {

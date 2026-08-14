@@ -441,6 +441,203 @@ describe('the canonical stage-spec Block terminology is byte-untouched', () => {
 });
 
 // ---------------------------------------------------------------------------
+// The blocker fix — :245 / :251 / :253
+// ---------------------------------------------------------------------------
+//
+// The PR 11 review found three sentences that still made something other than
+// the licensed rung an independent depth condition:
+//
+//   :245  "Deep or causal work begins only after ... you have checked the
+//          emerging picture with the user"        — a checking EVENT as a gate
+//   :251  "must NOT begin until ... gathered AND the emerging picture has
+//          been checked with the user"            — the same, conjunctive, over
+//                                                    the named Rung-3 categories
+//   :253  "demonstrated capability determines whether a depth or processing
+//          register is *available*"               — ambiguous between capacity
+//                                                    and permission
+//
+// :245 and :251 are RECONCILED — the user's recognition is re-expressed as
+// evidence feeding §3a/§3b, which is a stricter standard than a global "yes".
+// :253 is KEPT and CLARIFIED — capability is a real safety axis, but it runs
+// one way only.
+
+const gatherParagraph = (): string =>
+  section('**Let the user show you the whole map', '**Assessment is complete for the current decision**');
+const depthProportionality = (): string =>
+  section('**Match the depth and certainty of your action', '**Entry is capability-based.**');
+const capability = (): string =>
+  section('**Entry is capability-based.**', 'What you gather in the wide-assessment phase');
+
+describe(':245 — recognition is evidence, not a permission event', () => {
+  it('the checking-event gate is gone', () => {
+    expect(master).not.toContain(
+      'Deep or causal work begins only after the relevant picture has been gathered and you have **checked the emerging picture with the user**',
+    );
+  });
+
+  it('recognition and correction are named as evidence feeding sufficiency', () => {
+    const g = gatherParagraph();
+    expect(g).toMatch(/is \*\*evidence\*\*, and putting it to them is how you gather it/);
+    expect(g).toMatch(/Their recognition earns the Target \(§3a, §4\)/);
+    expect(g).toMatch(/their correction or narrowing is evidence too, and often the better kind/);
+    expect(g).toContain('`recognitionOffered` → `recognitionConfirmed` / `recognitionContradicted`');
+  });
+
+  it('no checking, agreement, share-back or completion event licenses depth', () => {
+    expect(gatherParagraph()).toMatch(
+      /None of it is a permission event: no picture-check, no clean agreement, no share-back and no moment of "assessment complete" licenses depth/,
+    );
+  });
+
+  it('the licensed rung is named as what reports the ceiling', () => {
+    expect(gatherParagraph()).toContain(
+      '**The licensed rung reports the deepest work the evidence justifies**',
+    );
+  });
+
+  it('every anti-jumping counterweight in the paragraph survives', () => {
+    const g = gatherParagraph();
+    expect(g).toContain('**Let the user show you the whole map before you go deep.**');
+    expect(g).toContain('Gather the relevant history, chronology, key relationships, dynamics and present situation');
+    expect(g).toContain('hold it **silently** as one provisional possibility among others');
+    expect(g).toContain('do NOT commit to it, do NOT organise the conversation around it, and do NOT drive the user toward it');
+    expect(g).toContain('never on the strength of one statement, image, metaphor or felt sense');
+    expect(g).toContain('never an interrogation or a questionnaire');
+  });
+});
+
+describe(':251 — the gate is sufficiency, not a checking event', () => {
+  it('the old conjunction is gone', () => {
+    expect(master).not.toContain(
+      'must NOT begin until the relevant history, chronology, dynamics and present situation have been gathered AND the emerging picture has been checked with the user',
+    );
+  });
+
+  it('points at Target Sufficiency, Mechanism Sufficiency and the rung ceiling', () => {
+    const d = depthProportionality();
+    expect(d).toContain('the **licensed rung reports that ceiling**');
+    expect(d).toContain('needs **Target Sufficiency** (§3a)');
+    expect(d).toContain('needs **Mechanism Sufficiency** (§3b)');
+    expect(d).toMatch(/with the mechanism that won its differential/);
+  });
+
+  it('Rung 1 is stated as always available', () => {
+    expect(depthProportionality()).toMatch(/is Rung 1: always available/);
+  });
+
+  it('applies the assumption test rather than a technique taxonomy', () => {
+    expect(depthProportionality()).toMatch(
+      /what decides is what your concrete use assumes, not the name of the technique/,
+    );
+  });
+
+  it('"least deep action" survives byte-exact', () => {
+    expect(master).toContain('take the **least deep action the evidence supports**');
+  });
+
+  it('intervention-specific, not-merely-plentiful evidence survives', () => {
+    const d = depthProportionality();
+    expect(d).toContain('The evidence must also be **relevant to the specific intervention**, not merely plentiful');
+    expect(d).toMatch(/the deeper and more specific the move .* the stronger and more directly relevant the evidence it requires/);
+  });
+
+  it('one vivid moment or general rapport remains insufficient', () => {
+    expect(depthProportionality()).toContain('a single vivid moment or general rapport is not enough');
+  });
+
+  it('assessment and low-risk intervention may still overlap', () => {
+    expect(depthProportionality()).toContain(
+      'Assessment and low-risk intervention may overlap when the intervention is safe, reversible, and useful for testing readiness or response',
+    );
+  });
+
+  it('no assessment-completion permission state is presupposed', () => {
+    // The old clause read "not evidence that assessment is complete", which
+    // presupposes a completion state to reach.
+    expect(master).not.toContain('is not evidence that assessment is complete');
+    expect(depthProportionality()).toContain(
+      '**Being able to identify a possible next intervention is not, by itself, enough evidence to justify its depth: an available next move and enough understanding to go deep are not the same thing.**',
+    );
+  });
+});
+
+describe(':253 — capability is a safety axis that runs one way only', () => {
+  it('the two questions are separated explicitly', () => {
+    const c = capability();
+    expect(c).toContain('**Capability and evidence are two different questions, and they run in one direction only.**');
+    expect(c).toMatch(/The licensed rung answers the epistemic one/);
+    expect(c).toMatch(/That is the ceiling, and it is the only thing that sets it/);
+    expect(c).toMatch(/Capability answers a clinical one inside that ceiling/);
+  });
+
+  it('capability may down-shift, defer, stabilise first, or respect a refusal', () => {
+    expect(capability()).toMatch(
+      /may lead you to choose something shallower, to defer an otherwise licensed intervention, to stabilise first, or to respect a modality they have refused/,
+    );
+  });
+
+  it('capability can never up-license', () => {
+    const c = capability();
+    expect(c).toContain('**It can never raise the ceiling.**');
+    expect(c).toMatch(/No amount of demonstrated capacity substitutes for Target or Mechanism Sufficiency/);
+    expect(c).toMatch(/a capable, articulate, well-regulated user whose evidence has not reached §3b still does not get Rung-3 work/);
+  });
+
+  it('no readiness ceremony is required', () => {
+    const c = capability();
+    expect(c).toMatch(/capability is not a second gate to clear/);
+    expect(c).toMatch(/You observe it \*\*through the work\*\*, not in advance/);
+    expect(c).toMatch(/there is no readiness ceremony/);
+  });
+
+  it('no prior successful deep attempt is required', () => {
+    expect(capability()).toMatch(/no prior successful deep intervention that must be banked first/);
+  });
+
+  it('no session count and no stage history license capability', () => {
+    const c = capability();
+    expect(c).toMatch(/no session count, no stage history/);
+    expect(c).toContain("not the user's language and not stage history");
+  });
+
+  it('absent contrary tolerability evidence, capability is not another gate', () => {
+    const c = capability();
+    expect(c).toContain(
+      '**Absent concrete contrary evidence about this user\'s tolerability or safety right now, capability is not a reason to withhold work the rung already licenses**',
+    );
+    expect(c).toMatch(/withholding it is the over-restriction failure, not caution/);
+  });
+
+  it('the user\'s request, refusal, correction and response are information', () => {
+    expect(capability()).toMatch(
+      /Their request, their refusal, their correction and their actual response to what you offer are all information/,
+    );
+  });
+
+  it('instability means adapt, not fail a gate', () => {
+    expect(capability()).toMatch(
+      /instability means adapt, slow, or work shallower this turn, not "they failed the readiness test"/,
+    );
+  });
+
+  it('Rung 1 is an unconditional floor and down-shift never means doing nothing', () => {
+    const c = capability();
+    expect(c).toContain('**The floor holds regardless.**');
+    expect(c).toMatch(/Rung 1 is always open and is real work/);
+    expect(c).toMatch(/acute distress makes support mandatory rather than optional \(§6\)/);
+    expect(c).toMatch(/Down-shifting never means doing nothing/);
+  });
+
+  it('the original capability discipline survives', () => {
+    const c = capability();
+    expect(c).toContain('**Entry is capability-based.**');
+    expect(c).toContain('demonstrated through the specific abilities that block is meant to establish');
+    expect(c).toContain('capacity genuinely present · present but unstable · intellectually understood but not usable · absent');
+    expect(c).toContain('A person may appear well regulated while still lacking the specific capacity a given stage requires');
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Reintroduction scans
 // ---------------------------------------------------------------------------
 
@@ -449,15 +646,32 @@ describe('reintroduction scans', () => {
   // scans by exact identity — never by a loose "contains 'not'" rule, which
   // would gut them. Each is asserted to still exist below, so an exemption
   // cannot quietly outlive the sentence it was written for.
-  const DENIALS = [
-    "**There is one depth authority: the licensed rung in the state block.** Not the phase you think you are in, not whether a share-back has happened, not the router's stage label, not the name of a technique, not how many sessions have passed. None of those is a second permission system, and none of them grants or withholds depth on its own.",
+  // A line is exempt from the scans below ONLY if it carries one of these
+  // markers — phrases that can only occur in a sentence denying a coupling.
+  // Exemption is therefore earned by the text saying the denial, not by a
+  // maintainer listing a paragraph. Each marker is asserted to exist exactly
+  // once, so an exemption cannot outlive the sentence it was written for.
+  const DENIAL_MARKERS = [
+    'None of those is a second permission system',
+    'None of it is a permission event',
+    'It can never raise the ceiling',
   ];
 
-  it('every exempted denial sentence is still present', () => {
-    for (const d of DENIALS) expect(master).toContain(d);
+  it('every denial marker exists exactly once', () => {
+    for (const m of DENIAL_MARKERS) {
+      expect(master.split(m).length - 1).toBe(1);
+    }
   });
 
-  const lines = master.split('\n').filter((l) => !DENIALS.includes(l));
+  it('every denial marker is used in a genuine denial', () => {
+    for (const m of DENIAL_MARKERS) {
+      expect(m).toMatch(/None of|never raise/);
+    }
+  });
+
+  const lines = master
+    .split('\n')
+    .filter((l) => !DENIAL_MARKERS.some((m) => l.includes(m)));
 
   it('no line couples a phase/Block term to a permission verb', () => {
     const offenders = lines.filter(
@@ -485,16 +699,50 @@ describe('reintroduction scans', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('no depth permission is conditional on a checking or closure event', () => {
+    // The blocker fix. Any line that makes depth turn on the user having
+    // checked/agreed/confirmed, or on assessment being "complete", is the
+    // coupling this PR removed.
+    const offenders = lines.filter(
+      (l) =>
+        /checked with the user|checked the emerging picture|agreed the picture|confirmed the formulation|assessment is complete|assessment complete|picture is complete/i.test(l) &&
+        /(may not|must not|only after|begins only|not until|before you (may|can)|unlocks?|licen[cs]es?|permits?|opens? Rung)/i.test(l),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it('no capability wording requires prior successful deep work or a readiness milestone', () => {
+    const offenders = lines.filter(
+      (l) =>
+        /capab|readiness|ready|capacity/i.test(l) &&
+        /(must first|only after (a|one|they|the user) .*(successful|completed)|prove(n|d)? ready|readiness milestone|earn the right|before deep work (may|can) (ever )?be)/i.test(l),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it('no capability wording can raise the rung', () => {
+    const offenders = lines.filter(
+      (l) =>
+        /capab|capacity|readiness|well[- ]regulated|stable enough/i.test(l) &&
+        /(opens? Rung|raises? the (ceiling|rung)|licen[cs]es? (deep|Rung|causal)|grants? (deep|Rung)|therefore (deep|Rung))/i.test(l),
+    );
+    expect(offenders).toEqual([]);
+  });
+
   it('no second permission state was invented', () => {
+    // Line-scoped and DENIALS-exempt, so the sentence that names
+    // "assessment complete" in order to say it licenses nothing does not
+    // trip the scan that exists to keep such a state from being invented.
     for (const invented of [
       'assessment complete',
       'assessment_complete',
       'phase_complete',
-      'blockTransition',
+      'blocktransition',
       'block_closed',
       'assessment phase closed',
     ]) {
-      expect(master.toLowerCase()).not.toContain(invented.toLowerCase());
+      const offenders = lines.filter((l) => l.toLowerCase().includes(invented));
+      expect(offenders).toEqual([]);
     }
   });
 });
