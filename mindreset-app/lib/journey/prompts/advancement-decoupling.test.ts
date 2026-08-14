@@ -19,7 +19,8 @@ import { loadMasterJourneyPrompt } from './load-spec';
 const master = loadMasterJourneyPrompt() ?? '';
 
 function shareBackSection(): string {
-  const start = master.indexOf('THE SHARE-BACK MILESTONE');
+  // Renamed by PR 11 — the milestone no longer 'closes' a phase.
+  const start = master.indexOf('THE SHARE-BACK.');
   expect(start).toBeGreaterThan(-1);
   const end = master.indexOf('</assessment_phase>', start);
   expect(end).toBeGreaterThan(start);
@@ -121,7 +122,7 @@ describe('share-back is not made less available', () => {
 
   it('the milestone, the worked example, and the invitation to correct survive', () => {
     const section = shareBackSection();
-    expect(section).toContain('THE SHARE-BACK MILESTONE');
+    expect(section).toContain('THE SHARE-BACK.');
     expect(section).toMatch(/Does this match how you see yourself\? Anything I'm missing or have wrong\?/);
     expect(section).toContain('The user confirms, corrects, or adds. You revise accordingly.');
   });
@@ -149,10 +150,18 @@ describe('share-back is not made less available', () => {
     );
   });
 
-  it('the rule against deep work on an unconfirmed formulation survives', () => {
-    expect(shareBackSection()).toContain(
-      'do not build deep work on an unconfirmed formulation',
-    );
+  it('the epistemic protection survives, narrowed by PR 11 to causal work', () => {
+    // REWRITTEN by PR 11 (owner correction 2). The original sentence — "do
+    // not build deep work on an unconfirmed formulation" — read as holding
+    // ALL deeper work behind a confirmed causal formulation, which is
+    // stricter than §3a and would keep target-level work waiting on user
+    // agreement. The protection is kept and scoped to the work that
+    // actually depends on a cause; the Rung-2 carve-out is asserted in
+    // block-depth-authority.test.ts.
+    const s = shareBackSection();
+    expect(s).toContain('**Do not build causal work on a formulation that has not earned it.**');
+    expect(s).toMatch(/must rest on a mechanism reading that has met the §3b standard/);
+    expect(s).toMatch(/trap #11 takes hold/);
   });
 
   it("PR 9's four-condition promotion standard survives in both sites", () => {
@@ -222,10 +231,13 @@ describe('Block 1 / Block 2+ is deliberately untouched', () => {
   // Owner ruling: licensedRung is the future authority for depth
   // permission, but the Block system is NOT repaired in PR 10. These
   // assertions exist so that a later PR has to change them on purpose.
-  it('the Block 1 depth prohibitions are still present', () => {
-    expect(master).toContain('Do NOT offer in Block 1:');
-    expect(master).toContain('- Foreign material release (formal ritualised release with returned-to)');
-    expect(master).toContain('That waits for Block 2+.');
+  it('the Block depth prohibitions were removed by PR 11, not by PR 10', () => {
+    // This assertion is INVERTED by PR 11. It existed to prove PR 10 left
+    // the Block system alone; PR 11 is the PR that removes its depth
+    // authority, under its own audit and owner rulings. The replacement
+    // conditions are asserted in block-depth-authority.test.ts.
+    expect(master).not.toContain('Do NOT offer in Block 1:');
+    expect(master).not.toContain('That waits for Block 2+.');
   });
 
   it('the assessment_phase tags are still present', () => {
