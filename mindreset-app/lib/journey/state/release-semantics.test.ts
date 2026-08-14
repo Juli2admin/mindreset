@@ -33,7 +33,17 @@ vi.mock('@/lib/prisma', () => ({
   default: {
     recodeProgress: {
       findUnique: vi.fn(() =>
-        Promise.resolve({ anchorTextEncrypted: 'enc(my bench)', mii: {} }),
+        Promise.resolve({
+          anchorTextEncrypted: 'enc(my bench)',
+          mii: {},
+          // Middle Layer PR 8' (2026-08-14) — symbolic return is Rung-3 work,
+          // so persisting a release now requires a persisted licence. This
+          // suite tests the release SEMANTICS, so its user is licensed; the
+          // refusal path has its own suite in
+          // middleLayer/rung3-persistence.test.ts.
+          middleLayerTargetStatus: 'established',
+          middleLayerMechanismStatus: 'established',
+        }),
       ),
       update: vi.fn(() => Promise.resolve({})),
     },
