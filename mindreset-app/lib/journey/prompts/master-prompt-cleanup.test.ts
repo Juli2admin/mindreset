@@ -103,7 +103,11 @@ describe('master prompt — Block 1 checklist includes the required-every-turn t
     const idx = master.indexOf('3. **Moves performed.**');
     expect(idx).toBeGreaterThan(-1);
     const stepSlice = master.slice(idx, idx + 500);
-    expect(stepSlice).toContain('REQUIRED every turn');
+    // PR 12 (2026-08-14): "REQUIRED every turn" became "Account for this
+    // field every turn", because the old phrasing read as "find a move
+    // every turn". Accountability is unchanged; fabrication pressure is
+    // not. universal.none remains the complete answer for a no-move turn.
+    expect(stepSlice).toContain('Account for this field every turn');
     expect(stepSlice).toContain('moveJustPerformed');
     // The step must show the model how to emit on a pure-witness turn.
     expect(stepSlice).toContain('universal.witness_and_reflect');
@@ -131,7 +135,7 @@ describe('master prompt — Block 1 checklist includes the required-every-turn t
     // Explicit closing paragraph reinforces which fields are the
     // absolute must-emit set for the router.
     expect(master).toContain(
-      '`channel`, `clinicalRead`, and `moveJustPerformed` are the three EVERY-TURN fields',
+      '`channel`, `clinicalRead`, and `moveJustPerformed` are the three fields to account for on every turn',
     );
   });
 });
