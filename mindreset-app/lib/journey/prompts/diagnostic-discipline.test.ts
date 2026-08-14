@@ -21,9 +21,18 @@ import { loadMasterJourneyPrompt } from './load-spec';
 const master = loadMasterJourneyPrompt() ?? '';
 
 describe('diagnostic discipline — gather-before-depth gate is restored and operational', () => {
-  it('the method intro holds the deeper moves until the picture is gathered AND checked', () => {
+  it('the method intro still holds depth behind evidence — now via the licensed rung', () => {
+    // REWRITTEN by PR 11. The original gate was "gathered AND checked with
+    // the user", which is Target Sufficiency wearing share-back's clothes,
+    // and it classified moves 3-8 as inherently deep. Owner ruling 1: depth
+    // follows what the concrete use assumes, never the move's identity. The
+    // discipline this test guards — depth is not free — is unchanged.
     expect(master).toContain(
-      'deeper moves (3–8 — causal/root work, parts work, foreign-material release, identity-level, deep somatic-symbolic and imagery work) are held until the relevant picture has been gathered AND checked with the user',
+      '**how deep you take it is governed by the licensed rung in the state block**',
+    );
+    expect(master).toMatch(/the test is not which technique is used but \*\*what your use of it assumes\*\*/);
+    expect(master).toContain(
+      'Being able to name a possible next move is not the same as understanding enough to go deep',
     );
   });
 

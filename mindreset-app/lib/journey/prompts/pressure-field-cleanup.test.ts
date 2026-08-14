@@ -63,7 +63,8 @@ function clinicalReadSpec(): string {
 
 /** The `<assessment_phase>` share-back milestone block. */
 function shareBackSection(): string {
-  const start = master.indexOf('THE SHARE-BACK MILESTONE');
+  // Renamed by PR 11 — the milestone no longer 'closes' a phase.
+  const start = master.indexOf('THE SHARE-BACK.');
   expect(start).toBeGreaterThan(-1);
   const end = master.indexOf('</assessment_phase>', start);
   expect(end).toBeGreaterThan(start);
@@ -213,7 +214,9 @@ describe('case formulation bullet — sharing is decoupled from promotion', () =
       'You may share part of it only when: it is supported by repeated or converging evidence;',
     );
     expect(master).toContain(
-      'THE SHARE-BACK MILESTONE. When the picture feels comprehensive — roughly 2–4 sessions in, with the major dimensions filled — there is a specific moment that closes Block 1:',
+      // PR 11 renamed the heading and dropped "closes Block 1"; the
+      // trigger condition and its descriptive pacing are unchanged.
+      'THE SHARE-BACK. When the picture feels comprehensive — roughly 2–4 sessions in, with the major dimensions filled — there is a moment worth taking:',
     );
   });
 });
@@ -435,9 +438,11 @@ describe('share-back — emissions record the event, they do not constitute it',
     expect(section).toMatch(/\*\*optional and clinically determined\*\*/);
   });
 
-  it('the rule against deep work on an unconfirmed formulation remains', () => {
+  it('the epistemic protection remains, narrowed by PR 11 to causal work', () => {
+    // See advancement-decoupling.test.ts for the rationale (owner
+    // correction 2). The protection is kept; its scope is corrected.
     expect(shareBackSection()).toContain(
-      'do not build deep work on an unconfirmed formulation',
+      '**Do not build causal work on a formulation that has not earned it.**',
     );
   });
 
