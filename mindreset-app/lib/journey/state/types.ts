@@ -10,6 +10,7 @@ import type {
   TaskContract,
 } from '../stateReport/schema';
 import type { ClosureProcess } from '../closure/process';
+import type { MiddleLayerState } from '../middleLayer/sufficiency';
 import type { OnboardingAnswers } from '@/lib/platform/types';
 
 export type JourneyChannel =
@@ -247,6 +248,17 @@ export type JourneyState = {
   //     model-generated history.
   // See lib/journey/closure/process.ts for the transition model.
   closureProcess: ClosureProcess;
+
+  // Middle Layer PR 6 (2026-08-14) — the code-owned licensed rung, read back
+  // from the two server-owned columns PR 4 writes. SERVER-OWNED in the same
+  // sense as closureProcess above: written only by the sufficiency validator,
+  // never by the model, and never inferred from anything the model reported.
+  //
+  // Read back rather than recomputed, because MIDDLE_LAYER.md §8 says
+  // "Permission derives from persisted state" — rendering a fresh
+  // recomputation would replace persisted permission with in-flight
+  // permission. Legacy rows normalise to Rung 1, which §6 always allows.
+  middleLayer: MiddleLayerState;
 
   // Clinician Working Memory (2026-08-08). The clinician's own analytical
   // output from earlier turns in THIS session, projected back so it is

@@ -18,6 +18,7 @@ import { CLOSURE_PROCESS_NONE } from '../closure/process';
 import type { JourneyState } from '../state/types';
 import { parseStateReport } from '../stateReport/parse';
 import { CANONICAL_MOVES, CANONICAL_MOVES_SET } from '../stateReport/schema';
+import { MIDDLE_LAYER_STATE_NONE } from '../middleLayer/sufficiency';
 
 function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
   return {
@@ -31,7 +32,7 @@ function makeState(overrides: Partial<JourneyState> = {}): JourneyState {
     sessionCount: 1, daysEngaged: 1, thisSessionMessageCount: 0, stageJustAdvanced: false,
     hoursSinceLastTurn: null, isSessionResume: false, hasOpenCycle: false,
     openCycleDescription: null, sessionRejectedModalities: [], recentChannelShift: false,
-    taskContract: null, onboardingAnswers: null, closureProcess: CLOSURE_PROCESS_NONE,
+    taskContract: null, onboardingAnswers: null, closureProcess: CLOSURE_PROCESS_NONE, middleLayer: MIDDLE_LAYER_STATE_NONE,
     workingMemory: null, ...overrides,
   };
 }
@@ -386,19 +387,22 @@ describe('PR 5 activates emission, never enforcement', () => {
     expect(r.taskContract?.target).not.toHaveProperty('status');
   });
 
-  it('the prompt does not tell the model its licensed rung', () => {
-    // PR 6 renders the rung into the state block. PR 5 must not.
+  it('PR 6: the state block NOW carries the licensed rung', () => {
+    // Inverted deliberately. Through PR 5 this asserted the rung was absent
+    // — that was the proof PR 5 had not done PR 6's job. PR 6 renders it, so
+    // the assertion inverts rather than being deleted. Still advisory:
+    // nothing refuses work on the strength of it (PR 7 / PR 8).
     const blocks = assembleSystemPromptBlocks(makeState());
-    expect(blocks[2].text).not.toMatch(/licensed rung/i);
-    expect(blocks[2].text).not.toMatch(/rung [123]/i);
+    expect(blocks[2].text).toMatch(/Licensed depth — Middle Layer rung 1/);
   });
 
-  it('the state block is unchanged by PR 5', () => {
-    // Byte-for-byte: PR 5 touched the canon block and the master prompt,
-    // never the dynamic per-turn block.
+  it('the state block carries the rung but not the Middle Layer manual', () => {
+    // PR 6 adds a short dynamic fact block, never a second copy of the
+    // canon. The manual stays in the cached block above it.
     const blocks = assembleSystemPromptBlocks(makeState());
     expect(blocks[2].text).toContain('## Current user state');
     expect(blocks[2].text).not.toContain('THE MIDDLE LAYER');
     expect(blocks[2].text).not.toContain('mechanismDifferential');
+    expect(blocks[2].text).not.toContain('Everything you believe about the user sits at exactly one of four levels.');
   });
 });

@@ -489,6 +489,77 @@ export function deriveLicensedRung(
   return 1;
 }
 
+// ---------------------------------------------------------------------------
+// Middle Layer PR 6 (2026-08-14) — reading the persisted verdict back
+// ---------------------------------------------------------------------------
+
+/**
+ * The code-owned Middle Layer state, as the state block needs it.
+ *
+ * Read back from the two server-owned columns PR 4 writes. Deliberately NOT
+ * recomputed: MIDDLE_LAYER.md §8 says "Permission derives from persisted
+ * state", and the canonical rule requires the gate to be "independently
+ * satisfied AND PERSISTED". Rendering a freshly recomputed verdict would
+ * quietly replace persisted permission with in-flight permission.
+ */
+export type MiddleLayerState = {
+  targetStatus: TargetValidatedStatus;
+  mechanismStatus: MechanismValidatedStatus;
+  /** Derived by deriveLicensedRung — never stored, never model-supplied. */
+  licensedRung: LicensedRung;
+  /** True when no evaluation has ever been persisted for this user. */
+  neverEvaluated: boolean;
+};
+
+/** The conservative default: no evidence, Rung 1, which §6 always allows. */
+export const MIDDLE_LAYER_STATE_NONE: MiddleLayerState = {
+  targetStatus: 'none',
+  mechanismStatus: 'none',
+  licensedRung: 1,
+  neverEvaluated: true,
+};
+
+/**
+ * Normalise the two persisted columns into renderable state.
+ *
+ * Fail-safe in the same shape as normaliseClosureProcess: anything that is
+ * not an exact member of the closed set — NULL from a legacy row, a value
+ * written by a future version, corruption — becomes 'none', which derives
+ * Rung 1. A user can never lose Rung 1 (§6 makes it unconditional), so the
+ * conservative fallback costs them nothing.
+ *
+ * Contains NO sufficiency logic. It maps strings to unions and delegates the
+ * one derivation to deriveLicensedRung, which is the same function PR 4's
+ * shadow path uses. There is exactly one rung rule in this codebase.
+ */
+export function normaliseMiddleLayerState(raw: {
+  targetStatus?: string | null;
+  mechanismStatus?: string | null;
+}): MiddleLayerState {
+  const targetStatus = (TARGET_VALIDATED_STATUSES as readonly string[]).includes(
+    raw.targetStatus ?? '',
+  )
+    ? (raw.targetStatus as TargetValidatedStatus)
+    : 'none';
+  const mechanismStatus = (MECHANISM_VALIDATED_STATUSES as readonly string[]).includes(
+    raw.mechanismStatus ?? '',
+  )
+    ? (raw.mechanismStatus as MechanismValidatedStatus)
+    : 'none';
+
+  return {
+    targetStatus,
+    mechanismStatus,
+    // 'established' is the ONLY status that licenses anything. 'leading' is
+    // the model's own claim about a mechanism and buys nothing here.
+    licensedRung: deriveLicensedRung(
+      targetStatus === 'established',
+      mechanismStatus === 'established',
+    ),
+    neverEvaluated: raw.targetStatus == null && raw.mechanismStatus == null,
+  };
+}
+
 export function evaluateSufficiency(
   contract: TaskContract | null | undefined,
   evidence: EvidenceSet = EMPTY_EVIDENCE,
