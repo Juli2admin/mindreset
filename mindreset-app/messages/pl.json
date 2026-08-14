@@ -312,7 +312,7 @@
     "contact": "Kontakt",
     "shareYourStory": "Podziel się historią",
     "languagePickerLabel": "Język",
-    "compliance": "MindReset AI Ltd · Zarejestrowana w UK Information Commissioner's Office pod numerem rejestracyjnym ZB642008 · Prawa wynikające z UK GDPR (dostęp do danych, usunięcie danych i eksport danych) są realizowane zgodnie z Polityką prywatności."
+    "compliance": "PROINVESTCO LTD (company number 15396477) · Zarejestrowana w UK Information Commissioner's Office pod numerem rejestracyjnym ZB642008 · Prawa wynikające z UK GDPR (dostęp do danych, usunięcie danych i eksport danych) są realizowane zgodnie z Polityką prywatności."
   },
   "Testimonials": {
     "kicker": "OD INNYCH IDĄCYCH TĄ DROGĄ",
@@ -877,7 +877,7 @@
       "title": "Warunki świadczenia usług",
       "preamble": {
         "operatorLabel": "Operator:",
-        "operatorBody": "<strong>Platforma samopomocy MindReset AI</strong>, prowadzona przez <strong>MindReset AI Ltd</strong>, spółkę zarejestrowaną w Anglii i Walii, z siedzibą w Londynie, Wielka Brytania.",
+        "operatorBody": "<strong>Platforma samopomocy MindReset AI</strong>, prowadzona przez <strong>PROINVESTCO LTD</strong> (company number 15396477), spółkę zarejestrowaną w Anglii i Walii, z siedzibą w Wielkiej Brytanii.",
         "note": "",
         "contactLabel": "Kontakt:",
         "agreement": "Korzystając z platformy samopomocy MindReset AI („Usługa“), dostępnej pod adresem mindreset.ai, akceptujesz niniejsze Warunki. Prosimy o uważne zapoznanie się z nimi. Jeśli się z nimi nie zgadzasz, prosimy nie korzystać z Usługi."
@@ -904,7 +904,7 @@
         "understoodItem": "Przeczytałeś(-aś) i zrozumiałeś(-aś) wynik Checku gotowości oraz ograniczenia Usługi określone w niniejszych Warunkach;",
         "notForCrisisItem": "Rozumiesz, że Usługa nie jest odpowiednia dla aktywnego kryzysu, ciężkich objawów psychiatrycznych, aktywnej suicydalności, niedawnej psychozy, dysocjacji wymagającej opieki klinicznej ani innych stanów wykraczających poza wsparcie samopomocowe;",
         "acceptResponsibilityItem": "Przyjmujesz pełną odpowiedzialność za swoją decyzję o korzystaniu z Usługi;",
-        "releaseLiabilityItem": "Zwalniasz operatora Usługi (MindReset AI Ltd) z odpowiedzialności za wszelkie szkody wynikające z korzystania z Usługi w sytuacji, gdy Check gotowości wskazał, że Usługa może być dla Ciebie nieodpowiednia."
+        "releaseLiabilityItem": "Zwalniasz operatora Usługi (PROINVESTCO LTD) z odpowiedzialności za wszelkie szkody wynikające z korzystania z Usługi w sytuacji, gdy Check gotowości wskazał, że Usługa może być dla Ciebie nieodpowiednia."
       },
       "section3": {
         "title": "3. Akceptacja warunków i wiek",
@@ -1166,8 +1166,8 @@
     "title": "Polityka prywatności",
     "preamble": {
       "controllerLabel": "Administrator danych:",
-      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>MindReset AI Ltd</strong>, spółka zarejestrowana w England & Wales, z siedzibą w Londynie, Wielka Brytania — <mail>support@mindreset.ai</mail>",
-      "note": "MindReset AI Ltd jest zarejestrowana w brytyjskim Information Commissioner's Office pod numerem rejestracyjnym ZB642008."
+      "controllerBody": "<strong>MindReset AI self-help platform</strong>, operated by <strong>PROINVESTCO LTD</strong> (company number 15396477), spółka zarejestrowana w England & Wales, z siedzibą w Wielkiej Brytanii — <mail>support@mindreset.ai</mail>",
+      "note": "PROINVESTCO LTD jest zarejestrowana w brytyjskim Information Commissioner's Office pod numerem rejestracyjnym ZB642008."
     },
     "section1": {
       "title": "1. Zakres niniejszej Privacy Policy",
