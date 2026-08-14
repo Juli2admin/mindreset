@@ -10,6 +10,7 @@ import type { StateReport, TaskContract } from '../stateReport/schema';
 import { blocksProgression, normaliseClosureProcess } from '../closure/process';
 import { evaluateSufficiency } from '../middleLayer/sufficiency';
 import { logSufficiencyShadow } from '../middleLayer/shadow-log';
+import { applyEvidenceExchanges, loadEvidence } from '../middleLayer/evidence';
 
 type Updates = {
   // Anchor capture (Stage 1 — set once, never overwritten)
@@ -78,6 +79,19 @@ export async function applyStateReportToProgress(
         lastCheckedAt: new Date().toISOString(),
       },
     };
+  }
+
+  // Middle Layer PR 4b (2026-08-13) — write this turn's evidence exchanges
+  // BEFORE applyUpdates, because the shadow validator inside applyUpdates
+  // reads them. Wrapped: an evidence-path defect must never cost a user
+  // their turn, exactly as the shadow evaluation is wrapped.
+  try {
+    await applyEvidenceExchanges(userId, report);
+  } catch (err) {
+    console.error('[journey/middle-layer] evidence write failed (ignored)', {
+      userId,
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   await applyUpdates(userId, updates);
@@ -172,7 +186,12 @@ async function applyUpdates(userId: string, u: Updates): Promise<void> {
     const contractForShadow = data.taskContractEncrypted
       ? decryptJsonOrNull<TaskContract>(data.taskContractEncrypted as string)
       : decryptJsonOrNull<TaskContract>(current.taskContractEncrypted);
-    const verdict = evaluateSufficiency(contractForShadow);
+    // Middle Layer PR 4b — read the code-owned evidence AFTER this turn's
+    // exchanges have been written, so a confirmation that landed this turn is
+    // visible to the validator. The later-turn guard lives in
+    // applyEvidenceExchanges, not here.
+    const evidence = await loadEvidence(userId);
+    const verdict = evaluateSufficiency(contractForShadow, evidence);
     data.middleLayerTargetStatus = verdict.target.status;
     data.middleLayerMechanismStatus = verdict.mechanism.status;
     logSufficiencyShadow(userId, verdict);

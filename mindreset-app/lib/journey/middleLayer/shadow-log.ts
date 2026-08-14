@@ -37,9 +37,18 @@ export type SufficiencyShadowLine = {
   /** Structural counts only — how many parts/candidates, never their content. */
   counts: {
     targetPartsPresent: number;
+    /** USER-CONFIRMED instances only (PR 4b). */
     corroboration: number;
     candidates: number;
     leading: number;
+    /**
+     * PR 4b — how many times a Target recognition has been withdrawn.
+     * OBSERVABILITY ONLY, never a gate. Repeated pressing for recognition is
+     * a real clinical risk, most of all for a user whose Target is
+     * difficulty declining under pressure — but any threshold would be an
+     * invented proxy, so this is surfaced for review and nothing more.
+     */
+    recognitionContradictions: number;
   };
 };
 
@@ -63,6 +72,7 @@ export function buildSufficiencyShadowLine(
       corroboration: p.corroborationCount,
       candidates: verdict.mechanism.candidateCount,
       leading: verdict.mechanism.leadingCount,
+      recognitionContradictions: verdict.recognitionContradictionCount,
     },
   };
 }

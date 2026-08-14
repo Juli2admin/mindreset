@@ -108,6 +108,7 @@ model User {
   journeyForeignFiles    JourneyForeignFile[]
   journeySignatureImages JourneySignatureImage[]
   journeyPatterns        JourneyPattern[]
+  journeyEvidenceExchanges JourneyEvidenceExchange[]
   journeyMessages        JourneyMessage[]
   // States & Themes — state module sessions.
   stateSessions          StateSession[]
@@ -1013,6 +1014,51 @@ model JourneyPattern {
   @@unique([userId, category])
   @@index([userId])
   @@index([userId, active, lastConfirmedAt])
+}
+
+// =============================================================================
+// JOURNEY EVIDENCE EXCHANGE — Middle Layer PR 4b (2026-08-13)
+// =============================================================================
+// SERVER-OWNED evidence for the two sufficiency gates of MIDDLE_LAYER.md §3.
+// Written ONLY by lib/journey/middleLayer/evidence.ts, never by the model.
+//
+// One row = one proposition put to the user, with a code-stamped outcome.
+// Three kinds, one lifecycle:
+//
+//   mechanism   — a causal reading put to the user (§1(2))
+//   instance    — a corroborating instance put to the user as DISTINCT (§1(3))
+//   recognition — the Target's wording put to the user as theirs (§4.2)
+//
+// WHY THIS TABLE EXISTS AT ALL. The model writes its state report after its
+// reply, in the same call. It can claim anything about the present; it cannot
+// manufacture a future user turn. That asymmetry is the only thing in the
+// system the model cannot defeat, so every fact that licenses a rung is
+// stamped here by code, on a turn LATER than the offer it answers. A claim
+// and a finding must not share a field — the model's differential stays in
+// taskContractEncrypted, and nothing there licenses anything.
+//
+// subjectEncrypted is clinical content (encrypted, as JourneyForeignFile).
+// It is used ONLY to route an outcome back to its offer. It is NEVER
+// load-bearing for licensing: code must never decide whether two wordings
+// mean the same thing (owner decision 4, 2026-08-13). Rewording can lose
+// evidence; it can never gain any, and it can never erase a contradiction —
+// contradictions are counted with max() across rows, which no rewording
+// escapes, and a contradiction whose routing fails still records a row.
+model JourneyEvidenceExchange {
+  id                       String    @id @default(cuid())
+  user                     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                   String
+  createdAt                DateTime  @default(now())
+
+  kind                     String    // mechanism | instance | recognition
+  subjectEncrypted         String    // routing only — never licensing
+
+  offeredAt                DateTime?
+  confirmedAt              DateTime?
+  contradictedAt           DateTime?
+
+  @@index([userId, kind])
+  @@index([userId, contradictedAt])
 }
 
 // =============================================================================

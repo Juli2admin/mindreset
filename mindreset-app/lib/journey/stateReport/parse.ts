@@ -498,6 +498,35 @@ export function parseStateReport(
     }
   }
 
+  // Middle Layer PR 4b (2026-08-13) — the seven evidence exchanges.
+  // Each carries exactly ONE free-text subject, cleaned by the same rule the
+  // task contract already uses (trim, >= 3 chars, placeholder rejection,
+  // 300-char cap). The subject is used only to route an outcome back to its
+  // offer; it never licenses anything.
+  //
+  // Note what is NOT parsed: offeredAt, confirmedAt, contradictedAt. If the
+  // model emits them they are silently dropped, because they are never read
+  // from here. That is the integrity boundary of the Middle Layer gate — a
+  // model that could stamp its own confirmation could license its own Rung 3.
+  for (const [field, key] of [
+    ['mechanismOffered', 'reading'],
+    ['mechanismConfirmed', 'reading'],
+    ['mechanismContradicted', 'reading'],
+    ['instanceOffered', 'instance'],
+    ['instanceConfirmed', 'instance'],
+    ['recognitionOffered', 'recognition'],
+    ['recognitionConfirmed', 'recognition'],
+    ['recognitionContradicted', 'recognition'],
+  ] as const) {
+    const raw = obj[field];
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) continue;
+    const subject = cleanContractString((raw as Record<string, unknown>)[key]);
+    if (subject === undefined) continue;
+    // Rebuilt from the cleaned subject alone — any extra keys the model sent
+    // (including stamps) are discarded by construction, not by a blocklist.
+    (report as Record<string, unknown>)[field] = { [key]: subject };
+  }
+
   return report;
 }
 
@@ -635,6 +664,10 @@ export function parseMechanismDifferential(
 
     const supports = cleanContractStringList(obj.supports);
     if (supports !== undefined) entry.supports = supports;
+    // PR 4b — instance keys, resolved against confirmed exchanges at
+    // validation time. The parser does not resolve them (no DB here).
+    const corroboration = cleanContractStringList(obj.corroboration);
+    if (corroboration !== undefined) entry.corroboration = corroboration;
     const countsAgainst = cleanContractStringList(obj.countsAgainst);
     if (countsAgainst !== undefined) entry.countsAgainst = countsAgainst;
 
