@@ -190,7 +190,11 @@ describe('checkStage2Gate — canon-aligned advancement', () => {
     expect(result.reasons).toContain('safety_not_clean_for_last_3_turns');
   });
 
-  it('fails when AI did not recommend advance', () => {
+  it('PASSES on the clinical criteria alone when the AI recommended "stay"', () => {
+    // INVERTED by Middle Layer PR 10 (2026-08-14) — see the matching test
+    // in stage1-gate.test.ts. Canon §10's three Stage 2 conditions are all
+    // touched here and the anchor is set, so the gate passes without the
+    // model's permission token.
     const turns: AuditTurn[] = [
       makeTurn(5, { readinessTouched: ['emotion_named'] }),
       makeTurn(4, { readinessTouched: ['emotion_located'] }),
@@ -199,8 +203,8 @@ describe('checkStage2Gate — canon-aligned advancement', () => {
       makeTurn(1, {}),
     ];
     const result = checkStage2Gate(makeState(), turns);
-    expect(result.passed).toBe(false);
-    expect(result.reasons).toContain('ai_did_not_recommend_advance');
+    expect(result.passed).toBe(true);
+    expect(result.reasons).not.toContain('ai_did_not_recommend_advance');
   });
 
   it('tolerates token name variations (hyphen vs underscore)', () => {

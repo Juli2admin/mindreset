@@ -12,7 +12,10 @@
 //   - last two intensity readings ≤ 5/10
 //   - safetyFlag === 'none' for last N turns (stage-dependent)
 //   - no frozen_for_review flag
-//   - AI's recommendedAction === 'advance' (advisory; code makes the final call)
+//
+// Middle Layer PR 10 (2026-08-14): they no longer require the AI's
+// `recommendedAction === 'advance'`. Stage 8's discharge gate still
+// requires `recommendedAction === 'discharge'` — see standardGuards.
 
 import type { JourneyState } from '../state/types';
 // Middle Layer PR 7' (2026-08-14) — Rung-3 signals earn no advancement
@@ -43,11 +46,34 @@ function pass(): GateResult {
   return { passed: true, reasons: [] };
 }
 
+/**
+ * Guards shared by every gate.
+ *
+ * Middle Layer PR 10 (2026-08-14) — `recommendedAction === 'advance'` is no
+ * longer one of them.
+ *
+ * It was an AND-term for Stages 1–7 while six separate sources (this file's
+ * own header, router.ts, Shared Core §, and all seven stage specs' §10)
+ * described it as "advisory; code makes the final call". It was not
+ * advisory. And the master prompt instructed the model to emit it ONLY
+ * after a confirmed share-back — so a user's agreement with a shared
+ * picture was, in practice, the permission slip for stage bookkeeping.
+ * That is the coupling PR 10 removes; the prompt half goes with it.
+ *
+ * Nothing replaces it. Stages 1–7 now advance on the code-verified canon
+ * §10 criteria and these guards alone — no substitute model-authored
+ * permission token. Every other guard is untouched.
+ *
+ * `expectedAction` is now OPTIONAL and only Stage 8 passes it. Discharge
+ * stays intentional: it is a real clinical endpoint with a user-facing
+ * consequence, not an internal counter, so the model must still agree
+ * (owner decision 2, 2026-08-14).
+ */
 function standardGuards(
   state: JourneyState,
   turns: AuditTurn[],
   safetyWindow: number,
-  expectedAction: 'advance' | 'discharge' = 'advance',
+  expectedAction?: 'discharge',
 ): string[] {
   const reasons: string[] = [];
   if (state.frozenForReview) reasons.push('frozen_for_review');
@@ -57,13 +83,11 @@ function standardGuards(
   if (!safetyNoneForLast(turns, safetyWindow)) {
     reasons.push(`safety_not_clean_for_last_${safetyWindow}_turns`);
   }
-  const last = turns[turns.length - 1];
-  if (last?.report.recommendedAction !== expectedAction) {
-    reasons.push(
-      expectedAction === 'discharge'
-        ? 'ai_did_not_recommend_discharge'
-        : 'ai_did_not_recommend_advance',
-    );
+  if (expectedAction !== undefined) {
+    const last = turns[turns.length - 1];
+    if (last?.report.recommendedAction !== expectedAction) {
+      reasons.push('ai_did_not_recommend_discharge');
+    }
   }
   return reasons;
 }
@@ -88,7 +112,8 @@ function standardGuards(
 //   - Last 3 turns' safetyFlag is `none` (canon strict reading)
 //   - `readinessTouched` includes: anchor-identified, one emotion-or-body-
 //     state named, basic orientation present
-//   - recommendedAction: advance
+//   - recommendedAction: advance  ← NO LONGER ENFORCED (Middle Layer PR 10).
+//     The canon spec still lists it; the code no longer reads it here.
 //   - No frozen_for_review
 //
 // SAFETY GUARD: Stage 1 uses a LOOSER safety guard than canon (B option per
@@ -109,10 +134,11 @@ export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateRe
   if (intensities.length < 2) reasons.push('insufficient_intensity_history');
   else if (intensities.some((i) => i > 5)) reasons.push('recent_intensity_above_5');
   if (!noRedFlagInLast(turns, 3)) reasons.push('red_flag_in_last_3_turns');
-  const last = turns[turns.length - 1];
-  if (last?.report.recommendedAction !== 'advance') {
-    reasons.push('ai_did_not_recommend_advance');
-  }
+  // Middle Layer PR 10 — the `recommendedAction === 'advance'` check that
+  // stood here is gone, matching standardGuards. This gate keeps its own
+  // inlined copy of the guards only because its safety rule is looser
+  // (red-flag-only, not safety-none); the advance term was identical to
+  // the shared one and is removed identically.
 
   if (!state.anchorText) reasons.push('anchor_not_set');
 
@@ -150,7 +176,8 @@ export function checkStage1Gate(state: JourneyState, turns: AuditTurn[]): GateRe
 //   - safetyFlag none for 3 turns (canon strict — this stage uses standard
 //     guards, not the looser Stage 1 rule)
 //   - Anchor still accessible (code approximates with anchorText set)
-//   - recommendedAction: advance
+//   - recommendedAction: advance  ← NO LONGER ENFORCED (Middle Layer PR 10),
+//     as for every classic gate. Stage 8's discharge check is unaffected.
 //   - No frozen_for_review
 export function checkStage2Gate(state: JourneyState, turns: AuditTurn[]): GateResult {
   const reasons = standardGuards(state, turns, 3);
@@ -587,10 +614,14 @@ export function checkStage8Gate(
   turns: AuditTurn[],
   stage8StartedAt: Date,
 ): GateResult {
-  // Stage 8 expects the AI to emit `recommendedAction: 'discharge'`, not
-  // 'advance'. The previous standardGuards default forced 'advance' which
-  // made the gate unreachable — the router checks the gate first, then
-  // the action, so the gate is consulted with whatever the AI emitted.
+  // Stage 8 requires the AI to emit `recommendedAction: 'discharge'`.
+  //
+  // Middle Layer PR 10 (2026-08-14) — this is now the ONLY gate that reads
+  // `recommendedAction` at all, and it is deliberate (owner decision 2):
+  // discharge is a real clinical endpoint with a user-facing consequence,
+  // not an internal stage counter, so the model must still agree. Passing
+  // 'discharge' explicitly is what opts this gate in; every other gate
+  // omits the argument and no longer checks the field.
   const reasons = standardGuards(state, turns, 10, 'discharge');
   if (!state.identityAnchor) reasons.push('identity_anchor_missing');
 
