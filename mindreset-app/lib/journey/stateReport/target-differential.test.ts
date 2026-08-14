@@ -563,10 +563,16 @@ describe('Target / differential are inert at runtime', () => {
     expect(withTargetOnly).toBe(withNone);
     // Specifically, the "no contract yet" invitation is still shown...
     expect(withTargetOnly).toContain('No session task contract captured yet');
-    // ...and none of the Middle Layer material leaked into the prompt.
+    // ...and THIS USER'S stored material did not leak into the prompt.
+    //
+    // PR 5 note: the canon now discusses mechanisms and names an
+    // "introjected rule" as a worked example, so a bare substring grep for
+    // that phrase no longer distinguishes canon from user data. The
+    // byte-identical assertion above is the real proof and is unchanged —
+    // it is strictly stronger than any grep. What still must never appear
+    // is this user's own words.
     expect(withTargetOnly).not.toContain(TARGET.phenomenon);
-    expect(withTargetOnly).not.toContain('introjected rule');
-    expect(withTargetOnly).not.toMatch(/mechanism differential/i);
+    expect(withTargetOnly).not.toContain(TARGET.inTheirTerms);
   });
 
   it('a legacy contract renders identically whether or not a Target is attached', () => {
@@ -580,13 +586,17 @@ describe('Target / differential are inert at runtime', () => {
     expect(withTarget).toBe(plain);
     expect(withTarget).toContain(LEGACY.presentingRequest!);
     expect(withTarget).not.toContain(TARGET.phenomenon);
-    expect(withTarget).not.toContain('introjected rule');
+    expect(withTarget).not.toContain(TARGET.inTheirTerms);
   });
 
-  it('the master prompt does not instruct the model to emit target or mechanismDifferential', () => {
+  it('PR 5: the master prompt NOW documents target and mechanismDifferential', () => {
+    // Inverted deliberately. Through PRs 3-4b this asserted the fields were
+    // absent from the prompt — that was the proof emission had not been
+    // opened. PR 5 opens it, so the same assertion inverts rather than
+    // being deleted: the representation must now be reachable.
     const master = loadMasterJourneyPrompt();
     expect(master).not.toBeNull();
-    expect(master).not.toContain('mechanismDifferential');
-    expect(master).not.toContain('therapeuticTarget');
+    expect(master).toContain('mechanismDifferential');
+    expect(master).toContain('recognitionOffered');
   });
 });

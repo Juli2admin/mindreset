@@ -743,10 +743,17 @@ describe('shadow mode changes nothing a user could perceive', () => {
       }),
     ).map((b) => b.text).join('\n');
 
+    // The byte-identical assertion is the real proof of inertness, and it
+    // is strictly stronger than any grep: whatever this user has stored
+    // makes no difference to the prompt.
+    //
+    // PR 5 note: /rung/i and /sufficiency/i used to be asserted absent.
+    // They are now legitimately present — the Middle Layer canon is
+    // injected and it TEACHES the ladder and the two sufficiencies. What
+    // must still never appear is this user's own material.
     expect(loaded).toBe(plain);
-    expect(loaded).not.toMatch(/rung/i);
-    expect(loaded).not.toMatch(/sufficiency/i);
     expect(loaded).not.toContain(FULL_TARGET.phenomenon!);
+    expect(loaded).not.toContain(FULL_TARGET.inTheirTerms!);
   });
 
   it('persists both status columns and no behavioural field', async () => {

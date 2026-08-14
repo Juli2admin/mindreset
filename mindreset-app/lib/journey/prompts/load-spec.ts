@@ -45,6 +45,16 @@ export const sharedCore = (): string => loadSpec('00-shared-core.md');
 // algorithm into the always-hot prefix so it's read every turn.
 export const practiceGenerationAlgorithm = (): string =>
   loadSpec('PRACTICE_GENERATION_ALGORITHM.md');
+// THE MIDDLE LAYER — Investigation, Formulation, Target (owner-ratified
+// v0.2, 2026-08-13). Middle Layer PR 5 (2026-08-14) injects it into the
+// runtime prompt for the first time; PRs 1-4b built it and its machinery
+// while it sat un-injected.
+//
+// It is loaded VERBATIM. The canon is authoritative and is never rewritten
+// on the way in — anything PR 5 needed to say about how it relates to the
+// other canon sources is said in the block header in assemble.ts, not by
+// editing this file.
+export const middleLayer = (): string => loadSpec('MIDDLE_LAYER.md');
 export const stage01 = (): string => loadSpec('01-stage-stabilisation.md');
 export const stage02 = (): string => loadSpec('02-stage-pain.md');
 export const stage03 = (): string => loadSpec('03-stage-adult-self.md');

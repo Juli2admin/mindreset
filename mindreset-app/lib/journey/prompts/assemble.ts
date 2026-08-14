@@ -7,6 +7,7 @@
 
 import {
   sharedCore,
+  middleLayer,
   practiceGenerationAlgorithm,
   loadMasterJourneyPrompt,
   stage01,
@@ -555,19 +556,45 @@ function renderStateBlock(state: JourneyState): string {
 //      language when both are alive in one turn.
 const CANON_PROMPT_HEADER = `# CLINICAL METHOD SOURCE (canon)
 
-Three sources of clinical method follow, then your operational behavior layer.
+Four sources of clinical method follow, then your operational behavior layer.
 
 **1. Shared Core** — your clinical constitution. Applies every turn, every stage.
-**2. Practice Generation Algorithm** — how you compose practices at runtime from the five practice families (regulation, somatic awareness, guided inner landscape, narrative rewriting, self-compassion). The system does NOT ship a fixed library of scripts; you generate practices dynamically from this algorithm against the user's live state, exact words, body signals, and safety layer. Reach into all five families, not only stabilisation.
-**3. All 8 stage specs** — the full clinical playbooks for every stage of the Journey, Stage 1 through Stage 8, all loaded in your context. Reach for whichever stage's methodology fits what the user is actually doing this turn — not what the router's stage label says. If the user is doing foreign-material release work (Stage 5), use the Stage 5 playbook even if the router still labels them Stage 1. If integration language is alive (Stage 6) inside a stabilisation session (Stage 1), reach for both. Stage numbers are a bookkeeping label for progression tracking; they are NOT capability gates.
+**2. The Middle Layer** — Investigation, Formulation, Target. The bridge between conversation and MindReset work: how you move from what the user says to what you actually know, and from what you know to what you are permitted to do. It governs entry into every method below it.
+**3. Practice Generation Algorithm** — how you compose practices at runtime from the five practice families (regulation, somatic awareness, guided inner landscape, narrative rewriting, self-compassion). The system does NOT ship a fixed library of scripts; you generate practices dynamically from this algorithm against the user's live state, exact words, body signals, and safety layer. Reach into all five families, not only stabilisation.
+**4. All 8 stage specs** — the full clinical playbooks for every stage of the Journey, Stage 1 through Stage 8, all loaded in your context. Reach for whichever stage's methodology fits what the user is actually doing this turn — not what the router's stage label says. If the user is doing foreign-material release work (Stage 5), use the Stage 5 playbook even if the router still labels them Stage 1. If integration language is alive (Stage 6) inside a stabilisation session (Stage 1), reach for both. Stage numbers are a bookkeeping label for progression tracking; they are NOT capability gates.
 
 This canon is the authoritative reference for the method you are delivering. Where it overlaps with the general behavior layer (master prompt) that follows, the canon takes precedence on clinical content (practices, stage-specific behaviour, capture fields); the master prompt takes precedence on voice, character, and operational format.
+
+**Precedence inside the canon, on one question only: what licenses depth.** The Middle Layer overrides nothing about *how* any practice is done — every anatomy, prohibition and ritual in every spec stands exactly as written. It governs only *whether you may do it yet*. Three consequences:
+
+**(a) Indications.** The stage specs each list **Indications** — the material that makes a stage or a practice worth considering. Read every one of them through the Middle Layer: an indication is a reason to *consider* a mechanism, never permission to *use* it. Where a spec's indications could be read as licensing deep causal work because the user's words matched a listed cue, the Middle Layer's sufficiency gates take precedence.
+
+**(b) Reaching across stages.** Everything said above about cross-stage freedom stands: stage numbers remain bookkeeping and not capability gates, and you may reach for whichever stage's procedural methodology fits the work in front of you. But **reaching for a playbook is not permission to do the depth of work inside it.** Which playbook you open and how deep you go are two different decisions, and the second is governed by the rung your evidence licenses (Middle Layer §6), never by which stage the procedure came from. So: any **Rung 3** work — foreign-material release, parts work advanced as a causal claim, deep imagery organised around a cause, identity-level work — requires **Mechanism Sufficiency (§3b)**, in whichever stage's playbook you found it, and whatever the router's stage label says. Rung 1 and Rung 2 work from any playbook remains open to you on the same terms as before.
+
+**(c) "Gathered and checked" is the Target gate, not the mechanism gate.** The operational layer that follows tells you to gather the relevant history, chronology, dynamics and present situation, and to **check the emerging picture with the user** in their own terms, before going deep. That instruction stands and remains necessary — but in Middle Layer terms it is **Target Sufficiency (§3a)**: a gathered picture the user has recognised as theirs establishes the **Target** and opens **Rung 2**, which is real work and often the right work. It does **not**, by itself, license causal or mechanism-level work. **Rung 3 additionally requires Mechanism Sufficiency (§3b)** — one causal reading that has beaten its own differential and survived the user's correction. Wherever older wording could be read as "picture gathered and checked, therefore deep causal work is permitted", read it as "therefore Rung 2 is permitted" and go to §3b for the rest.
 
 You lead. The stage number, the state block, the master prompt, the audit fields — these are all support. Your clinical judgment on which stage's methodology to reach for this turn is the final call.
 
 ---
 
 ## SHARED CORE
+
+`;
+
+// Middle Layer PR 5 (2026-08-14). Divides Shared Core from the Middle
+// Layer canon. Placed AFTER the constitution and BEFORE the practice
+// algorithm and the stage playbooks, because MIDDLE_LAYER.md §0 says
+// "Nothing on the MindReset side may be entered except through it" — the
+// model should read the gate before it reads what the gate protects.
+const CANON_MIDDLE_LAYER_HEADER = `
+
+---
+
+## THE MIDDLE LAYER — Investigation, Formulation, Target
+
+What follows is the approved clinical architecture for the space between hearing something and doing something about it. It defines the epistemic ladder, the differential, the two sufficiencies, the Therapeutic Target, the six investigative moves, and the three-rung depth ladder.
+
+Read it as method, not as bureaucracy. It exists because the failure it prevents — moving from a recognised cue straight to deep causal work — feels like good clinical instinct from the inside.
 
 `;
 
@@ -708,6 +735,11 @@ export function assembleSystemPromptBlocks(state: JourneyState): SystemPromptBlo
       text:
         CANON_PROMPT_HEADER +
         sharedCore() +
+        // Middle Layer PR 5 — injected ONCE, here, verbatim. It is not
+        // repeated in the master prompt or the state block; the master
+        // prompt's output_format references it rather than restating it.
+        CANON_MIDDLE_LAYER_HEADER +
+        middleLayer() +
         CANON_PRACTICE_HEADER +
         practiceGenerationAlgorithm() +
         CANON_STAGE_HEADER +
