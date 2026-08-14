@@ -106,6 +106,76 @@ describe('reconciliation with the stage specs', () => {
     expect(prompt).toContain("the Middle Layer's sufficiency gates take precedence");
   });
 
+  // -------------------------------------------------------------------------
+  // F1 / F2 — the two licensing ambiguities found by the pre-merge audit.
+  //
+  // F1: the header's cross-stage freedom ("if the user is doing
+  //     foreign-material release work, use the Stage 5 playbook even if the
+  //     router still labels them Stage 1") named a Rung-3 practice and
+  //     attached no evidence condition, and it deleted the stage specs' own
+  //     conjunctive gates by declaring stage numbers not capability gates.
+  //     That was the surviving route to the original cue -> mechanism jump.
+  //
+  // F2: the operational layer states ONE gate for deep causal work —
+  //     "gathered AND checked with the user". Under the Middle Layer that is
+  //     Target Sufficiency and opens Rung 2 only. Left unmapped, the two
+  //     sufficiencies had no expression in the layer where the model
+  //     actually decides when to act.
+  // -------------------------------------------------------------------------
+
+  it('F1: reaching for a playbook is explicitly NOT permission to work at its depth', () => {
+    const prompt = assembled();
+    expect(prompt).toContain('reaching for a playbook is not permission to do the depth of work inside it');
+    expect(prompt).toContain('Which playbook you open and how deep you go are two different decisions');
+  });
+
+  it('F1: Rung 3 work needs Mechanism Sufficiency whichever playbook it came from', () => {
+    const prompt = assembled();
+    expect(prompt).toContain('requires **Mechanism Sufficiency (§3b)**, in whichever stage\'s playbook you found it');
+    // The four Rung-3 practices are named where the licence is granted, so
+    // the fix reaches the exact examples the old wording invited.
+    expect(prompt).toContain('foreign-material release, parts work advanced as a causal claim, deep imagery organised around a cause, identity-level work');
+  });
+
+  it('F1: cross-stage freedom SURVIVES — stage labels are not capability gates again', () => {
+    const prompt = assembled();
+    // The fix must not have re-imposed stage sequencing by the back door.
+    expect(prompt).toContain('stage numbers remain bookkeeping and not capability gates');
+    expect(prompt).toContain('you may reach for whichever stage\'s procedural methodology fits the work');
+    expect(prompt).toContain('Stage numbers are a bookkeeping label for progression tracking; they are NOT capability gates.');
+    // Rung 1 and Rung 2 work stays reachable from any playbook.
+    expect(prompt).toContain('Rung 1 and Rung 2 work from any playbook remains open to you');
+  });
+
+  it('F2: gathered-and-checked is mapped to Target Sufficiency and Rung 2', () => {
+    const prompt = assembled();
+    expect(prompt).toContain('"Gathered and checked" is the Target gate, not the mechanism gate');
+    expect(prompt).toContain('it is **Target Sufficiency (§3a)**');
+    expect(prompt).toContain('establishes the **Target** and opens **Rung 2**');
+  });
+
+  it('F2: gathered-and-checked explicitly does NOT license Rung 3', () => {
+    const prompt = assembled();
+    expect(prompt).toContain('It does **not**, by itself, license causal or mechanism-level work');
+    expect(prompt).toContain('**Rung 3 additionally requires Mechanism Sufficiency (§3b)**');
+    // And the older wording is re-read rather than contradicted.
+    expect(prompt).toContain('read it as "therefore Rung 2 is permitted"');
+  });
+
+  it('F2: the gather-before-depth rule is preserved, not removed', () => {
+    const prompt = assembled();
+    // Still necessary — just no longer sufficient for Rung 3.
+    expect(prompt).toContain('That instruction stands and remains necessary');
+    // The master prompt's own rule is untouched by PR 5.
+    expect(prompt).toContain('never on the strength of one statement, image, metaphor or felt sense');
+  });
+
+  it('the precedence rule is scoped to licensing only — practice content untouched', () => {
+    const prompt = assembled();
+    expect(prompt).toContain('The Middle Layer overrides nothing about *how* any practice is done');
+    expect(prompt).toContain('It governs only *whether you may do it yet*');
+  });
+
   it('the Middle Layer is announced as one of the canon sources', () => {
     const prompt = assembled();
     expect(prompt).toContain('Four sources of clinical method');
