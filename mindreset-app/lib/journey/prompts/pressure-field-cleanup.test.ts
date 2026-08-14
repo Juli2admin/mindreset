@@ -389,10 +389,13 @@ describe('clinicalRead — records the differential, not a settled status', () =
     expect(entry).toContain('**REQUIRED every turn.**');
   });
 
-  it('keeps the field required every turn and internal-only', () => {
+  it('keeps the field accounted for every turn and internal-only', () => {
+    // Reworded by PR 12 (2026-08-14). The trio is still named as the
+    // every-turn set; what changed is that the sentence no longer explains
+    // the requirement by what the router needs in order to advance.
     expect(clinicalReadSpec()).toContain('never surfaced');
     expect(master).toContain(
-      '`channel`, `clinicalRead`, and `moveJustPerformed` are the three EVERY-TURN fields',
+      '`channel`, `clinicalRead`, and `moveJustPerformed` are the three fields to account for on every turn',
     );
   });
 });
@@ -493,10 +496,14 @@ describe('advancement coupling — removed by PR 10', () => {
     );
   });
 
-  it('moveJustPerformed advancement framing is unchanged', () => {
-    expect(master).toContain(
-      'The stage-advancement router reads this; leaving it null costs the user real progression.',
-    );
+  it('moveJustPerformed advancement framing is REMOVED (PR 12)', () => {
+    // INVERTED by PR 12. This assertion existed to prove PR 9 had not
+    // touched the framing; PR 12 is the PR that removes it, because
+    // telling the model that a null field "costs the user real
+    // progression" is an incentive to manufacture a move. The full
+    // invariant lives in move-emission-honesty.test.ts.
+    expect(master).not.toContain('costs the user real progression');
+    expect(master).not.toContain('The stage-advancement router reads this');
   });
 
   it('therapeuticMode is untouched and recommendedDepth is absent', () => {
