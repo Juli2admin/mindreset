@@ -184,15 +184,22 @@ describe('checkStage1Gate — canon-aligned advancement', () => {
     expect(result.reasons).toContain('anchor_not_set');
   });
 
-  it('fails when AI did not recommend advance on the last turn', () => {
+  it('PASSES on the clinical criteria alone when the AI recommended "stay"', () => {
+    // INVERTED by Middle Layer PR 10 (2026-08-14). This test previously
+    // asserted that `recommendedAction: 'stay'` blocked the gate. It no
+    // longer does: the model's advance token was an AND-term for Stages
+    // 1–7 while the master prompt told the model to emit it only after a
+    // confirmed share-back, which made the classic lane depend on one
+    // user utterance. All three canon §10 tokens plus the anchor and the
+    // regulation guards are satisfied here, so the gate passes.
     const turns: AuditTurn[] = [
       makeTurn(3, { readinessTouched: ['anchor_identified'] }),
       makeTurn(2, { readinessTouched: ['emotion_named'] }),
       makeTurn(1, { readinessTouched: ['orientation_present'] }), // stay default
     ];
     const result = checkStage1Gate(makeState(), turns);
-    expect(result.passed).toBe(false);
-    expect(result.reasons).toContain('ai_did_not_recommend_advance');
+    expect(result.passed).toBe(true);
+    expect(result.reasons).not.toContain('ai_did_not_recommend_advance');
   });
 
   it('fails when recent intensity above 5', () => {

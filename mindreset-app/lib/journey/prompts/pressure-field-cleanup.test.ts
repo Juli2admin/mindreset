@@ -467,20 +467,19 @@ describe('share-back — emissions record the event, they do not constitute it',
 // The PR 10 boundary — advancement is untouched
 // ---------------------------------------------------------------------------
 
-describe('advancement coupling is byte-identical (belongs to PR 10)', () => {
-  // `standardGuards` requires `report.recommendedAction === expectedAction`
-  // for every classic gate, Stages 1–7. If PR 9 had softened either
-  // instruction site, users would stop advancing. Both are asserted
-  // verbatim, as full lines.
+describe('advancement coupling — removed by PR 10', () => {
+  // These two assertions previously pinned the coupling VERBATIM, because
+  // PR 9 had to prove it had not touched what the classic gates depended
+  // on. PR 10 removes that dependency in code, so the instructions go with
+  // it. The full behavioural proof lives in advancement-authority.test.ts;
+  // what stays here is the guard that the instructions do not come back.
 
-  it('the share-back triple still instructs recommendedAction: "advance"', () => {
-    expect(master).toContain('\n2. `recommendedAction: "advance"`\n');
+  it('the share-back bundle no longer instructs recommendedAction: "advance"', () => {
+    expect(master).not.toContain('\n2. `recommendedAction: "advance"`\n');
   });
 
-  it('the Block 1 checklist still couples confirmation to advance', () => {
-    expect(master).toContain(
-      '10. **Share-back.** Did the user confirm my shared-back formulation ("yes that\'s me", "yeah that\'s accurate", "yes whole picture", "yes, true")? → Add `"formulation_confirmed"` to `readinessTouched` AND set `recommendedAction: "advance"`.',
-    );
+  it('the Block 1 checklist no longer couples confirmation to advance', () => {
+    expect(master).not.toContain('AND set `recommendedAction: "advance"`');
   });
 
   it('the recommendedAction schema entry is unchanged', () => {

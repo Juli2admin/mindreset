@@ -4,9 +4,12 @@
 // Decides whether the user stays in the current stage, advances to the next,
 // or regresses to grounding / parts work.
 //
-// Code holds the gates. The AI's recommendedAction is advisory — the router
-// only advances when the stage's completion criteria are met AND the AI
-// agrees. Regression and frozen-for-review take precedence over advancement.
+// Code holds the gates. Middle Layer PR 10 (2026-08-14) — `recommendedAction`
+// is now genuinely advisory for ADVANCEMENT: the router advances when the
+// stage's completion criteria are met, full stop. It is still read here for
+// the three things that are the model's call — regression, discharge, and
+// red-flag routing. Regression and frozen-for-review take precedence over
+// advancement.
 
 import prisma from '@/lib/prisma';
 import type { JourneyState } from '../state/types';
