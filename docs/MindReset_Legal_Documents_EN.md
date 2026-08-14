@@ -51,8 +51,7 @@ For the MiniMind subscription, no waiver checkbox is needed — subscriptions ha
 
 **Last updated: 14 May 2026**
 
-**Operator:** **MindReset AI self-help platform**, operated by **Julia Loya** (sole proprietor), based in London, United Kingdom.
-*[NOTE: To be updated when a UK Limited company is registered. The corporate entity, registration number, registered address, and trading name (if changed) will replace this line. The methodology and product structure remain the same.]*
+**Operator:** **MindReset AI self-help platform**, operated by **PROINVESTCO LTD** (company number 15396477), a company registered in England & Wales, based in the United Kingdom.
 
 **Contact:** support@mindreset.ai
 
@@ -90,7 +89,7 @@ The Readiness Check classifies your responses into one of three informational ca
 - You have read and understood the Readiness Check result and the limitations of the Service stated in these Terms;
 - You understand the Service is not appropriate for active crisis, severe psychiatric symptoms, active suicidality, recent psychosis, dissociation requiring clinical care, or other conditions that exceed self-help support;
 - You accept full responsibility for your decision to use the Service;
-- You release the operator of the Service (currently Julia Loya, sole proprietor) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate.
+- You release the operator of the Service (PROINVESTCO LTD) from liability for any harm arising from your use of the Service when the Readiness Check has indicated it may not be appropriate.
 
 ---
 
@@ -308,7 +307,7 @@ For questions about these Terms: support@mindreset.ai
 
 **Last updated: 14 May 2026**
 
-**Data Controller:** **MindReset AI self-help platform**, operated by Julia Loya (sole proprietor), London, United Kingdom — support@mindreset.ai
+**Data Controller:** **MindReset AI self-help platform**, operated by **PROINVESTCO LTD** (company number 15396477), a company registered in England & Wales, based in the United Kingdom — support@mindreset.ai
 
 **ICO Registration:** *[NOTE: To be obtained at ico.org.uk before public launch. Annual fee ~£40-60. Register before any marketing or public availability.]*
 
@@ -551,7 +550,7 @@ Nothing in this Refund Policy excludes your statutory rights under the **Consume
 
 When you take this to a UK solicitor for sign-off (recommended ~£400-800), have them verify:
 
-1. **Entity question** — Julia Loya will register a UK Limited company before public marketing launch. The legal entity name, registration number, and registered address will replace "MindReset AI self-help platform, operated by Julia Loya (sole proprietor)" in all four documents. The methodology, pricing, and product structure remain the same regardless of entity form.
+1. **Entity question** — MindReset is operated by **PROINVESTCO LTD** (company number 15396477), a company registered in England & Wales. The methodology, pricing, and product structure are unchanged from the previous sole-proprietor form.
 2. **Liability cap** — £100 / 6-month payments cap may be challenged in court for special-category data products; solicitor will advise
 3. **Limitation of liability for AI** — case law is evolving; current draft is conservative but may need updates
 4. **Special category data consent wording** — verify the "explicit consent" wording meets Art 9 §2(a) UK GDPR standard for psychological wellbeing data
