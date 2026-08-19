@@ -183,3 +183,39 @@ export function closeBoundaryApplies(args: {
   //    turn-22 shape, and no measurement was validated on it either.
   return evaluateClosureGate(report, sessionTurns, observedAt, captured ?? null).outcome !== 'passed';
 }
+
+/**
+ * When the boundary enters AWAITING_INITIAL_SCORE, what instant does it enter AT?
+ *
+ * THE DEFECT THIS FIXES, observed live 2026-08-19. The boundary asked the
+ * approved question and the user answered "5" — and was asked again, because
+ * orchestrator §3 re-delivered it. §3 decides that with
+ * `countUserMessagesSince(transitionedAt)`, where `0` means "we have not asked
+ * yet". That reading is correct only when the entry timestamp precedes the
+ * user message that triggered it, which is true of the orchestrator's own
+ * entry by pure accident of ordering:
+ *
+ *   orchestrator entry — transition at :399, THEN persistMessages at :440
+ *                        writes the triggering message. Next turn counts it: 1.
+ *   boundary entry     — the triggering message is persisted at :460 BEFORE
+ *                        the model call; the transition happens after the
+ *                        stream. Next turn counts nothing: 0 -> asks again.
+ *
+ * So the boundary anchors immediately BEFORE the message that triggered it,
+ * reproducing the same ordering §3 already expects. Nothing in §3 changes, and
+ * the count keeps its existing meaning: the triggering message is behind us,
+ * so the next message is the reply.
+ *
+ * The 1ms is deliberate rather than cosmetic. `countUserMessagesSince` filters
+ * on `createdAt > since`, so anchoring exactly at the message's own timestamp
+ * would exclude it and reproduce the bug. Both values come from the same
+ * clock — Prisma fills `@default(now())` client-side — so one millisecond is
+ * the whole margin required and any larger offset would only widen the window
+ * for no reason.
+ *
+ * PURE. The only other reader of this timestamp is the 4-hour
+ * interrupted-process check, which is unaffected at millisecond scale.
+ */
+export function boundaryEntryAnchor(triggeringUserMessageAt: Date): Date {
+  return new Date(triggeringUserMessageAt.getTime() - 1);
+}
