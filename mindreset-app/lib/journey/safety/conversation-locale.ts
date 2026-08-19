@@ -33,46 +33,95 @@
 // locale unchanged, so nothing regresses relative to what shipped. The limit is
 // therefore stated plainly rather than hidden: a Russian-speaking user whose
 // message is Latin-only and inconclusive still gets the fallback locale.
+//
+// ---------------------------------------------------------------------------
+// SESSION INHERITANCE (2026-08-19) — the limit above, hit live.
+// ---------------------------------------------------------------------------
+//
+// The stability boundary asks "по шкале от 1 до 10..." and the user answers
+// «5». That reply is language-neutral by construction: the question we ask
+// invites a bare number. So the very next code-authored string — the re-asked
+// question, and then the close-correction — fell back to the URL locale and
+// came out in ENGLISH, mid-close, in a Russian session where the user was at
+// 5/10 and depleted. Observed 2026-08-19.
+//
+// The fix is the third parameter: when THIS message carries no signal, the
+// recent conversation is consulted before the URL locale. A session in which
+// the user has been writing Russian stays Russian across «5», «ок» and «👍».
+//
+// THE ASYMMETRY IS DELIBERATE AND UNCHANGED. `messageLocaleSignal` detects
+// only Russian — Latin script is never read as evidence of English, for the
+// reason stated above. So history can only ever move the answer TOWARD 'ru',
+// never away from a Russian fallback, and the safety property this module was
+// built on survives intact: it can correct a wrong locale, never introduce one.
+//
+// The cost of that asymmetry, stated rather than hidden: an English-writing
+// user who quoted a Cyrillic phrase within the lookback window gets one
+// platform string in Russian. That is the same bet the mixed-script rule
+// already makes ("nobody writes Cyrillic by accident"), and it is the cheap
+// direction of a mistake compared with the failure above.
 
 /** Cyrillic Unicode block. Same range the keyword scanners use. */
 const CYRILLIC = /[Ѐ-ӿԀ-ԯ]/;
 
-/** Any Latin letter. */
-const LATIN = /[A-Za-z]/;
+/**
+ * The language signal ONE message carries, or null when it carries none.
+ *
+ * Russian is the only verdict this can reach, and that is the whole design:
+ *
+ *   - Cyrillic, alone or mixed with Latin, is Russian. Cyrillic is the marked
+ *     script — nobody writes it by accident in an English sentence, whereas
+ *     Latin fragments in Russian (a brand, a borrowed word, a URL) are routine.
+ *   - Latin-only WITH letters looks like English but is also exactly what a
+ *     Russian speaker's "ok" looks like. Deliberately NOT evidence of English.
+ *   - No letters at all — a bare score, punctuation, an emoji — is no signal.
+ *
+ * Exported so callers can ask the cheap question "is this turn's message
+ * inconclusive?" before paying to load any history. Pure.
+ */
+export function messageLocaleSignal(text: string | null | undefined): 'ru' | null {
+  if (!text) return null;
+  if (CYRILLIC.test(text)) return 'ru';
+  // Latin-only and letterless both fall through: neither is evidence.
+  return null;
+}
 
 /**
  * Resolve the language a code-authored conversational message should use.
  *
- * @param text     the user's own message this turn — the only direct evidence
+ * @param text     the user's own message this turn — the most direct evidence
  *                 of what language they are actually writing in
- * @param fallback the URL / stored-preference locale, used when `text` carries
- *                 no script signal at all
+ * @param fallback the URL / stored-preference locale, used only when neither
+ *                 `text` nor `recentUserMessages` carries a signal
+ * @param recentUserMessages
+ *                 the user's own recent messages, newest first. Consulted ONLY
+ *                 when this turn's message is inconclusive — a bare score, an
+ *                 emoji, "ok" — so a Russian session stays Russian across the
+ *                 language-neutral replies our own questions invite. Omit it
+ *                 and the behaviour is byte-for-byte what shipped before.
  *
  * Pure. No I/O, no model call, no persistence.
  */
 export function resolveConversationLocale(
   text: string | null | undefined,
   fallback: string | null | undefined,
+  recentUserMessages?: readonly (string | null | undefined)[],
 ): string | null {
-  if (!text) return fallback ?? null;
+  // 1. This turn's own message always wins when it says anything.
+  const direct = messageLocaleSignal(text);
+  if (direct) return direct;
 
-  const hasCyrillic = CYRILLIC.test(text);
-  const hasLatin = LATIN.test(text);
+  // 2. Otherwise inherit the language the session has been running in. Only
+  //    'ru' is reachable here (see messageLocaleSignal), so this can never
+  //    override a Russian fallback with English.
+  if (recentUserMessages) {
+    for (const message of recentUserMessages) {
+      const signal = messageLocaleSignal(message);
+      if (signal) return signal;
+    }
+  }
 
-  // Unambiguous Russian.
-  if (hasCyrillic && !hasLatin) return 'ru';
-
-  // Mixed script — a Russian sentence with a borrowed word, a brand name, or a
-  // URL. Cyrillic is the marked script here: nobody writes Cyrillic by accident
-  // in an English sentence, whereas Latin fragments in Russian are routine.
-  if (hasCyrillic) return 'ru';
-
-  // Latin-only WITH letters is a positive signal for English, but it is also
-  // what a Russian speaker's "ok" looks like. Deliberately NOT treated as
-  // evidence of English: fall back instead, so this function can only ever
-  // correct a wrong locale, never introduce one.
-  if (hasLatin) return fallback ?? null;
-
-  // No letters at all — a bare score, punctuation, an emoji. No signal.
+  // 3. Nothing in the conversation says anything. The URL / stored preference
+  //    is all that is left — the original behaviour, unchanged.
   return fallback ?? null;
 }
