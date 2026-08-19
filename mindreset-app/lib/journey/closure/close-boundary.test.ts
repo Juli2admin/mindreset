@@ -52,7 +52,11 @@ import { measurementRequired } from './orchestrator';
 import { getStabilityQuestionForLocale } from './stability-question';
 import {
   CLOSURE_PROCESS_NONE,
+  CLOSURE_PROCESS_STATES,
   isAllowedTransition,
+  isActiveProcessState,
+  normaliseClosureProcess,
+  resolveClosureProcessForTurn,
   transitionClosureProcess,
   blocksProgression,
 } from './process';
@@ -333,10 +337,12 @@ describe('streaming is exactly production, on every turn', () => {
     ).toBe(1);
   });
 
-  it('the boundary is reached only from an idle, unconstrained turn', () => {
+  it('the boundary is reached only from an unconstrained, transition-eligible turn', () => {
     expect(route).toContain(
-      "closureOrchestration.kind === 'proceed' &&\n          state.closureProcess.state === 'NONE' &&",
+      "closureOrchestration.kind === 'proceed' &&\n          isAllowedTransition(state.closureProcess.state, 'AWAITING_INITIAL_SCORE') &&",
     );
+    // The hand-picked state comparison is gone for good.
+    expect(route).not.toContain("state.closureProcess.state === 'NONE'");
   });
 
   it('no extra model call is made', () => {
@@ -486,6 +492,123 @@ describe('nothing is duplicated', () => {
     // the boundary enters AWAITING_INITIAL_SCORE, so the two never collide.
     expect(route).toContain("if (args.closureProcess.state === 'DELIVERING_STABILISATION') {");
     expect(route).toContain("'AWAITING_INITIAL_SCORE',");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 7b. Process eligibility (2026-08-19) — the regression from the first live
+//     test of this boundary.
+// ---------------------------------------------------------------------------
+//
+// THE DEFECT. The gate was `state.closureProcess.state === 'NONE'`, copied
+// from orchestrator.ts §4. But `INCOMPLETE` is RETAINED forever by design —
+// resolveClosureProcessForTurn: "the approved semantics keep the previous
+// attempt on record rather than silently re-arming it" — so any user whose
+// closure attempt once ended INCOMPLETE could never satisfy that gate again.
+//
+// Observed live on 2026-08-19: the row had read INCOMPLETE since 2026-08-13.
+// The Clinician closed a session that peaked at intensity 8, with
+// `safetyFlag: "watch"` on every turn and only an `ambiguous`-scale reading,
+// and the boundary never ran. Nothing errored; the turn looked normal.
+//
+// THE FIX. Ask the transition table instead of naming a state. Eligibility is
+// exactly "may this turn open a stability check from here", which is what
+// `isAllowedTransition(state, 'AWAITING_INITIAL_SCORE')` already answers.
+
+describe('process eligibility is the transition table', () => {
+  it('exactly NONE and INCOMPLETE are eligible — enumerated, not asserted', () => {
+    const eligible = CLOSURE_PROCESS_STATES.filter((s) =>
+      isAllowedTransition(s, 'AWAITING_INITIAL_SCORE'),
+    );
+    expect([...eligible].sort()).toEqual(['INCOMPLETE', 'NONE']);
+  });
+
+  it('fires from NONE', () => {
+    expect(isAllowedTransition('NONE', 'AWAITING_INITIAL_SCORE')).toBe(true);
+    expect(transitionClosureProcess(CLOSURE_PROCESS_NONE, 'AWAITING_INITIAL_SCORE', { now: NOW }).ok).toBe(true);
+  });
+
+  it('fires from INCOMPLETE — the live 2026-08-19 row', () => {
+    const stuck = normaliseClosureProcess({
+      state: 'INCOMPLETE',
+      route: 'ACTIVATED_CLOSE',
+      enteredAt: new Date('2026-08-08T14:07:47.776Z'),
+      transitionedAt: new Date('2026-08-13T11:41:43.365Z'),
+      roundCount: 2,
+      initialScore: 2,
+      postScore: 5,
+      freezeInterruptedAt: null,
+    } as never);
+    expect(stuck.state).toBe('INCOMPLETE');
+    // Retained, never re-armed — this is why the old gate could not recover.
+    expect(resolveClosureProcessForTurn(stuck, NOW).changed).toBe(false);
+    expect(resolveClosureProcessForTurn(stuck, NOW).process.state).toBe('INCOMPLETE');
+    // ...and the new gate admits it.
+    expect(isAllowedTransition(stuck.state, 'AWAITING_INITIAL_SCORE')).toBe(true);
+    expect(transitionClosureProcess(stuck, 'AWAITING_INITIAL_SCORE', { now: NOW }).ok).toBe(true);
+  });
+
+  it('still refuses every mid-sequence state', () => {
+    for (const s of [
+      'AWAITING_INITIAL_SCORE',
+      'AWAITING_POST_SCORE',
+      'DELIVERING_STABILISATION',
+    ] as const) {
+      expect(isActiveProcessState(s)).toBe(true);
+      expect(isAllowedTransition(s, 'AWAITING_INITIAL_SCORE')).toBe(false);
+    }
+  });
+
+  it('does not admit CLOSED — which never reaches the gate anyway', () => {
+    expect(isAllowedTransition('CLOSED', 'AWAITING_INITIAL_SCORE')).toBe(false);
+    // A substantive turn re-arms CLOSED to NONE before the boundary is
+    // reached, so the eligible path is CLOSED -> NONE -> AWAITING_INITIAL_SCORE.
+    const closed = normaliseClosureProcess({ state: 'CLOSED', completedAt: NOW } as never);
+    const resolved = resolveClosureProcessForTurn(closed, NOW);
+    expect(resolved.changed).toBe(true);
+    expect(resolved.process.state).toBe('NONE');
+    expect(isAllowedTransition(resolved.process.state, 'AWAITING_INITIAL_SCORE')).toBe(true);
+  });
+
+  it('a retained attempt lends the gate nothing — stale scores are not reused', () => {
+    // process.ts on a retained INCOMPLETE: "do not reuse anything from it,
+    // require a fresh current-state assessment". The route passes
+    // `captured: null`; even if a stale score were offered it could not
+    // validate this close.
+    const staleAt = new Date('2026-08-13T11:41:43.365Z').toISOString();
+    expect(
+      closeBoundaryApplies({
+        report: CLOSING,
+        sessionTurns: DESTABILISED,
+        observedAt: NOW,
+        captured: { score: 9, at: staleAt },
+      }),
+    ).toBe(true);
+    // A FRESH score at or above threshold still clears it, unchanged.
+    expect(
+      closeBoundaryApplies({
+        report: CLOSING,
+        sessionTurns: DESTABILISED,
+        observedAt: NOW,
+        captured: { score: 9, at: min(2).toISOString() },
+      }),
+    ).toBe(false);
+  });
+
+  it('no other closure behaviour was touched', () => {
+    // orchestrator §4 keeps its own `=== 'NONE'` entry condition. Asserted so
+    // this fix cannot be mistaken for having widened user-initiated exits.
+    const orch = readFileSync(
+      path.join(process.cwd(), 'lib/journey/closure/orchestrator.ts'),
+      'utf8',
+    );
+    expect(orch).toContain("if (process.state === 'NONE') {");
+    // And INCOMPLETE is still retained rather than re-armed.
+    const proc = readFileSync(
+      path.join(process.cwd(), 'lib/journey/closure/process.ts'),
+      'utf8',
+    );
+    expect(proc).toContain('INCOMPLETE is RETAINED');
   });
 });
 
