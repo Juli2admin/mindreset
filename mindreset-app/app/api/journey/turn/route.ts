@@ -37,15 +37,20 @@ import {
   claimsClosure,
   failSafeClosureGate,
   type ClosureGateResult,
+  type ClosureTurn,
 } from '@/lib/journey/closure/guard';
 // Activated Closure Phase 1 — server-owned process orchestration. Separate
 // concern from the guard above: the guard validates a closure CLAIM after the
 // reply has streamed; this owns the closure PROCESS before the model runs.
-import { runClosureOrchestration } from '@/lib/journey/closure/orchestrator';
+import {
+  runClosureOrchestration,
+  measurementRequired,
+} from '@/lib/journey/closure/orchestrator';
 import { appendClosureNote } from '@/lib/journey/closure/state-notes';
 import { stabilisationDelivered } from '@/lib/journey/closure/stabilisation-evidence';
 import { persistClosureProcess } from '@/lib/journey/closure/persist';
-import { closeCorrectionFor } from '@/lib/journey/closure/close-guard';
+import { closeCorrectionFor, closeBoundaryApplies } from '@/lib/journey/closure/close-guard';
+import { getStabilityQuestionForLocale } from '@/lib/journey/closure/stability-question';
 import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
@@ -465,6 +470,56 @@ export async function POST(request: NextRequest) {
   });
   recent.reverse();
 
+  // ------------------------------------------------------------------
+  // Stability boundary — arming (2026-08-19).
+  //
+  // journey-master.md:362 forbids any session-pause or session-close move in a
+  // session that destabilised until an explicit stability check has been run.
+  // Enforcement has only ever been possible after the fact, because the claim
+  // that a close is happening lives in the state report, which the model emits
+  // AFTER the reply. So the boundary needs the reply held back — and the
+  // decision to hold it has to be made before the first token arrives.
+  //
+  // This is the whole cost of the boundary, and it is bounded three ways:
+  //   * it never runs unless the closure process is idle AND the orchestration
+  //     hook chose `proceed` — an active process already owns its own turn;
+  //   * the query decrypts nothing. `measurementRequired` reads only
+  //     `createdAt`, `intensity` and `safetyFlag` (guard.ts —
+  //     `currentSessionTurns` + `findDestabilisation`; `ClosureTurn.cycleStatus`
+  //     is declared on the type but never read by either), so three plain
+  //     columns are the whole input;
+  //   * a session that never reached intensity 6 leaves `armedSessionTurns`
+  //     null, and every line downstream of it is skipped. Those turns stream
+  //     byte-identically to before this change.
+  //
+  // Fail-open: any error here disarms the boundary, which is exactly today's
+  // behaviour. Refusing a user their reply over a failed history read would be
+  // a worse outcome than the failure this guards against.
+  let armedSessionTurns: ClosureTurn[] | null = null;
+  if (closureOrchestration.kind === 'proceed' && state.closureProcess.state === 'NONE') {
+    try {
+      const rows = await prisma.journeyTurn.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: HISTORY_LIMIT,
+        select: { createdAt: true, intensityReported: true, safetyFlag: true },
+      });
+      const sessionWindow: ClosureTurn[] = rows.map((r, i) => ({
+        n: rows.length - i,
+        createdAt: r.createdAt,
+        intensity: r.intensityReported,
+        safetyFlag: r.safetyFlag,
+        cycleStatus: null,
+      }));
+      if (measurementRequired(sessionWindow, new Date())) armedSessionTurns = sessionWindow;
+    } catch (err) {
+      console.error('[journey/stability-boundary] arming query failed; boundary disarmed', {
+        userId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
   // System prompt is assembled as a block array so Anthropic prompt
   // caching can cache the canon (Shared Core + active stage spec) +
   // master-before-state. Dynamic content (the state block + master tail)
@@ -556,6 +611,20 @@ export async function POST(request: NextRequest) {
 
   const encoder = new TextEncoder();
 
+  // Stability boundary — delivery. On an armed turn the visible text is held
+  // here instead of going straight out; on every other turn this array stays
+  // empty and is never touched.
+  const held: string[] = [];
+  const boundaryArmed = armedSessionTurns !== null;
+  /** True once `held` has been sent (or deliberately dropped). */
+  let heldSettled = false;
+  // Set when the boundary actually fires, so the background finaliser persists
+  // what the user was SHOWN rather than the prose that was withheld.
+  let deliveredInstead: string | null = null;
+  // Parsed once, with one clock, and handed to finaliseTurn (below) so the
+  // boundary decision and the persisted record cannot diverge.
+  let preParsed: { report: StateReport; observedAt: Date } | null = null;
+
   const readable = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
@@ -580,13 +649,101 @@ export async function POST(request: NextRequest) {
           ) {
             const visible = ingestChunk(processor, event.delta.text);
             if (visible.length > 0) {
-              controller.enqueue(encoder.encode(visible));
+              if (boundaryArmed) held.push(visible);
+              else controller.enqueue(encoder.encode(visible));
             }
           }
         }
         const tail = finaliseStream(processor);
         if (tail.length > 0) {
-          controller.enqueue(encoder.encode(tail));
+          if (boundaryArmed) held.push(tail);
+          else controller.enqueue(encoder.encode(tail));
+        }
+
+        // ------------------------------------------------------------------
+        // Stability boundary — decision and flush (2026-08-19).
+        //
+        // Everything the decision needs now exists: `processor.fullText` holds
+        // the reply AND the <state-report>, and nothing has reached the user.
+        // The report is parsed exactly once here, with one `observedAt`, and
+        // that same pair is handed to finaliseTurn so there is no second parse
+        // and no second clock.
+        //
+        // Only the DELIVERY changes. The report is archived as the model wrote
+        // it, `applyClosureGate` still governs the record downstream, and the
+        // Inspector still shows the close claim that was refused.
+        // ------------------------------------------------------------------
+        if (armedSessionTurns !== null) {
+          let withhold = false;
+          try {
+            const observedAt = new Date();
+            const split = splitReplyAndReport(processor.fullText);
+            preParsed = {
+              report: parseStateReport(split.rawStateReport, { observedAt }),
+              observedAt,
+            };
+            withhold = closeBoundaryApplies({
+              report: preParsed.report,
+              sessionTurns: armedSessionTurns,
+              observedAt,
+              // The closure process is NONE on every armed turn (checked at
+              // arming), so it holds no captured score. Passed explicitly
+              // rather than defaulted so the reuse is visible.
+              captured: null,
+            });
+          } catch (err) {
+            // Never cost the user their reply over this check.
+            console.error('[journey/stability-boundary] check failed; delivering reply', {
+              userId,
+              error: err instanceof Error ? err.message : String(err),
+            });
+            withhold = false;
+          }
+
+          if (withhold) {
+            // The Clinician's closing prose is not delivered. The user gets the
+            // approved stability question instead — the same text, from the
+            // same function, that the orchestrator's exit-intent path delivers
+            // when it enters this state.
+            const question = getStabilityQuestionForLocale(conversationLocale);
+            controller.enqueue(encoder.encode(question));
+            deliveredInstead = question;
+            heldSettled = true;
+
+            // Enter the existing closure path, mirroring orchestrator.ts §4
+            // exactly: the same transition, the same writer, the same state.
+            // From here the established machinery owns the close — next turn
+            // the orchestrator captures the user's score, and the stabilisation
+            // and INCOMPLETE routes work as they already do.
+            try {
+              const entered = transitionClosureProcess(
+                state.closureProcess,
+                'AWAITING_INITIAL_SCORE',
+                { now: preParsed?.observedAt ?? new Date() },
+              );
+              if (entered.ok) {
+                const written = await persistClosureProcess(
+                  userId,
+                  state.closureProcess,
+                  entered.process,
+                  'clinician_close_without_measurement',
+                );
+                state.closureProcess = written.process;
+              }
+            } catch (err) {
+              console.error('[journey/stability-boundary] process entry failed', {
+                userId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            }
+            console.warn('[journey/stability-boundary] closing reply withheld', {
+              userId,
+              stageAtTurn: state.currentStage,
+            });
+          } else {
+            for (const chunk of held) controller.enqueue(encoder.encode(chunk));
+            heldSettled = true;
+          }
         }
 
         // Closing invariant, user-visible half (owner-approved 2026-08-08).
@@ -636,6 +793,14 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         // Surface a soft error to the client; details go to Sentry/logs.
         console.error('[journey/turn] stream error', err);
+        // Stability boundary: a stream that died produced no state report, so
+        // the boundary has nothing to evaluate and must not silently eat the
+        // partial text it was holding. Flushing here keeps a failed armed turn
+        // identical to a failed ordinary turn — partial reply, then the notice.
+        if (!heldSettled) {
+          for (const chunk of held) controller.enqueue(encoder.encode(chunk));
+          heldSettled = true;
+        }
         controller.enqueue(encoder.encode('\n\n[Connection interrupted. Please try again.]'));
       } finally {
         controller.close();
@@ -680,6 +845,11 @@ export async function POST(request: NextRequest) {
                 stopReason: msg?.stop_reason ?? null,
                 outputTokens: msg?.usage?.output_tokens ?? null,
                 closureProcess: state.closureProcess,
+                // Stability boundary: reuse the single parse + single clock
+                // from the delivery decision, and persist what the user was
+                // actually shown when the closing prose was withheld.
+                preParsed,
+                deliveredInstead,
               }),
             )
             // The reply has already streamed by this point; a background
@@ -730,14 +900,34 @@ async function finaliseTurn(args: {
   outputTokens: number | null;
   /** Authoritative closure record as the pre-LLM hook left it this turn. */
   closureProcess: ClosureProcess;
+  /**
+   * Stability boundary (2026-08-19). On an armed turn the delivery decision
+   * already parsed the report with its own trusted clock. Reusing that pair
+   * here is what keeps finding B2's "one clock reading governs this turn"
+   * true across the new boundary: without it the same text would be parsed
+   * twice, stamped with two different `observedAt`s, and could produce two
+   * different gate verdicts. Null on every ordinary turn, which parses here
+   * exactly as before.
+   */
+  preParsed?: { report: StateReport; observedAt: Date } | null;
+  /**
+   * Set only when the boundary withheld the Clinician's reply. The report is
+   * still archived as written — only the persisted TRANSCRIPT follows what the
+   * user was shown, so a page reload and the next turn's history both match
+   * their screen.
+   */
+  deliveredInstead?: string | null;
 }): Promise<void> {
   const split = splitReplyAndReport(args.fullText);
   // ONE trusted server clock reading governs this whole turn: it is stamped
   // onto every measurement as `observedAt` AND handed to the closure guard,
   // so ordering is exact rather than a race between parse time and guard
-  // time (review finding B2, 2026-07-28).
-  const observedAt = new Date();
-  const parsedReport = parseStateReport(split.rawStateReport, { observedAt });
+  // time (review finding B2, 2026-07-28). When the stability boundary already
+  // took that reading before delivery, it is the one that governs — taking a
+  // second one here would reintroduce exactly the divergence B2 removed.
+  const observedAt = args.preParsed?.observedAt ?? new Date();
+  const parsedReport =
+    args.preParsed?.report ?? parseStateReport(split.rawStateReport, { observedAt });
 
   // ------------------------------------------------------------------
   // Closure guard (repair 2026-07-28 — scale semantics + closure gating).
@@ -892,10 +1082,15 @@ async function finaliseTurn(args: {
       stageAtTurn: args.stageAtTurn,
     });
   }
+  // Stability boundary: when the closing prose was withheld, the transcript
+  // records the stability question the user actually received. Persisting the
+  // withheld goodbye would show it on their next page load and feed it back
+  // into the next turn's history as though it had been said.
   const persistedReply =
-    leakCheck.leaked || split.humanReply.length === 0
+    args.deliveredInstead ??
+    (leakCheck.leaked || split.humanReply.length === 0
       ? LEAK_USER_PLACEHOLDER
-      : split.humanReply;
+      : split.humanReply);
   await prisma.journeyMessage.create({
     data: {
       userId: args.userId,
