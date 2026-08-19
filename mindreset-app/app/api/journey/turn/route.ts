@@ -53,7 +53,10 @@ import {
   claimsVisibleClose,
 } from '@/lib/journey/closure/close-guard';
 import { getStabilityQuestionForLocale } from '@/lib/journey/closure/stability-question';
-import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
+import {
+  resolveConversationLocale,
+  messageLocaleSignal,
+} from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
   isAllowedTransition,
@@ -120,6 +123,14 @@ const MAX_USER_MESSAGE_CHARS = 4000;
 // so the responsive-lift bias is warranted.
 const JOURNEY_COOLDOWN_MIN_WAIT_MS = 20 * 1000;
 
+// How far back the conversation locale looks when THIS turn's message carries
+// no script signal (2026-08-19). Five is the span of one closing exchange —
+// question, score, practice, acknowledgement — which is exactly the stretch of
+// language-neutral replies our own closure questions invite. Long enough that a
+// «5» inherits the Russian it was answered in; short enough that a language
+// switch three sessions ago cannot reach forward.
+const LOCALE_LOOKBACK_MESSAGES = 5;
+
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -169,7 +180,46 @@ export async function POST(request: NextRequest) {
   // resolveConversationLocale reads this turn's own message and falls back to
   // the URL locale when the text carries no script signal, so it can only ever
   // correct a wrong locale, never introduce one.
-  const conversationLocale = resolveConversationLocale(userMessage, body.locale ?? null);
+  //
+  // SESSION INHERITANCE (2026-08-19). The one message guaranteed to carry no
+  // script signal is the one our own stability question asks for: a bare «5».
+  // On 2026-08-19 that fell back to the URL locale and put the re-asked
+  // question and the close-correction into English, mid-close, in a Russian
+  // session. So when — and only when — this turn's message is inconclusive, the
+  // recent conversation is consulted first.
+  //
+  // The extra read is paid by nobody else: `messageLocaleSignal` is a regex
+  // over the message we already have, and an ordinary Russian or English
+  // sentence answers it outright. Failure is non-fatal and lands exactly on
+  // the previous behaviour — a locale lookup must never cost a user their
+  // crisis response.
+  let conversationLocale = resolveConversationLocale(userMessage, body.locale ?? null);
+  if (messageLocaleSignal(userMessage) === null) {
+    try {
+      const recentUserRows = await prisma.journeyMessage.findMany({
+        where: { userId, role: 'user' },
+        orderBy: { createdAt: 'desc' },
+        take: LOCALE_LOOKBACK_MESSAGES,
+        select: { contentEncrypted: true },
+      });
+      conversationLocale = resolveConversationLocale(
+        userMessage,
+        body.locale ?? null,
+        recentUserRows.map((m) => {
+          try {
+            return decrypt(m.contentEncrypted);
+          } catch {
+            return null;
+          }
+        }),
+      );
+    } catch (err) {
+      console.error('[journey/turn] locale history lookup failed; using fallback locale', {
+        userId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
 
   // Localised crisis response. Default to EN if absent or unknown — never
   // silently fail to deliver SOME canned response in a Red Flag situation.
