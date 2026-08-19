@@ -55,6 +55,7 @@ import { getStabilityQuestionForLocale } from '@/lib/journey/closure/stability-q
 import { resolveConversationLocale } from '@/lib/journey/safety/conversation-locale';
 import {
   transitionClosureProcess,
+  isAllowedTransition,
   type ClosureProcess,
 } from '@/lib/journey/closure/process';
 import { loadRecentTurns } from '@/lib/journey/router/history';
@@ -663,10 +664,38 @@ export async function POST(request: NextRequest) {
         // Mutually exclusive with the close-guard correction below, which
         // requires a 'stabilisation' note: this branch requires `proceed`,
         // which carries no note at all.
+        //
+        // ELIGIBILITY IS THE TRANSITION TABLE, NOT A HAND-PICKED STATE
+        // (2026-08-19, after the first live test of this boundary).
+        //
+        // This gate was `state === 'NONE'`, copied from orchestrator.ts §4.
+        // That is the wrong predicate. `INCOMPLETE` is RETAINED forever by
+        // design — resolveClosureProcessForTurn says so in its own words,
+        // "the approved semantics keep the previous attempt on record rather
+        // than silently re-arming it" — so a user whose closure attempt ever
+        // ended INCOMPLETE could never satisfy `=== 'NONE'` again. In the
+        // live session of 2026-08-19 the row had been INCOMPLETE since
+        // 2026-08-13; the Clinician closed a session that had peaked at
+        // intensity 8 with only an `ambiguous`-scale reading, and this branch
+        // was never entered.
+        //
+        // `isAllowedTransition(state, 'AWAITING_INITIAL_SCORE')` asks the
+        // transition table the exact question the code is about to act on:
+        // may this turn open a stability check from here? It answers true for
+        // NONE and INCOMPLETE and false for every mid-sequence state, and it
+        // cannot drift from ALLOWED_TRANSITIONS because it IS
+        // ALLOWED_TRANSITIONS. CLOSED never reaches here — a substantive turn
+        // re-arms it to NONE in resolveClosureProcessForTurn first.
+        //
+        // The INCOMPLETE -> AWAITING_INITIAL_SCORE edge already existed for
+        // precisely this purpose; process.ts calls it "the existing
+        // INCOMPLETE -> AWAITING_INITIAL_SCORE edge to begin a fresh
+        // assessment". Nothing about the orchestrator's own entry condition
+        // changes here.
         // ------------------------------------------------------------------
         if (
           closureOrchestration.kind === 'proceed' &&
-          state.closureProcess.state === 'NONE' &&
+          isAllowedTransition(state.closureProcess.state, 'AWAITING_INITIAL_SCORE') &&
           preParsed !== null &&
           (claimsVisibleClose(preParsed.report) || claimsClosure(preParsed.report))
         ) {
@@ -691,8 +720,15 @@ export async function POST(request: NextRequest) {
                 report,
                 sessionTurns,
                 observedAt,
-                // The process is NONE on this branch, so it holds no captured
-                // score. Passed explicitly so the reuse is visible.
+                // Always null, and now load-bearing rather than incidental.
+                // An INCOMPLETE process can still carry the scores of the
+                // attempt that failed — this user's row holds an initial 2
+                // and a post 5 from 2026-08-08/13 — and process.ts is explicit
+                // that a retained attempt means "do not reuse anything from
+                // it, require a fresh current-state assessment". Passing them
+                // would offer a days-old number to the gate. (It would fail
+                // the freshness check anyway; not offering it is the honest
+                // version.)
                 captured: null,
               })
             ) {
