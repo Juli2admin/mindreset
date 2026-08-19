@@ -415,8 +415,17 @@ describe('one authoritative observedAt', () => {
     );
   });
 
-  it('the same instant is what enters the closure process', () => {
-    expect(route).toContain("'AWAITING_INITIAL_SCORE',\n                { now: observedAt },");
+  it('the process entry is anchored on the triggering message, not on observedAt', () => {
+    // CHANGED 2026-08-19 after the live duplicate-question defect. `observedAt`
+    // is taken after this turn's user message was persisted, which made
+    // orchestrator §3 read "we have not asked yet" and ask again. The entry
+    // now anchors immediately before that message; the gate and every
+    // measurement still run on the one trusted reading. Full reasoning and the
+    // end-to-end regression live in boundary-entry-anchor.test.ts.
+    expect(route).toContain(
+      "'AWAITING_INITIAL_SCORE',\n                { now: boundaryEntryAnchor(userMessageRow.createdAt) },",
+    );
+    expect(route).not.toContain('{ now: observedAt },');
   });
 
   it('the gate is still handed that one reading, as finding B2 requires', () => {

@@ -49,6 +49,7 @@ import { persistClosureProcess } from '@/lib/journey/closure/persist';
 import {
   closeCorrectionFor,
   closeBoundaryApplies,
+  boundaryEntryAnchor,
   claimsVisibleClose,
 } from '@/lib/journey/closure/close-guard';
 import { getStabilityQuestionForLocale } from '@/lib/journey/closure/stability-question';
@@ -454,13 +455,19 @@ export async function POST(request: NextRequest) {
 
   // Persist the user's message before calling the LLM so we don't lose it on
   // an LLM error.
-  await prisma.journeyMessage.create({
+  //
+  // The row's `createdAt` is kept: the stability boundary below anchors its
+  // closure-process entry immediately before this message, which is what lets
+  // orchestrator §3 see that the question has already been asked. See
+  // `boundaryEntryAnchor`.
+  const userMessageRow = await prisma.journeyMessage.create({
     data: {
       userId,
       role: 'user',
       contentEncrypted: encrypt(userMessage),
       stageAtTime: state.currentStage,
     },
+    select: { createdAt: true },
   });
 
   // History — most recent N turns, oldest first for the Anthropic call.
@@ -744,10 +751,17 @@ export async function POST(request: NextRequest) {
               //    established machinery owns the close: next turn the
               //    orchestrator captures the user's score, and the stabilisation
               //    and INCOMPLETE routes work as they already do.
+              // Anchored immediately before this turn's user message, not at
+              // `observedAt`. `observedAt` is after that message was persisted,
+              // which made orchestrator §3's "has the user spoken since we
+              // asked" count read 0 and re-deliver the question — the live
+              // duplicate of 2026-08-19. See `boundaryEntryAnchor`. The gate
+              // and every measurement still use `observedAt`; only the process
+              // entry timestamp moves.
               const entered = transitionClosureProcess(
                 state.closureProcess,
                 'AWAITING_INITIAL_SCORE',
-                { now: observedAt },
+                { now: boundaryEntryAnchor(userMessageRow.createdAt) },
               );
               if (entered.ok) {
                 const written = await persistClosureProcess(
