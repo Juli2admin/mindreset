@@ -131,19 +131,27 @@ export function closeCorrectionFor(args: {
 //     already the single authority on that question.
 // No wording is inspected. No new threshold, scale, or clinical rule exists
 // here.
+//
+// WHAT IT ENFORCES, PRECISELY. The session STATE and PROCESS, not the words.
+// This predicate is evaluated after the reply has streamed, so a caller acting
+// on `true` cannot un-say a goodbye the user has already read. What it can do —
+// and what the route does — is refuse to accept the close, enter the existing
+// AWAITING_INITIAL_SCORE state, and immediately ask the approved stability
+// question, converting an invalid close into the stability check the protocol
+// required in the first place. Corrective enforcement, not suppression.
 
 /**
- * Must this turn's closing reply be withheld?
+ * Is this turn's close/pause claim invalid for want of a stability measurement?
  *
  * PURE. `sessionTurns` is the raw recent-turn window; both
  * `measurementRequired` and `evaluateClosureGate` narrow it to the current
  * session themselves, using the same `observedAt` so one clock governs both.
  *
- * FAILS OPEN ON DELIVERY, deliberately. Every branch that cannot establish a
- * violation returns false, so a missing or unparseable state report costs the
- * user nothing — they get their reply. The boundary only fires on a positive,
- * structured claim that the session is being ended without the measurement the
- * protocol requires.
+ * FAILS CLOSED ON THE VERDICT — it never invents a violation. Every branch that
+ * cannot establish one returns false, so a missing or unparseable state report
+ * changes nothing about the turn. It returns true only on a positive,
+ * structured claim that the session is being ended or parked without the
+ * measurement the protocol requires.
  */
 export function closeBoundaryApplies(args: {
   report: StateReport;
