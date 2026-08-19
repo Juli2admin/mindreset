@@ -31,6 +31,13 @@
 
 import type { StateReport } from '../stateReport/schema';
 import type { ClosureNoteKind } from './state-notes';
+import {
+  claimsClosure,
+  evaluateClosureGate,
+  type CapturedMeasurement,
+  type ClosureTurn,
+} from './guard';
+import { measurementRequired } from './orchestrator';
 
 /**
  * Owner-approved copy (2026-08-08). Do not reword without owner approval.
@@ -89,4 +96,90 @@ export function closeCorrectionFor(args: {
   if (args.note !== 'stabilisation') return null;
   if (!claimsVisibleClose(args.report)) return null;
   return getCloseCorrectionForLocale(args.locale);
+}
+
+// ---------------------------------------------------------------------------
+// The stability boundary (2026-08-19)
+// ---------------------------------------------------------------------------
+//
+// THE DEFECT, from the live session of 2026-08-17 (25 turns, all Stage 3).
+// Intensity reached 7 four times and 6 on twelve turns; `stabilityCheck` was
+// never emitted on any turn; the Clinician emitted
+// `moveJustPerformed: ["universal.session_close"]` on turns 22 AND 23 and told
+// the user the session was finished. `applyClosureGate` did its job — the
+// archived turn-23 row carries
+// `closureGate: {outcome: "blocked", reasons: ["no_stability_measurement"]}` —
+// but it runs after the reply has streamed, so it corrected the RECORD and
+// nothing else. `closeCorrectionFor` above could not help either: it requires
+// a `'stabilisation'` note, and the closure process was `NONE` because the
+// process is entered by USER exit intent (orchestrator.ts §4) and this close
+// was the Clinician's own.
+//
+// THE RULE IS EXISTING METHODOLOGY, NOT A NEW ONE. journey-master.md:362:
+// "If the user has DESTABILISED in this session at any point (intensity >= 6
+// at any turn...), you do NOT close the session on vague reassurance. Before
+// any session-pause or session-close move: 1. Run an explicit stability
+// check." The thresholds are the constants already in guard.ts.
+//
+// THIS FUNCTION ADDS NO JUDGEMENT OF ITS OWN. It composes three existing
+// authorities and nothing else:
+//   * does this turn end or park the session — `claimsVisibleClose` (the
+//     model's own canonical move) OR `claimsClosure` (its record claim);
+//   * does this session need a measurement — `measurementRequired`, the same
+//     function the orchestrator's exit-intent path uses;
+//   * has a valid measurement been taken — `evaluateClosureGate`, which is
+//     already the single authority on that question.
+// No wording is inspected. No new threshold, scale, or clinical rule exists
+// here.
+//
+// WHAT IT ENFORCES, PRECISELY. The session STATE and PROCESS, not the words.
+// This predicate is evaluated after the reply has streamed, so a caller acting
+// on `true` cannot un-say a goodbye the user has already read. What it can do —
+// and what the route does — is refuse to accept the close, enter the existing
+// AWAITING_INITIAL_SCORE state, and immediately ask the approved stability
+// question, converting an invalid close into the stability check the protocol
+// required in the first place. Corrective enforcement, not suppression.
+
+/**
+ * Is this turn's close/pause claim invalid for want of a stability measurement?
+ *
+ * PURE. `sessionTurns` is the raw recent-turn window; both
+ * `measurementRequired` and `evaluateClosureGate` narrow it to the current
+ * session themselves, using the same `observedAt` so one clock governs both.
+ *
+ * FAILS CLOSED ON THE VERDICT — it never invents a violation. Every branch that
+ * cannot establish one returns false, so a missing or unparseable state report
+ * changes nothing about the turn. It returns true only on a positive,
+ * structured claim that the session is being ended or parked without the
+ * measurement the protocol requires.
+ */
+export function closeBoundaryApplies(args: {
+  report: StateReport;
+  /** Recent turns for this user, newest-first or oldest-first — both work. */
+  sessionTurns: ClosureTurn[];
+  /** The single trusted server clock reading for this turn. */
+  observedAt: Date;
+  /** Code-captured user-reported score, when the closure process holds one. */
+  captured?: CapturedMeasurement | null;
+}): boolean {
+  const { report, sessionTurns, observedAt, captured } = args;
+
+  // 1. Does this turn end or park the session? `universal.session_close` is
+  //    the model's own structured claim that it performed a session close —
+  //    the same signal closeCorrectionFor reads, and the one present on both
+  //    failing turns of the live session. `claimsClosure` catches the
+  //    record-level claim when the visible move was omitted.
+  if (!claimsVisibleClose(report) && !claimsClosure(report)) return false;
+
+  // 2. Does this session require a measurement at all? Sessions that never
+  //    destabilised are none of this boundary's business — the same
+  //    proportionality rule the guard states for itself.
+  if (!measurementRequired(sessionTurns, observedAt)) return false;
+
+  // 3. Has one actually been completed and validated? `passed` is the only
+  //    outcome that says yes. `blocked` is an explicit no. `not_applicable`
+  //    here can only mean the turn claimed no closure in the gate's own
+  //    sense (a visible close with no record claim) — which is precisely the
+  //    turn-22 shape, and no measurement was validated on it either.
+  return evaluateClosureGate(report, sessionTurns, observedAt, captured ?? null).outcome !== 'passed';
 }
