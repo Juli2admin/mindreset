@@ -271,6 +271,43 @@ const THIRD_PERSON: string[] = [
 ];
 
 /**
+ * Reported-speech guard for the NO-PREDICATE deferral branch ONLY (2026-08-24).
+ *
+ * In the session of 2026-08-24 the user described her childhood — her wishes
+ * dismissed with «Либо, ой, ну давай в другой раз» — and the words her MOTHER
+ * used matched DEFERRAL (`в другой раз`) + COOPERATIVE (`давай`) with no
+ * predicate, so step 6 read the quote as the user asking to leave. The closure
+ * machinery captured her next score and closed the session mid-breakthrough;
+ * she had to override («я не хочу, чтобы мы останавливались»).
+ *
+ * This list is THIRD_PERSON plus the past-tense speech verbs that introduce a
+ * quote («мама говорила: давай в другой раз» carries no pronoun at all). It is
+ * deliberately a SEPARATE constant consulted only in the deferral branch:
+ * extending THIRD_PERSON itself would also move the predicate path (step 7),
+ * which this fix must not touch. The known ambiguity — «как я говорила, давай
+ * потом» is first person and would be suppressed — is the same trade-off the
+ * list already accepts for ` сказала `, and the cost is soft: a suppressed
+ * exit falls to `none`, the Clinician sees the message and can respond.
+ */
+const REPORTED_SPEECH: string[] = [
+  ...THIRD_PERSON,
+  ' говорил ',
+  ' говорила ',
+  ' говорили ',
+  ' сказали ',
+];
+
+/**
+ * A no-predicate deferral+cooperative pair counts as an exit only when the
+ * message IS the proposal — a direct speech act, not a marker buried in
+ * narrative. The longest pinned genuine exit on this branch is 5 tokens
+ * («слушай, давай потом, я устала»); the 2026-08-24 false positive was ~48.
+ * Ten leaves room for filler plus a short reason and still rejects any
+ * narrative by an order of magnitude.
+ */
+const MAX_DIRECT_PROPOSAL_TOKENS = 10;
+
+/**
  * A departure verb is only an exit when it is TERMINAL. With a complement it is
  * a metaphor, a direction or a relationship — "go deeper", "go back to that",
  * «уйти от него», «ухожу в себя». Those are ordinary clinical material and must
@@ -403,6 +440,11 @@ function has(text: string, phrases: string[]): boolean {
   return find(text, phrases) !== null;
 }
 
+/** Whitespace tokens in a normalised message. */
+function tokenCount(text: string): number {
+  return text.trim().split(' ').filter(Boolean).length;
+}
+
 /** True when one of `phrases` sits shortly before `index`. */
 function governedBy(text: string, index: number, phrases: string[]): boolean {
   const before = text.slice(Math.max(0, index - GOVERN_WINDOW), index + 1);
@@ -501,9 +543,22 @@ export function detectExitIntent(message: string): ExitIntentResult {
   // 6. No predicate: only a cooperative deferral proposal counts. This is what
   //    separates «давай в следующий раз» (ending now) from "I will write to you
   //    later" (future contact, deliberately excluded).
+  //
+  //    Tightened 2026-08-24: the pair must be a DIRECT proposal. Two
+  //    suppressive-only guards — the message is short enough to BE the
+  //    proposal, and neither marker sits in reported speech. Either guard
+  //    failing yields `none`, never a new exit.
   if (!predicate) {
     if (topic && cooperative) return { intent: 'activity_stop', matched: 'topic_scope' };
-    if (deferral && cooperative) return { intent: 'session_exit', matched: 'deferral' };
+    const deferralHit = find(text, DEFERRAL);
+    const cooperativeHit = find(text, COOPERATIVE);
+    if (deferralHit && cooperativeHit) {
+      const attributed =
+        governedBy(text, cooperativeHit.index, REPORTED_SPEECH) ||
+        governedBy(text, deferralHit.index, REPORTED_SPEECH);
+      const direct = tokenCount(text) <= MAX_DIRECT_PROPOSAL_TOKENS;
+      if (direct && !attributed) return { intent: 'session_exit', matched: 'deferral' };
+    }
     return NO_INTENT;
   }
 
