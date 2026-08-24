@@ -186,7 +186,28 @@ const SCOPE_SESSION: string[] = [
   'на сегодня',
 ];
 
-/** Deferral to a later session — also session scope, listed for audit clarity. */
+/**
+ * Deferral to a later session — also session scope, listed for audit clarity.
+ *
+ * «ПОТОМ» IS PHRASE-LEVEL ONLY (2026-08-23). The bare token used to sit in
+ * this list, and it ended a live session at its most productive moment.
+ *
+ * In Russian «потом» is overwhelmingly the narrative connective "then /
+ * afterwards", not the deferral "later". The user wrote, about her marriage:
+ *
+ *   «если я всё-таки начинаю с ним общаться, а потом он это продолжает хотеть»
+ *
+ * `общаться` matched P_CONTINUE, bare `потом` matched this list, and step 10
+ * lifted the pair to `session_exit`. The turn short-circuited to a canned
+ * stability question, so the Clinician never saw the message — and it was the
+ * turn in which she named the two extremes, the depletion, and the
+ * «ребёнок и мама» dynamic. The same pair fires on any sentence of the shape
+ * "…говорить… а потом…", which in relational narrative is most of them.
+ *
+ * The deferral sense survives as whole phrases, in both word orders, because
+ * Russian orders freely. Each one is a request about THIS conversation and
+ * cannot be said about a third party without changing the verb.
+ */
 const DEFERRAL: string[] = [
   'tomorrow',
   'later',
@@ -195,7 +216,12 @@ const DEFERRAL: string[] = [
   'завтра',
   'в другой раз',
   'в следующий раз',
-  'потом',
+  'давай потом',
+  'давайте потом',
+  'потом поговорим',
+  'поговорим потом',
+  'потом продолжим',
+  'продолжим потом',
 ];
 
 /** Restricts to the current material — keeps the intent at ACTIVITY level. */
