@@ -5,7 +5,12 @@ import prisma from '@/lib/prisma';
 import { decrypt } from '@/lib/encrypt';
 import { parseStateReport } from '../stateReport/parse';
 import { normaliseClosureProcess } from '../closure/process';
-import { normaliseMiddleLayerState } from '../middleLayer/sufficiency';
+import {
+  normaliseMiddleLayerState,
+  evaluateSufficiency,
+  type SufficiencyVerdict,
+} from '../middleLayer/sufficiency';
+import { loadEvidence } from '../middleLayer/evidence';
 import { MAX_MEASUREMENT_AGE_MS } from '../closure/measurement-age';
 import type {
   ModalityRejected,
@@ -321,6 +326,30 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     continuity.isSessionResume,
   );
 
+  const taskContract = parseStoredJson<TaskContract>(
+    decryptOrNull(progress.taskContractEncrypted),
+  );
+
+  // Rung-progress detail (2026-08-24). Recompute the SAME verdict the shadow
+  // write persisted at last save — same function, same contract blob, same
+  // evidence rows — so the state block can name which §3a/§3b requirements
+  // are met and which exact emissions are still missing. It is render detail
+  // ONLY: `middleLayer` below stays the permission authority (§8, permission
+  // derives from persisted state), and between a save and this load the
+  // validator's inputs do not change, so this cannot disagree with the
+  // persisted statuses. Fail-soft: any error here degrades the state block
+  // to its static requirement text, never the turn.
+  let middleLayerProgress: SufficiencyVerdict | null = null;
+  try {
+    const evidence = await loadEvidence(userId);
+    middleLayerProgress = evaluateSufficiency(taskContract, evidence);
+  } catch (err) {
+    console.error('[journey/middle-layer] rung-progress detail failed (ignored)', {
+      userId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
   return {
     userId: progress.userId,
     currentStage: progress.currentStage,
@@ -360,9 +389,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
     // Clinician Working Memory — derived from the same recent reports the
     // signals above already read. See deriveWorkingMemory.
     workingMemory: sensitivity.workingMemory,
-    taskContract: parseStoredJson<TaskContract>(
-      decryptOrNull(progress.taskContractEncrypted),
-    ),
+    taskContract,
     // Platform Step 3 part B (2026-07-20) — sign-up onboarding answers,
     // rendered only until the Journey's own task contract exists.
     onboardingAnswers: await getOnboardingAnswers(userId),
@@ -379,6 +406,7 @@ export async function loadJourneyState(userId: string): Promise<JourneyState | n
       targetStatus: progress.middleLayerTargetStatus,
       mechanismStatus: progress.middleLayerMechanismStatus,
     }),
+    middleLayerProgress,
     closureProcess: normaliseClosureProcess({
       state: progress.closureProcessState,
       route: progress.closureRoute,

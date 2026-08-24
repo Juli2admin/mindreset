@@ -10,7 +10,7 @@ import type {
   TaskContract,
 } from '../stateReport/schema';
 import type { ClosureProcess } from '../closure/process';
-import type { MiddleLayerState } from '../middleLayer/sufficiency';
+import type { MiddleLayerState, SufficiencyVerdict } from '../middleLayer/sufficiency';
 import type { OnboardingAnswers } from '@/lib/platform/types';
 
 export type JourneyChannel =
@@ -259,6 +259,20 @@ export type JourneyState = {
   // recomputation would replace persisted permission with in-flight
   // permission. Legacy rows normalise to Rung 1, which §6 always allows.
   middleLayer: MiddleLayerState;
+  /**
+   * Rung-progress detail for the state block (2026-08-24) — the SAME
+   * evaluateSufficiency verdict the shadow write persisted last turn,
+   * recomputed read-only so its per-requirement reasons are renderable.
+   *
+   * INFORMATIONAL ONLY. `middleLayer` above (the persisted columns) remains
+   * the sole permission authority; nothing derives a rung, a gate or a route
+   * from this field. Between a save and the next load the validator's inputs
+   * (contract blob + evidence rows) do not change, so this cannot disagree
+   * with the persisted statuses — it only carries the detail they dropped.
+   * Null when the evidence read or evaluation failed (render falls back to
+   * the static requirement text).
+   */
+  middleLayerProgress?: SufficiencyVerdict | null;
 
   // Clinician Working Memory (2026-08-08). The clinician's own analytical
   // output from earlier turns in THIS session, projected back so it is

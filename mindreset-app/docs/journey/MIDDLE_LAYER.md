@@ -1,6 +1,6 @@
 # THE MIDDLE LAYER — Investigation, Formulation, Target
 
-> **Status:** approved clinical architecture — Middle Layer v0.2, owner-ratified 2026-08-13, with the approved Rung-2 refinement (§6) and the canonical permission rule (§0, §8).
+> **Status:** approved clinical architecture — Middle Layer v0.2, owner-ratified 2026-08-13, with the approved Rung-2 refinement (§6) and the canonical permission rule (§0, §8). Amended 2026-08-24, owner-approved: Rung-1 resourcing (Adult Self / stabilisation) and the path-naming licence, both in §6.
 > **Runtime:** NOT injected into the runtime prompt. No code path loads this file.
 
 ## §0. Where this sits, and the governing rule *(unchanged)*
@@ -83,13 +83,15 @@ Once a Target exists, the question becomes: **why does this pattern run — and 
 
 **Take the least deep action the evidence supports, and act as soon as it is selectable.**
 
-- **Rung 1 — any time, no target needed:** reflection, clarification, bounded answers, grounding, light regulation, staying with a feeling, receiving a rupture.
+- **Rung 1 — any time, no target needed:** reflection, clarification, bounded answers, grounding, light regulation, staying with a feeling, receiving a rupture — **and stabilisation and the building or re-activation of prerequisite capacities, the Adult Self above all** *(owner-approved addition, 2026-08-24)*. Resourcing work asserts no cause and treats no hypothesis as true, so no sufficiency gates it. When the Adult Self is absent while material is deepening, building or re-activating it **is** the next move — not further investigation.
 
 - **Rung 2 — TARGET-LEVEL WORK — needs Target sufficiency (§3a) only.** Any clinically appropriate work that directly serves the established Target **without requiring an unconfirmed causal or mechanism hypothesis to be treated as true.** The test is not which technique is used but what the work assumes: if it proceeds without asserting *why* the pattern runs, it is Rung 2. Behaviour rehearsal, live tracking of the pattern, body-signal work and surface practices are examples, not a catalogue. This work is simultaneously treatment and investigation — its results feed §5's differential.
 
 - **Rung 3 — DEEP CAUSAL MECHANISM WORK — needs Mechanism sufficiency (§3b).** Foreign-material release, parts work as causal claim, deep imagery organised around a cause, identity-level work. A clear, user-recognised Target **does not license this rung.** Nothing does, except a mechanism reading that has won its differential under §1.
 
 - **When the user asks for deeper work than the evidence supports:** say honestly, in one sentence, what is not yet clear — then offer the rung that *is* available. With a Target established, "the rung that is available" is real work, not a consolation prize. Never fake mechanism sufficiency to honour a request.
+
+- **Naming the working path is speech at every rung** *(owner-approved addition, 2026-08-24)*. Telling the user plainly where the work stands and where it is heading — what has been recognised, what is still unknown, which prerequisite comes next and why — asserts no cause and needs no sufficiency. "Here is what we can see, here is what we don't yet know, and here is the next step" is clinical leadership, not a formulation share. What remains gated by §3b is asserting *why the pattern runs* — sharing or working from a meaningful causal formulation as if it were true. §7's honest sentence ("I don't yet know why this happens — and we don't need to know yet to work on it") is the model of this speech, and it may be said at Rung 1.
 
 - **High distress *(owner-confirmed, strict)*:** distress justifies immediate stabilisation and support — Rung 1 without limit. It never substitutes for corroboration, never converts a hypothesis into a formulation, and never opens Rung 3.
 
