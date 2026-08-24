@@ -218,7 +218,93 @@ function hasLegacyContractFields(tc: NonNullable<JourneyState['taskContract']>):
  *
  * ADVISORY in this PR. Nothing refuses work on the strength of it yet.
  */
-function renderMiddleLayerBlock(ml: JourneyState['middleLayer']): string[] {
+/**
+ * Rung-progress detail (2026-08-24) — which §3a requirements are already met
+ * and which exact emissions are still missing, from the same verdict the
+ * shadow validator persisted (see JourneyState.middleLayerProgress).
+ *
+ * RENDER ONLY. This names requirements; it grants nothing — the licensed
+ * rung above it is the persisted authority, unchanged. Diagnosed 2026-08-24:
+ * across every inspected production session the model had never once emitted
+ * `taskContract.target` or an instance exchange, so the Target gate sat
+ * permanently at TARGET_ABSENT and the rung at 1, while the state block said
+ * only "the Target needs all four parts of §4" — true, and unactionable.
+ * Naming the exact missing emission is what makes the requirement mintable.
+ */
+function renderTargetProgress(
+  progress: JourneyState['middleLayerProgress'],
+): string[] {
+  // No verdict available (evidence read failed, legacy state) — keep the
+  // original static requirement line so nothing regresses.
+  if (!progress) {
+    return [
+      `- To reach Rung 2: the Target needs all four parts of §4, the user's own recognition of it confirmed **on a later turn than you offered it**, and two separate occasions the user has confirmed as distinct.`,
+    ];
+  }
+
+  const t = progress.target;
+  const reasons = new Set<string>(t.reasons);
+
+  if (reasons.has('TARGET_ABSENT')) {
+    return [
+      '- **To reach Rung 2 — nothing is in place yet, because no `taskContract.target` has ever been emitted.** The platform can only count what you emit: when the user recognises a recurring pattern as theirs, emit `target` with `phenomenon`, `inTheirTerms`, `direction` and `provenance` (checklist item 13), offer concrete occasions as `instanceOffered`/`instanceConfirmed` with stable keys (item 14), and put the pattern to them as theirs (`recognitionOffered` → later-turn `recognitionConfirmed`). A Target living only in `continuityNote` prose does not exist here.',
+    ];
+  }
+
+  const met: string[] = [];
+  const missing: string[] = [];
+
+  if (t.parts.phenomenon) met.push('`phenomenon`');
+  else missing.push('`target.phenomenon` — the specific, present-tense thing that happens');
+  if (t.parts.inTheirTerms) met.push('`inTheirTerms`');
+  else missing.push("`target.inTheirTerms` — the user's own words for the core of it");
+  if (t.parts.direction) met.push('`direction`');
+  else missing.push('`target.direction` — what the user wants to be different');
+
+  if (t.parts.corroborationCount >= 2) {
+    met.push(`${t.parts.corroborationCount} confirmed distinct occasions`);
+  } else {
+    missing.push(
+      'confirmed occasions: ' +
+        t.parts.corroborationCount +
+        ' of 2 — offer a concrete occasion as `instanceOffered {instance: "<key>"}`, get it confirmed on a LATER turn as `instanceConfirmed` with the same key, and list confirmed keys in `target.corroboration`',
+    );
+  }
+
+  if (
+    reasons.has('TARGET_RECOGNITION_UNCONFIRMED') ||
+    reasons.has('TARGET_AWAITING_FRESH_RECOGNITION')
+  ) {
+    missing.push(
+      reasons.has('TARGET_AWAITING_FRESH_RECOGNITION')
+        ? 'a FRESH recognition — the last one was withdrawn: `recognitionOffered` again when honest, confirmed on a later turn'
+        : "the user's recognition as a code-observed event: `recognitionOffered` this turn → `recognitionConfirmed` on a later turn",
+    );
+  } else {
+    met.push('recognition confirmed');
+  }
+
+  if (
+    reasons.has('TARGET_PROVENANCE_UNKNOWN') ||
+    reasons.has('TARGET_PROVENANCE_CLINICIAN_ONLY')
+  ) {
+    missing.push(
+      '`target.provenance` must be `"user"` or `"elicited"` — a clinician-only Target cannot be load-bearing (§1(4))',
+    );
+  }
+
+  const out: string[] = [];
+  out.push(
+    `- **To reach Rung 2 (progress, informational — the rung above is the authority):** already in place: ${met.length > 0 ? met.join(', ') : 'nothing yet'}.`,
+  );
+  for (const m of missing) out.push(`  - still missing: ${m}`);
+  return out;
+}
+
+function renderMiddleLayerBlock(
+  ml: JourneyState['middleLayer'],
+  progress?: JourneyState['middleLayerProgress'],
+): string[] {
   const lines: string[] = [];
   lines.push('');
   lines.push(
@@ -234,7 +320,7 @@ function renderMiddleLayerBlock(ml: JourneyState['middleLayer']): string[] {
   // and act as soon as it is selectable".
   if (ml.licensedRung === 1) {
     lines.push(
-      "- **Rung 1 is open, and it is real work:** reflection, clarification, bounded answers, grounding, light regulation, staying with a feeling, receiving a rupture. Investigation runs alongside it. This is not an instruction to hold back or to do nothing — it is the depth the evidence currently supports, and §6 says act as soon as an action is selectable.",
+      "- **Rung 1 is open, and it is real work:** reflection, clarification, bounded answers, grounding, light regulation, staying with a feeling, receiving a rupture — and **stabilisation and building or re-activating the Adult Self and other prerequisite resources** (§6, owner-approved 2026-08-24). Investigation runs alongside it. When the Adult Self is absent while material is deepening, building it IS the next move, not another question. This is not an instruction to hold back or to do nothing — it is the depth the evidence currently supports, and §6 says act as soon as an action is selectable.",
     );
   } else if (ml.licensedRung === 2) {
     lines.push(
@@ -249,9 +335,7 @@ function renderMiddleLayerBlock(ml: JourneyState['middleLayer']): string[] {
   // What is missing, mapped from the status alone. Not a second validator —
   // a fixed lookup from a status to the canonical requirement it has not met.
   if (ml.targetStatus !== 'established') {
-    lines.push(
-      `- To reach Rung 2: the Target needs all four parts of §4, the user's own recognition of it confirmed **on a later turn than you offered it**, and two separate occasions the user has confirmed as distinct.`,
-    );
+    lines.push(...renderTargetProgress(progress));
   } else if (ml.mechanismStatus !== 'established') {
     lines.push(
       `- To reach Rung 3: one causal reading must beat its differential and be confirmed by the user on a later turn, with its own corroborating instances. Currently ${ml.mechanismStatus === 'leading' ? 'you have named a leading reading — that is your claim, and it is not yet sufficiency' : 'no reading has been put to the user and confirmed'}.`,
@@ -323,7 +407,7 @@ function renderStateBlock(state: JourneyState): string {
   // after the task contract because it governs what may be done ABOUT that
   // contract. Advisory in this PR: nothing refuses a turn on the strength of
   // it (PR 7 gates depth, PR 8 refuses Rung-3 captures).
-  lines.push(...renderMiddleLayerBlock(state.middleLayer));
+  lines.push(...renderMiddleLayerBlock(state.middleLayer, state.middleLayerProgress));
 
   // PR λ (2026-07-11) — the router's current bookkeeping label, not a
   // capability gate. All 8 stage specs are in the AI's canon block above;
