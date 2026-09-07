@@ -32,7 +32,6 @@
 import type { StateReport } from '../stateReport/schema';
 import type { ClosureNoteKind } from './state-notes';
 import {
-  claimsClosure,
   evaluateClosureGate,
   type CapturedMeasurement,
   type ClosureTurn,
@@ -123,14 +122,36 @@ export function closeCorrectionFor(args: {
 //
 // THIS FUNCTION ADDS NO JUDGEMENT OF ITS OWN. It composes three existing
 // authorities and nothing else:
-//   * does this turn end or park the session — `claimsVisibleClose` (the
-//     model's own canonical move) OR `claimsClosure` (its record claim);
+//   * does this turn end or park the session — `claimsVisibleClose`, the
+//     model's own canonical ACTION move, and nothing weaker (see below);
 //   * does this session need a measurement — `measurementRequired`, the same
 //     function the orchestrator's exit-intent path uses;
 //   * has a valid measurement been taken — `evaluateClosureGate`, which is
 //     already the single authority on that question.
 // No wording is inspected. No new threshold, scale, or clinical rule exists
 // here.
+//
+// THE TRIGGER IS THE ACTION MOVE ONLY (narrowed 2026-09-05, owner-approved).
+// This boundary originally also fired on `claimsClosure` — the record-level
+// claim, `cycleCanClose === true || cycleStatus === 'closed'` — as a backstop
+// for a close whose visible move was omitted. Live on 2026-09-05 that backstop
+// misfired: mid-investigation, on a turn whose visible reply was an OPEN
+// question («Расскажи мне про поиск…»), the model emitted a record-level
+// closure capability claim. `claimsClosure` conflates capability ("the cycle
+// could close now") with action ("I am closing this turn"); that conflation is
+// correct where it polices the RECORD — applyClosureGate rightly downgraded
+// the claim to cycleCanClose:false — but as a trigger for a USER-VISIBLE
+// intervention it appended the stability question to a turn that was
+// continuing the conversation, orchestrator §3 then swallowed the user's
+// substantive answer with a re-ask, and the ≥threshold score railroaded the
+// session into a close nobody asked for.
+//
+// So: the user-visible boundary fires only on `universal.session_close`, the
+// model's explicit statement that it performed a close — present on BOTH
+// failing turns of the original 2026-08-17 defect, so nothing this boundary
+// was built to catch is lost. Record-level claims remain fully policed by the
+// existing `applyClosureGate` path, which corrects the persisted record and
+// touches nothing the user sees.
 //
 // WHAT IT ENFORCES, PRECISELY. The session STATE and PROCESS, not the words.
 // This predicate is evaluated after the reply has streamed, so a caller acting
@@ -167,9 +188,11 @@ export function closeBoundaryApplies(args: {
   // 1. Does this turn end or park the session? `universal.session_close` is
   //    the model's own structured claim that it performed a session close —
   //    the same signal closeCorrectionFor reads, and the one present on both
-  //    failing turns of the live session. `claimsClosure` catches the
-  //    record-level claim when the visible move was omitted.
-  if (!claimsVisibleClose(report) && !claimsClosure(report)) return false;
+  //    failing turns of the live session. Record-level claims (`claimsClosure`)
+  //    deliberately do NOT trigger here since 2026-09-05: `cycleCanClose` is a
+  //    capability assessment, not an action, and firing on it interrupted a
+  //    live mid-investigation turn. The record path still polices those claims.
+  if (!claimsVisibleClose(report)) return false;
 
   // 2. Does this session require a measurement at all? Sessions that never
   //    destabilised are none of this boundary's business — the same
