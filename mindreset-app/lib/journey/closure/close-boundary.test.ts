@@ -28,10 +28,12 @@
 //
 // WHAT THIS IS NOT. No new clinical rule, threshold, scale, copy, schema,
 // validator, model call or architecture. `closeBoundaryApplies` composes three
-// existing authorities — `claimsVisibleClose` / `claimsClosure`,
-// `measurementRequired`, `evaluateClosureGate` — and the fallback is the
-// owner-approved `getStabilityQuestionForLocale`, entered through the already
-// legal `NONE -> AWAITING_INITIAL_SCORE` transition.
+// existing authorities — `claimsVisibleClose` (the action move; record-level
+// `claimsClosure` was removed from the trigger 2026-09-05, see
+// close-boundary-trigger.test.ts), `measurementRequired`,
+// `evaluateClosureGate` — and the fallback is the owner-approved
+// `getStabilityQuestionForLocale`, entered through the already legal
+// `NONE -> AWAITING_INITIAL_SCORE` transition.
 
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -325,9 +327,7 @@ describe('streaming is exactly production, on every turn', () => {
   it('the history read happens only on a turn that claims a close', () => {
     // The one added query sits INSIDE the close-claim conditional, so an
     // ordinary turn pays nothing for the boundary — not even a query.
-    const guardIdx = route.indexOf(
-      '(claimsVisibleClose(preParsed.report) || claimsClosure(preParsed.report))',
-    );
+    const guardIdx = route.indexOf('claimsVisibleClose(preParsed.report)');
     expect(guardIdx).toBeGreaterThan(-1);
     const queryIdx = route.indexOf('select: { createdAt: true, intensityReported: true, safetyFlag: true }');
     expect(queryIdx).toBeGreaterThan(guardIdx);

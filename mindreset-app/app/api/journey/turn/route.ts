@@ -750,11 +750,20 @@ export async function POST(request: NextRequest) {
         // assessment". Nothing about the orchestrator's own entry condition
         // changes here.
         // ------------------------------------------------------------------
+        // THE TRIGGER IS THE ACTION MOVE ONLY (narrowed 2026-09-05).
+        // `claimsClosure` — the record-level `cycleCanClose`/`cycleStatus`
+        // claim — no longer arms this branch. Live on 2026-09-05 the model
+        // emitted a closure CAPABILITY claim on a mid-investigation turn whose
+        // visible reply was an open question; the boundary appended the
+        // stability question, §3 swallowed the user's substantive answer, and
+        // the captured score closed a session nobody asked to end. Record
+        // claims stay fully policed by applyClosureGate in finaliseTurn, which
+        // corrects the persisted record and touches nothing the user sees.
         if (
           closureOrchestration.kind === 'proceed' &&
           isAllowedTransition(state.closureProcess.state, 'AWAITING_INITIAL_SCORE') &&
           preParsed !== null &&
-          (claimsVisibleClose(preParsed.report) || claimsClosure(preParsed.report))
+          claimsVisibleClose(preParsed.report)
         ) {
           try {
             const { report, observedAt } = preParsed;
