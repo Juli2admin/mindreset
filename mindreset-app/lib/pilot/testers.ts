@@ -22,7 +22,13 @@
 // discipline.
 
 export const PILOT_TESTER_EMAILS: ReadonlySet<string> = new Set<string>([
-  'svetlana.morozova@inbox.lv',
+  // svetlana.morozova@inbox.lv removed 2026-09-22 (owner request): her
+  // 30-day pilot trial ended 2026-08-12 and the legacy allowlist grant was
+  // keeping MiniMind Extended re-granted on every /home visit. Removal
+  // stops the re-grant loop; the already-applied tier is pulled by the
+  // owner-run revocation SQL (see the header above). Her pilot history,
+  // Purchase rows, and trial fields are untouched — they are what keeps
+  // the Journey gate correctly returning pilot_expired.
   'quin55@mail.ru',
 ]);
 
