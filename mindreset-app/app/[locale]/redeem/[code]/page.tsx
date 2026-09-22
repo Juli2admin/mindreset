@@ -9,7 +9,7 @@
 // if something misbehaves.
 
 import type { Metadata } from 'next';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { redeemInvitation, type RedeemResult } from '@/lib/pilot/invitations';
 
@@ -77,6 +77,10 @@ const COPY: Record<string, Copy> = {
         title: "You're already in a pilot.",
         body: 'This account already has an active pilot code linked to it. You can go straight to The Journey.',
       },
+      email_locked: {
+        title: 'This invitation is reserved for a specific email address.',
+        body: 'Please sign up (or sign in) with the exact email address this invitation was sent to, then open the link again. If that is what you did, reply to the invitation email and we will sort it out.',
+      },
     },
   },
   ru: {
@@ -114,6 +118,10 @@ const COPY: Record<string, Copy> = {
       user_already_pilot: {
         title: 'У Вас уже есть активный пилот.',
         body: 'К этому аккаунту уже привязан пилотный код. Можно сразу перейти к Пути.',
+      },
+      email_locked: {
+        title: 'Это приглашение закреплено за определённым email-адресом.',
+        body: 'Пожалуйста, зарегистрируйтесь (или войдите) с тем адресом, на который пришло приглашение, и откройте ссылку ещё раз. Если Вы так и сделали — ответьте на письмо с приглашением, мы разберёмся.',
       },
     },
   },
@@ -157,9 +165,22 @@ export default async function RedeemPage({
     return <ErrorView copy={copy} reasonKey="not_found" pricingHref={pricingHref} />;
   }
 
+  // Primary email — needed only for email-locked invitations; a locked
+  // code fails closed if this lookup yields nothing. Non-fatal: an
+  // unlocked code redeems exactly as before even if this throws.
+  let primaryEmail: string | null = null;
+  try {
+    const user = await currentUser();
+    primaryEmail =
+      user?.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)
+        ?.emailAddress ?? null;
+  } catch (err) {
+    console.error('[redeem] currentUser() threw (continuing):', err);
+  }
+
   let result: RedeemResult | null = null;
   try {
-    result = await redeemInvitation(params.code, userId);
+    result = await redeemInvitation(params.code, userId, primaryEmail);
   } catch (err) {
     console.error('[redeem] redeemInvitation threw:', {
       code: params.code,

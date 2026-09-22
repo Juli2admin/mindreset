@@ -186,7 +186,7 @@ export default async function HomePage({
     const pilotCookie = cookies().get(PILOT_REDEEM_COOKIE);
     if (pilotCookie?.value) {
       try {
-        const result = await redeemInvitation(pilotCookie.value, user.id);
+        const result = await redeemInvitation(pilotCookie.value, user.id, primaryEmail);
         if (result.ok === true) {
           console.log('[home] pilot code redeemed on first authenticated visit', {
             userId: user.id,

@@ -18,6 +18,27 @@ export const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no O/0/I/1 c
 export const CODE_LENGTH = 10;
 export const CODE_PREFIX = 'PILOT-';
 
+// ---------------------------------------------------------------------------
+// Email-locked invitations (owner request, 2026-09-22)
+// ---------------------------------------------------------------------------
+// A code listed here can be redeemed ONLY by an account whose primary email
+// matches (case-insensitive). This closes the one gap in the invitation
+// mechanism: a plain code is bound to the link, so anyone it leaks to could
+// claim the trial. A locked code is bound to the person.
+//
+// This is deliberately NOT the PILOT_TESTER_EMAILS allowlist (testers.ts):
+// that mechanism grants indefinite access at signup with no trial window.
+// A locked invitation keeps every property of the normal pilot flow —
+// 30 days from redemption, self-closing expiry, revocable — and adds only
+// the eligibility check.
+//
+// To lock a code: add `'PILOT-XXXXXXXXXX': 'their.email@example.com'`
+// (email lowercase). Codes not listed here behave exactly as before.
+export const INVITATION_EMAIL_LOCKS: Readonly<Record<string, string>> = {
+  // Anastasia — clinical tester, one-month pilot (2026-09-22).
+  'PILOT-6P2HAQPYCJ': 'anastasia@akiseleva.com',
+};
+
 /**
  * Generate an unambiguous invitation code. Prefix + 10 alphanumeric chars,
  * no vowels or lookalikes so it's safe to speak aloud / hand-write.
@@ -74,7 +95,8 @@ export type RedeemResult =
         | 'invitation_expired'
         | 'invitation_revoked'
         | 'already_redeemed_by_other'
-        | 'user_already_pilot';
+        | 'user_already_pilot'
+        | 'email_locked';
     };
 
 /**
@@ -82,10 +104,15 @@ export type RedeemResult =
  * user redeems the same code twice, returns ok:true with
  * alreadyRedeemedByThisUser:true. If a different user tries to redeem
  * an already-claimed code, returns already_redeemed_by_other.
+ *
+ * `redeemerEmail` is the redeeming account's primary email, used only for
+ * INVITATION_EMAIL_LOCKS. An unlocked code ignores it entirely; a locked
+ * code FAILS CLOSED — no email supplied, or a mismatch, refuses redemption.
  */
 export async function redeemInvitation(
   code: string,
   userId: string,
+  redeemerEmail?: string | null,
 ): Promise<RedeemResult> {
   const invitation = await prisma.pilotInvitation.findUnique({
     where: { code },
@@ -94,6 +121,22 @@ export async function redeemInvitation(
   if (invitation.revokedAt) return { ok: false, reason: 'invitation_revoked' };
   if (invitation.expiresAt && invitation.expiresAt < new Date()) {
     return { ok: false, reason: 'invitation_expired' };
+  }
+
+  // Email lock — checked before any state is read or written, so a locked
+  // code refused here has changed nothing. Case-insensitive; fails closed
+  // when the caller could not supply an email.
+  const lockedTo = INVITATION_EMAIL_LOCKS[invitation.code];
+  if (lockedTo) {
+    const email = redeemerEmail?.trim().toLowerCase() ?? null;
+    if (email !== lockedTo) {
+      console.warn('[pilot] email-locked code refused', {
+        code: invitation.code,
+        userId,
+        emailSupplied: email !== null,
+      });
+      return { ok: false, reason: 'email_locked' };
+    }
   }
 
   // Idempotent same-user redeem
