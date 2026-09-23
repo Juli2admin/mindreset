@@ -177,6 +177,8 @@ The MiniMind v2.3 system prompt exists in TWO places:
 
 | Document | Path |
 |---|---|
+| **The Journey — architectural reference (PRIMARY; read first for any Journey prompt/runtime work; supersedes the Clinical Manual where they differ)** | `mindreset-app/docs/journey/JOURNEY-ARCHITECTURAL-UPDATE.md` |
+| The Journey — Clinical Manual (8-block detailed protocols) | `mindreset-app/docs/journey/CLINICAL_MANUAL.md` |
 | Roadmap (v1, 15 May 2026 — out of date in places) | `mindreset-app/docs/roadmap/MindReset_Roadmap_v1.md` |
 | MiniMind prompt canonical | `mindreset-app/docs/minimind/MiniMind_System_Prompt_v2.3.md` |
 | Journey clinical manual (source of truth) | `mindreset-app/docs/journey/CLINICAL_MANUAL.md` |
